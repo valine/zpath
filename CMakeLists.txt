@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0) # setting this is required
-project(example_project)            # this sets the project name
+project(zpath)            # this sets the project name
 
 ###############################################################################
 ## file globbing ##############################################################
@@ -20,13 +20,13 @@ file(GLOB_RECURSE data resources/*)
 
 # The data is just added to the executable, because in some IDEs (QtCreator) 
 # files are invisible when they are not explicitly part of the project.
-add_executable(example ${sources} ${data})
+add_executable(zpath ${sources} ${data})
 
 # Just for example add some compiler flags.
-target_compile_options(example PUBLIC -std=c++1y -Wall -Wfloat-conversion)
+target_compile_options(zpath PUBLIC -std=c++1y -Wall -Wfloat-conversion)
 
 # This allows to include files relative to the root of the src directory with a <> pair
-target_include_directories(example PUBLIC src/main)
+target_include_directories(zpath PUBLIC src/main)
 
 # This copies all resource files in the build directory.
 # We need this, because we want to work with paths relative to the executable.
@@ -40,7 +40,7 @@ file(COPY ${data} DESTINATION resources)
 # that we need to link into the program.
 #find_package(Boost 1.36.0 COMPONENTS filesystem system REQUIRED)
 
-#target_link_libraries(example PUBLIC
+#target_link_libraries(zpath PUBLIC
  # ${Boost_LIBRARIES}
   # here you can add any library dependencies
 #)
@@ -65,11 +65,11 @@ if(GTEST_FOUND)
 
   # This allows us to use the executable as a link library, and inherit all 
   # linker options and library dependencies from it, by simply adding it as dependency.
-  set_target_properties(example PROPERTIES ENABLE_EXPORTS on)
+  set_target_properties(zpath PROPERTIES ENABLE_EXPORTS on)
 
   target_link_libraries(unit_tests PUBLIC
     ${GTEST_BOTH_LIBRARIES}
-    example
+    zpath
   )
 
   target_include_directories(unit_tests PUBLIC
@@ -84,7 +84,7 @@ endif()
 
 # All install commands get the same destination. this allows us to use paths
 # relative to the executable.
-install(TARGETS example DESTINATION example_destination)
+install(TARGETS zpath DESTINATION example_destination)
 
 # This is basically a repeat of the file copy instruction that copies the
 # resources in the build directory, but here we tell cmake that we want it
@@ -95,7 +95,7 @@ install(DIRECTORY resources DESTINATION example_destination)
 # there are a lot more variables you can set, and some
 # you need to set for some package types, but we want to
 # be minimal here.
-set(CPACK_PACKAGE_NAME "MyExample")
+set(CPACK_PACKAGE_NAME "Zpath")
 set(CPACK_PACKAGE_VERSION "1.0.0")
 
 # We don't want to split our program up into several incomplete pieces.
