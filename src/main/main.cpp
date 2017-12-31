@@ -17,7 +17,7 @@ using std::endl;
 int MAIN(int argc, char** argv) {
 
 
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 101; i++) {
 
     cout << i;
   }
