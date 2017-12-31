@@ -18,7 +18,7 @@ int MAIN(int argc, char** argv) {
 
 
   for (int i = 0; i < 101; i++) {
-broken
+
     cout << i;
   }
   return EXIT_SUCCESS;
