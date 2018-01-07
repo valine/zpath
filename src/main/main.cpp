@@ -2,6 +2,7 @@
 
 #include <iostream>
 using std::cout;
+using std::cin;
 using std::endl;
 #include <fstream>
 #include <string>
@@ -16,11 +17,13 @@ using std::endl;
 
 int MAIN(int argc, char** argv) {
 
+  int theNumber;
 
-  for (int i = 0; i < 101; i++) {
+  cout << "Input a number" << endl;
+  cin >> theNumber;
 
-    cout << i;
-  }
+  cout << "Your number + 5 = " << theNumber + 5 << endl;
+  
   return EXIT_SUCCESS;
 }
 
