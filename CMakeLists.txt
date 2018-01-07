@@ -22,8 +22,9 @@ file(GLOB_RECURSE data resources/*)
 # files are invisible when they are not explicitly part of the project.
 add_executable(zpath ${sources} ${data})
 
+
 # Just for example add some compiler flags.
-target_compile_options(zpath PUBLIC -std=c++1y -Wall -Wfloat-conversion)
+target_compile_options(zpath PUBLIC -std=c++1y -Wall)
 
 # This allows to include files relative to the root of the src directory with a <> pair
 target_include_directories(zpath PUBLIC src/main)
