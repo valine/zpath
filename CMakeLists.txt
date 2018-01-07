@@ -28,6 +28,10 @@ target_compile_options(zpath PUBLIC -std=c++1y -Wall -Wfloat-conversion)
 # This allows to include files relative to the root of the src directory with a <> pair
 target_include_directories(zpath PUBLIC src/main)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # This copies all resource files in the build directory.
 # We need this, because we want to work with paths relative to the executable.
 file(COPY ${data} DESTINATION resources)
