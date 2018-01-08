@@ -58,7 +58,7 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 # glew
 
 if (WIN32)
-    list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
+    list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)")
 endif (WIN32)
 
 
