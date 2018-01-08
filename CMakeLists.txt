@@ -59,6 +59,14 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 
+target_link_libraries(
+        zpath
+        glfw
+        ${OPENGL_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        ${EXTRA_LIBS}
+  )
+
 #target_link_libraries(zpath PUBLIC
  # ${Boost_LIBRARIES}
   # here you can add any library dependencies
