@@ -13,63 +13,103 @@ using std::endl;
 #include <stdlib.h>
 #include <stdio.h>
 
-// when testing, the main of gtest and this main function will collide,
-// this prevents the collision, but it's an ugly hack like all ifdef branches
-#ifdef UNIT_TESTS
-#define MAIN not_main
-#else
-#define MAIN main
-#endif
-
-int MAIN(int argc, char** argv) {
-
-  int theNumber;
-
-  cout << "Input a number" << endl;
-  cin >> theNumber;
-
-  cout << "Your number + 5 = " << theNumber + 5 << endl;
-
-  // start GL context and O/S window using the GLFW helper library
-  if (!glfwInit()) {
-    fprintf(stderr, "ERROR: could not start GLFW3\n");
-    return 1;
-  } 
-
-  // uncomment these lines if on Apple OS X
-  /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);*/
-
-  GLFWwindow* window = glfwCreateWindow(640, 480, "Hello Triangle", NULL, NULL);
-  if (!window) {
-    fprintf(stderr, "ERROR: could not open window with GLFW3\n");
+static const struct
+{
+    float x, y;
+    float r, g, b;
+} vertices[3] =
+{
+    { -0.6f, -0.4f, 1.f, 0.f, 0.f },
+    {  0.6f, -0.4f, 0.f, 1.f, 0.f },
+    {   0.f,  0.6f, 0.f, 0.f, 1.f }
+};
+static const char* vertex_shader_text =
+"uniform mat4 MVP;\n"
+"attribute vec3 vCol;\n"
+"attribute vec2 vPos;\n"
+"varying vec3 color;\n"
+"void main()\n"
+"{\n"
+"    gl_Position = vec4(vPos, 0.0, 1.0);\n"
+"    color = vCol;\n"
+"}\n";
+static const char* fragment_shader_text =
+"varying vec3 color;\n"
+"void main()\n"
+"{\n"
+"    gl_FragColor = vec4(color, 1.0);\n"
+"}\n";
+static void error_callback(int error, const char* description)
+{
+    fprintf(stderr, "Error: %s\n", description);
+}
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+int main(void)
+{
+    GLFWwindow* window;
+    GLuint vertex_buffer, vertex_shader, fragment_shader, program;
+    GLint mvp_location, vpos_location, vcol_location;
+    glfwSetErrorCallback(error_callback);
+    if (!glfwInit())
+        exit(EXIT_FAILURE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    window = glfwCreateWindow(640, 480, "zpath", NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+    glfwSetKeyCallback(window, key_callback);
+    glfwMakeContextCurrent(window);
+    
+   GLenum err = glewInit();
+    
+    glfwSwapInterval(1);
+    // NOTE: OpenGL error checks have been omitted for brevity
+    glGenBuffers(1, &vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
+    glCompileShader(vertex_shader);
+    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
+    glCompileShader(fragment_shader);
+    program = glCreateProgram();
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    glLinkProgram(program);
+    mvp_location = glGetUniformLocation(program, "MVP");
+    vpos_location = glGetAttribLocation(program, "vPos");
+    vcol_location = glGetAttribLocation(program, "vCol");
+    glEnableVertexAttribArray(vpos_location);
+    glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
+                          sizeof(float) * 5, (void*) 0);
+    glEnableVertexAttribArray(vcol_location);
+    glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
+                          sizeof(float) * 5, (void*) (sizeof(float) * 2));
+    while (!glfwWindowShouldClose(window))
+    {
+        float ratio;
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+        ratio = width / (float) height;
+        glViewport(0, 0, width, height);
+        glClear(GL_COLOR_BUFFER_BIT);
+        
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+    glfwDestroyWindow(window);
     glfwTerminate();
-    return 1;
-  }
-  glfwMakeContextCurrent(window);
-                                  
-  // start GLEW extension handler
-  glewExperimental = GL_TRUE;
-  glewInit();
-
-  // get version info
-  const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
-  const GLubyte* version = glGetString(GL_VERSION); // version as a string
-  printf("Renderer: %s\n", renderer);
-  printf("OpenGL version supported %s\n", version);
-
-  // tell GL to only draw onto a pixel if the shape is closer to the viewer
-  glEnable(GL_DEPTH_TEST); // enable depth-testing
-  glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-
-  /* OTHER STUFF GOES HERE NEXT */
-  
-  // close GL context and any other GLFW resources
-  glfwTerminate();
-  
-  return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }
 
 
