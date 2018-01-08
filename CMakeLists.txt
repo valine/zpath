@@ -56,10 +56,9 @@ find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 # glew
-
-# if (WIN32)
-#     list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
-# endif (WIN32)
+if (WIN32)
+  list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
+endif (WIN32)
 
 
 find_package(GLEW REQUIRED)
@@ -73,6 +72,7 @@ target_link_libraries(
         ${EXTRA_LIBS}
   )
 
+#
 #target_link_libraries(zpath PUBLIC
  # ${Boost_LIBRARIES}
   # here you can add any library dependencies
