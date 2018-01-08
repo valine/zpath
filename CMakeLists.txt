@@ -58,12 +58,8 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 # glew
 
 if (WIN32)
-    set(GLEW_INCLUDE_DIR, "C:/Program\ Files\ (x86)/GLEW/include/GL/glew.h")
-    set(GLEW_LIBRARY, "C:/Program\ Files\ (x86)/GLEW/lib/glew32d.lib")
+    list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
 endif (WIN32)
-
-find_path(GLEW_INCLUDE_DIR GL/glew.h)
-find_library(GLEW_LIBRARY NAMES GLEW glew32 glew glew32s PATH_SUFFIXES lib64)
 
 
 find_package(GLEW REQUIRED)
