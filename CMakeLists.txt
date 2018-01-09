@@ -116,7 +116,9 @@ endif()
 ###############################################################################
 
 SET(CPACK_OUTPUT_FILE_PREFIX packages)
-SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 1)
+#SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 1)
+
+set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 # All install commands get the same destination. this allows us to use paths
 # relative to the executable.
 install(TARGETS zpath DESTINATION zpath)
@@ -136,6 +138,6 @@ set(CPACK_PACKAGE_VERSION "0.1.0")
 # We don't want to split our program up into several incomplete pieces.
 set(CPACK_MONOLITHIC_INSTALL 1)
 
-set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+
 # This must be last
 include(CPack)
