@@ -79,7 +79,12 @@ file(COPY ${data} DESTINATION resources)
 
 
 find_package (OpenGL REQUIRED)
-find_package (glfw3 REQUIRED)
+
+# glfw
+find_package(glfw3 REQUIRED)
+include_directories(${GLFW_INCLUDE_DIRS})
+link_libraries(${GLFW_LIBRARY_DIRS})
+
 if (WIN32)
   include_directories("C:/glew/include")
   link_directories("C:/glew/lib/Release/x64")
