@@ -62,7 +62,10 @@ endif (WIN32)
 
 
 find_package(GLEW REQUIRED)
-include_directories(${GLEW_INCLUDE_DIRS})
+if (GLEW_FOUND)
+    include_directories(${GLEW_INCLUDE_DIRS})
+    link_libraries(${GLEW_LIBRARIES})
+endif()
 
 target_link_libraries(
         zpath
