@@ -28,7 +28,7 @@ add_executable(zpath ${sources} ${data})
 
 
 # Just for example add some compiler flags.
-target_compile_options(zpath PUBLIC -std=c++1y -Wall)
+target_compile_options(zpath PUBLIC -std=c++1y -Wall ${SDL2_CFLAGS_OTHER})
 
 # This allows to include files relative to the root of the src directory with a <> pair
 target_include_directories(zpath PUBLIC src/main)
@@ -48,9 +48,15 @@ include_directories(zpath ${OPENGL_INCLUDE_DIR})
 link_libraries(zpath ${OPENGL_gl_LIBRARY})
 
 # glfw
-find_package(glfw3 REQUIRED)
+find_package(glfw3 3.2 REQUIRED)
 include_directories(${GLFW_INCLUDE_DIRS})
-link_libraries(${GLFW_LIBRARY_DIRS})
+
+find_package (Threads)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SDL2 REQUIRED sdl2)
+target_include_directories(zpath PUBLIC ${SDL2_INCLUDE_DIRS})
+
 
 if (WIN32)
   include_directories("C:/glew/include")
@@ -85,10 +91,24 @@ if (WIN32)
 endif (WIN32)
 
 if (UNIX)
+
+  find_package(X11 REQUIRED)
+
+  message(STATUS "X11_FOUND = ${X11_FOUND}")
+  message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
+  message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
+
+  include_directories(${X11_INCLUDE_DIR})
+
   target_link_libraries (zpath
+          ${SDL2_LIBRARIES}
           ${OPENGL_LIBRARIES}
-          ${GLFW3_LIBRARY}
-          ${GLEW_LIBRARY})
+          ${GLEW_LIBRARY}
+          glfw3
+          ${X11_LIBRARIES}
+          ${CMAKE_THREAD_LIBS_INIT}
+          ${CMAKE_DL_LIBS})
+
 endif (UNIX)
 #
 #target_link_libraries(zpath PUBLIC
