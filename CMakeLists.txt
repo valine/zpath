@@ -79,11 +79,11 @@ file(COPY ${data} DESTINATION resources)
 
 
 find_package (OpenGL REQUIRED)
+find_package (glfw3 REQUIRED)
 if (WIN32)
   include_directories("C:/glew/include")
   link_directories("C:/glew/lib/Release/x64")
 else (WIN32)
-  find_package (glfw3 REQUIRED)
   find_package (GLEW REQUIRED STATIC)
 endif (WIN32)
 if (APPLE)
