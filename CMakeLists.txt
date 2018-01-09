@@ -46,35 +46,71 @@ file(COPY ${data} DESTINATION resources)
 # that we need to link into the program.
 #find_package(Boost 1.36.0 COMPONENTS filesystem system REQUIRED)
 
-# glfw
-find_package(glfw3 REQUIRED)
-include_directories(${GLFW_INCLUDE_DIRS})
-link_libraries(${GLFW_LIBRARY_DIRS})
+# # glfw
+# find_package(glfw3 REQUIRED)
+# include_directories(${GLFW_INCLUDE_DIRS})
+# link_libraries(${GLFW_LIBRARY_DIRS})
 
-# opengl
-find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
+# # opengl
+# find_package(OpenGL REQUIRED)
+# include_directories(${OPENGL_INCLUDE_DIRS})
 
-# glew
+# # glew
+# if (WIN32)
+#   list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
+# endif (WIN32)
+
+# find_package (GLEW REQUIRED STATIC)
+# if (GLEW_FOUND)
+#     set(GLEW_USE_STATIC_BUILD ON)
+#     include_directories(${GLEW_INCLUDE_DIRS})
+#     link_directories("C:/Program Files (x86)/GLEW/lib")
+#     link_libraries(${GLEW_LIBRARIES})
+# endif()
+
+# target_link_libraries(
+#         zpath
+#         glfw
+#         ${OPENGL_LIBRARIES}
+#         ${GLEW_LIBRARIES}
+#         ${EXTRA_LIBS}
+#   )
+
+
+
+find_package (OpenGL REQUIRED)
 if (WIN32)
-  list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
+  include_directories("C:/GLFW/include" "C:/glm" "C:/glew/include")
+  link_directories("C:/glew/lib/Release/x64" "C:/GLFW/lib-mingw" )
+else (WIN32)
+  find_package (glfw3 REQUIRED)
+  find_package (GLEW REQUIRED STATIC)
+endif (WIN32)
+if (APPLE)
+  include_directories(/usr/local/include)
+  find_library(COCOA_LIBRARY Cocoa REQUIRED)
+  find_library(IOKIT_LIBRARY IOKit REQUIRED)
+  find_library(COREVID_LIBRARY CoreVideo REQUIRED)
+endif (APPLE)
+
+#add_executable(zpath ${SOURCE_FILES})
+  target_link_libraries (zpath
+          ${GLFW3_LIBRARY}
+          ${OPENGL_LIBRARIES}
+          ${GLEW_LIBRARY}
+          ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
+
+if (WIN32)
+  target_link_libraries (sample
+          ${OPENGL_LIBRARIES} glfw3 glew32s glu32 opengl32)
 endif (WIN32)
 
-find_package (GLEW REQUIRED STATIC)
-if (GLEW_FOUND)
-    set(GLEW_USE_STATIC_BUILD ON)
-    include_directories(${GLEW_INCLUDE_DIRS})
-    link_libraries(${GLEW_LIBRARIES})
-endif()
-
-target_link_libraries(
-        zpath
-        glfw
-        ${OPENGL_LIBRARIES}
-        ${GLEW_LIBRARIES}
-        ${EXTRA_LIBS}
-  )
-
+if (UNIX)
+  target_link_libraries (zpath
+          ${OPENGL_LIBRARIES}
+          ${GLFW3_LIBRARY}
+          ${GLEW_LIBRARY})
+endif (UNIX)
 #
 #target_link_libraries(zpath PUBLIC
  # ${Boost_LIBRARIES}
