@@ -91,12 +91,12 @@ if (WIN32)
 else (WIN32)
   find_package (GLEW REQUIRED STATIC)
 endif (WIN32)
+
 if (APPLE)
   include_directories(/usr/local/include)
   find_library(COCOA_LIBRARY Cocoa REQUIRED)
   find_library(IOKIT_LIBRARY IOKit REQUIRED)
   find_library(COREVID_LIBRARY CoreVideo REQUIRED)
-endif (APPLE)
 
 #add_executable(zpath ${SOURCE_FILES})
   target_link_libraries (zpath
@@ -105,9 +105,16 @@ endif (APPLE)
           ${GLEW_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
 
+endif (APPLE)
+
 if (WIN32)
-  target_link_libraries (zpath
-          ${OPENGL_LIBRARIES} glfw glew opengl32)
+  target_link_libraries (
+    zpath
+    ${OPENGL_LIBRARIES} 
+    glfw 
+    glew32d 
+    opengl32)
+
 endif (WIN32)
 
 if (UNIX)
