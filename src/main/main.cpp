@@ -1,6 +1,9 @@
 #include "main.h"
 
 #include <iostream>
+
+#define GLEW_STATIC
+
 using std::cout;
 using std::cin;
 using std::endl;
