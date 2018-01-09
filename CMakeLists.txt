@@ -57,13 +57,13 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 
 # glew
 if (WIN32)
-  list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
+  list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW/lib")
 endif (WIN32)
 
 set(GLEW_USE_STATIC_BUILD ON)
 find_package(GLEW REQUIRED)
 if (GLEW_FOUND)
-    
+
     include_directories(${GLEW_INCLUDE_DIRS})
     link_libraries(${GLEW_LIBRARIES})
 endif()
