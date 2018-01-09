@@ -107,7 +107,7 @@ endif (APPLE)
 
 if (WIN32)
   target_link_libraries (zpath
-          ${OPENGL_LIBRARIES} glfw glew32s opengl32)
+          ${OPENGL_LIBRARIES} glfw glew32sd opengl32)
 endif (WIN32)
 
 if (UNIX)
