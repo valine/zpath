@@ -1,4 +1,5 @@
 # ZPath
+Path tracer 
 
 ## Build instructions
 
@@ -6,11 +7,13 @@ Dependencies
 
 * CMake https://cmake.org/download/
 * GLFW http://www.glfw.org/download.html
-* Glew http://glew.sourceforge.net
+* GLEW http://glew.sourceforge.net
 
-To build
+### To build
 
+```bash
 cd zpath 
 mkdir build && cd build
 cmake ..
 make
+```
