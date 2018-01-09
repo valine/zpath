@@ -67,7 +67,7 @@ if (APPLE)
 
 #add_executable(zpath ${SOURCE_FILES})
   target_link_libraries (zpath
-          glfw
+          ${GLFW_STATIC_LIBRARIES}
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
