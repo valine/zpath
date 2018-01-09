@@ -85,13 +85,11 @@ find_package(glfw3 REQUIRED)
 include_directories(${GLFW_INCLUDE_DIRS})
 link_libraries(${GLFW_LIBRARY_DIRS})
 
-find_package (GLEW REQUIRED STATIC)
-
 if (WIN32)
   include_directories("C:/glew/include")
-  link_directories("C:/glew/lib/release/x64")
+  link_libraries("C:/glew/lib/release/x64")
 else (WIN32)
-
+  find_package (GLEW REQUIRED STATIC)
 endif (WIN32)
 if (APPLE)
   include_directories(/usr/local/include)
