@@ -100,7 +100,7 @@ endif (APPLE)
 
 #add_executable(zpath ${SOURCE_FILES})
   target_link_libraries (zpath
-          ${GLFW3_LIBRARY}
+          glfw
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
