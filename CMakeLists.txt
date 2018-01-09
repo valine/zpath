@@ -87,7 +87,7 @@ link_libraries(${GLFW_LIBRARY_DIRS})
 
 if (WIN32)
   include_directories("C:/glew/include")
-  link_libraries("C:/glew/lib/release/x64")
+  link_directories("C:/glew/lib/release/Win32")
 else (WIN32)
   find_package (GLEW REQUIRED STATIC)
 endif (WIN32)
