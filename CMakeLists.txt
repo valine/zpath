@@ -112,7 +112,7 @@ if (WIN32)
     zpath
     ${OPENGL_LIBRARIES} 
     glfw 
-    glew32d 
+    glew32s 
     opengl32)
 
 endif (WIN32)
