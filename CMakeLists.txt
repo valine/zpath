@@ -119,7 +119,7 @@ SET(CPACK_OUTPUT_FILE_PREFIX packages)
 SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 1)
 # All install commands get the same destination. this allows us to use paths
 # relative to the executable.
-install(TARGETS ${CMAKE_CURRENT_BINARY_DIR} DESTINATION zpath)
+install(TARGETS zpath DESTINATION zpath)
 
 # This is basically a repeat of the file copy instruction that copies the
 # resources in the build directory, but here we tell cmake that we want it
@@ -136,5 +136,6 @@ set(CPACK_PACKAGE_VERSION "0.1.0")
 # We don't want to split our program up into several incomplete pieces.
 set(CPACK_MONOLITHIC_INSTALL 1)
 
+set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 # This must be last
 include(CPack)
