@@ -44,6 +44,8 @@ file(COPY ${data} DESTINATION resources)
 
 
 find_package (OpenGL REQUIRED)
+include_directories(zpath ${OPENGL_INCLUDE_DIR})
+link_libraries(zpath ${OPENGL_gl_LIBRARY})
 
 # glfw
 find_package(glfw3 REQUIRED)
