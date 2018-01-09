@@ -42,41 +42,6 @@ file(COPY ${data} DESTINATION resources)
 ## dependencies ###############################################################
 ###############################################################################
 
-# This defines the variables Boost_LIBRARIES that containts all library names
-# that we need to link into the program.
-#find_package(Boost 1.36.0 COMPONENTS filesystem system REQUIRED)
-
-# # glfw
-# find_package(glfw3 REQUIRED)
-# include_directories(${GLFW_INCLUDE_DIRS})
-# link_libraries(${GLFW_LIBRARY_DIRS})
-
-# # opengl
-# find_package(OpenGL REQUIRED)
-# include_directories(${OPENGL_INCLUDE_DIRS})
-
-# # glew
-# if (WIN32)
-#   list(APPEND CMAKE_PREFIX_PATH "C:/Program Files (x86)/GLEW")
-# endif (WIN32)
-
-# find_package (GLEW REQUIRED STATIC)
-# if (GLEW_FOUND)
-#     set(GLEW_USE_STATIC_BUILD ON)
-#     include_directories(${GLEW_INCLUDE_DIRS})
-#     link_directories("C:/Program Files (x86)/GLEW/lib")
-#     link_libraries(${GLEW_LIBRARIES})
-# endif()
-
-# target_link_libraries(
-#         zpath
-#         glfw
-#         ${OPENGL_LIBRARIES}
-#         ${GLEW_LIBRARIES}
-#         ${EXTRA_LIBS}
-#   )
-
-
 
 find_package (OpenGL REQUIRED)
 
