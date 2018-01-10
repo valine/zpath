@@ -10,6 +10,8 @@ using std::endl;
 #include <fstream>
 #include <string>
 
+#include<glm/glm.hpp>
+
 #define GLEW_STATIC
 
 #include <GL/glew.h>
