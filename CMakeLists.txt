@@ -40,16 +40,16 @@ include_directories(${GLFW_INCLUDE_DIRS})
 
 find_package (Threads)
 
-#glm
-find_package (glm REQUIRED)
-link_libraries(zpath ${GLM_LIBRARY})
-
 if (WIN32)
   include_directories("C:/glew/include")
   include_directories("C:/glm")
   link_directories("C:/glew/lib/release/Win32")
 else (WIN32)
   find_package (GLEW REQUIRED STATIC)
+
+    #glm
+  find_package (glm REQUIRED)
+  link_libraries(zpath ${GLM_LIBRARY})
 endif (WIN32)
 
 if (APPLE)
