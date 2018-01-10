@@ -168,7 +168,9 @@ install(TARGETS zpath DESTINATION ".")
 install(DIRECTORY resources DESTINATION ".")
 
 if (WIN32)
-  install(FILES "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx86/x86/msvcp140.dll" DESTINATION bin)
+  install(FILES "C:/zpath-libs/MSVCP140D.dll" DESTINATION .)
+  install(FILES "C:/zpath-libs/ucrtbased.dll" DESTINATION .)
+  install(FILES "C:/zpath-libs/VCRUNTIME140D.dll" DESTINATION .)
 endif (WIN32)
 
 
