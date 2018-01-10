@@ -167,6 +167,11 @@ install(TARGETS zpath DESTINATION ".")
 # in the package.
 install(DIRECTORY resources DESTINATION ".")
 
+if (WIN32)
+  install(FILES "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx86/x86/msvcp140.dll" DESTINATION bin)
+endif (WIN32)
+
+
 # Now comes everything we need, to create a package
 # there are a lot more variables you can set, and some
 # you need to set for some package types, but we want to
