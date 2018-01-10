@@ -10,7 +10,9 @@ using std::endl;
 #include <fstream>
 #include <string>
 
-#include<glm/glm.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define GLEW_STATIC
 
@@ -37,7 +39,7 @@ static const char* vertex_shader_text =
 "varying vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = vec4(vPos, 0.0, 1.0);\n"
+"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
 "    color = vCol;\n"
 "}\n";
 
@@ -108,6 +110,13 @@ int main(void) {
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
                           sizeof(float) * 5, (void*) (sizeof(float) * 2));
     while (!glfwWindowShouldClose(window)) {
+     
+        glm::mat4 matrix;
+        matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+       
+        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(matrix));
+
         float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
