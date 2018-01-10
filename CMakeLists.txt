@@ -42,14 +42,9 @@ find_package (Threads)
 
 if (WIN32)
   include_directories("C:/glew/include")
-  include_directories("C:/glm")
   link_directories("C:/glew/lib/release/Win32")
 else (WIN32)
   find_package (GLEW REQUIRED STATIC)
-
-    #glm
-  find_package (glm REQUIRED)
-  link_libraries(zpath ${GLM_LIBRARY})
 endif (WIN32)
 
 if (APPLE)
@@ -62,7 +57,6 @@ if (APPLE)
           glfw3
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
-          ${GLM_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
 
 endif (APPLE)
@@ -73,7 +67,6 @@ if (WIN32)
     ${OPENGL_LIBRARIES} 
     gdi32
     glfw3
-    ${GLM_LIBRARY}
     glew32s 
     opengl32)
 endif (WIN32)
@@ -92,7 +85,6 @@ if (UNIX)
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
           glfw3
-          ${GLM_LIBRARY}
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS})
