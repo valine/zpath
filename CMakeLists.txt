@@ -88,7 +88,7 @@ if (WIN32)
   add_custom_command(TARGET zpath POST_BUILD        # Adds a post-build event to MyTest
     COMMAND ${CMAKE_COMMAND} -E copy_if_different  # which executes "cmake - E copy_if_different..."
         "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.12.25827/bin/Hostx86/x86/msvcp140.dll"      # <--this is in-file
-        $<TARGET_FILE_DIR:zpath>)                 # <--this is out-file path
+        $<TARGET_FILE_DIR:zpath>/MSVCP140D.dll)                 # <--this is out-file path
 
 endif (WIN32)
 
