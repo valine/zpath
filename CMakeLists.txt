@@ -62,7 +62,6 @@ if (APPLE)
           glfw3
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
-          ${GLM_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
 
 endif (APPLE)
@@ -73,7 +72,6 @@ if (WIN32)
     ${OPENGL_LIBRARIES} 
     gdi32
     glfw3
-    ${GLM_LIBRARY}
     glew32s 
     opengl32)
 endif (WIN32)
@@ -92,7 +90,6 @@ if (UNIX)
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
           glfw3
-          ${GLM_LIBRARY}
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS})
