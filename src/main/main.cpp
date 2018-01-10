@@ -83,7 +83,7 @@ int main(void) {
     glfwSetKeyCallback(window, key_callback);
     glfwMakeContextCurrent(window);
     
-   GLenum err = glewInit();
+    GLenum err = glewInit();
     
     glfwSwapInterval(1);
     // NOTE: OpenGL error checks have been omitted for brevity
@@ -136,5 +136,3 @@ int main(void) {
 
 // just some function to have something that can be test
 #include <exception>
-
-
