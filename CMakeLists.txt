@@ -79,8 +79,9 @@ endif (APPLE)
 if (WIN32)
   target_link_libraries (
     zpath
-    gdi32.lib
+    ${OPENGL_LIBRARIES} 
     glfw3
+    glew32s 
     opengl32)
 
 endif (WIN32)
@@ -98,6 +99,7 @@ if (UNIX)
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
+          gdi32
           glfw3
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
