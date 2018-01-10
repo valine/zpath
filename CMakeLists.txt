@@ -28,7 +28,7 @@ add_executable(zpath ${sources} ${data})
 
 
 # Just for example add some compiler flags.
-target_compile_options(zpath PUBLIC -std=c++1y -Wall ${SDL2_CFLAGS_OTHER})
+target_compile_options(zpath PUBLIC -std=c++1y -Wall)
 
 # This allows to include files relative to the root of the src directory with a <> pair
 target_include_directories(zpath PUBLIC src/main)
@@ -53,10 +53,6 @@ include_directories(${GLFW_INCLUDE_DIRS})
 
 find_package (Threads)
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(SDL2 REQUIRED sdl2)
-target_include_directories(zpath PUBLIC ${SDL2_INCLUDE_DIRS})
-
 
 if (WIN32)
   include_directories("C:/glew/include")
@@ -73,7 +69,7 @@ if (APPLE)
 
 #add_executable(zpath ${SOURCE_FILES})
   target_link_libraries (zpath
-          ${GLFW_STATIC_LIBRARIES}
+          glfw3
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
@@ -84,7 +80,7 @@ if (WIN32)
   target_link_libraries (
     zpath
     ${OPENGL_LIBRARIES} 
-    glfw 
+    glfw3
     glew32s 
     opengl32)
 
@@ -101,7 +97,6 @@ if (UNIX)
   include_directories(${X11_INCLUDE_DIR})
 
   target_link_libraries (zpath
-          ${SDL2_LIBRARIES}
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
           glfw3
