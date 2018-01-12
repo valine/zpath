@@ -12,26 +12,13 @@ using std::ifstream;
 using std::cout;
 
 
-ZShader::ZShader(const char* vertexPath, const char* fragmentPath) {
+ZShader::ZShader(std::string vertexPathStr, std::string fragmentPathStr) {
 
  // 1. retrieve the vertex/fragment source code from filePath
 
-  //       std::ifstream vertexFile(vertexPath);
-		// std::string vertexCodeStr;
-		// vertexFile.seekg(0, std::ios::end);   
-		// vertexCodeStr.reserve(vertexFile.tellg());
-		// vertexFile.seekg(0, std::ios::beg);
-		// vertexCodeStr.assign((std::istreambuf_iterator<char>(vertexFile)),
-  //           std::istreambuf_iterator<char>());
-  // 		std::ifstream fragmentFile(fragmentPath);
-		
-		// std::string fragmentCodeStr;
-		// fragmentFile.seekg(0, std::ios::end);   
-		// fragmentCodeStr.reserve(fragmentFile.tellg());
-		// fragmentFile.seekg(0, std::ios::beg);
-		// fragmentCodeStr.assign((std::istreambuf_iterator<char>(fragmentFile)),
-  //           std::istreambuf_iterator<char>());
-
+		cout << vertexPathStr;
+		const char * vertexPath = vertexPathStr.c_str();
+		const char * fragmentPath = fragmentPathStr.c_str();
 
 		std::ifstream vT(vertexPath);
 		std::stringstream vBuffer;
@@ -43,48 +30,32 @@ ZShader::ZShader(const char* vertexPath, const char* fragmentPath) {
 		fBuffer << fT.rdbuf();
 		std:string fragmentCodeStr = fBuffer.str();
 
-		cout << fragmentCodeStr;
-
+		cout << vertexCodeStr << "code";
 
 		const char* vertexCode = vertexCodeStr.c_str();
         const char * fragmentCode = fragmentCodeStr.c_str();
-
-            // vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    // glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-    // glCompileShader(vertex_shader);
-    // fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    // glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-    // glCompileShader(fragment_shader);
-   
-    // program = glCreateProgram();
-   
-    // glAttachShader(program, vertex_shader);
-    // glAttachShader(program, fragment_shader);
-    // glLinkProgram(program);
-
-
        
-        // 2. compile shaders
+        // compile shaders
         GLuint vertex, fragment;
 
         vertex = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertex, 1, &vertexCode, NULL);
         glCompileShader(vertex);
         checkCompileErrors(vertex, "VERTEX");
-        //fragment Shader
+      
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragment, 1, &fragmentCode, NULL);
         glCompileShader(fragment);
         checkCompileErrors(fragment, "FRAGMENT");
-        // shader Program
+
         mID = glCreateProgram();
         glAttachShader(mID, vertex);
         glAttachShader(mID, fragment);
         glLinkProgram(mID);
         checkCompileErrors(mID, "PROGRAM");
         // delete the shaders as they're linked into our program now and no longer necessary
-      //  glDeleteShader(vertex);
-       // glDeleteShader(fragment);
+        glDeleteShader(vertex);
+        glDeleteShader(fragment);
 
 }
 

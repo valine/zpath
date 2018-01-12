@@ -6,7 +6,7 @@ class ZShader {
 
 public:
 	GLuint mID;
-	ZShader(const char* vertexPath, const char* fragmentPath);
+	ZShader(std::string, std::string);
 	void use();
 private:
 	void checkCompileErrors(GLuint shader, std::string type);

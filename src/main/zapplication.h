@@ -1,8 +1,12 @@
 
+#include <string> 
+
 class ZApplication {
 	
+
 public: 
 
-	ZApplication();
+	std::string mDataPath;
 
+	ZApplication(std::string dataPath);
 };

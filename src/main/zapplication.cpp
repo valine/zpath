@@ -35,10 +35,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 }
 
-ZApplication::ZApplication() {
+ZApplication::ZApplication(std::string dataPath) {
+
+
+	mDataPath = dataPath;
 
     GLFWwindow* window;
-    GLuint vertex_buffer, vertex_shader, fragment_shader, program;
+    GLuint vertex_buffer;
     GLint mvp_location, vpos_location, vcol_location;
     glfwSetErrorCallback(error_callback);
 
@@ -67,23 +70,12 @@ ZApplication::ZApplication() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   
 
-    // vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    // glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
-    // glCompileShader(vertex_shader);
-    // fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    // glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
-    // glCompileShader(fragment_shader);
-   
-    // program = glCreateProgram();
-   
-    // glAttachShader(program, vertex_shader);
-    // glAttachShader(program, fragment_shader);
-    // glLinkProgram(program);
 
-    ZShader shader = ZShader("./bin/resources/shaders/uivertexshader.glsl", 
-    	"./bin/resources/shaders/uifragmentshader.glsl");
-   
-    shader.use();
+    std::string vertexPath = mDataPath + "resources/shaders/uivertexshader.glsl";
+    std::string fragmentPath = mDataPath + "resources/shaders/uifragmentshader.glsl";
+
+    ZShader shader = ZShader(vertexPath, fragmentPath);
+  
 
     mvp_location = glGetUniformLocation(shader.mID, "MVP");
     vpos_location = glGetAttribLocation(shader.mID, "vPos");
@@ -99,7 +91,7 @@ ZApplication::ZApplication() {
         glm::mat4 matrix;
         matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
-       
+           shader.use();
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(matrix));
 
         float ratio;
@@ -108,8 +100,6 @@ ZApplication::ZApplication() {
         ratio = width / (float) height;
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT);
-        
-        glUseProgram(program);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glfwSwapBuffers(window);
         glfwPollEvents();
