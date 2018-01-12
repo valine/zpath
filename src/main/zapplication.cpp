@@ -13,6 +13,9 @@
 
 #include "zshader.h"
 
+using glm::mat4;
+using glm::ortho;
+
 static const struct
 {
     float x, y;
@@ -80,23 +83,33 @@ ZApplication::ZApplication(std::string dataPath) {
     mvp_location = glGetUniformLocation(shader.mID, "MVP");
     vpos_location = glGetAttribLocation(shader.mID, "vPos");
     vcol_location = glGetAttribLocation(shader.mID, "vCol");
+
     glEnableVertexAttribArray(vpos_location);
     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
                           sizeof(float) * 5, (void*) 0);
     glEnableVertexAttribArray(vcol_location);
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
                           sizeof(float) * 5, (void*) (sizeof(float) * 2));
+
+
+  
     while (!glfwWindowShouldClose(window)) {
      
-        glm::mat4 matrix;
-        matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
-           shader.use();
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(matrix));
-
-        float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
+
+        mat4 matrix;
+        matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        matrix = glm::translate(matrix, glm::vec3(0.0f, 0.0f, -3.0f));
+
+
+        mat4 projection = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+
+
+           shader.use();
+        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, glm::value_ptr(projection * matrix));
+
+        float ratio;
         ratio = width / (float) height;
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT);
