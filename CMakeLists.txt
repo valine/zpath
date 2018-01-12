@@ -25,6 +25,10 @@ target_include_directories(zpath PUBLIC src/main)
 
 file(COPY ${data} DESTINATION resources)
 
+add_custom_command(TARGET zpath PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:zpath>/resources)
+
 ###############################################################################
 ## dependencies ###############################################################
 ###############################################################################
