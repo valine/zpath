@@ -1,0 +1,8 @@
+
+class ZApplication {
+	
+public: 
+
+	ZApplication();
+
+};
