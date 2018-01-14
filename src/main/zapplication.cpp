@@ -15,7 +15,6 @@
 using glm::mat4;
 using glm::ortho;
 using std::cout;
-using glm::to_string;
 
 
 static const struct
