@@ -11,6 +11,9 @@ using std::string;
 using std::ifstream;
 using std::cout;
 
+ZShader::ZShader() {
+    
+}
 
 ZShader::ZShader(std::string vertexPathStr, std::string fragmentPathStr) {
 

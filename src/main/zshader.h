@@ -7,6 +7,7 @@ class ZShader {
 public:
 	GLuint mID;
 	ZShader(std::string, std::string);
+	ZShader();
 	void use();
 private:
 	void checkCompileErrors(GLuint shader, std::string type);
