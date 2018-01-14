@@ -38,22 +38,29 @@ find_package (OpenGL REQUIRED)
 include_directories(zpath ${OPENGL_INCLUDE_DIR})
 link_libraries(zpath ${OPENGL_gl_LIBRARY})
 
-# glfw
-find_package(glfw3 3.2 REQUIRED)
-include_directories(${GLFW_INCLUDE_DIRS})
-
 find_package (Threads)
 
 if (WIN32)
+
   include_directories("C:/glew/include")
-  include_directories("C:/glm")
   link_directories("C:/glew/lib/release/Win32")
+
+
+  include_directories("C:/Program Files (x86)/glfw3/lib")
+  link_directories("C:/Program Files (x86)/glfw3/include/GLFW")
+
+
+  include_directories("C:/glm")
 else (WIN32)
   find_package (GLEW REQUIRED STATIC)
 
     #glm
   find_package (glm REQUIRED)
   link_libraries(zpath ${GLM_LIBRARY})
+
+  # glfw
+find_package(glfw3 3.2 REQUIRED)
+include_directories(${GLFW_INCLUDE_DIRS})
 endif (WIN32)
 
 if (APPLE)
@@ -143,7 +150,7 @@ if (WIN32)
 endif (WIN32)
 
 set(CPACK_PACKAGE_NAME "Zpath")
-set(CPACK_PACKAGE_VERSION "0.1.0")
+set(CPACK_PACKAGE_VERSION "0.1.1")
 
 set(CPACK_MONOLITHIC_INSTALL 1)
 
