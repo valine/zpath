@@ -11,13 +11,9 @@ using std::string;
 using std::ifstream;
 using std::cout;
 
-ZShader::ZShader() {
-    
-}
+ZShader::ZShader() {}
 
 ZShader::ZShader(std::string vertexPathStr, std::string fragmentPathStr) {
-
- // 1. retrieve the vertex/fragment source code from filePath
 
 		cout << vertexPathStr;
 		const char * vertexPath = vertexPathStr.c_str();
@@ -37,8 +33,7 @@ ZShader::ZShader(std::string vertexPathStr, std::string fragmentPathStr) {
 
 		const char* vertexCode = vertexCodeStr.c_str();
         const char * fragmentCode = fragmentCodeStr.c_str();
-       
-        // compile shaders
+
         GLuint vertex, fragment;
 
         vertex = glCreateShader(GL_VERTEX_SHADER);
@@ -56,11 +51,12 @@ ZShader::ZShader(std::string vertexPathStr, std::string fragmentPathStr) {
         glAttachShader(mID, fragment);
         glLinkProgram(mID);
         checkCompileErrors(mID, "PROGRAM");
-        // delete the shaders as they're linked into our program now and no longer necessary
+
         glDeleteShader(vertex);
         glDeleteShader(fragment);
 
 }
+
 
 void ZShader::use() {
 
