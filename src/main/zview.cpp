@@ -32,10 +32,10 @@ ZView::ZView(float maxWidth, float maxHeight, ZShader *shader) {
 	mFaceIndices[4] = 2;
 	mFaceIndices[5] = 3;
 
-    mBackgroundColor[0] = 0;
-    mBackgroundColor[1] = 0;
-    mBackgroundColor[2] = 1.0;
-    mBackgroundColor[3] = 1.0;
+    mBackgroundColor[0] = 0.2;
+    mBackgroundColor[1] = 0.2;
+    mBackgroundColor[2] = 0.2;
+    mBackgroundColor[3] = 0.2;
 
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -75,12 +75,18 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
     int left = 0 + mMarginLeft; // TODO: Surrounding view need to be accounted for
     int right; 
     int top = 0 + mMarginTop; // TODO: Surrounding view need to be accounted for
-    int bottom = mMaxHeight - mMarginBottom; //TODO: bottom of window should be taken into acount
+    int bottom; //TODO: bottom of window should be taken into acount
 
     if (windowWidth < mMaxWidth) {
         right = windowWidth - mMarginRight;
     } else {
         right = mMaxWidth - mMarginRight;
+    }
+
+    if (windowHeight < mMaxHeight) {
+        bottom = windowHeight - mMarginBottom;
+    } else {
+        bottom = mMaxHeight - mMarginBottom;
     }
 
     mVertices[0] = left;

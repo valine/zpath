@@ -8,8 +8,8 @@ ZViewController::ZViewController(string resourcePath) {
 
     mUIShader = new ZShader(vertexPath, fragmentPath);
  
-	mRootView = new ZView(300, 500, mUIShader);
-    mRootView->setMargin(10,10,10,10);
+	mRootView = new ZView(600, 500, mUIShader);
+    mRootView->setMargin(5,5,5,5);
 }
 
 void ZViewController::addSubView(ZView *view) {
