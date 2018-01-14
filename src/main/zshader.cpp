@@ -1,33 +1,20 @@
 #include "zshader.h"
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
-using std::string;
-using std::ifstream;
-using std::cout;
-
-ZShader::ZShader() {}
-
-ZShader::ZShader(std::string vertexPathStr, std::string fragmentPathStr) {
+ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
 
 		cout << vertexPathStr;
 		const char * vertexPath = vertexPathStr.c_str();
 		const char * fragmentPath = fragmentPathStr.c_str();
 
-		std::ifstream vT(vertexPath);
-		std::stringstream vBuffer;
+		ifstream vT(vertexPath);
+		stringstream vBuffer;
 		vBuffer << vT.rdbuf();
-		std::string vertexCodeStr = vBuffer.str();
+		string vertexCodeStr = vBuffer.str();
 
-		std::ifstream fT(fragmentPath);
-		std::stringstream fBuffer;
+		ifstream fT(fragmentPath);
+		stringstream fBuffer;
 		fBuffer << fT.rdbuf();
-		std:string fragmentCodeStr = fBuffer.str();
+		string fragmentCodeStr = fBuffer.str();
 
 		cout << vertexCodeStr << "code";
 
@@ -57,13 +44,12 @@ ZShader::ZShader(std::string vertexPathStr, std::string fragmentPathStr) {
 
 }
 
-
 void ZShader::use() {
 
 	glUseProgram(mID);
 }
 
-void ZShader::checkCompileErrors(unsigned int shader, std::string type) {
+void ZShader::checkCompileErrors(unsigned int shader, string type) {
 
 	 int success;
         char infoLog[1024];
@@ -73,7 +59,7 @@ void ZShader::checkCompileErrors(unsigned int shader, std::string type) {
             if (!success)
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
         else
@@ -82,7 +68,7 @@ void ZShader::checkCompileErrors(unsigned int shader, std::string type) {
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
 }

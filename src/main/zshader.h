@@ -2,18 +2,26 @@
 #define ZSHADER_H
 
 #include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 #define GLEW_STATIC
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+using std::string;
+using std::ifstream;
+using std::cout;
+using std::stringstream;
 
 class ZShader {
 
 public:
 	GLuint mID;
-	ZShader(std::string, std::string);
-	ZShader();
+	ZShader(string, string);
 	void use();
 private:
-	void checkCompileErrors(GLuint shader, std::string type);
+	void checkCompileErrors(GLuint shader, string type);
 };
 
 #endif

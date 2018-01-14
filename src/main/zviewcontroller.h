@@ -1,7 +1,6 @@
 
 #include <vector>
 #include <string>
-#include "zview.h"
 
 #define GLEW_STATIC
 
@@ -11,18 +10,19 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+#include "zview.h"
+#include "zshader.h"
+
+
 using glm::mat4;
 using glm::ortho;
-
-
-
 using std::vector;
 using std::string;
 
 class ZViewController {
 
 public:
-
 	ZViewController(string resourcePath);
 
 	ZView* getRootView();
@@ -33,7 +33,6 @@ public:
 
 	void draw();
 private:
-
 	ZView *mRootView;
 	vector<ZView*> mViews;
 

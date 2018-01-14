@@ -2,25 +2,32 @@
 #define ZVIEW_H
 
 #include <string> 
+#include <iostream>
 #define GLEW_STATIC
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "zshader.h"
 
-using std::string; 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
+using std::string; 
+using std::cout;
+using std::endl;
+using glm::mat4;
 
 class ZView {
 	
 	public:
-		ZView(float maxWidth, float maxHeight, string dataPath, int shaderID);
+		ZView(float maxWidth, float maxHeight, ZShader *shader);
 		void draw();
 		void setShader(int shaderID);
 		void onWindowChange(int windowWidth, int windowHeight);
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
 	private:
-		int mShaderID;
+		ZShader *mShader;
 		float mMaxWidth; 
 		float mMaxHeight;
 

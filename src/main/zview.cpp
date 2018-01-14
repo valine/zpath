@@ -1,29 +1,12 @@
 
 #include "zview.h"
 
-#include <string>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#define GLEW_STATIC
-
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-
-using std::cout;
-using std::endl;
-using std::string;
-using glm::mat4;
-
-
-ZView::ZView(float maxWidth, float maxHeight, string mDataPath, int shaderID) {
+ZView::ZView(float maxWidth, float maxHeight, ZShader *shader) {
 
 	mMaxWidth = maxWidth;
 	mMaxHeight = maxHeight;
 
+    mShader = shader;
 
     mVertices[0] = 0;
     mVertices[1] = 0;
@@ -54,11 +37,6 @@ ZView::ZView(float maxWidth, float maxHeight, string mDataPath, int shaderID) {
     mBackgroundColor[2] = 1.0;
     mBackgroundColor[3] = 1.0;
 
-
-    mShaderID = shaderID;
-
-    GLint vpos_location, vcol_location;
-    
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
@@ -67,8 +45,8 @@ ZView::ZView(float maxWidth, float maxHeight, string mDataPath, int shaderID) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
   
-    mPositionLocation = glGetAttribLocation(shaderID, "vPos");
-    mColorLocation = glGetUniformLocation(shaderID, "uColor");
+    mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
+    mColorLocation = glGetUniformLocation(shader->mID, "uColor");
 
     glEnableVertexAttribArray(mPositionLocation);
     glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
@@ -104,17 +82,6 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
     } else {
         right = mMaxWidth - mMarginRight;
     }
-    // if (windowWidth < mMaxWidth) {
-    //     mVertices[3] = windowWidth + mMarginLeft;
-    //     mVertices[9] = windowWidth;
-    //     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    //     glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
-    // } else {
-    //     mVertices[3] = mMaxWidth;
-    //     mVertices[9] = mMaxWidth;
-    //     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    //     glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
-    // }
 
     mVertices[0] = left;
     mVertices[1] = top;
@@ -130,22 +97,13 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
 
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
-
 }
-
-
 
 void ZView::draw() {
 
-     glProgramUniform4f(mShaderID, mColorLocation,
+     glProgramUniform4f(mShader->mID, mColorLocation,
         mBackgroundColor[0], mBackgroundColor[1], 
         mBackgroundColor[2], mBackgroundColor[3]);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); 
-
-}
-
-
-void ZView::setShader(int shader) {
-	mShaderID = shader;
 }

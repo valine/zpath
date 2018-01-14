@@ -1,7 +1,5 @@
 
 #include "zviewcontroller.h"
-using std::string;
-
 
 ZViewController::ZViewController(string resourcePath) {
 
@@ -10,7 +8,7 @@ ZViewController::ZViewController(string resourcePath) {
 
     mUIShader = new ZShader(vertexPath, fragmentPath);
  
-	mRootView = new ZView(300, 500, resourcePath, mUIShader->mID);
+	mRootView = new ZView(300, 500, mUIShader);
     mRootView->setMargin(10,10,10,10);
 }
 
