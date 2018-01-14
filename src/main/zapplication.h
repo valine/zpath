@@ -2,6 +2,7 @@
 #include <string> 
 
 #include "zview.h"
+#include "zviewcontroller.h"
 
 #define GLEW_STATIC
 
@@ -17,5 +18,6 @@ public:
 
 private:
 	ZView *view;
+	ZViewController *viewController;
 
 };

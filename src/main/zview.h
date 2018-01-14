@@ -1,3 +1,5 @@
+#ifndef ZVIEW_H
+#define ZVIEW_H
 
 #include <string> 
 #define GLEW_STATIC
@@ -43,3 +45,5 @@ class ZView {
 
 		void computeBounds(int windowHeight, int maxWidth);
 };
+
+#endif

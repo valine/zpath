@@ -1,3 +1,6 @@
+#ifndef ZSHADER_H
+#define ZSHADER_H
+
 #include <string>
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -12,3 +15,5 @@ public:
 private:
 	void checkCompileErrors(GLuint shader, std::string type);
 };
+
+#endif
