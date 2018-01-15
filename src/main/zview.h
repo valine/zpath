@@ -24,14 +24,22 @@ using std::vector;
 class ZView {
 	
 	public:
-		ZView(float maxWidth, float maxHeight);
-
 		enum Gravity {
 		    topLeft,
 		    topRight,
 		    bottomLeft,
 		    bottomRight
 		};
+
+		enum Bounds {
+		    fillParent
+		};
+
+		ZView(float maxWidth, float maxHeight);
+
+		ZView(Bounds maxWidth, float maxHeight);
+		ZView(float maxWidth, Bounds maxHeight);
+		ZView(Bounds maxWidth, Bounds maxHeight);
 
 		void draw();
 		void setShader(ZShader *shader);
@@ -73,6 +81,8 @@ class ZView {
 
 		vector<ZView*> getSubViews();
 	private:
+
+		void init(int width, int height);
 
 		Gravity mGravity;
 		ZView *mParentView;

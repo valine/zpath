@@ -11,19 +11,19 @@ ZViewController::ZViewController(string resourcePath) {
     float backgroundColor[4] = {0, 0, 0, 0};
     float highlightColor[4] = {0.1, 0.2, 0.9, 1.0};
 
-	mRootView = new ZView(1920, 1920);
+	mRootView = new ZView(ZView::fillParent, ZView::fillParent);
     mRootView->setOffset(0,0);
     mRootView->setMargin(0,0,0,0);
     mRootView->setBackgroundColor(backgroundColor);
     mRootView->setShader(mUIShader);
     
-    ZView* navBar = new ZView(1920, 30);
+    ZView* navBar = new ZView(ZView::fillParent, 30);
     navBar->setMargin(0,0,0,0);
     navBar->setBackgroundColor(panelColor);
 
-    ZView* propertiesPanel = new ZView(200, 1080);
+    ZView* propertiesPanel = new ZView(200, ZView::fillParent);
 
-    propertiesPanel->setMargin(1, 1, 1, 1);
+    propertiesPanel->setMargin(2, 2, 2, 2);
     propertiesPanel->setOffset(0, 30);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
@@ -31,12 +31,12 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->addSubView(navBar);
     mRootView->addSubView(propertiesPanel);
 
-    for (int i = 0; i < 10; i++) {
-        ZView* highlight = new ZView(30, 30);
-        highlight->setMargin(10,10,10,10);
-        highlight->setOffset(0, i * 100);
+    for (int i = 0; i < 30; i++) {
+        ZView* highlight = new ZView(ZView::fillParent, 30);
+        highlight->setMargin(0,0,0,0);
+        highlight->setOffset(0, i * 30);
 
-        float color[4] = {0.1f, 0.1, i * 0.1 + 0.1, 0};
+        float color[4] = {0.1f, 0.1, i * 0.02 + 0.2, 0};
 
         highlight->setBackgroundColor(color);
         highlight->setGravity(ZView::topLeft);

@@ -4,14 +4,30 @@
 
 ZView::ZView(float maxWidth, float maxHeight) {
 
-	mMaxWidth = maxWidth;
-	mMaxHeight = maxHeight;
+    init(maxWidth, maxHeight);
+}
 
-	mVertices[3] = mMaxWidth;
+ZView::ZView(Bounds maxWidth, float maxHeight) {
+    init(100000, maxHeight);
+}
+
+ZView::ZView(float maxWidth, Bounds maxHeight) {
+    init(maxWidth, 100000);
+}
+
+ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
+    init(100000, 100000);
+}
+
+void ZView::init(int maxWidth, int maxHeight) {
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+
+    mVertices[3] = mMaxWidth;
     mVertices[7] = mMaxHeight;
 
     mVertices[9] = mMaxWidth;
-	mVertices[10] = mMaxHeight;
+    mVertices[10] = mMaxHeight;
 
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -23,6 +39,7 @@ ZView::ZView(float maxWidth, float maxHeight) {
 
     setParentView(this);
 }
+
 
 void ZView::setShader(ZShader *shader) {
 
