@@ -33,9 +33,17 @@ class ZView {
 
 		void addSubView(ZView *view);
 
+		void setParentView(ZView *parentView);
+
+		int getOffsetX();
+		int getOffsetY();
+
 		void setBackgroundColor(float color[4]);
 		vector<ZView*> getSubViews();
 	private:
+
+		ZView *mParentView;
+
 		ZShader *mShader;
 		float mMaxWidth; 
 		float mMaxHeight;
@@ -61,8 +69,8 @@ class ZView {
 		int top;
 		int bottom; 
 
-		int mOffsetX;
-		int mOffsetY;
+		int mOffsetX = 0;
+		int mOffsetY = 0;
 
 		int mParentWidth;
 		int mParentHeight;

@@ -9,6 +9,8 @@ ZTiledView::ZTiledView(float maxWidth, float maxHeight, ZShader *shader)
 }
 
 
-void ZTiledView::sayHi() {
-	cout<<"hi tiled view"<<endl;
+void ZTiledView::setTileCount(int x, int y) {
+	mTileCountX = x;
+	mTileCountY = y;
+
 }

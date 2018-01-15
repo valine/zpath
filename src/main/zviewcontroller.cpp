@@ -9,6 +9,7 @@ ZViewController::ZViewController(string resourcePath) {
  
 	float panelColor[4] = {0.1, 0.1, 0.1, 1.0};
     float backgroundColor[4] = {0, 0, 0, 0};
+    float highlightColor[4] = {1, 0.1, 0.2, 1.0};
 
 	mRootView = new ZView(1920, 1920, mUIShader);
     mRootView->setOffset(0,0);
@@ -19,13 +20,26 @@ ZViewController::ZViewController(string resourcePath) {
     navBar->setMargin(0,0,0,0);
     navBar->setBackgroundColor(panelColor);
 
+
     ZTiledView* propertiesPanel = new ZTiledView(300, 1920, mUIShader);
 
-    propertiesPanel->setMargin(2,32,2,2);
+    propertiesPanel->setMargin(2,2,2,2);
+    propertiesPanel->setOffset(0, 30);
     propertiesPanel->setBackgroundColor(panelColor);
    
     mRootView->addSubView(navBar);
     mRootView->addSubView(propertiesPanel);
+
+    for (int i = 0; i < 10; i++) {
+        
+
+        ZView* highlight = new ZView(1920, 30, mUIShader);
+        highlight->setMargin(4,2,4,2);
+        highlight->setOffset(0, i * 31);
+        highlight->setBackgroundColor(highlightColor);
+        propertiesPanel->addSubView(highlight);
+    }
+   
 }
 
 ZView* ZViewController::getRootView() {

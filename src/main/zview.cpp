@@ -47,6 +47,8 @@ ZView::ZView(float maxWidth, float maxHeight, ZShader *shader) {
 
     mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
     mColorLocation = glGetUniformLocation(shader->mID, "uColor");
+
+    setParentView(this);
 }
 
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
@@ -68,13 +70,22 @@ void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int margin
 }
 
 void ZView::setOffset(int x, int y) {
-
     mOffsetX = x;
     mOffsetY = y;
+}
 
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->setOffset(x, y);
+int ZView::getOffsetX() {
+    if (mParentView == this) {
+        return 0;
     }
+    return mOffsetX + mParentView->getOffsetX();
+}
+
+int ZView::getOffsetY() {
+    if (mParentView == this) {
+        return 0; 
+    } 
+    return mOffsetY + mParentView->getOffsetY();
 }
 
 void ZView::computeBounds(int windowWidth, int windowHeight) {
@@ -83,19 +94,19 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
         mParentWidth = windowWidth;
         mParentHeight = windowHeight;
 
-        left = mOffsetX + mMarginLeft; // TODO: Surrounding view need to be accounted for
-        top = mOffsetY + mMarginTop; // TODO: Surrounding view need to be accounted for
+        left = mOffsetX + mParentView->getOffsetX() + mMarginLeft;
+        top = mOffsetY + mParentView->getOffsetY() + mMarginTop;
 
-        if (windowWidth < mMaxWidth + mOffsetX) {
+        if (windowWidth < mMaxWidth + mOffsetX + mParentView->getOffsetX()) {
             right = windowWidth - mMarginRight;
         } else {
-            right = mMaxWidth + mOffsetX - mMarginRight;
+            right = mMaxWidth + mOffsetX + mParentView->getOffsetX() - mMarginRight;
         }
 
-        if (windowHeight < mMaxHeight + mOffsetY) {
+        if (windowHeight < mMaxHeight + mOffsetY + mParentView->getOffsetY() ) {
             bottom = windowHeight - mMarginBottom;
         } else {
-            bottom = mMaxHeight + mOffsetY - mMarginBottom;
+            bottom = mMaxHeight + mOffsetY + mParentView->getOffsetY() - mMarginBottom;
         }
 
         mVertices[0] = left;
@@ -117,7 +128,11 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
 
 void ZView::addSubView(ZView *view) {
     mViews.push_back(view);
-    view->setOffset(mOffsetX + mMarginLeft, mOffsetY + mMarginTop);
+    view->setParentView(this);
+}
+
+void ZView::setParentView(ZView *parentView) {
+    mParentView = parentView;
 }
 
 vector<ZView*> ZView::getSubViews() {
