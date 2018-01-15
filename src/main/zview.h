@@ -25,6 +25,14 @@ class ZView {
 	
 	public:
 		ZView(float maxWidth, float maxHeight, ZShader *shader);
+
+		enum Gravity {
+		    topLeft,
+		    topRight,
+		    bottomLeft,
+		    bottomRight
+		};
+
 		void draw();
 		void setShader(int shaderID);
 		void onWindowChange(int windowWidth, int windowHeight);
@@ -38,10 +46,26 @@ class ZView {
 		int getOffsetX();
 		int getOffsetY();
 
+		int getMarginLeft();
+		int getMarginTop();
+		int getMarginRight();
+		int getMarginBottom();
+
+		int getLeft();
+		int getTop();
+		int getRight();
+		int getBottom();
+
+		int getWidth();
+		int getHeight();
+
 		void setBackgroundColor(float color[4]);
+		void setGravity(ZView::Gravity gravity);
+
 		vector<ZView*> getSubViews();
 	private:
 
+		Gravity mGravity;
 		ZView *mParentView;
 
 		ZShader *mShader;
