@@ -19,7 +19,8 @@ ZViewController::ZViewController(string resourcePath) {
     navBar->setMargin(0,0,0,0);
     navBar->setBackgroundColor(panelColor);
 
-    ZView* propertiesPanel = new ZView(300, 1920, mUIShader);
+    ZTiledView* propertiesPanel = new ZTiledView(300, 1920, mUIShader);
+
     propertiesPanel->setMargin(2,32,2,2);
     propertiesPanel->setBackgroundColor(panelColor);
    

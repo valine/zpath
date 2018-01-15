@@ -25,7 +25,7 @@ ZApplication::ZApplication(std::string resourcePath) {
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_MAXIMIZED, true);
     window = glfwCreateWindow(640, 480, "ZPath", NULL, NULL);
 
