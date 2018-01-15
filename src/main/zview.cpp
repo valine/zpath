@@ -2,12 +2,10 @@
 #include "zview.h"
 
 
-ZView::ZView(float maxWidth, float maxHeight, ZShader *shader) {
+ZView::ZView(float maxWidth, float maxHeight) {
 
 	mMaxWidth = maxWidth;
 	mMaxHeight = maxHeight;
-
-    mShader = shader;
 
     mVertices[0] = 0;
     mVertices[1] = 0;
@@ -46,10 +44,19 @@ ZView::ZView(float maxWidth, float maxHeight, ZShader *shader) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
 
+    setParentView(this);
+}
+
+void ZView::setShader(ZShader *shader) {
+
+    mShader = shader;
+
     mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
     mColorLocation = glGetUniformLocation(shader->mID, "uColor");
 
-    setParentView(this);
+     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setShader(shader);
+    }
 }
 
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
@@ -141,64 +148,92 @@ int ZView::getLeft() {
 }
 
 int ZView::getTop() {
+
     int thisTop = mOffsetY + mMarginTop;
+
     if (mParentView == this) {
         return thisTop;
     } else {
-        if (thisTop + mParentView->getTop() > mParentView->getBottom()) {
-            return mParentView->getBottom();
+        if (mGravity == bottomRight || mGravity == bottomLeft) {
+            thisTop = mParentView->getBottom() - mMarginBottom - mMaxHeight - mOffsetY;
+
+            if (thisTop - mMarginTop < mParentView->getTop()) {
+                thisTop = mParentView->getTop() + mMarginTop;
+            }
+
+            return thisTop;
+        } else {
+            if (thisTop + mParentView->getTop() > mParentView->getBottom()) {
+                return mParentView->getBottom();
+            }
+            return mParentView->getTop() + thisTop; 
         }
-        return mParentView->getTop() + thisTop;
     }
 }
 
 int ZView::getRight() {
     int thisRight = mMaxWidth + mMarginLeft + mOffsetX;
 
-    if (mGravity == bottomRight || mGravity == topRight) {
-        thisRight += mParentView->getWidth() - mMaxWidth - mMarginRight;
-    }
-
     if (mParentView == this) {
         return thisRight;
     } else {
-          if (thisRight + mParentView->getLeft() < mParentView->getRight()) {
-             return mParentView->getLeft() + thisRight;
-        } else {
-            return mParentView->getRight() - mMarginRight;
+
+        if (mGravity == topRight || mGravity == bottomRight) {
+            thisRight = mParentView->getRight() - mMarginRight - mOffsetX;
+
+            if (thisRight < mParentView->getLeft() + mMarginLeft) {
+                thisRight = mParentView->getLeft() + mMarginLeft;
+            }
+            return thisRight;
         }
+
+        if (thisRight + mParentView->getLeft() + mMarginRight < mParentView->getRight()) {
+             thisRight = mParentView->getLeft() + thisRight;
+        } else {
+            thisRight = mParentView->getRight() - mMarginRight;
+        }
+
+        if (thisRight < getLeft()) {
+            thisRight = getLeft();
+        } 
+
+        return thisRight;
     }
 
 }
 
 int ZView::getBottom() {
     int thisBottom = mMaxHeight + mMarginTop + mOffsetY;
+
     if (mParentView == this) {
         return thisBottom;
     } else {
-        if (thisBottom + mParentView->getTop() < mParentView->getBottom()) {
-             return mParentView->getTop() + thisBottom;
-        } else {
-            return mParentView->getBottom() - mMarginBottom;
+
+        if (mGravity == bottomLeft || mGravity == bottomRight) {
+            thisBottom = mParentView->getBottom() - mMarginBottom - mOffsetY;
+
+            if (thisBottom < mParentView->getTop() + mMarginTop) {
+                thisBottom = mParentView->getTop() + mMarginTop;
+            }
+            return thisBottom;
         }
+
+        if (thisBottom + mParentView->getTop() + mMarginTop < mParentView->getBottom()) {
+             thisBottom = mParentView->getTop() + thisBottom;
+        } else {
+            thisBottom = mParentView->getBottom() - mMarginBottom;
+        }
+
+        if (thisBottom < getTop()) {
+            thisBottom = getTop();
+        } 
+
+        return thisBottom;
     }
 }
 
 
 void ZView::computeBounds(int windowWidth, int windowHeight) {
-
-
-        // if (mGravity == bottomRight || mGravity == topRight) {
-        //     int width = right - left + (mMarginRight * 2);
-        //     left += mParentView->getWidth() - width;
-        //     right += mParentView->getWidth() - width;
-        // }
-
-        // if (mGravity == bottomLeft || mGravity == bottomRight) {
-        //     int height = bottom - top + (mMarginBottom * 2);
-        //     top += windowHeight - height;
-        //     bottom += windowHeight - height;
-        // }
 
         mVertices[0] = getLeft();
         mVertices[1] = getTop();
@@ -220,6 +255,7 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
 void ZView::addSubView(ZView *view) {
     mViews.push_back(view);
     view->setParentView(this);
+    view->setShader(mShader);
 }
 
 void ZView::setParentView(ZView *parentView) {

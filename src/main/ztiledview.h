@@ -8,10 +8,9 @@ class ZTiledView : public ZView {
 
 public:
 
-	ZTiledView(float maxWidth, float maxHeight, ZShader *shader);
+	ZTiledView(float maxWidth, float maxHeight);
 	void setTileCount(int x, int y);
 private:
 	int mTileCountX;
 	int mTileCountY;
-
 };

@@ -24,7 +24,7 @@ using std::vector;
 class ZView {
 	
 	public:
-		ZView(float maxWidth, float maxHeight, ZShader *shader);
+		ZView(float maxWidth, float maxHeight);
 
 		enum Gravity {
 		    topLeft,
@@ -34,7 +34,7 @@ class ZView {
 		};
 
 		void draw();
-		void setShader(int shaderID);
+		void setShader(ZShader *shader);
 		void onWindowChange(int windowWidth, int windowHeight);
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
 		void setOffset(int x, int y);

@@ -2,8 +2,8 @@
 #include "ztiledview.h"
 
 
-ZTiledView::ZTiledView(float maxWidth, float maxHeight, ZShader *shader) 
-: ZView(maxWidth, maxHeight, shader) {
+ZTiledView::ZTiledView(float maxWidth, float maxHeight) 
+: ZView(maxWidth, maxHeight) {
 
 
 }
