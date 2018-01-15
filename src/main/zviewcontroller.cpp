@@ -23,8 +23,8 @@ ZViewController::ZViewController(string resourcePath) {
 
     ZView* propertiesPanel = new ZView(200, 1080);
 
-    propertiesPanel->setMargin(2, 30 + 2, 2,2);
-    propertiesPanel->setOffset(0, 0);
+    propertiesPanel->setMargin(1, 1, 1, 1);
+    propertiesPanel->setOffset(0, 30);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
    
@@ -51,6 +51,13 @@ ZViewController::ZViewController(string resourcePath) {
         menuItem->setGravity(ZView::topLeft);
         navBar->addSubView(menuItem);
     } 
+
+    int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
+    int viewportHeight = 1000;
+    ZTiledView *tileView = new ZTiledView(viewportWidth, viewportHeight, 3, 3);
+    tileView->setOffset(propertiesPanel->getWidth(), 30);
+    tileView->setGravity(ZView::topRight);
+    mRootView->addSubView(tileView);
 }
 
 ZView* ZViewController::getRootView() {

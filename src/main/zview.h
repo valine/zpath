@@ -56,11 +56,20 @@ class ZView {
 		int getRight();
 		int getBottom();
 
+		int getMaxWidth();
+		int getMaxHeight();
+
 		int getWidth();
 		int getHeight();
 
 		void setBackgroundColor(float color[4]);
 		void setGravity(ZView::Gravity gravity);
+
+		void setMaxWidth(int width);
+		void setMaxHeight(int height);
+
+
+		virtual void computeBounds(int windowHeight, int maxWidth);
 
 		vector<ZView*> getSubViews();
 	private:
@@ -72,7 +81,7 @@ class ZView {
 		float mMaxWidth; 
 		float mMaxHeight;
 
-		float mBackgroundColor[4] = {0.1};
+		float mBackgroundColor[4] = {0,0,0,0};
 
 		GLuint mVertexBuffer;
 		GLuint mFaceIndicesBuffer;
@@ -83,10 +92,10 @@ class ZView {
 		int mColorLocation;
 		int mPositionLocation;
 
-		int mMarginLeft;
-		int mMarginTop;
-		int mMarginRight;
-		int mMarginBottom;
+		int mMarginLeft = 0;
+		int mMarginTop = 0;
+		int mMarginRight = 0;
+		int mMarginBottom = 0;
 
 		int left = 0;
 		int right = 0; 
@@ -100,9 +109,6 @@ class ZView {
 		int mParentHeight;
 
 		vector<ZView*> mViews;
-
-
-		void computeBounds(int windowHeight, int maxWidth);
 };
 
 #endif

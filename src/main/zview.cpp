@@ -77,12 +77,20 @@ int ZView::getOffsetY() {
     return mOffsetY + mParentView->getOffsetY();
 }
 
-int ZView::getWidth() {
+int ZView::getMaxWidth() {
     return mMaxWidth;
 }
 
-int ZView::getHeight() {
+int ZView::getMaxHeight() {
     return mMaxHeight;
+}
+
+int ZView::getHeight() {
+    return getBottom() - getTop();
+}
+
+int ZView::getWidth() {
+    return getRight() - getLeft();
 }
 
 int ZView::getMarginLeft() {
@@ -229,7 +237,10 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
 void ZView::addSubView(ZView *view) {
     mViews.push_back(view);
     view->setParentView(this);
-    view->setShader(mShader);
+
+    if (mShader != nullptr) {
+        view->setShader(mShader);
+    }
 }
 
 void ZView::setParentView(ZView *parentView) {
@@ -250,6 +261,14 @@ void ZView::setBackgroundColor(float color[4]) {
 void ZView::setGravity(Gravity gravity) {
     mGravity = gravity;
 }
+
+void ZView::setMaxWidth(int width) {
+    mMaxWidth = width;
+}
+void ZView::setMaxHeight(int height) {
+    mMaxHeight = height;
+}
+
 
 void ZView::draw() {
 
