@@ -7,7 +7,7 @@ ZViewController::ZViewController(string resourcePath) {
     string fragmentPath = resourcePath + "resources/shaders/uifragmentshader.glsl";
     mUIShader = new ZShader(vertexPath, fragmentPath);
  
-	float panelColor[4] = {0.7, 0.7, 0.7, 0.7};
+	float panelColor[4] = {0.1, 0.1, 0.1, 1.0};
     float backgroundColor[4] = {0, 0, 0, 0};
 
 	mRootView = new ZView(1920, 1920, mUIShader);
