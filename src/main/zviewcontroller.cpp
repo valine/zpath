@@ -26,15 +26,17 @@ ZViewController::ZViewController(string resourcePath) {
     propertiesPanel->setOffset(0, 0);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topLeft);
+
    
     mRootView->addSubView(navBar);
     mRootView->addSubView(propertiesPanel);
 
     for (int i = 0; i < 5; i++) {
-        ZView* highlight = new ZView(1000, 30, mUIShader);
-        highlight->setMargin(2,2,2,2);
-        highlight->setOffset(0, i * 31);
+        ZView* highlight = new ZView(50, 30, mUIShader);
+        highlight->setMargin(10,10,10,10);
+        highlight->setOffset(0, i * 52);
         highlight->setBackgroundColor(highlightColor);
+        highlight->setGravity(ZView::topLeft);
         propertiesPanel->addSubView(highlight);
     }
    
