@@ -6,11 +6,6 @@ static void error_callback(int error, const char* description) {
     fprintf(stderr, "Error: %s\n", description);
 }
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
 void ZApplication::onWindowResize(int width, int height) {
 	viewController->onWindowChange(width, height);
 }
@@ -19,6 +14,9 @@ void ZApplication::onWindowMove(GLFWwindow *window) {
 	mShouldSwapBuffer = false;
 }
 
+void ZApplication::onKeyPress(int key, int scancode, int action, int mods) {
+
+}
 
 ZApplication::ZApplication(std::string resourcePath) {
     GLFWwindow* window;
@@ -55,8 +53,15 @@ ZApplication::ZApplication(std::string resourcePath) {
            thiz->onWindowMove(window);
     });
 
+    glfwSetKeyCallback(window,
+    [] (GLFWwindow* window, int key, int scancode, int action, int mods) {
+        auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
+      	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+       		glfwSetWindowShouldClose(window, true);
+            thiz->onKeyPress(key, scancode, action, mods);
+    });
 
-    glfwSetKeyCallback(window, key_callback);
+
     glfwMakeContextCurrent(window);
     
     GLenum err = glewInit();
@@ -66,7 +71,7 @@ ZApplication::ZApplication(std::string resourcePath) {
     }
 
     glEnable(GL_MULTISAMPLE);  
-    glfwSwapInterval(2);
+    glfwSwapInterval(0);
     
     viewController = new ZViewController(resourcePath);
 
@@ -74,13 +79,14 @@ ZApplication::ZApplication(std::string resourcePath) {
     
         glfwWaitEvents();
 
-        glClear(GL_COLOR_BUFFER_BIT);
-        viewController->draw();
-
         int windowWidth, windowHeight;
         glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
         glViewport(0, 0, windowWidth, windowHeight);
 
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        viewController->draw();
+        
         if (mShouldSwapBuffer) {
         	glfwSwapBuffers(window);
 	    }

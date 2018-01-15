@@ -17,6 +17,7 @@ public:
 	ZApplication(string resourcePath);
 	void onWindowResize(int width, int height);
 	void onWindowMove(GLFWwindow *window);
+	void onKeyPress(int key, int scancode, int action, int mods);
 
 private:
 	ZViewController *viewController;
