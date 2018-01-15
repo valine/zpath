@@ -13,10 +13,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
+
 using std::string; 
 using std::cout;
 using std::endl;
 using glm::mat4;
+using std::vector;
 
 class ZView {
 	
@@ -26,6 +29,12 @@ class ZView {
 		void setShader(int shaderID);
 		void onWindowChange(int windowWidth, int windowHeight);
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
+		void setOffset(int x, int y);
+
+		void addSubView(ZView *view);
+
+		void setBackgroundColor(float color[4]);
+		vector<ZView*> getSubViews();
 	private:
 		ZShader *mShader;
 		float mMaxWidth; 
@@ -47,8 +56,19 @@ class ZView {
 		int mMarginRight;
 		int mMarginBottom;
 
+		int left;
+		int right; 
+		int top;
+		int bottom; 
+
+		int mOffsetX;
+		int mOffsetY;
+
 		int mParentWidth;
 		int mParentHeight;
+
+		vector<ZView*> mViews;
+
 
 		void computeBounds(int windowHeight, int maxWidth);
 };

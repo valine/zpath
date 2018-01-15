@@ -44,13 +44,10 @@ ZView::ZView(float maxWidth, float maxHeight, ZShader *shader) {
     glGenBuffers(1, &mFaceIndicesBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
+
   
     mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
     mColorLocation = glGetUniformLocation(shader->mID, "uColor");
-
-    glEnableVertexAttribArray(mPositionLocation);
-    glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 3, (void*) 0);
 }
 
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
@@ -58,6 +55,9 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
     mParentHeight = windowHeight;
 
     computeBounds(windowWidth, windowHeight);
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->onWindowChange(right, bottom);
+    }
 }
 
 void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
@@ -70,23 +70,31 @@ void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int margin
     computeBounds(mParentWidth, mParentWidth);
 }
 
+void ZView::setOffset(int x, int y) {
+
+    mOffsetX = x;
+    mOffsetY = y;
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setOffset(x, y);
+    }
+}
+
 void ZView::computeBounds(int windowWidth, int windowHeight) {
 
-    int left = 0 + mMarginLeft; // TODO: Surrounding view need to be accounted for
-    int right; 
-    int top = 0 + mMarginTop; // TODO: Surrounding view need to be accounted for
-    int bottom; //TODO: bottom of window should be taken into acount
+    left = mOffsetX + mMarginLeft; // TODO: Surrounding view need to be accounted for
+    top = mOffsetY + mMarginTop; // TODO: Surrounding view need to be accounted for
 
-    if (windowWidth < mMaxWidth) {
+    if (windowWidth < mMaxWidth + mOffsetX) {
         right = windowWidth - mMarginRight;
     } else {
-        right = mMaxWidth - mMarginRight;
+        right = mMaxWidth + mOffsetX - mMarginRight;
     }
 
-    if (windowHeight < mMaxHeight) {
+    if (windowHeight < mMaxHeight + mOffsetY) {
         bottom = windowHeight - mMarginBottom;
     } else {
-        bottom = mMaxHeight - mMarginBottom;
+        bottom = mMaxHeight + mOffsetY - mMarginBottom;
     }
 
     mVertices[0] = left;
@@ -105,11 +113,39 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
 }
 
+void ZView::addSubView(ZView *view) {
+    mViews.push_back(view);
+    view->setOffset(mOffsetX + mMarginLeft, mOffsetY + mMarginTop);
+}
+
+vector<ZView*> ZView::getSubViews() {
+    return mViews;
+}
+
+void ZView::setBackgroundColor(float color[4]) {
+    mBackgroundColor[0] = color[0];
+    mBackgroundColor[1] = color[1];
+    mBackgroundColor[2] = color[2];
+    mBackgroundColor[3] = color[3];
+}
+
 void ZView::draw() {
+
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+                          sizeof(float) * 3, (void*) 0);
 
      glProgramUniform4f(mShader->mID, mColorLocation,
         mBackgroundColor[0], mBackgroundColor[1], 
         mBackgroundColor[2], mBackgroundColor[3]);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); 
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->draw();
+        cout << "drawing subView" << endl;
+    }
 }

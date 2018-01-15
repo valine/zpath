@@ -5,15 +5,26 @@ ZViewController::ZViewController(string resourcePath) {
 
 	string vertexPath = resourcePath + "resources/shaders/uivertexshader.glsl";
     string fragmentPath = resourcePath + "resources/shaders/uifragmentshader.glsl";
-
     mUIShader = new ZShader(vertexPath, fragmentPath);
  
-	mRootView = new ZView(600, 500, mUIShader);
-    mRootView->setMargin(5,5,5,5);
-}
+	float panelColor[4] = {0.7, 0.7, 0.7, 0.7};
+    float backgroundColor[4] = {0, 0, 0, 0};
 
-void ZViewController::addSubView(ZView *view) {
-	mViews.push_back(view);
+	mRootView = new ZView(1920, 1920, mUIShader);
+    mRootView->setOffset(0,0);
+    mRootView->setMargin(2,2,2,2);
+    mRootView->setBackgroundColor(backgroundColor);
+    
+    ZView* navBar = new ZView(1920, 30, mUIShader);
+    navBar->setMargin(0,0,0,0);
+    navBar->setBackgroundColor(panelColor);
+
+    ZView* propertiesPanel = new ZView(300, 1920, mUIShader);
+    propertiesPanel->setMargin(2,32,2,2);
+    propertiesPanel->setBackgroundColor(panelColor);
+   
+    mRootView->addSubView(navBar);
+    mRootView->addSubView(propertiesPanel);
 }
 
 ZView* ZViewController::getRootView() {

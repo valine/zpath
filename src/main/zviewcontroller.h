@@ -14,7 +14,6 @@
 #include "zview.h"
 #include "zshader.h"
 
-
 using glm::mat4;
 using glm::ortho;
 using std::vector;
@@ -27,15 +26,11 @@ public:
 
 	ZView* getRootView();
 
-	void addSubView(ZView* view);
-
 	void onWindowChange(int width, int height);
 
 	void draw();
 private:
 	ZView *mRootView;
-	vector<ZView*> mViews;
-
 	int mParentWidth;
 	int mParentHeight;
 
