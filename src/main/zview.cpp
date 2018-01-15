@@ -7,34 +7,11 @@ ZView::ZView(float maxWidth, float maxHeight) {
 	mMaxWidth = maxWidth;
 	mMaxHeight = maxHeight;
 
-    mVertices[0] = 0;
-    mVertices[1] = 0;
-    mVertices[2] = 0;
-
 	mVertices[3] = mMaxWidth;
-    mVertices[4] = 0;
-    mVertices[5] = 0;
-
-    mVertices[6] = 0;
     mVertices[7] = mMaxHeight;
-	mVertices[8] = 0; 
 
     mVertices[9] = mMaxWidth;
 	mVertices[10] = mMaxHeight;
-	mVertices[11] = 0;
-
-	mFaceIndices[0] = 0;
-	mFaceIndices[1] = 1;
-	mFaceIndices[2] = 2;
-
-	mFaceIndices[3] = 1;
-	mFaceIndices[4] = 2;
-	mFaceIndices[5] = 3;
-
-    mBackgroundColor[0] = 0.2;
-    mBackgroundColor[1] = 0.2;
-    mBackgroundColor[2] = 0.2;
-    mBackgroundColor[3] = 0.2;
 
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -177,7 +154,6 @@ int ZView::getRight() {
     if (mParentView == this) {
         return thisRight;
     } else {
-
         if (mGravity == topRight || mGravity == bottomRight) {
             thisRight = mParentView->getRight() - mMarginRight - mOffsetX;
 
@@ -208,7 +184,6 @@ int ZView::getBottom() {
     if (mParentView == this) {
         return thisBottom;
     } else {
-
         if (mGravity == bottomLeft || mGravity == bottomRight) {
             thisBottom = mParentView->getBottom() - mMarginBottom - mOffsetY;
 
@@ -231,7 +206,6 @@ int ZView::getBottom() {
         return thisBottom;
     }
 }
-
 
 void ZView::computeBounds(int windowWidth, int windowHeight) {
 

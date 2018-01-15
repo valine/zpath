@@ -72,13 +72,13 @@ class ZView {
 		float mMaxWidth; 
 		float mMaxHeight;
 
-		float mBackgroundColor[4];
+		float mBackgroundColor[4] = {0.1};
 
 		GLuint mVertexBuffer;
 		GLuint mFaceIndicesBuffer;
 
-		float mVertices[3 * 4];
-		int mFaceIndices[6];
+		float mVertices[3 * 4] = {0};
+		int mFaceIndices[6] = {0,1,2,1,2,3};
 
 		int mColorLocation;
 		int mPositionLocation;
@@ -88,10 +88,10 @@ class ZView {
 		int mMarginRight;
 		int mMarginBottom;
 
-		int left;
-		int right; 
-		int top;
-		int bottom; 
+		int left = 0;
+		int right = 0; 
+		int top = 0;
+		int bottom = 0; 
 
 		int mOffsetX = 0;
 		int mOffsetY = 0;

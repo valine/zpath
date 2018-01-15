@@ -15,8 +15,10 @@ class ZApplication {
 	
 public: 
 	ZApplication(string resourcePath);
-	void onWindowChange(int width, int height);
+	void onWindowResize(int width, int height);
+	void onWindowMove(GLFWwindow *window);
 
 private:
 	ZViewController *viewController;
+	bool mShouldSwapBuffer = true;
 };
