@@ -9,7 +9,7 @@ ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY)
 	mTileCountY = tilesY;
 
 	float backgroundColor[4] = {0.1, 0.1, 0.1, 1};
-;
+
 	int width = (getWidth() - (mTileMargin * tilesX)) / tilesX;
 	int height = (getHeight() - (mTileMargin * tilesY)) / tilesY;
 
@@ -38,13 +38,6 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 	int i = 0;
 	for (int x = 0; x < mTileCountX; x++) {
 		for (int y = 0; y < mTileCountY; y++) {	
-
-			float cursorX1 =  (float) mTileWeightX / getWidth();
-			int singleTileWeightX1 = (1 - exp( -1 * cursorX1)) * getWidth();
-
-			float cursorX2 = (float) 1 - (mTileWeightX / getWidth());
-			int singleTileWeightX2 = (1 - exp( -1 * cursorX2)) * getWidth();
-
 
 			int width = (getWidth() - (mTileMargin * mTileCountX)) / mTileCountX;
 			int height = (getHeight() - (mTileMargin * mTileCountY)) / mTileCountY;

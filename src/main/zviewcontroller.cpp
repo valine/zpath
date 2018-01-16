@@ -54,7 +54,7 @@ ZViewController::ZViewController(string resourcePath) {
 
     int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
     int viewportHeight = 1000;
-    ZTiledView *tileView = new ZTiledView(viewportWidth, viewportHeight, 3, 3);
+    ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 3);
     tileView->setOffset(propertiesPanel->getWidth(), 30);
     tileView->setGravity(ZView::topRight);
     mRootView->addSubView(tileView);
