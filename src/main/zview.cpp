@@ -233,7 +233,6 @@ int ZView::getBottom() {
 }
 
 void ZView::computeBounds(int windowWidth, int windowHeight) {
-
         mVertices[0] = getLeft();
         mVertices[1] = getTop();
 
@@ -264,6 +263,19 @@ void ZView::setParentView(ZView *parentView) {
     mParentView = parentView;
 }
 
+bool ZView::mouseIsDown() {
+    return mMouseDown;
+}
+
+
+int ZView::getMouseDownX() {
+    return mMouseDownX;
+}
+
+int ZView::getMouseDownY() {
+    return mMouseDownY;
+}
+
 vector<ZView*> ZView::getSubViews() {
     return mViews;
 }
@@ -282,10 +294,46 @@ void ZView::setGravity(Gravity gravity) {
 void ZView::setMaxWidth(int width) {
     mMaxWidth = width;
 }
+
 void ZView::setMaxHeight(int height) {
     mMaxHeight = height;
 }
 
+void ZView::onKeyPress(int key, int scancode, int action, int mods) {
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->onKeyPress(key, scancode, action, mods);
+    }
+}
+
+void ZView::onMouseEvent(int button, int action, int mods) {
+    if (action == GLFW_PRESS) {
+        mMouseDown  = true;
+    } else {
+        mMouseDown = false;
+    }
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        ZView* view = (*it);
+
+        if (action == GLFW_PRESS && view->getLeft() < mMouseX && view->getRight() > mMouseX) {
+            view->onMouseEvent(button, action, mods);
+        } 
+        
+        if (action == GLFW_RELEASE && view->mouseIsDown()) {
+            view->onMouseEvent(button, action, mods);
+        }
+       
+    }
+}
+
+void ZView::onCursorPosChange(double x, double y) {
+
+    mMouseX = x;
+    mMouseY = y;
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->onCursorPosChange(x, y);
+    }
+}
 
 void ZView::draw() {
 

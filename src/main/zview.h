@@ -36,7 +36,6 @@ class ZView {
 		};
 
 		ZView(float maxWidth, float maxHeight);
-
 		ZView(Bounds maxWidth, float maxHeight);
 		ZView(float maxWidth, Bounds maxHeight);
 		ZView(Bounds maxWidth, Bounds maxHeight);
@@ -76,8 +75,15 @@ class ZView {
 		void setMaxWidth(int width);
 		void setMaxHeight(int height);
 
+		bool mouseIsDown();
+		int getMouseDownX();
+		int getMouseDownY();
 
 		virtual void computeBounds(int windowHeight, int maxWidth);
+
+		virtual void onKeyPress(int key, int scancode, int action, int mods);
+		virtual void onMouseEvent(int button, int action, int mods);
+		virtual void onCursorPosChange(double x, double y);
 
 		vector<ZView*> getSubViews();
 	private:
@@ -117,6 +123,14 @@ class ZView {
 
 		int mParentWidth;
 		int mParentHeight;
+
+		int mMouseX;
+		int mMouseY;
+
+		int mMouseDownX;
+		int mMouseDownY;
+
+		bool mMouseDown;
 
 		vector<ZView*> mViews;
 };

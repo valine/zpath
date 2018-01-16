@@ -55,3 +55,16 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 
 	ZView::computeBounds(windowHeight, maxWidth);
 }
+
+void ZTiledView::onMouseEvent(int button, int action, int mods) {
+	ZView::onMouseEvent(button, action, mods);
+	std::cout<<"mouse event tile"<<endl;
+}
+
+void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {
+
+}
+	
+void ZTiledView::onCursorPosChange(double x, double y) {
+
+}

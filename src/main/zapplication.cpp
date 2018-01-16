@@ -15,7 +15,15 @@ void ZApplication::onWindowMove(GLFWwindow *window) {
 }
 
 void ZApplication::onKeyPress(int key, int scancode, int action, int mods) {
+	viewController->onKeyPress(key, scancode, action, mods);
+}
 
+void ZApplication::onMouseEvent(int button, int action, int mods) {
+	viewController->onMouseEvent(button, action, mods);
+}
+
+void ZApplication::onCursorPosChange(double x, double y) {
+	viewController->onCursorPosChange(x, y);
 }
 
 ZApplication::ZApplication(std::string resourcePath) {
@@ -61,6 +69,18 @@ ZApplication::ZApplication(std::string resourcePath) {
             thiz->onKeyPress(key, scancode, action, mods);
     });
 
+    glfwSetMouseButtonCallback(window,
+    [] (GLFWwindow* window, int button, int action, int mods) {
+        auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
+      	
+           thiz->onMouseEvent(button, action, mods);
+    });
+
+    glfwSetCursorPosCallback(window,
+    [] (GLFWwindow* window, double xpos, double ypos) {
+        auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
+           thiz->onCursorPosChange(xpos, ypos);
+    });
 
     glfwMakeContextCurrent(window);
     
@@ -86,7 +106,7 @@ ZApplication::ZApplication(std::string resourcePath) {
 
         glClear(GL_COLOR_BUFFER_BIT);
         viewController->draw();
-        
+
         if (mShouldSwapBuffer) {
         	glfwSwapBuffers(window);
 	    }

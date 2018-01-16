@@ -13,6 +13,10 @@ public:
 	void setTileCount(int x, int y);
 	void computeBounds(int windowHeight, int maxWidth);
 	void setTileMargin(int margin);
+
+	void onKeyPress(int key, int scancode, int action, int mods);
+	void onMouseEvent(int button, int action, int mods);
+	void onCursorPosChange(double x, double y);
 private:
 	int mTileCountX;
 	int mTileCountY;

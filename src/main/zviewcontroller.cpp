@@ -31,7 +31,7 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->addSubView(navBar);
     mRootView->addSubView(propertiesPanel);
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 40; i++) {
         ZView* highlight = new ZView(ZView::fillParent, 30);
         highlight->setMargin(0,0,0,0);
         highlight->setOffset(0, i * 30);
@@ -45,8 +45,8 @@ ZViewController::ZViewController(string resourcePath) {
 
     for (int i = 0; i < 10; i++) {
         ZView* menuItem = new ZView(100, 50);
-        menuItem->setMargin(4,4,4,4);
-        menuItem->setOffset(i * 104, 0);
+        menuItem->setMargin(2,2,2,2);
+        menuItem->setOffset(i * 102, 0);
         menuItem->setBackgroundColor(backgroundColor);
         menuItem->setGravity(ZView::topLeft);
         navBar->addSubView(menuItem);
@@ -72,6 +72,18 @@ void ZViewController::onWindowChange(int width, int height) {
 	mParentHeight = height;
 
     mRootView->onWindowChange(width, height);
+}
+
+void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
+	mRootView->onKeyPress(key, scancode, action, mods);
+}
+	
+void ZViewController::onMouseEvent(int button, int action, int mods) {
+	mRootView->onMouseEvent(button, action, mods);
+}
+
+void ZViewController::onCursorPosChange(double x, double y) {
+	mRootView->onCursorPosChange(x, y);
 }
 
 void ZViewController::draw() {
