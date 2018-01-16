@@ -58,6 +58,11 @@ ZViewController::ZViewController(string resourcePath) {
     tileView->setOffset(propertiesPanel->getWidth(), 30);
     tileView->setGravity(ZView::topRight);
     mRootView->addSubView(tileView);
+
+
+    Z3DView *viewport3D = new Z3DView(100, 100, 1);
+    viewport3D->setBackgroundColor(highlightColor);
+    mRootView->addSubView(viewport3D);
 }
 
 ZView* ZViewController::getRootView() {

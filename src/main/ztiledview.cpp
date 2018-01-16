@@ -85,11 +85,7 @@ void ZTiledView::onCursorPosChange(double x, double y) {
 	if (mouseIsDown()) {
 		int deltaX =  x - getMouseDownX();
 		int deltaY = y - getMouseDownY();
-		cout<<deltaX<<" "<<deltaY<<endl;
-
 		mTileWeightX = mInitialTileWeightX + deltaX;
-
-
 	}
 
 

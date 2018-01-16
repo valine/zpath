@@ -14,6 +14,7 @@
 #include "zview.h"
 #include "zshader.h"
 #include "ztiledview.h"
+#include "z3dview.h"
 
 using glm::mat4;
 using glm::ortho;
