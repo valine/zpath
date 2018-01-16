@@ -305,9 +305,11 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
     }
 }
 
-void ZView::onMouseEvent(int button, int action, int mods) {
+void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     if (action == GLFW_PRESS) {
         mMouseDown  = true;
+        mMouseDownX = x;
+        mMouseDownY = y;
     } else {
         mMouseDown = false;
     }
@@ -316,11 +318,11 @@ void ZView::onMouseEvent(int button, int action, int mods) {
         ZView* view = (*it);
 
         if (action == GLFW_PRESS && view->getLeft() < mMouseX && view->getRight() > mMouseX) {
-            view->onMouseEvent(button, action, mods);
+            view->onMouseEvent(button, action, mods, x, y);
         } 
-        
+
         if (action == GLFW_RELEASE && view->mouseIsDown()) {
-            view->onMouseEvent(button, action, mods);
+            view->onMouseEvent(button, action, mods, x, y);
         }
        
     }
@@ -336,7 +338,7 @@ void ZView::onCursorPosChange(double x, double y) {
 }
 
 void ZView::draw() {
-
+    mShader->use();
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
 

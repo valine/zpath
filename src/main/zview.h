@@ -40,7 +40,7 @@ class ZView {
 		ZView(float maxWidth, Bounds maxHeight);
 		ZView(Bounds maxWidth, Bounds maxHeight);
 
-		void draw();
+		virtual void draw();
 		void setShader(ZShader *shader);
 		void onWindowChange(int windowWidth, int windowHeight);
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
@@ -82,7 +82,7 @@ class ZView {
 		virtual void computeBounds(int windowHeight, int maxWidth);
 
 		virtual void onKeyPress(int key, int scancode, int action, int mods);
-		virtual void onMouseEvent(int button, int action, int mods);
+		virtual void onMouseEvent(int button, int action, int mods, int x, int y);
 		virtual void onCursorPosChange(double x, double y);
 
 		vector<ZView*> getSubViews();

@@ -18,8 +18,10 @@ void ZApplication::onKeyPress(int key, int scancode, int action, int mods) {
 	viewController->onKeyPress(key, scancode, action, mods);
 }
 
-void ZApplication::onMouseEvent(int button, int action, int mods) {
-	viewController->onMouseEvent(button, action, mods);
+void ZApplication::onMouseEvent(GLFWwindow* window, int button, int action, int mods) {
+	double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+	viewController->onMouseEvent(button, action, mods, xpos, ypos);
 }
 
 void ZApplication::onCursorPosChange(double x, double y) {
@@ -51,7 +53,7 @@ ZApplication::ZApplication(std::string resourcePath) {
     [] (GLFWwindow* window, int width, int height) {
         auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
            thiz->onWindowResize(width, height);
-           glfwSwapBuffers(window);
+           
         
     });
 
@@ -73,13 +75,14 @@ ZApplication::ZApplication(std::string resourcePath) {
     [] (GLFWwindow* window, int button, int action, int mods) {
         auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
       	
-           thiz->onMouseEvent(button, action, mods);
+           thiz->onMouseEvent(window, button, action, mods);
     });
 
     glfwSetCursorPosCallback(window,
     [] (GLFWwindow* window, double xpos, double ypos) {
         auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
            thiz->onCursorPosChange(xpos, ypos);
+           glfwSwapBuffers(window);
     });
 
     glfwMakeContextCurrent(window);

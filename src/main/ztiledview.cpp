@@ -39,6 +39,13 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 	for (int x = 0; x < mTileCountX; x++) {
 		for (int y = 0; y < mTileCountY; y++) {	
 
+			float cursorX1 =  (float) mTileWeightX / getWidth();
+			int singleTileWeightX1 = (1 - exp( -1 * cursorX1)) * getWidth();
+
+			float cursorX2 = (float) 1 - (mTileWeightX / getWidth());
+			int singleTileWeightX2 = (1 - exp( -1 * cursorX2)) * getWidth();
+
+
 			int width = (getWidth() - (mTileMargin * mTileCountX)) / mTileCountX;
 			int height = (getHeight() - (mTileMargin * mTileCountY)) / mTileCountY;
 
@@ -50,15 +57,24 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 			tile->setOffset(x * (width + mTileMargin), y * (height + mTileMargin));
 			i++;
 		}
-
 	}
 
 	ZView::computeBounds(windowHeight, maxWidth);
 }
 
-void ZTiledView::onMouseEvent(int button, int action, int mods) {
-	ZView::onMouseEvent(button, action, mods);
-	std::cout<<"mouse event tile"<<endl;
+void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
+	ZView::onMouseEvent(button, action, mods, x, y);
+
+	if (action == GLFW_PRESS) {
+		float color[4] = {1.0,1.0,1.0,1.0};
+		setBackgroundColor(color);
+		mInitialTileWeightX = mTileWeightX;
+	}
+
+	if (action == GLFW_RELEASE) {
+		float color[4] = {0,0,0,0};
+		setBackgroundColor(color);
+	}
 }
 
 void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {
@@ -66,5 +82,16 @@ void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {
 }
 	
 void ZTiledView::onCursorPosChange(double x, double y) {
+	if (mouseIsDown()) {
+		int deltaX =  x - getMouseDownX();
+		int deltaY = y - getMouseDownY();
+		cout<<deltaX<<" "<<deltaY<<endl;
+
+		mTileWeightX = mInitialTileWeightX + deltaX;
+
+
+	}
+
+
 
 }

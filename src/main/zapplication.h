@@ -18,7 +18,7 @@ public:
 	void onWindowResize(int width, int height);
 	void onWindowMove(GLFWwindow *window);
 	void onKeyPress(int key, int scancode, int action, int mods);
-	void onMouseEvent(int button, int action, int mods);
+	void onMouseEvent(GLFWwindow* window, int button, int action, int mods);
 	void onCursorPosChange(double x, double y);
 
 private:

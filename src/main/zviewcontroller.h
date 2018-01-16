@@ -29,7 +29,7 @@ public:
 
 	void onWindowChange(int width, int height);
 	void onKeyPress(int key, int scancode, int action, int mods);
-	void onMouseEvent(int button, int action, int mods);
+	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 
 	void draw();

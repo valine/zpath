@@ -78,12 +78,13 @@ void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
 	mRootView->onKeyPress(key, scancode, action, mods);
 }
 	
-void ZViewController::onMouseEvent(int button, int action, int mods) {
-	mRootView->onMouseEvent(button, action, mods);
+void ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
+	mRootView->onMouseEvent(button, action, mods, x, y);
 }
 
 void ZViewController::onCursorPosChange(double x, double y) {
 	mRootView->onCursorPosChange(x, y);
+	mRootView->onWindowChange(mParentWidth, mParentHeight);
 }
 
 void ZViewController::draw() {
