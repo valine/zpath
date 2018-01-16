@@ -41,7 +41,8 @@ class ZView {
 		ZView(Bounds maxWidth, Bounds maxHeight);
 
 		virtual void draw();
-		void setShader(ZShader *shader);
+		virtual void setShader(ZShader *shader);
+		
 		void onWindowChange(int windowWidth, int windowHeight);
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
 		void setOffset(int x, int y);

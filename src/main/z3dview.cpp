@@ -24,3 +24,8 @@ void Z3DView::onCursorPosChange(double x, double y) {
 void Z3DView::draw() {
 	cout<<"hello"<<endl;
 }
+
+void Z3DView::setShader(ZShader* shader) {
+
+	
+}

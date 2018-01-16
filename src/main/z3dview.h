@@ -14,6 +14,7 @@ public:
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void draw();
+	void setShader(ZShader* shader);
 private:
 	int mDebug; 
 };

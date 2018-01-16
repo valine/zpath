@@ -71,8 +71,6 @@ ZView* ZViewController::getRootView() {
 
 void ZViewController::onWindowChange(int width, int height) {
 
-	mUIShader->use();
-
 	mParentWidth = width;
 	mParentHeight = height;
 
