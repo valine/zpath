@@ -22,6 +22,7 @@ void Z3DView::onCursorPosChange(double x, double y) {
 }
 
 void Z3DView::draw() {
+	glViewport(getLeft(),getRight(),getTop(),getBottom());
 }
 
 void Z3DView::setShader(ZShader* shader) {
