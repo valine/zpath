@@ -1,5 +1,5 @@
 # ZPath
-Path tracer 
+Cross platform UI framework 
 
 ## Build instructions
 
