@@ -11,10 +11,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "zview.h"
-#include "zshader.h"
-#include "ztiledview.h"
-#include "z3dview.h"
+#include "ui/zview.h"
+#include "ui/zshader.h"
+#include "ui/ztiledview.h"
+#include "ui/z3dview.h"
 
 using glm::mat4;
 using glm::ortho;

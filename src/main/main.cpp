@@ -10,8 +10,7 @@ using std::endl;
 #include <fstream>
 #include <string>
 
-#include <zrenderer.h>
-#include <zapplication.h>
+#include <ui/zapplication.h>
 
 
 int main(int argc, char* argv[]) {
