@@ -80,6 +80,8 @@ class ZView {
 		int getMouseDownX();
 		int getMouseDownY();
 
+		ZView* getParentView();
+
 		virtual void computeBounds(int windowHeight, int maxWidth);
 
 		virtual void onKeyPress(int key, int scancode, int action, int mods);

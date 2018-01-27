@@ -28,8 +28,8 @@ ZViewController::ZViewController(string resourcePath) {
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
    
-    mRootView->addSubView(navBar);
-    mRootView->addSubView(propertiesPanel);
+    //mRootView->addSubView(navBar);
+   // mRootView->addSubView(propertiesPanel);
 
     for (int i = 0; i < 40; i++) {
         ZView* highlight = new ZView(ZView::fillParent, 30);
@@ -57,12 +57,13 @@ ZViewController::ZViewController(string resourcePath) {
     ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 3);
     tileView->setOffset(propertiesPanel->getWidth(), 30);
     tileView->setGravity(ZView::topRight);
+    
     mRootView->addSubView(tileView);
 
-
-    Z3DView *viewport3D = new Z3DView(100, 100, resourcePath);
+    Z3DView *viewport3D = new Z3DView(200, 300, resourcePath);
     viewport3D->setBackgroundColor(highlightColor);
-    mRootView->addSubView(viewport3D);
+    viewport3D->setGravity(ZView::topLeft);
+    tileView->addSubView(viewport3D);
 }
 
 ZView* ZViewController::getRootView() {
@@ -92,13 +93,13 @@ void ZViewController::onCursorPosChange(double x, double y) {
 
 void ZViewController::draw() {
 
-	mRootView->draw();
-    mUIShader->use();
-	GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
-
-	mat4 matrix;
+ mUIShader->use();
+    GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
+    mat4 matrix;
     matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
     mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -10.0f, 100.0f);
     glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+	mRootView->draw();
 }
 

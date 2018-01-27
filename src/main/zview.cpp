@@ -263,6 +263,10 @@ void ZView::setParentView(ZView *parentView) {
     mParentView = parentView;
 }
 
+ZView* ZView::getParentView() {
+    return mParentView;
+}
+
 bool ZView::mouseIsDown() {
     return mMouseDown;
 }

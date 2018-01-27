@@ -25,5 +25,9 @@ private:
 	GLuint mVertexBuffer;
 	GLuint mFaceIndicesBuffer;
 
+	int mColorLocation;
+	int mPositionLocation;
+
+		
 	ZShader *mShader;
 };
