@@ -60,7 +60,7 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->addSubView(tileView);
 
 
-    Z3DView *viewport3D = new Z3DView(100, 100, 1);
+    Z3DView *viewport3D = new Z3DView(100, 100, resourcePath);
     viewport3D->setBackgroundColor(highlightColor);
     mRootView->addSubView(viewport3D);
 }
@@ -93,6 +93,7 @@ void ZViewController::onCursorPosChange(double x, double y) {
 void ZViewController::draw() {
 
 	mRootView->draw();
+    mUIShader->use();
 	GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
 
 	mat4 matrix;

@@ -80,7 +80,4 @@ void ZTiledView::onCursorPosChange(double x, double y) {
 		int deltaY = y - getMouseDownY();
 		mTileWeightX = mInitialTileWeightX + deltaX;
 	}
-
-
-
 }
