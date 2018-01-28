@@ -1,3 +1,5 @@
+#ifndef ZMESH_H
+#define ZMESH_H
 
 #include <vector> 
 using std::vector;
@@ -16,3 +18,5 @@ private:
 	vector<float> mVertices;
 	vector<int> mFaceIndices;
 };
+
+#endif
