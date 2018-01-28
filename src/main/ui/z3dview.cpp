@@ -6,39 +6,16 @@
 Z3DView::Z3DView(float maxWidth, float maxHeight, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
 
-	mVertices.push_back(-1);
-	mVertices.push_back(-1);
-	mVertices.push_back(0.0);
-
-
-	mVertices.push_back(1.0);
-	mVertices.push_back(-1);
-	mVertices.push_back(0.0);
-
-	mVertices.push_back(-1);
-	mVertices.push_back(1.0);
-	mVertices.push_back(0.0);
-
-	mVertices.push_back(0);
-	mVertices.push_back(1);
-	mVertices.push_back(1);
-
-
-	mFaceIndices.push_back(0);
-	mFaceIndices.push_back(1);
-	mFaceIndices.push_back(2);
-	mFaceIndices.push_back(1);
-	mFaceIndices.push_back(2);
-	mFaceIndices.push_back(3);
-
+	ZObjLoader loader = ZObjLoader("");
+	ZMesh mesh = loader.loadMesh("");
 
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), &mVertices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mesh.getVertices().size() * sizeof(float), &mesh.getVertices()[0], GL_STATIC_DRAW);
 
     glGenBuffers(1, &mFaceIndicesBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mFaceIndices.size() * sizeof(int), &mFaceIndices[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.getFaceIndices().size() * sizeof(int), &mesh.getFaceIndices()[0], GL_STATIC_DRAW);
 	
 	string vertexPath = resourcePath + "resources/shaders/generalvertexshader.glsl";
     string fragmentPath = resourcePath + "resources/shaders/generalfragmentshader.glsl";

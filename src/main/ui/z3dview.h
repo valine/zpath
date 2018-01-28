@@ -1,6 +1,7 @@
 #include "zview.h"
 #include <iostream>
 #include <ui/zshader.h>
+#include "mesh/zobjloader.h"
 #include <vector> 
 #include <string>
 
