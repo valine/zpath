@@ -11,6 +11,7 @@ class ZScene {
 public: 
 	ZScene();
 	void addObject(ZObject *object);
+	vector<ZObject*> getObjects();
 private:
 	vector<ZObject*> mObjects;
 };

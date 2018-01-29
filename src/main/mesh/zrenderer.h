@@ -3,6 +3,7 @@
 
 #include <string>
 #include "zscene.h"
+#include "ui/zshader.h"
 #include <iostream>
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -14,12 +15,15 @@ class ZRenderer {
 
 public:
 	ZRenderer(string debug);
-
 	void setScene(ZScene *scene);
 	void draw();	
 
 private:
-	ZScene *mScene;
+	ZScene *mScene = nullptr;
+	ZShader *mShader;
+
+	int mColorLocation;
+	int mPositionLocation;
 };
 
 #endif
