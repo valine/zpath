@@ -1,3 +1,5 @@
+#ifndef ZOBJECT_H
+#define ZOBJECT_H
 #include <vector>
 #include "mesh/zmesh.h"
 using std::vector;
@@ -12,3 +14,5 @@ public:
 private: 
 	ZMesh mMesh;
 };
+
+#endif

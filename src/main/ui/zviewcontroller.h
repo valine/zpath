@@ -16,6 +16,8 @@
 #include "ui/ztiledview.h"
 #include "ui/z3dview.h"
 
+#include "mesh/zrenderer.h"
+
 using glm::mat4;
 using glm::ortho;
 using std::vector;

@@ -1,10 +1,16 @@
 #include "zrenderer.h"
-#include <iostream>
-#include <string>
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+
+
+
+ZRenderer::ZRenderer(string resourcePath) {
+
+
+}
 
 void ZRenderer::draw() {
 	std::cout << "drawing";
+}
+
+void ZRenderer::setScene(ZScene *scene) {
+	mScene = scene;
 }

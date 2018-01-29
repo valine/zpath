@@ -60,7 +60,8 @@ ZViewController::ZViewController(string resourcePath) {
     
     mRootView->addSubView(tileView);
 
-    Z3DView *viewport3D = new Z3DView(200, 300, resourcePath);
+    ZRenderer *renderer = new ZRenderer(resourcePath);
+    Z3DView *viewport3D = new Z3DView(200, 300, renderer);
     viewport3D->setBackgroundColor(highlightColor);
     viewport3D->setGravity(ZView::topLeft);
     tileView->addSubView(viewport3D);
