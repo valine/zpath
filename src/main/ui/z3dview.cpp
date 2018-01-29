@@ -38,7 +38,11 @@ void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
 void Z3DView::onCursorPosChange(double x, double y) {
 	if (mouseIsDown()) {
 	
-	}
+    }
+}
+
+void Z3DView::setRenderer(ZRenderer renderer) {
+    mRenderer = renderer;
 }
 
 void Z3DView::draw() {

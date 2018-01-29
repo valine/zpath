@@ -2,6 +2,8 @@
 #include <iostream>
 #include <ui/zshader.h>
 #include "mesh/zobjloader.h"
+#include "mesh/zrenderer.h"
+#include "mesh/zscene.h"
 #include <vector> 
 #include <string>
 
@@ -17,6 +19,8 @@ public:
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void draw();
+
+	void setRenderer(ZRenderer renderer);
 private:
 	int mDebug; 
 
@@ -29,6 +33,7 @@ private:
 	int mColorLocation;
 	int mPositionLocation;
 
-		
 	ZShader *mShader;
+
+	ZRenderer mRenderer;
 };
