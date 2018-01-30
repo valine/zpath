@@ -1,3 +1,6 @@
+#ifndef Z3DVIEW_H
+#define Z3DVIEW_H
+
 #include "zview.h"
 #include <iostream>
 #include <ui/zshader.h>
@@ -9,6 +12,8 @@
 
 using std::cout;
 using std::endl;
+
+class ZRenderer;
 
 class Z3DView : public ZView {
 
@@ -22,3 +27,5 @@ public:
 private:
 	ZRenderer *mRenderer;
 };
+
+#endif

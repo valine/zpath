@@ -4,6 +4,7 @@
 #include <string>
 #include "zscene.h"
 #include "ui/zshader.h"
+#include "ui/z3dview.h"
 #include <iostream>
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -17,16 +18,21 @@ using namespace glm;
 
 using std::string;
 
+class Z3DView; 
+
 class ZRenderer {
 
 public:
 	ZRenderer(string debug);
 	void setScene(ZScene *scene);
-	void draw();	
+	void draw();
+	void setParentView(Z3DView *view);	
 
 private:
 	ZScene *mScene = nullptr;
 	ZShader *mShader;
+
+	Z3DView *mParentView = nullptr;
 
 	int mColorLocation;
 	int mPositionLocation;

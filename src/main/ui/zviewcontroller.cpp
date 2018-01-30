@@ -58,7 +58,7 @@ ZViewController::ZViewController(string resourcePath) {
     tileView->setOffset(propertiesPanel->getWidth(), 30);
     tileView->setGravity(ZView::topRight);
     
-   // mRootView->addSubView(tileView);
+    mRootView->addSubView(tileView);
 
     BasicScene* scene = new BasicScene(resourcePath);
     ZRenderer *renderer = new ZRenderer(resourcePath);

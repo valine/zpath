@@ -6,6 +6,7 @@
 Z3DView::Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer) 
 : ZView(maxWidth, maxHeight) {
     mRenderer = renderer;
+    renderer->setParentView(this);
 }
 
 void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -26,6 +27,7 @@ void Z3DView::onCursorPosChange(double x, double y) {
 
 void Z3DView::setRenderer(ZRenderer *renderer) {
     mRenderer = renderer;
+    renderer->setParentView(this);
 }
 
 void Z3DView::draw() {
