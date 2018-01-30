@@ -17,6 +17,7 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	vector<float> vertexNormals;
 
 	vector<float> tmpNormals;
+	vector<float> vertexNormalIndices;
 
 	while (getline(infile, line)) {
 	
@@ -49,11 +50,19 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   		faceIndices.push_back(stoi(indiceTokensB.at(0)) - 1);
 	   		faceIndices.push_back(stoi(indiceTokensC.at(0)) - 1);
 
-	   		// vertexNormals.push_back(tmpNormals.at(stoi(indiceTokensA.at(2)) - 1));
-	   		// vertexNormals.push_back(tmpNormals.at(stoi(indiceTokensB.at(2)) + 0));
-	   		// vertexNormals.push_back(tmpNormals.at(stoi(indiceTokensC.at(2)) + 1));
-
+	   		vertexNormalIndices.push_back(stoi(indiceTokensA.at(2)) - 1);
+	   		vertexNormalIndices.push_back(stoi(indiceTokensB.at(2)) - 1);
+	   		vertexNormalIndices.push_back(stoi(indiceTokensC.at(2)) - 1);
 	   	}
+	}
+
+	for (unsigned i = 0; i < vertexNormalIndices.size(); ++i) {
+
+		int vertex = faceIndices[i];
+
+		vertexNormals.at(vertex * 3 + 0) = tmpNormals.at(vertexNormalIndices[i] * 3 + 0);
+	   	vertexNormals.at(vertex * 3 + 1) = tmpNormals.at(vertexNormalIndices[i] * 3 + 1);
+	   	vertexNormals.at(vertex * 3 + 2) = tmpNormals.at(vertexNormalIndices[i] * 3 + 2);
 	}
 
 	ZMesh* mesh = new ZMesh();
