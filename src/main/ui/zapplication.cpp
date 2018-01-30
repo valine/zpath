@@ -53,8 +53,6 @@ ZApplication::ZApplication(std::string resourcePath) {
     [] (GLFWwindow* window, int width, int height) {
         auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
            thiz->onWindowResize(width, height);
-           
-        
     });
 
     glfwSetWindowPosCallback(window,

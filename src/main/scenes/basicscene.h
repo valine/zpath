@@ -4,7 +4,7 @@ class BasicScene : public ZScene {
 
 public:
 
-	BasicScene();
+	BasicScene(string resourcePath);
 
 private:
 

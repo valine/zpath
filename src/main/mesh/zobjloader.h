@@ -5,9 +5,14 @@
 #include "mesh/zmesh.h"
 #include "mesh/zobject.h"
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
-using std::vector;
-using std::string;
+
+#include <algorithm>
+#include <iterator>
+using namespace std; 
 
 class ZObjLoader {
 	
@@ -18,8 +23,10 @@ public:
 	ZObject* loadObject(string fileName);
 	
 private:
+	template<typename Out>
+	void split(const string &s, char delim, Out result);
 
-
+	vector<string> split(const string &s, char delim);
 
 };
 

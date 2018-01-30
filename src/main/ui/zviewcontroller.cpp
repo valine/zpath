@@ -27,9 +27,9 @@ ZViewController::ZViewController(string resourcePath) {
     propertiesPanel->setOffset(0, 30);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
-   
-    //mRootView->addSubView(navBar);
-   // mRootView->addSubView(propertiesPanel);
+    
+    mRootView->addSubView(navBar);
+    mRootView->addSubView(propertiesPanel);
 
     for (int i = 0; i < 40; i++) {
         ZView* highlight = new ZView(ZView::fillParent, 30);
@@ -60,7 +60,7 @@ ZViewController::ZViewController(string resourcePath) {
     
     mRootView->addSubView(tileView);
 
-    BasicScene* scene = new BasicScene();
+    BasicScene* scene = new BasicScene(resourcePath);
     ZRenderer *renderer = new ZRenderer(resourcePath);
     renderer->setScene(scene);
 

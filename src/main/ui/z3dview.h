@@ -14,25 +14,11 @@ class Z3DView : public ZView {
 
 public:
 	Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer);
-
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void draw();
-
 	void setRenderer(ZRenderer *renderer);
 private:
-
-	// vector<float> mVertices;
-	// vector<int> mFaceIndices;
-
-	// GLuint mVertexBuffer;
-	// GLuint mFaceIndicesBuffer;
-
-	// int mColorLocation;
-	// int mPositionLocation;
-
-	// ZShader *mShader;
-
 	ZRenderer *mRenderer;
 };

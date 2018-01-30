@@ -2,15 +2,17 @@
 #define ZSCENE_H
 
 #include <vector>
+#include <string> 
 #include "mesh/zobject.h"
 #include "mesh/zmesh.h"
 #include "zobjloader.h"
-using std::vector;
+using namespace std;
+
 
 class ZScene {
 	
 public: 
-    ZScene();
+    ZScene(string resourcePath);
 	void addObject(ZObject *object);
 	vector<ZObject*> getObjects();
 private:

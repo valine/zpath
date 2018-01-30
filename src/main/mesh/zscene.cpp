@@ -1,6 +1,6 @@
 #include "zscene.h"
 
-ZScene::ZScene() {
+ZScene::ZScene(string resourcePath) {
 
 }
 

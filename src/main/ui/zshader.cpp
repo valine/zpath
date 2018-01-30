@@ -2,7 +2,7 @@
 
 ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
 
-		cout << vertexPathStr;
+		//cout << vertexPathStr;
 		const char * vertexPath = vertexPathStr.c_str();
 		const char * fragmentPath = fragmentPathStr.c_str();
 
@@ -16,7 +16,7 @@ ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
 		fBuffer << fT.rdbuf();
 		string fragmentCodeStr = fBuffer.str();
 
-		cout << vertexCodeStr << "code";
+		//cout << vertexCodeStr << "code";
 
 		const char* vertexCode = vertexCodeStr.c_str();
         const char * fragmentCode = fragmentCodeStr.c_str();
