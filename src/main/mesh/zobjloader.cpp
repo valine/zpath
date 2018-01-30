@@ -17,7 +17,7 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	vertices.push_back(-1);
 	vertices.push_back(0.0);
 
-	vertices.push_back(-1);
+	vertices.push_back(-0.1);
 	vertices.push_back(1.0);
 	vertices.push_back(0.0);
 

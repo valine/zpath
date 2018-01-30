@@ -30,7 +30,7 @@ void ZRenderer::draw() {
 			    1, 0, 
 			    0, 1);
 
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); 
+			glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
 	    }
 	}
 }

@@ -18,6 +18,8 @@ public:
 	vector<float> getVertices() const; 
 	vector<int> getFaceIndices() const; 
 
+	int getFaceIndiceCount();
+
 	GLuint getVertexBuffer();
 	GLuint getFaceIndicesBuffer();
 

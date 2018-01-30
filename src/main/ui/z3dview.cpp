@@ -6,24 +6,6 @@
 Z3DView::Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer) 
 : ZView(maxWidth, maxHeight) {
     mRenderer = renderer;
-
-//	ZObjLoader loader = ZObjLoader("");
-//	ZMesh mesh = loader.loadMesh("");
-
-    // glGenBuffers(1, &mVertexBuffer);
-    // glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    // glBufferData(GL_ARRAY_BUFFER, mesh.getVertices().size() * sizeof(float), &mesh.getVertices()[0], GL_STATIC_DRAW);
-
-    // glGenBuffers(1, &mFaceIndicesBuffer);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.getFaceIndices().size() * sizeof(int), &mesh.getFaceIndices()[0], GL_STATIC_DRAW);
-	
-	//string vertexPath = resourcePath + "resources/shaders/generalvertexshader.glsl";
-    //string fragmentPath = resourcePath + "resources/shaders/generalfragmentshader.glsl";
-  //  mShader = new ZShader(vertexPath, fragmentPath);
-
-   // mPositionLocation = glGetAttribLocation(mShader->mID, "vPos");
-   // mColorLocation = glGetUniformLocation(mShader->mID, "uColor");
 }
 
 void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -52,19 +34,4 @@ void Z3DView::draw() {
 	glViewport(getLeft(),y,getWidth(),getHeight());
 
     mRenderer->draw();
-
-   // mShader->use();
-    
-	// glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
- //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-
- //    glEnableVertexAttribArray(mPositionLocation);
- //    glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
- //                          sizeof(float) * 3, (void*) 0);
-
- //     glProgramUniform4f(mShader->mID, mColorLocation,
- //        1, 0, 
- //        0, 1);
-
- //    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); 
 }

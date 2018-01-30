@@ -33,3 +33,7 @@ GLuint ZMesh::getFaceIndicesBuffer() {
 	return mFaceIndicesBuffer;
 }
 
+int ZMesh::getFaceIndiceCount() {
+	return mFaceIndices.size();
+}
+
