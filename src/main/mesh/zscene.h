@@ -4,6 +4,7 @@
 #include <vector>
 #include "mesh/zobject.h"
 #include "mesh/zmesh.h"
+#include "zobjloader.h"
 using std::vector;
 
 class ZScene {

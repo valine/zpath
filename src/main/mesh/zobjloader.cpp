@@ -5,7 +5,7 @@ ZObjLoader::ZObjLoader(string resourcePath) {
 
 }
 
-ZMesh ZObjLoader::loadMesh(string fileName) {
+ZMesh* ZObjLoader::loadMesh(string fileName) {
 
 	vector<float> vertices;
 
@@ -34,9 +34,19 @@ ZMesh ZObjLoader::loadMesh(string fileName) {
 	faceIndices.push_back(2);
 	faceIndices.push_back(3);
 
-	ZMesh mesh = ZMesh();
-	mesh.setVertices(vertices);
-	mesh.setFaceIndices(faceIndices);
+	ZMesh* mesh = new ZMesh();
+	mesh->setVertices(vertices);
+	mesh->setFaceIndices(faceIndices);
 
 	return mesh;
+}
+
+ZObject* ZObjLoader::loadObject(string fileName) {
+
+	ZMesh* mesh = loadMesh(fileName);
+
+	ZObject* object = new ZObject();
+	object->setMesh(mesh);
+
+	return object;
 }

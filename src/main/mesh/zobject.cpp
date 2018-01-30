@@ -2,12 +2,14 @@
 
 #include "zobject.h"
 
-void ZObject::setMesh(ZMesh mesh) {
+ZObject::ZObject() {
 
+}
+
+void ZObject::setMesh(ZMesh* mesh) {
 	mMesh = mesh;
 }
 
-ZMesh ZObject::getMesh() {
-
+ZMesh* ZObject::getMesh() {
 	return mMesh;
 }

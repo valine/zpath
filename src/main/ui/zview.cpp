@@ -19,6 +19,27 @@ ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
     init(100000, 100000);
 }
 
+
+void ZView::draw() {
+    mShader->use();
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+                          sizeof(float) * 3, (void*) 0);
+
+     glProgramUniform4f(mShader->mID, mColorLocation,
+        mBackgroundColor[0], mBackgroundColor[1], 
+        mBackgroundColor[2], mBackgroundColor[3]);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); 
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->draw();
+    }
+}
+
 void ZView::init(int maxWidth, int maxHeight) {
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
@@ -341,22 +362,3 @@ void ZView::onCursorPosChange(double x, double y) {
     }
 }
 
-void ZView::draw() {
-    mShader->use();
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-
-    glEnableVertexAttribArray(mPositionLocation);
-    glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 3, (void*) 0);
-
-     glProgramUniform4f(mShader->mID, mColorLocation,
-        mBackgroundColor[0], mBackgroundColor[1], 
-        mBackgroundColor[2], mBackgroundColor[3]);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); 
-
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->draw();
-    }
-}
