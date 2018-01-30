@@ -17,6 +17,7 @@
 #include "ui/z3dview.h"
 
 #include "mesh/zscene.h"
+#include "scenes/basicscene.h"
 #include "mesh/zrenderer.h"
 
 using glm::mat4;

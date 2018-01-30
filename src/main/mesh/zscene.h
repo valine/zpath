@@ -10,7 +10,7 @@ using std::vector;
 class ZScene {
 	
 public: 
-	ZScene();
+    ZScene();
 	void addObject(ZObject *object);
 	vector<ZObject*> getObjects();
 private:
