@@ -54,20 +54,11 @@ ZViewController::ZViewController(string resourcePath) {
 
     int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
     int viewportHeight = 1000;
-    ZTiledView *tileView = new ZTiledView(10000, 10000, 2, 1);
+    ZTiledView *tileView = new ZTiledView(10000, 10000, 2, 1, resourcePath);
     tileView->setOffset(propertiesPanel->getWidth(), 30);
     tileView->setGravity(ZView::topRight);
     
     mRootView->addSubView(tileView);
-
-    BasicScene* scene = new BasicScene(resourcePath);
-    ZRenderer *renderer = new ZRenderer(resourcePath);
-    renderer->setScene(scene);
-
-    Z3DView *viewport3D = new Z3DView(700, 700, renderer);
-    viewport3D->setBackgroundColor(highlightColor);
-    viewport3D->setGravity(ZView::topLeft);
-    mRootView->addSubView(viewport3D);
 }
 
 ZView* ZViewController::getRootView() {

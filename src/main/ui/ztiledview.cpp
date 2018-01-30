@@ -2,7 +2,7 @@
 #include "ztiledview.h"
 #include <iostream>
 
-ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY) 
+ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
 
 	mTileCountX = tilesX;
@@ -12,10 +12,18 @@ ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY)
 
 	int width = (getWidth() - (mTileMargin * tilesX)) / tilesX;
 	int height = (getHeight() - (mTileMargin * tilesY)) / tilesY;
+  
+   
+   	BasicScene *scene = new BasicScene(resourcePath);
+
 
 	for (int x = 0; x < tilesX; x++) {
 		for (int y = 0; y < tilesY; y++) {
-			ZView *tile = new ZView(width, height);
+
+			ZRenderer *renderer = new ZRenderer(resourcePath);
+			renderer->setScene(scene);
+
+			Z3DView *tile = new Z3DView(width, height, renderer);
 			tile->setOffset(x * (width + mTileMargin), y * (height + mTileMargin));
 			tile->setMargin(mTileMargin, mTileMargin, mTileMargin, mTileMargin);
 			tile->setBackgroundColor(backgroundColor);
