@@ -33,7 +33,9 @@ void ZView::draw() {
         mBackgroundColor[0], mBackgroundColor[1], 
         mBackgroundColor[2], mBackgroundColor[3]);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); 
+   // if (mParentView != this) {
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+   //}
 
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->draw();

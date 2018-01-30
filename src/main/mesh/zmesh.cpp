@@ -9,6 +9,16 @@ void ZMesh::setVertices(vector<float> vertices) {
 	
 }
 
+void ZMesh::setVertexNormals(vector<float> normals) {
+	mVertexNormals = normals;
+
+    glGenBuffers(1, &mVertexNormalBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexNormalBuffer);
+    glBufferData(GL_ARRAY_BUFFER, mVertexNormals.size() * sizeof(float), &mVertexNormals[0], GL_STATIC_DRAW);
+	
+}
+
+
 void ZMesh::setFaceIndices(vector<int> indices) {
 	mFaceIndices = indices;
 
@@ -21,6 +31,11 @@ vector<float> ZMesh::getVertices() const {
 	return mVertices;
 }
 
+vector<float> ZMesh::getVertexNormals() const {
+	return mVertexNormals;
+}
+
+
 vector<int> ZMesh::getFaceIndices() const {
 	return mFaceIndices;
 }
@@ -28,6 +43,11 @@ vector<int> ZMesh::getFaceIndices() const {
 GLuint ZMesh::getVertexBuffer() {
 	return mVertexBuffer;
 }
+
+GLuint ZMesh::getVertexNormalBuffer() {
+	return mVertexNormalBuffer;
+}
+
 
 GLuint ZMesh::getFaceIndicesBuffer() {
 	return mFaceIndicesBuffer;

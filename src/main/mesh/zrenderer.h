@@ -9,6 +9,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+using namespace glm;
+
 using std::string;
 
 class ZRenderer {
@@ -24,6 +30,11 @@ private:
 
 	int mColorLocation;
 	int mPositionLocation;
+	int mNormalLocation;
+
+	int mViewMatrixLocation;
+	int mProjectionMatrixLocation;
+	int mModelMatrixLocation;
 };
 
 #endif

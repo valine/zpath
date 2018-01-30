@@ -64,10 +64,10 @@ ZViewController::ZViewController(string resourcePath) {
     ZRenderer *renderer = new ZRenderer(resourcePath);
     renderer->setScene(scene);
 
-    Z3DView *viewport3D = new Z3DView(200, 300, renderer);
+    Z3DView *viewport3D = new Z3DView(700, 700, renderer);
     viewport3D->setBackgroundColor(highlightColor);
     viewport3D->setGravity(ZView::topLeft);
-    tileView->addSubView(viewport3D);
+    mRootView->addSubView(viewport3D);
 }
 
 ZView* ZViewController::getRootView() {

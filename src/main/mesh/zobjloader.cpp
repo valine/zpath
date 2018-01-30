@@ -14,6 +14,9 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	
 	vector<float> vertices;
 	vector<int> faceIndices;
+	vector<float> vertexNormals;
+
+	vector<float> tmpNormals;
 
 	while (getline(infile, line)) {
 	
@@ -25,11 +28,16 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   		vertices.push_back(stod(tokens.at(1)));
 	   		vertices.push_back(stod(tokens.at(2)));
 	   		vertices.push_back(stod(tokens.at(3)));
+
+	   		// vertexNormals.push_back(stod(tokens.at(1)));
+	   		// vertexNormals.push_back(stod(tokens.at(2)));
+	   		// vertexNormals.push_back(stod(tokens.at(3)));
 	   	}
 
 	   	else if (tokens.at(0) == "vn") {
-
-
+			tmpNormals.push_back(stod(tokens.at(1)));
+	   		tmpNormals.push_back(stod(tokens.at(2)));
+	   		tmpNormals.push_back(stod(tokens.at(3)));
 	   	}
 
 	   	else if (tokens.at(0) == "f") {
@@ -41,12 +49,17 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   		faceIndices.push_back(stoi(indiceTokensB.at(0)) - 1);
 	   		faceIndices.push_back(stoi(indiceTokensC.at(0)) - 1);
 
+	   		vertexNormals.push_back(tmpNormals.at(stoi(indiceTokensA.at(2)) - 1));
+	   		vertexNormals.push_back(tmpNormals.at(stoi(indiceTokensB.at(2)) + 0));
+	   		vertexNormals.push_back(tmpNormals.at(stoi(indiceTokensC.at(2)) + 1));
+
 	   	}
 	}
 
 	ZMesh* mesh = new ZMesh();
 	mesh->setVertices(vertices);
 	mesh->setFaceIndices(faceIndices);
+	mesh->setVertexNormals(vertexNormals);
 
 	return mesh;
 }
