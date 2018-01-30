@@ -58,7 +58,7 @@ ZViewController::ZViewController(string resourcePath) {
     tileView->setOffset(propertiesPanel->getWidth(), 30);
     tileView->setGravity(ZView::topRight);
     
-    mRootView->addSubView(tileView);
+   // mRootView->addSubView(tileView);
 
     BasicScene* scene = new BasicScene(resourcePath);
     ZRenderer *renderer = new ZRenderer(resourcePath);
@@ -97,7 +97,7 @@ void ZViewController::onCursorPosChange(double x, double y) {
 
 void ZViewController::draw() {
 
- mUIShader->use();
+    mUIShader->use();
     GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
     mat4 matrix;
     matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
