@@ -37,8 +37,8 @@ public:
 private:
 	ZRenderer *mRenderer;
 
-	float mRotationX;
-	float mRotationY;
+	float mRotationX = 0;
+	float mRotationY = 0;
 };
 
 #endif

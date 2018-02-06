@@ -305,7 +305,6 @@ int ZView::getMouseDownY() {
 
 
 int ZView::getLastX() {
-    cout<<mLastX<<endl;
     return mLastX;
 }
 
