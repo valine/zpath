@@ -16,12 +16,13 @@ void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
 }
 
 void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
-
+	ZView::onKeyPress(key, scancode, action, mods);
 }
 	
 void Z3DView::onCursorPosChange(double x, double y) {
 	if (mouseIsDown()) {
-	
+		ZCamera* camera = mRenderer->getCamera();
+		camera->setPosition(vec3(3,3,0));
     }
 }
 

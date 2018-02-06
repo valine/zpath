@@ -344,7 +344,10 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         ZView* view = (*it);
 
-        if (action == GLFW_PRESS && view->getLeft() < mMouseX && view->getRight() > mMouseX) {
+        bool isInViewX = view->getLeft() < mMouseX && view->getRight() > mMouseX;
+        bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
+
+        if (isInViewY && isInViewX) {
             view->onMouseEvent(button, action, mods, x, y);
         } 
 

@@ -5,6 +5,7 @@
 #include "zscene.h"
 #include "ui/zshader.h"
 #include "ui/z3dview.h"
+#include "zcamera.h"
 #include <iostream>
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -27,6 +28,7 @@ public:
 	void setScene(ZScene *scene);
 	void draw();
 	void setParentView(Z3DView *view);	
+	ZCamera* getCamera();
 
 private:
 	ZScene *mScene = nullptr;
@@ -41,6 +43,8 @@ private:
 	int mViewMatrixLocation;
 	int mProjectionMatrixLocation;
 	int mModelMatrixLocation;
+
+	ZCamera* mCamera;
 };
 
 #endif

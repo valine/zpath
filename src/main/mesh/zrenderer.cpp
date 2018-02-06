@@ -16,6 +16,8 @@ ZRenderer::ZRenderer(string resourcePath) {
 
 	glDepthFunc(GL_LEQUAL);
 
+	mCamera = new ZCamera();
+
 }
 
 void ZRenderer::draw() {
@@ -50,19 +52,10 @@ void ZRenderer::draw() {
 				float height = mParentView->getHeight();
 
 				mat4 projectionMatrix = perspective(glm::radians(35.0f), (float) width / (float) height, 0.1f, 100.0f);
-				
-				mat4 viewMatrix = glm::lookAt(
-				    glm::vec3(5,0,0), // Camera is at (4,3,3), in World Space
-				    glm::vec3(0,0,0), // and looks at the origin
-				    glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-				);
-
-				viewMatrix = glm::rotate(viewMatrix, (float)glfwGetTime(), glm::vec3(0, 1, 0)); // where x, y, z is axis of rotation (e.g. 0 1 0)
 
 				glUniformMatrix4fv(mProjectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-				glUniformMatrix4fv(mViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+				glUniformMatrix4fv(mViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(mCamera->getViewMatrix()));
 			
-
 				glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
 			}
 	    }
@@ -77,4 +70,8 @@ void ZRenderer::setScene(ZScene *scene) {
 
 void ZRenderer::setParentView(Z3DView* view) {
 	mParentView = view;
+}
+
+ZCamera* ZRenderer::getCamera() {
+	return mCamera;
 }
