@@ -93,11 +93,5 @@ void ZTiledView::onCursorPosChange(double x, double y)  {
 		int deltaY = y - getMouseDownY();
 		mTileWeightX = mInitialTileWeightX + deltaX;
 	}
-  	
-  	// for (vector<ZView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
-   //      (*it)->onCursorPosChange(x, y);
-   //  }
-
-
 }
 

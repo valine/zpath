@@ -18,6 +18,8 @@ public:
 	void setUp(vec3 up);
 	void setFront(vec3 front);
 
+	vec3 getPosition();
+
 	mat4 getViewMatrix();
 private:
 

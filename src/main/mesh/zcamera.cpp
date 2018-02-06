@@ -1,5 +1,6 @@
 #include "zcamera.h"
-
+#include <iostream>
+using namespace std;
 
 ZCamera::ZCamera() {
 	  mPosition = glm::vec3(5,7,0); // Camera is at (4,3,3), in World Space
@@ -18,6 +19,10 @@ void ZCamera::setUp(vec3 up) {
 
 void ZCamera::setFront(vec3 front) {
 	mFront = front;
+}
+
+vec3 ZCamera::getPosition() {
+	return mPosition;
 }
 
 mat4 ZCamera::getViewMatrix() {

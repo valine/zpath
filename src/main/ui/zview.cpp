@@ -35,7 +35,7 @@ void ZView::draw() {
 
     if (mParentView != this) {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-   }
+    }
 
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->draw();
@@ -303,6 +303,16 @@ int ZView::getMouseDownY() {
     return mMouseDownY;
 }
 
+
+int ZView::getLastX() {
+    cout<<mLastX<<endl;
+    return mLastX;
+}
+
+int ZView::getLastY() {
+    return mLastY;
+}
+
 vector<ZView*> ZView::getSubViews() {
     return mViews;
 }
@@ -334,9 +344,12 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
 
 void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     if (action == GLFW_PRESS) {
+
         mMouseDown  = true;
         mMouseDownX = x;
         mMouseDownY = y;
+
+
     } else {
         mMouseDown = false;
     }
@@ -359,6 +372,8 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
 }
 
 void ZView::onCursorPosChange(double x, double y) {
+    mLastX = mMouseX;
+    mLastY = mMouseY;
 
     mMouseX = x;
     mMouseY = y;
