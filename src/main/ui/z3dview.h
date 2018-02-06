@@ -1,6 +1,9 @@
 #ifndef Z3DVIEW_H
 #define Z3DVIEW_H
 
+#define GLEW_STATIC
+
+#include <GL/glew.h>
 #include "zview.h"
 #include <iostream>
 #include <ui/zshader.h>
@@ -9,6 +12,7 @@
 #include "mesh/zscene.h"
 #include <vector> 
 #include <string>
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

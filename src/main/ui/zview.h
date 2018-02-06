@@ -80,6 +80,9 @@ class ZView {
 		int getMouseDownX();
 		int getMouseDownY();
 
+		int getLastX();
+		int getLastY();
+
 		ZView* getParentView();
 
 		virtual void computeBounds(int windowHeight, int maxWidth);
@@ -129,6 +132,9 @@ class ZView {
 
 		int mMouseX;
 		int mMouseY;
+
+		int mLastX;
+		int mLastY;
 
 		int mMouseDownX;
 		int mMouseDownY;
