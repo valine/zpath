@@ -370,6 +370,20 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     }
 }
 
+void ZView::onScrollChange(double x, double y) {
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        ZView* view = (*it);
+
+        bool isInViewX = view->getLeft() < mMouseX && view->getRight() > mMouseX;
+        bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
+
+        if (isInViewX && isInViewY) {
+            view->onScrollChange(x, y);
+        }
+    }
+}
+
 void ZView::onCursorPosChange(double x, double y) {
     mLastX = mMouseX;
     mLastY = mMouseY;

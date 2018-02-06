@@ -90,6 +90,7 @@ class ZView {
 		virtual void onKeyPress(int key, int scancode, int action, int mods);
 		virtual void onMouseEvent(int button, int action, int mods, int x, int y);
 		virtual void onCursorPosChange(double x, double y);
+		virtual void onScrollChange(double x, double y);
 
 		vector<ZView*> getSubViews();
 	private:

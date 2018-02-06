@@ -28,6 +28,10 @@ void ZApplication::onCursorPosChange(double x, double y) {
 	viewController->onCursorPosChange(x, y);
 }
 
+void ZApplication::onScrollEvent(GLFWwindow* window, double xoffset, double yoffset) {
+    viewController->onScrollChange(xoffset, yoffset);
+}
+
 ZApplication::ZApplication(std::string resourcePath) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
@@ -80,6 +84,13 @@ ZApplication::ZApplication(std::string resourcePath) {
     [] (GLFWwindow* window, double xpos, double ypos) {
         auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
            thiz->onCursorPosChange(xpos, ypos);
+           glfwSwapBuffers(window);
+    });
+
+    glfwSetScrollCallback(window,
+    [] (GLFWwindow* window, double xoffset, double yoffset) {
+        auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
+           thiz->onScrollEvent(window, xoffset, yoffset);
            glfwSwapBuffers(window);
     });
 

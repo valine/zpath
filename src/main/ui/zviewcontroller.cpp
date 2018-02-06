@@ -54,7 +54,7 @@ ZViewController::ZViewController(string resourcePath) {
 
     int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
     int viewportHeight = 1000;
-    ZTiledView *tileView = new ZTiledView(10000, 10000, 10, 10, resourcePath);
+    ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 3, resourcePath);
     tileView->setOffset(propertiesPanel->getWidth(), 30);
     tileView->setGravity(ZView::topRight);
     
@@ -84,6 +84,11 @@ void ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
 void ZViewController::onCursorPosChange(double x, double y) {
 	mRootView->onCursorPosChange(x, y);
 	mRootView->onWindowChange(mParentWidth, mParentHeight);
+}
+
+void ZViewController::onScrollChange(double x, double y) {
+
+    mRootView->onScrollChange(x, y);
 }
 
 void ZViewController::draw() {
