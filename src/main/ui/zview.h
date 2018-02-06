@@ -15,6 +15,9 @@
 
 #include <vector>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
 using std::string; 
 using std::cout;
 using std::endl;

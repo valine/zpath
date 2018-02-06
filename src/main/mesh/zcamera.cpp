@@ -37,6 +37,6 @@ mat4 ZCamera::getViewMatrix() {
 	    mUp  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 
-	mViewMatrix = glm::rotate(mViewMatrix, (float)glfwGetTime() / 5, glm::vec3(0, 1, 0)); // where x, y, z is axis of rotation (e.g. 0 1 0)
+	//mViewMatrix = glm::rotate(mViewMatrix, (float)glfwGetTime() / 5, glm::vec3(0, 1, 0)); // where x, y, z is axis of rotation (e.g. 0 1 0)
 	return mViewMatrix;
 }
