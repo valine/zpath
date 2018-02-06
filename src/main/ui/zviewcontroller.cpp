@@ -31,17 +31,17 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->addSubView(navBar);
     mRootView->addSubView(propertiesPanel);
 
-    for (int i = 0; i < 40; i++) {
-        ZView* highlight = new ZView(ZView::fillParent, 30);
-        highlight->setMargin(0,0,0,0);
-        highlight->setOffset(0, i * 30);
+    // for (int i = 0; i < 40; i++) {
+    //     ZView* highlight = new ZView(ZView::fillParent, 30);
+    //     highlight->setMargin(0,0,0,0);
+    //     highlight->setOffset(0, i * 30);
 
-        float color[4] = {0.1f, 0.1, i * 0.02 + 0.2, 0};
+    //     float color[4] = {0.1f, 0.1, i * 0.02 + 0.2, 0};
 
-        highlight->setBackgroundColor(color);
-        highlight->setGravity(ZView::topLeft);
-        propertiesPanel->addSubView(highlight);
-    } 
+    //     highlight->setBackgroundColor(color);
+    //     highlight->setGravity(ZView::topLeft);
+    //     propertiesPanel->addSubView(highlight);
+    // } 
 
     for (int i = 0; i < 10; i++) {
         ZView* menuItem = new ZView(100, 50);

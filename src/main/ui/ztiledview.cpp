@@ -69,7 +69,7 @@ void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 
 	if (action == GLFW_PRESS) {
-		float color[4] = {1.0,1.0,1.0,1.0};
+		float color[4] = {0.1,0.1,0.1,1.0};
 		setBackgroundColor(color);
 		mInitialTileWeightX = mTileWeightX;
 	}
