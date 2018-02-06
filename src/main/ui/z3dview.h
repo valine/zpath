@@ -36,6 +36,9 @@ public:
 	void setRenderer(ZRenderer *renderer);
 private:
 	ZRenderer *mRenderer;
+
+	float mRotationX;
+	float mRotationY;
 };
 
 #endif

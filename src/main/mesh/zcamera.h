@@ -19,8 +19,10 @@ public:
 	void setFront(vec3 front);
 
 	vec3 getPosition();
+	vec3 getUp();
 
 	mat4 getViewMatrix();
+
 private:
 
 	vec3 mPosition;
