@@ -30,14 +30,21 @@ void Z3DView::onCursorPosChange(double x, double y) {
 		int deltaX =  getLastX() - x;
 		int deltaY = getLastY() - y;
 	
+		mRotationX += deltaX;
+		mRotationY -= deltaY;
+
+		vec3 position = glm::vec3(5,3,0);
+		vec3 up = glm::vec3(0,1,0);
+
 		mat4 rotationMatrix = mat4();
-	    rotationMatrix = glm::rotate(rotationMatrix, (float) deltaX / 100, glm::vec3(0, 1, 0));
-		rotationMatrix = glm::rotate(rotationMatrix, (float) deltaY / 100, glm::vec3(0, 0, 1));
+	    rotationMatrix = glm::rotate(rotationMatrix, (float) mRotationX / 100, glm::vec3(0, 1, 0));
+		rotationMatrix = glm::rotate(rotationMatrix, (float) mRotationY / 100, glm::vec3(0, 0, 1));
 
 
-		vec3 newPosition = vec3(rotationMatrix * glm::vec4(camera->getPosition(), 1.0));
-
+		vec3 newPosition = vec3(rotationMatrix * vec4(position, 1.0));
+		vec3 newUp = vec3(rotationMatrix * vec4(up, 1.0));
 		camera->setPosition(newPosition);
+		camera->setUp(newUp);
 	}
 }
 
