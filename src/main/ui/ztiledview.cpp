@@ -56,6 +56,8 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 			tile->setMaxHeight(height);
 
 			tile->setOffset(x * (width + mTileMargin), y * (height + mTileMargin));
+
+			mTiles.push_back(tile);
 			i++;
 		}
 	}
@@ -79,13 +81,23 @@ void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
 }
 
 void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {
+	ZView::onKeyPress(key, scancode, action, mods);
 
 }
 	
-void ZTiledView::onCursorPosChange(double x, double y) {
+void ZTiledView::onCursorPosChange(double x, double y)  {
+	ZView::onCursorPosChange(x, y);
+
 	if (mouseIsDown()) {
 		int deltaX =  x - getMouseDownX();
 		int deltaY = y - getMouseDownY();
 		mTileWeightX = mInitialTileWeightX + deltaX;
 	}
+  	
+  	// for (vector<ZView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+   //      (*it)->onCursorPosChange(x, y);
+   //  }
+
+
 }
+

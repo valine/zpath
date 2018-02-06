@@ -133,7 +133,7 @@ class ZView {
 		int mMouseDownX;
 		int mMouseDownY;
 
-		bool mMouseDown;
+		bool mMouseDown = false;
 
 		vector<ZView*> mViews;
 };

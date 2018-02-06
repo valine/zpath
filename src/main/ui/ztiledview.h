@@ -28,4 +28,6 @@ private:
 	
 	int mInitialTileWeightX = 0;
 	int mTileWeightX = 0;
+
+	vector<ZView*> mTiles;
 };
