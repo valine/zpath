@@ -20,6 +20,8 @@
 #include "scenes/basicscene.h"
 #include "mesh/zrenderer.h"
 
+#include "zlabel.h"
+
 using glm::mat4;
 using glm::ortho;
 using std::vector;
@@ -45,5 +47,6 @@ private:
 	int mParentHeight;
 
 	ZShader *mUIShader;
+	ZShader *mTextShader;
 
 };

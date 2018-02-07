@@ -6,9 +6,13 @@ ZViewController::ZViewController(string resourcePath) {
 	string vertexPath = resourcePath + "resources/shaders/uivertexshader.glsl";
     string fragmentPath = resourcePath + "resources/shaders/uifragmentshader.glsl";
     mUIShader = new ZShader(vertexPath, fragmentPath);
+
+    string vertexTextPath = resourcePath + "resources/shaders/textvertexshader.glsl";
+    string fragmentTextPath = resourcePath + "resources/shaders/textfragmentshader.glsl";
+    mTextShader = new ZShader(vertexTextPath, fragmentTextPath);
  
 	float panelColor[4] = {0.1, 0.1, 0.1, 1.0};
-    float backgroundColor[4] = {0, 0, 0, 0};
+    float backgroundColor[4] = {0.2f, 0.2, 0.2, 1.0};
     float highlightColor[4] = {0.1, 0.2, 0.9, 1.0};
 
 	mRootView = new ZView(ZView::fillParent, ZView::fillParent);
@@ -16,15 +20,16 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->setMargin(0,0,0,0);
     mRootView->setBackgroundColor(backgroundColor);
     mRootView->setShader(mUIShader);
+    mRootView->setTextShader(mTextShader);
     
-    ZView* navBar = new ZView(ZView::fillParent, 30);
+    ZView* navBar = new ZView(ZView::fillParent, 22);
     navBar->setMargin(0,0,0,0);
     navBar->setBackgroundColor(panelColor);
 
     ZView* propertiesPanel = new ZView(200, ZView::fillParent);
 
     propertiesPanel->setMargin(2, 2, 2, 2);
-    propertiesPanel->setOffset(0, 30);
+    propertiesPanel->setOffset(0, 22);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
     
@@ -43,10 +48,18 @@ ZViewController::ZViewController(string resourcePath) {
     //     propertiesPanel->addSubView(highlight);
     // } 
 
+    ZLabel* label = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", resourcePath);
+     float color[4] = {0.2f, 0.2, 0.2, 1.0};
+    label->setMargin(4,4,4,4);
+    label->setGravity(ZView::topLeft);
+    label->setText("Properties");
+    label->setTextColor(vec3(0.8,0.8,0.8));
+    propertiesPanel->addSubView(label);
+
     for (int i = 0; i < 10; i++) {
-        ZView* menuItem = new ZView(100, 50);
+        ZView* menuItem = new ZView(48, 50);
         menuItem->setMargin(2,2,2,2);
-        menuItem->setOffset(i * 102, 0);
+        menuItem->setOffset(i * 50, 0);
         menuItem->setBackgroundColor(backgroundColor);
         menuItem->setGravity(ZView::topLeft);
         navBar->addSubView(menuItem);
@@ -54,8 +67,8 @@ ZViewController::ZViewController(string resourcePath) {
 
     int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
     int viewportHeight = 1000;
-    ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 3, resourcePath);
-    tileView->setOffset(propertiesPanel->getWidth(), 30);
+    ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 2, resourcePath);
+    tileView->setOffset(propertiesPanel->getWidth(), 22);
     tileView->setGravity(ZView::topRight);
     
     mRootView->addSubView(tileView);

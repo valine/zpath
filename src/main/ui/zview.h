@@ -42,10 +42,6 @@ class ZView {
 		ZView(Bounds maxWidth, float maxHeight);
 		ZView(float maxWidth, Bounds maxHeight);
 		ZView(Bounds maxWidth, Bounds maxHeight);
-
-		virtual void draw();
-		virtual void setShader(ZShader *shader);
-		
 		void onWindowChange(int windowWidth, int windowHeight);
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
 		void setOffset(int x, int y);
@@ -88,6 +84,13 @@ class ZView {
 
 		ZView* getParentView();
 
+
+		virtual void draw();
+		virtual void setShader(ZShader *shader);
+		virtual void setTextShader(ZShader *shader);
+
+		ZShader* getTextShader();
+
 		virtual void computeBounds(int windowHeight, int maxWidth);
 
 		virtual void onKeyPress(int key, int scancode, int action, int mods);
@@ -104,6 +107,7 @@ class ZView {
 		ZView *mParentView;
 
 		ZShader *mShader;
+		ZShader *mTextShader;
 		float mMaxWidth; 
 		float mMaxHeight;
 

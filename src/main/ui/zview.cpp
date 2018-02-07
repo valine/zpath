@@ -76,6 +76,20 @@ void ZView::setShader(ZShader *shader) {
     }
 }
 
+
+void ZView::setTextShader(ZShader *shader) {
+
+    mTextShader = shader;
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setTextShader(shader);
+    }
+}
+
+ZShader* ZView::getTextShader() {
+    return mTextShader;
+}
+
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
     if (mParentView == this) {
         mMaxWidth = windowWidth;
@@ -279,6 +293,7 @@ void ZView::addSubView(ZView *view) {
 
     if (mShader != nullptr) {
         view->setShader(mShader);
+        view->setTextShader(mTextShader);
     }
 }
 

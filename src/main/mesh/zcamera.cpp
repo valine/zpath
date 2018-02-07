@@ -3,7 +3,7 @@
 using namespace std;
 
 ZCamera::ZCamera() {
-	  mPosition = glm::vec3(3,3,0); // Camera is at (4,3,3), in World Space
+	  mPosition = glm::vec3(5,0,0); // Camera is at (4,3,3), in World Space
 	  mFront = glm::vec3(0,0,0); // and looks at the origin
 	  mUp = glm::vec3(0,1,0);  // Head is up (set to 0,-1,0 to look upside-down)
 

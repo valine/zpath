@@ -39,6 +39,11 @@ void Z3DView::onScrollChange(double x, double y) {
 	ZView::onScrollChange(x, y);
 
 	mOrbitAnchorPoint.x -= y;
+
+	if (mOrbitAnchorPoint.x < 0) {
+		mOrbitAnchorPoint.x = 0;
+	}
+	
 	updateCameraPosition();
 }
 
