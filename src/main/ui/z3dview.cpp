@@ -71,6 +71,10 @@ void Z3DView::updateCameraPosition() {
 }
 
 void Z3DView::draw() {
+
+	ZView::draw();
+
+	
 	int yv = getWindowHeight() - getBottom();
 	glViewport(getLeft(),yv,getWidth(),getHeight());
 

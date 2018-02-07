@@ -113,8 +113,8 @@ class ZView {
 
 		ZShader *mShader;
 		ZShader *mTextShader;
-		float mMaxWidth; 
-		float mMaxHeight;
+		float mMaxWidth = 0; 
+		float mMaxHeight = 0;
 
 		float mBackgroundColor[4] = {0,0,0,0};
 
@@ -140,11 +140,11 @@ class ZView {
 		int mOffsetX = 0;
 		int mOffsetY = 0;
 
-		int mParentWidth;
-		int mParentHeight;
+		int mParentWidth = 100;
+		int mParentHeight = 100;
 
-		int mMouseX;
-		int mMouseY;
+		int mMouseX = 0;
+		int mMouseY = 0;
 
 		int mLastX;
 		int mLastY;

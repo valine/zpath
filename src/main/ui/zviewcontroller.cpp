@@ -32,21 +32,23 @@ ZViewController::ZViewController(string resourcePath) {
 
 
 
-    ZLabel* label = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", resourcePath);
-     float color[4] = {0.2f, 0.2, 0.2, 1.0};
-    label->setMargin(4,4,4,4);
-    label->setGravity(ZView::topLeft);
+     ZLabel* label = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", resourcePath);
+    //  float color[4] = {0.2f, 0.2, 0.2, 1.0};
+    
+    // label->setGravity(ZView::topLeft);
+    label->setOffset(10,0);
     label->setText("Properties");
     label->setTextColor(vec3(0.8,0.8,0.8));
     propertiesPanel->addSubView(label);
+    //label->setMargin(4,4,4,4);
     
-    ZLabel* label2 = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", resourcePath);
-    label2->setMargin(4,4,4,4);
-    label2->setGravity(ZView::topLeft);
-    label2->setText("Hello");
-    label2->setTextColor(vec3(0.8,0.8,0.8));
-    label2->setOffset(100, 0);
-    propertiesPanel->addSubView(label2);
+    // ZLabel* label2 = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", resourcePath);
+    // label2->setMargin(4,4,4,4);
+    // label2->setGravity(ZView::topLeft);
+    // label2->setText("Hello");
+    // label2->setTextColor(vec3(0.8,0.8,0.8));
+    // label2->setOffset(100, 0);
+   // propertiesPanel->addSubView(label2);
 
 
     ZView* navBar = new ZView(ZView::fillParent, 20);
@@ -65,12 +67,11 @@ ZViewController::ZViewController(string resourcePath) {
          navBar->addSubView(menuItem);
     } 
 
-    int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
+    int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth() - 2;
     int viewportHeight = 1000;
     ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 2, resourcePath);
-    tileView->setOffset(propertiesPanel->getWidth(), 22);
+    tileView->setOffset(propertiesPanel->getWidth() + 2, 22);
     tileView->setGravity(ZView::topRight);
-    tileView->setMargin(4,2,4,2);
     
     mRootView->addSubView(tileView);
 }

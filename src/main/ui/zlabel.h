@@ -41,7 +41,7 @@ class ZLabel : public ZView {
 		map<GLchar, Character> Characters;
 
 		int mTextSize = 14;
-		vec3 mTextColor;
-		string mText;
-		string mFontPath;
+		vec3 mTextColor = vec3(1,1,1);
+		string mText = "";
+		string mFontPath = "";
 };
