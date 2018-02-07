@@ -49,22 +49,20 @@ ZViewController::ZViewController(string resourcePath) {
     propertiesPanel->addSubView(label2);
 
 
-    ZView* navBar = new ZView(ZView::fillParent, 22);
-    navBar->setMargin(0,0,0,0);
+    ZView* navBar = new ZView(ZView::fillParent, 20);
+    navBar->setMargin(2,2,2,2);
     navBar->setBackgroundColor(panelColor);
-    navBar->setGravity(ZView::topLeft);
+    navBar->setGravity(ZView::topRight);
     mRootView->addSubView(navBar);
 
-    string menuItemNames[4] = {"File", "Edit", "View", "Help"};
+    string menuItemNames[4] = {"File", "Edit", "View", "Render"};
     for (int i = 0; i < 4; i++) {
-        ZLabel* menuItem = new ZLabel(48, 21, "roboto/Roboto-Regular.ttf", resourcePath);
-        menuItem->setMargin(2,2,2,2);
-        menuItem->setOffset(i * 50, 0);
-        menuItem->setText(menuItemNames[i]);
-        menuItem->setTextColor(vec3(1.0,1.0,1.0));
-        menuItem->setBackgroundColor(backgroundColor);
-        menuItem->setGravity(ZView::topLeft);
-        navBar->addSubView(menuItem);
+         ZLabel* menuItem = new ZLabel(48, 21, "roboto/Roboto-Regular.ttf", resourcePath);
+         menuItem->setOffset(i * 50 + 10, 0);
+         menuItem->setText(menuItemNames[i]);
+         menuItem->setTextColor(vec3(0.8,0.8,0.8));
+         menuItem->setGravity(ZView::topLeft);
+         navBar->addSubView(menuItem);
     } 
 
     int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
@@ -72,6 +70,7 @@ ZViewController::ZViewController(string resourcePath) {
     ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 2, resourcePath);
     tileView->setOffset(propertiesPanel->getWidth(), 22);
     tileView->setGravity(ZView::topRight);
+    tileView->setMargin(4,2,4,2);
     
     mRootView->addSubView(tileView);
 }

@@ -85,7 +85,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
 void ZLabel::draw() {
 	ZView::draw();
 
-	int yv = getParentView()->getHeight() + getParentView()->getTop() - getTop() - getHeight();
+	int yv = getWindowHeight() - getBottom();
 	glViewport(getLeft(),yv,getWidth(),getHeight());
     GLfloat scale = 1.0;
    

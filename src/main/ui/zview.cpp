@@ -286,6 +286,10 @@ int ZView::getBottom() {
     }
 }
 
+int ZView::getWindowHeight() {
+    return mWindowHeight;
+}
+
 void ZView::computeBounds(int windowWidth, int windowHeight) {
         mVertices[0] = getLeft();
         mVertices[1] = getTop();

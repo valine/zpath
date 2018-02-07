@@ -71,8 +71,8 @@ void Z3DView::updateCameraPosition() {
 }
 
 void Z3DView::draw() {
-	int y = getParentView()->getHeight() + getParentView()->getTop() - getTop() - getHeight();
-	glViewport(getLeft(),y,getWidth(),getHeight());
+	int yv = getWindowHeight() - getBottom();
+	glViewport(getLeft(),yv,getWidth(),getHeight());
 
     mRenderer->draw();
 

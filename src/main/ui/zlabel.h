@@ -40,7 +40,7 @@ class ZLabel : public ZView {
 		GLuint VAO, VBO;
 		map<GLchar, Character> Characters;
 
-		int mTextSize = 16;
+		int mTextSize = 14;
 		vec3 mTextColor;
 		string mText;
 		string mFontPath;

@@ -72,6 +72,8 @@ class ZView {
 		void setWindowWidth(int width);
 		void setWindowHeight(int height);
 
+		int getWindowHeight();
+
 		void setBackgroundColor(float color[4]);
 		void setGravity(ZView::Gravity gravity);
 
