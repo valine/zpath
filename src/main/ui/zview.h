@@ -152,8 +152,8 @@ class ZView {
 		int mMouseDownX;
 		int mMouseDownY;
 
-		int mWindowWidth;
-		int mWindowHeight;
+		int mWindowWidth = 0;
+		int mWindowHeight = 0;
 
 		bool mMouseDown = false;
 

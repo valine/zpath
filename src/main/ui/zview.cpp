@@ -54,6 +54,8 @@ void ZView::init(int maxWidth, int maxHeight) {
     mVertices[9] = mMaxWidth;
     mVertices[10] = mMaxHeight;
 
+
+
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
@@ -63,6 +65,8 @@ void ZView::init(int maxWidth, int maxHeight) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
 
     setParentView(this);
+
+    setMargin(0,0,0,0);
 }
 
 

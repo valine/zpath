@@ -8,18 +8,15 @@ ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY, 
 	mTileCountX = tilesX;
 	mTileCountY = tilesY;
 
-	float backgroundColor[4] = {0.1, 0.1, 0.1, 1};
+	float backgroundColor[4] = {0.002428, 0.021219, 0.063010, 1};
 
 	int width = (getWidth() - (mTileMargin * tilesX)) / tilesX;
 	int height = (getHeight() - (mTileMargin * tilesY)) / tilesY;
-  
    
    	BasicScene *scene = new BasicScene(resourcePath);
 
-
 	for (int x = 0; x < tilesX; x++) {
 		for (int y = 0; y < tilesY; y++) {
-
 			ZRenderer *renderer = new ZRenderer(resourcePath);
 			renderer->setScene(scene);
 

@@ -11,8 +11,8 @@ ZViewController::ZViewController(string resourcePath) {
     string fragmentTextPath = resourcePath + "resources/shaders/textfragmentshader.glsl";
     mTextShader = new ZShader(vertexTextPath, fragmentTextPath);
  
-	float panelColor[4] = {0.1, 0.1, 0.1, 1.0};
-    float backgroundColor[4] = {0.2f, 0.2, 0.2, 1.0};
+	float panelColor[4] = {0.9, 0.9, 0.91, 1.0};
+    float backgroundColor[4] = {0.4f, 0.4, 0.4, 1.000};
     float highlightColor[4] = {0.1, 0.2, 0.9, 1.0};
 
 	mRootView = new ZView(ZView::fillParent, ZView::fillParent);
@@ -21,16 +21,13 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->setBackgroundColor(backgroundColor);
     mRootView->setShader(mUIShader);
     mRootView->setTextShader(mTextShader);
-    
+
 
     ZView* propertiesPanel = new ZView(200, ZView::fillParent);
-    propertiesPanel->setMargin(2, 2, 2, 2);
     propertiesPanel->setOffset(0, 22);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
     mRootView->addSubView(propertiesPanel);
-
-
 
      ZLabel* label = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", resourcePath);
     //  float color[4] = {0.2f, 0.2, 0.2, 1.0};
@@ -38,9 +35,9 @@ ZViewController::ZViewController(string resourcePath) {
     // label->setGravity(ZView::topLeft);
     label->setOffset(10,0);
     label->setText("Properties");
-    label->setTextColor(vec3(0.8,0.8,0.8));
+    label->setTextColor(vec3(0.1,0.1,0.1));
     propertiesPanel->addSubView(label);
-    //label->setMargin(4,4,4,4);
+    //label->setMargin(100,4,4,4);
     
     // ZLabel* label2 = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", resourcePath);
     // label2->setMargin(4,4,4,4);
@@ -51,8 +48,7 @@ ZViewController::ZViewController(string resourcePath) {
    // propertiesPanel->addSubView(label2);
 
 
-    ZView* navBar = new ZView(ZView::fillParent, 20);
-    navBar->setMargin(2,2,2,2);
+    ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
     navBar->setGravity(ZView::topRight);
     mRootView->addSubView(navBar);
@@ -62,7 +58,7 @@ ZViewController::ZViewController(string resourcePath) {
          ZLabel* menuItem = new ZLabel(48, 21, "roboto/Roboto-Regular.ttf", resourcePath);
          menuItem->setOffset(i * 50 + 10, 0);
          menuItem->setText(menuItemNames[i]);
-         menuItem->setTextColor(vec3(0.8,0.8,0.8));
+         menuItem->setTextColor(vec3(0.1,0.1,0.1));
          menuItem->setGravity(ZView::topLeft);
          navBar->addSubView(menuItem);
     } 
