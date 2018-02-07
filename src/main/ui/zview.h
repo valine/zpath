@@ -69,6 +69,9 @@ class ZView {
 		int getWidth();
 		int getHeight();
 
+		void setWindowWidth(int width);
+		void setWindowHeight(int height);
+
 		void setBackgroundColor(float color[4]);
 		void setGravity(ZView::Gravity gravity);
 
@@ -146,6 +149,9 @@ class ZView {
 
 		int mMouseDownX;
 		int mMouseDownY;
+
+		int mWindowWidth;
+		int mWindowHeight;
 
 		bool mMouseDown = false;
 

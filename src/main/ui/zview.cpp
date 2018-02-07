@@ -33,6 +33,8 @@ void ZView::draw() {
         mBackgroundColor[0], mBackgroundColor[1], 
         mBackgroundColor[2], mBackgroundColor[3]);
 
+    glViewport(0, 0, mWindowWidth, mWindowHeight);
+
     if (mParentView != this) {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }
@@ -89,6 +91,21 @@ void ZView::setTextShader(ZShader *shader) {
 ZShader* ZView::getTextShader() {
     return mTextShader;
 }
+
+void ZView::setWindowWidth(int width) {
+    mWindowWidth = width;
+     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setWindowWidth(width);
+    }
+}
+
+void ZView::setWindowHeight(int height) {
+    mWindowHeight = height;
+     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setWindowHeight(height);
+    }
+}
+
 
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
     if (mParentView == this) {

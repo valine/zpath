@@ -13,7 +13,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
     // Load font as face
     FT_Face face;
 
-    string resourceString = resourcePath + "resources/fonts/" + font;
+    string resourceString = resourcePath + "resources/fonts/" + font ;
     const char *resourceChar = resourceString.c_str();
 
     if (FT_New_Face(ft, resourceChar, 0, &face))
@@ -101,7 +101,7 @@ void ZLabel::draw() {
     glBindVertexArray(VAO);
 
     GLfloat x = 0;
-    GLfloat y = 10 * scale;
+    GLfloat y = 5 * scale;
 
     // Iterate through all characters
     std::string::const_iterator c;
