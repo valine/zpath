@@ -20,6 +20,7 @@ public:
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(GLFWwindow* window, int button, int action, int mods);
 	void onCursorPosChange(double x, double y);
+	void onScrollEvent(GLFWwindow *window, double xoffset, double yoffset);
 
 private:
 	ZViewController *viewController;

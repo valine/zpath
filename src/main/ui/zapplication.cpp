@@ -28,6 +28,10 @@ void ZApplication::onCursorPosChange(double x, double y) {
 	viewController->onCursorPosChange(x, y);
 }
 
+void ZApplication::onScrollEvent(GLFWwindow* window, double xoffset, double yoffset) {
+    viewController->onScrollChange(xoffset, yoffset);
+}
+
 ZApplication::ZApplication(std::string resourcePath) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
@@ -83,6 +87,13 @@ ZApplication::ZApplication(std::string resourcePath) {
            glfwSwapBuffers(window);
     });
 
+    glfwSetScrollCallback(window,
+    [] (GLFWwindow* window, double xoffset, double yoffset) {
+        auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
+           thiz->onScrollEvent(window, xoffset, yoffset);
+           glfwSwapBuffers(window);
+    });
+
     glfwMakeContextCurrent(window);
     
     GLenum err = glewInit();
@@ -93,6 +104,12 @@ ZApplication::ZApplication(std::string resourcePath) {
 
     glEnable(GL_MULTISAMPLE);  
     glfwSwapInterval(0);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     
     viewController = new ZViewController(resourcePath);
 
@@ -100,10 +117,9 @@ ZApplication::ZApplication(std::string resourcePath) {
     
         glfwPollEvents();
 
-        int windowWidth, windowHeight;
-        glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
-        glViewport(0, 0, windowWidth, windowHeight);
-
+        // int windowWidth, windowHeight;
+        // glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+   
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         viewController->draw();

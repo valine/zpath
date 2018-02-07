@@ -8,18 +8,15 @@ ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY, 
 	mTileCountX = tilesX;
 	mTileCountY = tilesY;
 
-	float backgroundColor[4] = {0.1, 0.1, 0.1, 1};
+	float backgroundColor[4] = {0.002428, 0.021219, 0.063010, 1.0};
 
 	int width = (getWidth() - (mTileMargin * tilesX)) / tilesX;
 	int height = (getHeight() - (mTileMargin * tilesY)) / tilesY;
-  
    
    	BasicScene *scene = new BasicScene(resourcePath);
 
-
 	for (int x = 0; x < tilesX; x++) {
 		for (int y = 0; y < tilesY; y++) {
-
 			ZRenderer *renderer = new ZRenderer(resourcePath);
 			renderer->setScene(scene);
 
@@ -68,16 +65,16 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 
-	if (action == GLFW_PRESS) {
-		float color[4] = {0.1,0.1,0.1,1.0};
-		setBackgroundColor(color);
-		mInitialTileWeightX = mTileWeightX;
-	}
+	// if (action == GLFW_PRESS) {
+	// 	float color[4] = {0.1,0.1,0.1,1.0};
+	// 	setBackgroundColor(color);
+	// 	mInitialTileWeightX = mTileWeightX;
+	// }
 
-	if (action == GLFW_RELEASE) {
-		float color[4] = {0,0,0,0};
-		setBackgroundColor(color);
-	}
+	// if (action == GLFW_RELEASE) {
+	// 	float color[4] = {0,0,0,0};
+	// 	setBackgroundColor(color);
+	// }
 }
 
 void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {

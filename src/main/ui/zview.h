@@ -15,6 +15,9 @@
 
 #include <vector>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H  
+
 using std::string; 
 using std::cout;
 using std::endl;
@@ -39,10 +42,6 @@ class ZView {
 		ZView(Bounds maxWidth, float maxHeight);
 		ZView(float maxWidth, Bounds maxHeight);
 		ZView(Bounds maxWidth, Bounds maxHeight);
-
-		virtual void draw();
-		virtual void setShader(ZShader *shader);
-		
 		void onWindowChange(int windowWidth, int windowHeight);
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
 		void setOffset(int x, int y);
@@ -70,6 +69,11 @@ class ZView {
 		int getWidth();
 		int getHeight();
 
+		void setWindowWidth(int width);
+		void setWindowHeight(int height);
+
+		int getWindowHeight();
+
 		void setBackgroundColor(float color[4]);
 		void setGravity(ZView::Gravity gravity);
 
@@ -85,11 +89,19 @@ class ZView {
 
 		ZView* getParentView();
 
+
+		virtual void draw();
+		virtual void setShader(ZShader *shader);
+		virtual void setTextShader(ZShader *shader);
+
+		ZShader* getTextShader();
+
 		virtual void computeBounds(int windowHeight, int maxWidth);
 
 		virtual void onKeyPress(int key, int scancode, int action, int mods);
 		virtual void onMouseEvent(int button, int action, int mods, int x, int y);
 		virtual void onCursorPosChange(double x, double y);
+		virtual void onScrollChange(double x, double y);
 
 		vector<ZView*> getSubViews();
 	private:
@@ -99,9 +111,10 @@ class ZView {
 		Gravity mGravity;
 		ZView *mParentView;
 
-		ZShader *mShader;
-		float mMaxWidth; 
-		float mMaxHeight;
+		ZShader *mShader = nullptr;
+		ZShader *mTextShader;
+		float mMaxWidth = 0; 
+		float mMaxHeight = 0;
 
 		float mBackgroundColor[4] = {0,0,0,0};
 
@@ -109,7 +122,7 @@ class ZView {
 		GLuint mFaceIndicesBuffer;
 
 		float mVertices[3 * 4] = {0};
-		int mFaceIndices[6] = {0,1,2,1,2,3};
+		int mFaceIndices[6] = {2,1,0,1,2,3};
 
 		int mColorLocation;
 		int mPositionLocation;
@@ -127,17 +140,20 @@ class ZView {
 		int mOffsetX = 0;
 		int mOffsetY = 0;
 
-		int mParentWidth;
-		int mParentHeight;
+		int mParentWidth = 100;
+		int mParentHeight = 100;
 
-		int mMouseX;
-		int mMouseY;
+		int mMouseX = 0;
+		int mMouseY = 0;
 
 		int mLastX;
 		int mLastY;
 
 		int mMouseDownX;
 		int mMouseDownY;
+
+		int mWindowWidth = 0;
+		int mWindowHeight = 0;
 
 		bool mMouseDown = false;
 

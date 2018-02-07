@@ -33,6 +33,8 @@ void ZView::draw() {
         mBackgroundColor[0], mBackgroundColor[1], 
         mBackgroundColor[2], mBackgroundColor[3]);
 
+    glViewport(0, 0, mWindowWidth, mWindowHeight);
+
     if (mParentView != this) {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }
@@ -52,6 +54,8 @@ void ZView::init(int maxWidth, int maxHeight) {
     mVertices[9] = mMaxWidth;
     mVertices[10] = mMaxHeight;
 
+
+
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
@@ -60,7 +64,8 @@ void ZView::init(int maxWidth, int maxHeight) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
 
-    setParentView(this);
+    mParentView = this;
+
 }
 
 
@@ -75,6 +80,35 @@ void ZView::setShader(ZShader *shader) {
         (*it)->setShader(shader);
     }
 }
+
+
+void ZView::setTextShader(ZShader *shader) {
+
+    mTextShader = shader;
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setTextShader(shader);
+    }
+}
+
+ZShader* ZView::getTextShader() {
+    return mTextShader;
+}
+
+void ZView::setWindowWidth(int width) {
+    mWindowWidth = width;
+     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setWindowWidth(width);
+    }
+}
+
+void ZView::setWindowHeight(int height) {
+    mWindowHeight = height;
+     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setWindowHeight(height);
+    }
+}
+
 
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
     if (mParentView == this) {
@@ -255,6 +289,10 @@ int ZView::getBottom() {
     }
 }
 
+int ZView::getWindowHeight() {
+    return mWindowHeight;
+}
+
 void ZView::computeBounds(int windowWidth, int windowHeight) {
         mVertices[0] = getLeft();
         mVertices[1] = getTop();
@@ -279,6 +317,7 @@ void ZView::addSubView(ZView *view) {
 
     if (mShader != nullptr) {
         view->setShader(mShader);
+        view->setTextShader(mTextShader);
     }
 }
 
@@ -305,7 +344,6 @@ int ZView::getMouseDownY() {
 
 
 int ZView::getLastX() {
-    cout<<mLastX<<endl;
     return mLastX;
 }
 
@@ -368,6 +406,20 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             view->onMouseEvent(button, action, mods, x, y);
         }
        
+    }
+}
+
+void ZView::onScrollChange(double x, double y) {
+
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        ZView* view = (*it);
+
+        bool isInViewX = view->getLeft() < mMouseX && view->getRight() > mMouseX;
+        bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
+
+        if (isInViewX && isInViewY) {
+            view->onScrollChange(x, y);
+        }
     }
 }
 

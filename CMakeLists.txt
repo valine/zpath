@@ -40,14 +40,18 @@ link_libraries(zpath ${OPENGL_gl_LIBRARY})
 
 find_package (Threads)
 
+find_package(Freetype REQUIRED)
+include_directories(${FREETYPE_INCLUDE_DIRS})
+
+
 # Check that the steamVR SDK is installed 
 # (needed to prevent a segfault in OpenVR).
-if(CMAKE_HOST_UNIX)
-  find_file(OPENVRPATHS openvrpaths.vrpath PATHS $ENV{HOME}/.config/openvr "$ENV{HOME}/Library/Application Support/OpenVR/.openvr")
-  if(${OPENVRPATHS} MATCHES OPENVRPATHS-NOTFOUND)
-    message(FATAL_ERROR "${OPENVRPATHS} Please install SteamVR SDK to continue..")
-  endif()
-endif()
+# if(CMAKE_HOST_UNIX)
+#   find_file(OPENVRPATHS openvrpaths.vrpath PATHS $ENV{HOME}/.config/openvr "$ENV{HOME}/Library/Application Support/OpenVR/.openvr")
+#   if(${OPENVRPATHS} MATCHES OPENVRPATHS-NOTFOUND)
+#     message(FATAL_ERROR "${OPENVRPATHS} Please install SteamVR SDK to continue..")
+#   endif()
+# endif()
 
 if (WIN32)
 
@@ -82,7 +86,8 @@ if (APPLE)
           glfw3
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
-          ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY})
+          ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+          ${FREETYPE_LIBRARIES})
 
 endif (APPLE)
 
@@ -93,7 +98,8 @@ if (WIN32)
     gdi32
     glfw3
     glew32s 
-    opengl32)
+    opengl32
+    ${FREETYPE_LIBRARIES})
 endif (WIN32)
 
 if (UNIX)
@@ -112,7 +118,8 @@ if (UNIX)
           glfw3
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
-          ${CMAKE_DL_LIBS})
+          ${CMAKE_DL_LIBS}
+          ${FREETYPE_LIBRARIES})
 
 endif (UNIX)
 
