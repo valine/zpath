@@ -23,30 +23,23 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->setTextShader(mTextShader);
 
 
-    ZView* propertiesPanel = new ZView(200, ZView::fillParent);
+    ZView* propertiesPanel = new ZView(400, ZView::fillParent);
     propertiesPanel->setOffset(0, 22);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
     mRootView->addSubView(propertiesPanel);
 
-     ZLabel* label = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", resourcePath);
-    //  float color[4] = {0.2f, 0.2, 0.2, 1.0};
-    
-    // label->setGravity(ZView::topLeft);
+    ZLabel* label = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", resourcePath);
     label->setOffset(10,0);
     label->setText("Properties");
     label->setTextColor(vec3(0.1,0.1,0.1));
     propertiesPanel->addSubView(label);
-    //label->setMargin(100,4,4,4);
-    
-    // ZLabel* label2 = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", resourcePath);
-    // label2->setMargin(4,4,4,4);
-    // label2->setGravity(ZView::topLeft);
-    // label2->setText("Hello");
-    // label2->setTextColor(vec3(0.8,0.8,0.8));
-    // label2->setOffset(100, 0);
-   // propertiesPanel->addSubView(label2);
 
+    ZButton* button = new ZButton(1000, 30, resourcePath);
+    button->setOffset(0,50);
+    button->setMargin(10,10,10,10);
+    button->setBackgroundColor(highlightColor);
+    propertiesPanel->addSubView(button);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
@@ -63,10 +56,10 @@ ZViewController::ZViewController(string resourcePath) {
          navBar->addSubView(menuItem);
     } 
 
-    int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth() - 2;
+    int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
     int viewportHeight = 1000;
-    ZTiledView *tileView = new ZTiledView(10000, 10000, 3, 2, resourcePath);
-    tileView->setOffset(propertiesPanel->getWidth() + 2, 22);
+    ZTiledView *tileView = new ZTiledView(10000, 10000, 2, 2, resourcePath);
+    tileView->setOffset(propertiesPanel->getWidth(), 22);
     tileView->setGravity(ZView::topRight);
     
     mRootView->addSubView(tileView);

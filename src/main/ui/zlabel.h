@@ -1,3 +1,6 @@
+#ifndef ZLABEL_H
+#define ZLABEL_H
+
 #include "zview.h"
 
 #include <iostream>
@@ -45,3 +48,5 @@ class ZLabel : public ZView {
 		string mText = "";
 		string mFontPath = "";
 };
+
+#endif

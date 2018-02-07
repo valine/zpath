@@ -111,7 +111,7 @@ class ZView {
 		Gravity mGravity;
 		ZView *mParentView;
 
-		ZShader *mShader;
+		ZShader *mShader = nullptr;
 		ZShader *mTextShader;
 		float mMaxWidth = 0; 
 		float mMaxHeight = 0;
@@ -122,7 +122,7 @@ class ZView {
 		GLuint mFaceIndicesBuffer;
 
 		float mVertices[3 * 4] = {0};
-		int mFaceIndices[6] = {0,1,2,1,2,3};
+		int mFaceIndices[6] = {2,1,0,1,2,3};
 
 		int mColorLocation;
 		int mPositionLocation;

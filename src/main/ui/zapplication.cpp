@@ -105,8 +105,11 @@ ZApplication::ZApplication(std::string resourcePath) {
     glEnable(GL_MULTISAMPLE);  
     glfwSwapInterval(0);
 
-     glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     
     viewController = new ZViewController(resourcePath);
 
@@ -114,8 +117,8 @@ ZApplication::ZApplication(std::string resourcePath) {
     
         glfwPollEvents();
 
-        int windowWidth, windowHeight;
-        glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+        // int windowWidth, windowHeight;
+        // glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
    
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

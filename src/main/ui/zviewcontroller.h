@@ -15,6 +15,7 @@
 #include "ui/zshader.h"
 #include "ui/ztiledview.h"
 #include "ui/z3dview.h"
+#include "ui/zbutton.h"
 
 #include "mesh/zscene.h"
 #include "scenes/basicscene.h"

@@ -64,9 +64,8 @@ void ZView::init(int maxWidth, int maxHeight) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
 
-    setParentView(this);
+    mParentView = this;
 
-    setMargin(0,0,0,0);
 }
 
 

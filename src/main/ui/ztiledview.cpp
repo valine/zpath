@@ -8,7 +8,7 @@ ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY, 
 	mTileCountX = tilesX;
 	mTileCountY = tilesY;
 
-	float backgroundColor[4] = {0.002428, 0.021219, 0.063010, 1};
+	float backgroundColor[4] = {0.002428, 0.021219, 0.063010, 1.0};
 
 	int width = (getWidth() - (mTileMargin * tilesX)) / tilesX;
 	int height = (getHeight() - (mTileMargin * tilesY)) / tilesY;
