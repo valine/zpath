@@ -14,11 +14,15 @@ public:
 
 	ZButton(float maxWidth, float maxHeight, string title);
 	void draw();
-	// void onKeyPress(int key, int scancode, int action, int mods);
-	// void onMouseEvent(int button, int action, int mods, int x, int y);
-	// void onCursorPosChange(double x, double y);
+	void onKeyPress(int key, int scancode, int action, int mods);
+	void onMouseEvent(int button, int action, int mods, int x, int y);
+	void onCursorPosChange(double x, double y);
+
+	void setText(string text);
 private:
 int debug;
+
+	ZLabel* mLabel;
 
 
 };

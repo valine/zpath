@@ -23,7 +23,7 @@ ZViewController::ZViewController(string resourcePath) {
     mRootView->setTextShader(mTextShader);
 
 
-    ZView* propertiesPanel = new ZView(400, ZView::fillParent);
+    ZView* propertiesPanel = new ZView(300, ZView::fillParent);
     propertiesPanel->setOffset(0, 22);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
@@ -35,11 +35,26 @@ ZViewController::ZViewController(string resourcePath) {
     label->setTextColor(vec3(0.1,0.1,0.1));
     propertiesPanel->addSubView(label);
 
-    ZButton* button = new ZButton(1000, 30, resourcePath);
+    ZButton* button = new ZButton(200, 40, resourcePath);
     button->setOffset(0,50);
     button->setMargin(10,10,10,10);
     button->setBackgroundColor(highlightColor);
+    button->setText("Toggle Quad View");
     propertiesPanel->addSubView(button);
+
+    ZButton* button2 = new ZButton(40, 40, resourcePath);
+    button2->setOffset(0,100);
+    button2->setMargin(10,10,10,10);
+    button2->setBackgroundColor(highlightColor);
+    button2->setText("+");
+    propertiesPanel->addSubView(button2);
+
+    ZButton* button3 = new ZButton(40, 40, resourcePath);
+    button3->setOffset(50,100);
+    button3->setMargin(10,10,10,10);
+    button3->setBackgroundColor(highlightColor);
+    button3->setText("-");
+    propertiesPanel->addSubView(button3);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
