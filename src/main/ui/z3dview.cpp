@@ -76,14 +76,14 @@ void Z3DView::draw() {
 
 	//glDisable(GL_DEPTH_TEST);
 
-	glDepthMask(false);
+	//glDepthMask(false);
 
 	int yv = getWindowHeight() - getBottom();
 	glViewport(getLeft(),yv,getWidth(),getHeight());
 
     mRenderer->draw();
 
-    glDepthMask(true);
+    //glDepthMask(true);
 
     //glEnable(GL_DEPTH_TEST);
 
