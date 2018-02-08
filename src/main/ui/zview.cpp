@@ -326,6 +326,11 @@ void ZView::addSubView(ZView *view) {
 }
 
 void ZView::clearSubViews() {
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        delete *it;
+        (*it) = NULL;
+    }
+
     mViews.clear();
     mViews.shrink_to_fit();
 }
