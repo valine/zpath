@@ -44,7 +44,7 @@ ZApplication::ZApplication(std::string resourcePath) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_MAXIMIZED, true);
-    window = glfwCreateWindow(640, 480, "ZPath", NULL, NULL);
+    window = glfwCreateWindow(1000, 700, "ZPath", NULL, NULL);
 
     if (!window) {
         glfwTerminate();
@@ -107,7 +107,7 @@ ZApplication::ZApplication(std::string resourcePath) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     
@@ -117,15 +117,17 @@ ZApplication::ZApplication(std::string resourcePath) {
     
         glfwPollEvents();
 
-        // int windowWidth, windowHeight;
-        // glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+         int windowWidth, windowHeight;
+         glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
    
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         viewController->draw();
 
         if (mShouldSwapBuffer) {
+            viewController->onWindowChange(windowWidth, windowHeight);
         	glfwSwapBuffers(window);
+
 	    }
 
 	    mShouldSwapBuffer = true;

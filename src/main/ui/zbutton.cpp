@@ -36,6 +36,10 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 
 	if (action == GLFW_RELEASE) {
 		setBackgroundColor(color);
+
+		if (mListener != nullptr) {
+			mListener->onClick();
+		}
 	}
 }
 
@@ -51,4 +55,8 @@ void ZButton::onCursorPosChange(double x, double y)  {
 	// 	int deltaX =  x - getMouseDownX();
 	// 	int deltaY = y - getMouseDownY();
 	// }
+}
+
+void ZButton::setOnClickListener(ZOnClickListener* l) {
+	mListener = l;
 }

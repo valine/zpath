@@ -43,7 +43,7 @@ private:
 
 	void updateCameraPosition();
 
-	vec3 mOrbitAnchorPoint = vec3(5,0,0);
+	vec3 mOrbitAnchorPoint = vec3(15,0,0);
 };
 
 #endif

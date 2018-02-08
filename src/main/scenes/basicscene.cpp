@@ -8,6 +8,6 @@ BasicScene::BasicScene(string resourcePath)
 	ZObject* object = loader.loadObject(resourcePath + "resources/meshes/cube");
 	addObject(object);
 
-	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs");
+	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/elephant");
 	addObject(dbs2);
 }

@@ -293,6 +293,10 @@ int ZView::getWindowHeight() {
     return mWindowHeight;
 }
 
+int ZView::getWindowWidth() {
+    return mWindowWidth;
+}
+
 void ZView::computeBounds(int windowWidth, int windowHeight) {
         mVertices[0] = getLeft();
         mVertices[1] = getTop();
@@ -319,6 +323,16 @@ void ZView::addSubView(ZView *view) {
         view->setShader(mShader);
         view->setTextShader(mTextShader);
     }
+}
+
+void ZView::clearSubViews() {
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        delete *it;
+        (*it) = NULL;
+    }
+
+    mViews.clear();
+    mViews.shrink_to_fit();
 }
 
 void ZView::setParentView(ZView *parentView) {

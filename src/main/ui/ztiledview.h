@@ -29,5 +29,7 @@ private:
 	int mInitialTileWeightX = 0;
 	int mTileWeightX = 0;
 
+	BasicScene* mScene;
+	string mResourcePath;
 	vector<ZView*> mTiles;
 };

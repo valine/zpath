@@ -6,7 +6,10 @@
 #include <string>
 
 #include "zlabel.h"
+#include "zonclicklistener.h"
+
 using namespace std;
+  
 
 class ZButton : public ZView {
 	
@@ -19,10 +22,13 @@ public:
 	void onCursorPosChange(double x, double y);
 
 	void setText(string text);
+
+	void setOnClickListener(ZOnClickListener* listener);
 private:
 int debug;
 
 	ZLabel* mLabel;
+	ZOnClickListener* mListener = nullptr;
 
 
 };
