@@ -47,6 +47,7 @@ class ZView {
 		void setOffset(int x, int y);
 
 		void addSubView(ZView *view);
+		void clearSubViews();
 
 		void setParentView(ZView *parentView);
 
@@ -73,6 +74,7 @@ class ZView {
 		void setWindowHeight(int height);
 
 		int getWindowHeight();
+		int getWindowWidth();
 
 		void setBackgroundColor(float color[4]);
 		void setGravity(ZView::Gravity gravity);

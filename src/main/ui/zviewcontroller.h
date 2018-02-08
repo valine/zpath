@@ -22,13 +22,14 @@
 #include "mesh/zrenderer.h"
 
 #include "zlabel.h"
+#include "zonclicklistener.h"
 
 using glm::mat4;
 using glm::ortho;
 using std::vector;
 using std::string;
 
-class ZViewController {
+class ZViewController : public ZOnClickListener {
 
 public:
 	ZViewController(string resourcePath);
@@ -40,8 +41,9 @@ public:
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void onScrollChange(double x, double y);
-
 	void draw();
+
+	void onClick();
 private:
 	ZView *mRootView;
 	int mParentWidth;
@@ -49,5 +51,9 @@ private:
 
 	ZShader *mUIShader;
 	ZShader *mTextShader;
+
+	ZTiledView *mTileView;
+
+	bool mIsQuadView = true;
 
 };

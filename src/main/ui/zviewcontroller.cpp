@@ -1,6 +1,21 @@
 
 #include "zviewcontroller.h"
 
+void ZViewController::onClick() {
+
+    if (mIsQuadView) {
+        mIsQuadView = false;
+        mTileView->setTileCount(1,1);
+    } else {
+        mIsQuadView = true;
+        mTileView->setTileCount(3,2);
+    }
+
+    cout<<"buttonWorking"<<endl;
+}
+
+
+
 ZViewController::ZViewController(string resourcePath) {
 
 	string vertexPath = resourcePath + "resources/shaders/uivertexshader.glsl";
@@ -39,7 +54,8 @@ ZViewController::ZViewController(string resourcePath) {
     button->setOffset(0,50);
     button->setMargin(10,10,10,10);
     button->setBackgroundColor(highlightColor);
-    button->setText("Toggle Quad View");
+    button->setText("Toggle Grid View");
+    button->setOnClickListener(this);
     propertiesPanel->addSubView(button);
 
     ZButton* button2 = new ZButton(40, 40, resourcePath);
@@ -73,11 +89,11 @@ ZViewController::ZViewController(string resourcePath) {
 
     int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
     int viewportHeight = 1000;
-    ZTiledView *tileView = new ZTiledView(10000, 10000, 2, 2, resourcePath);
-    tileView->setOffset(propertiesPanel->getWidth(), 22);
-    tileView->setGravity(ZView::topRight);
+    mTileView = new ZTiledView(10000, 10000, 3, 2, resourcePath);
+    mTileView->setOffset(propertiesPanel->getWidth(), 22);
+    mTileView->setGravity(ZView::topRight);
     
-    mRootView->addSubView(tileView);
+    mRootView->addSubView(mTileView);
 }
 
 ZView* ZViewController::getRootView() {
@@ -123,4 +139,3 @@ void ZViewController::draw() {
 
 	mRootView->draw();
 }
-
