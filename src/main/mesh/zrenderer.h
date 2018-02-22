@@ -39,6 +39,7 @@ private:
 	int mColorLocation;
 	int mPositionLocation;
 	int mNormalLocation;
+	int mCameraPositionLocation;
 
 	int mViewMatrixLocation;
 	int mProjectionMatrixLocation;

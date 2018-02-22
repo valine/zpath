@@ -9,6 +9,7 @@ ZRenderer::ZRenderer(string resourcePath) {
 	mPositionLocation = glGetAttribLocation(mShader->mID, "aPos");
 	mNormalLocation = glGetAttribLocation(mShader->mID, "aNormal");
 	mColorLocation = glGetUniformLocation(mShader->mID, "uColor");
+	mCameraPositionLocation = glGetUniformLocation(mShader->mID, "uCameraPosition");
 
 	mViewMatrixLocation = glGetUniformLocation(mShader->mID, "uViewMatrix");
 	mProjectionMatrixLocation = glGetUniformLocation(mShader->mID, "uProjectionMatrix");
@@ -44,6 +45,11 @@ void ZRenderer::draw() {
 			glUniform4f(mColorLocation,
 			    1, 0, 
 			    0, 1);
+
+			vec3 cameraPos = mCamera->getPosition();
+			glUniform3f(mCameraPositionLocation, cameraPos.x, cameraPos.y, cameraPos.z);
+
+			cout<<cameraPos.x<<" "<<cameraPos.y<<" "<<cameraPos.z<<endl;
 
 
 			if (mParentView != nullptr) {
