@@ -49,9 +49,6 @@ void ZRenderer::draw() {
 			vec3 cameraPos = mCamera->getPosition();
 			glUniform3f(mCameraPositionLocation, cameraPos.x, cameraPos.y, cameraPos.z);
 
-			cout<<cameraPos.x<<" "<<cameraPos.y<<" "<<cameraPos.z<<endl;
-
-
 			if (mParentView != nullptr) {
 				float width = mParentView->getWidth();
 				float height = mParentView->getHeight();

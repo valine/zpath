@@ -19,14 +19,14 @@ void main() {
 	vec3 lightDir = normalize(uLightPosition - vPosition);  
 
     // diffuse light
-	float attenuation = 1;
+	float attenuation = 1.0;
 	float distance = distance(uLightPosition, vPosition);
 	float diff = max(dot(norm, lightDir), 0.0);
 
 	vec3 diffuse = diff * uLightColor;
 
 	// spectular light 
-	float specularStrength = 1;
+	float specularStrength = 1.0;
 	vec3 viewDir = normalize(uCameraPosition - vPosition);
 	vec3 reflectDir = reflect(-lightDir, norm);  
 	
