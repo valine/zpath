@@ -54,6 +54,9 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 # endif()
 
 
+  if(UNIX AND NOT APPLE)
+      set(LINUX TRUE)
+  endif()
 
 if (WIN32)
 
@@ -112,26 +115,26 @@ if (WIN32)
     ${FREETYPE_LIBRARIES})
 endif (WIN32)
 
-# if (UNIX)
+if (LINUX)
 
-#   find_package(X11 REQUIRED)
+  find_package(X11 REQUIRED)
 
-#   message(STATUS "X11_FOUND = ${X11_FOUND}")
-#   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
-#   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
+  message(STATUS "X11_FOUND = ${X11_FOUND}")
+  message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
+  message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 
-#   include_directories(${X11_INCLUDE_DIR})
+  include_directories(${X11_INCLUDE_DIR})
 
-#   target_link_libraries (zpath
-#           ${OPENGL_LIBRARIES}
-#           ${GLEW_LIBRARY}
-#           glfw3
-#           ${X11_LIBRARIES}
-#           ${CMAKE_THREAD_LIBS_INIT}
-#           ${CMAKE_DL_LIBS}
-#           ${FREETYPE_LIBRARIES})
+  target_link_libraries (zpath
+          ${OPENGL_LIBRARIES}
+          ${GLEW_LIBRARY}
+          glfw3
+          ${X11_LIBRARIES}
+          ${CMAKE_THREAD_LIBS_INIT}
+          ${CMAKE_DL_LIBS}
+          ${FREETYPE_LIBRARIES})
 
-# endif (UNIX)
+endif (LINUX)
 
 ###############################################################################
 ## testing ####################################################################
