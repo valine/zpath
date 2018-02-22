@@ -9,6 +9,7 @@ Dependencies
 * GLFW http://www.glfw.org/download.html
 * GLEW http://glew.sourceforge.net
 * GLM https://glm.g-truc.net/0.9.8/index.html
+* Freetype https://www.freetype.org/
 
 ### To build
 
