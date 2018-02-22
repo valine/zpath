@@ -27,7 +27,7 @@ void main() {
 
 	vec3 diffuse = diff * uLightColor * lightBrightness / pow(distance, attenuation);
 
-	vec3 result = diffuse * uColor;
+	vec3 result = diffuse * uColor.xyz;
 
     gl_FragColor = vec4(result, 1.0);
 
