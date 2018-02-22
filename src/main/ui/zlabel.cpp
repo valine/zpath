@@ -59,7 +59,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
             texture,
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-            face->glyph->advance.x
+            (GLuint) face->glyph->advance.x
         };
         Characters.insert(std::pair<GLchar, Character>(c, character));
     }
@@ -78,8 +78,6 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-
 }
 
 void ZLabel::draw() {

@@ -14,8 +14,6 @@ void ZViewController::onClick() {
     cout<<"buttonWorking"<<endl;
 }
 
-
-
 ZViewController::ZViewController(string resourcePath) {
 
 	string vertexPath = resourcePath + "resources/shaders/uivertexshader.glsl";
@@ -137,5 +135,7 @@ void ZViewController::draw() {
     mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -10.0f, 100.0f);
     glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(projection));
 
-	mRootView->draw();
+    if (mRootView != nullptr) {
+	   mRootView->draw();
+    }
 }
