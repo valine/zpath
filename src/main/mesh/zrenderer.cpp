@@ -6,16 +6,15 @@ ZRenderer::ZRenderer(string resourcePath) {
     string fragmentPath = resourcePath + "resources/shaders/generalfragmentshader.glsl";
     mShader = new ZShader(vertexPath, fragmentPath);
 
-	mPositionLocation = glGetAttribLocation(mShader->mID, "vPos");
-	mNormalLocation = glGetAttribLocation(mShader->mID, "vNormal");
-
+	mPositionLocation = glGetAttribLocation(mShader->mID, "aPos");
+	mNormalLocation = glGetAttribLocation(mShader->mID, "aNormal");
 	mColorLocation = glGetUniformLocation(mShader->mID, "uColor");
-	
+
 	mViewMatrixLocation = glGetUniformLocation(mShader->mID, "uViewMatrix");
 	mProjectionMatrixLocation = glGetUniformLocation(mShader->mID, "uProjectionMatrix");
 
 	glDepthFunc(GL_LEQUAL);
-
+	
 	mCamera = new ZCamera();
 
 }

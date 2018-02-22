@@ -14,8 +14,6 @@ void ZViewController::onClick() {
     cout<<"buttonWorking"<<endl;
 }
 
-
-
 ZViewController::ZViewController(string resourcePath) {
 
 	string vertexPath = resourcePath + "resources/shaders/uivertexshader.glsl";
