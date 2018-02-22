@@ -8,8 +8,8 @@ void main() {
 
 	vec4 uColor = vec4(1.0, 0.9, 0.9, 1.0);
 	
-	vec3 uAmbitentLightColor = vec4(0.031373, 0.156863, 0.278431);
-	float ambientStrength = 0.6;
+	vec3 uAmbitentLightColor = vec3(0.031373, 0.156863, 0.278431);
+	float ambientStrength = 0.3;
     vec3 ambient = ambientStrength * uAmbitentLightColor;
 
     vec3 uLightPosition = vec3(4.0, 7.0, 0);
@@ -28,7 +28,6 @@ void main() {
 	vec3 result = (diffuse + ambient) * uColor.xyz;
 
     gl_FragColor = vec4(result, 1.0);
-
 }
 
 
