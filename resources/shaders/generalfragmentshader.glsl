@@ -10,7 +10,7 @@ void main() {
 	
 	vec3 uAmbitentLightColor = vec3(0.031373, 0.156863, 0.278431);
 	float ambientStrength = 0.3;
-    vec3 ambient = ambientStrength * uAmbitentLightColor;
+    vec3 ambient = vec3(ambientStrength) * uAmbitentLightColor;
 
     vec3 uLightPosition = vec3(4.0, 7.0, 0.0);
 	vec3 uLightColor = vec3(1.0, 1.0, 1.0);
