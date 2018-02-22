@@ -45,14 +45,14 @@ public:
 
 	void onClick();
 private:
-	ZView *mRootView;
-	int mParentWidth;
-	int mParentHeight;
+	ZView *mRootView = nullptr;
+	int mParentWidth = 0;
+	int mParentHeight = 0;
 
-	ZShader *mUIShader;
-	ZShader *mTextShader;
+	ZShader *mUIShader = nullptr;
+	ZShader *mTextShader = nullptr;
 
-	ZTiledView *mTileView;
+	ZTiledView *mTileView = nullptr;
 
 	bool mIsQuadView = true;
 

@@ -29,7 +29,7 @@ void ZView::draw() {
     glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
                           sizeof(float) * 3, (void*) 0);
 
-     glProgramUniform4f(mShader->mID, mColorLocation,
+    glUniform4f(mColorLocation,
         mBackgroundColor[0], mBackgroundColor[1], 
         mBackgroundColor[2], mBackgroundColor[3]);
 
@@ -40,7 +40,7 @@ void ZView::draw() {
     }
 
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->draw();
+       (*it)->draw();
     }
 }
 

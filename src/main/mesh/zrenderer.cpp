@@ -42,7 +42,7 @@ void ZRenderer::draw() {
 			glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
 			                          sizeof(float) * 3, (void*) 0);
 
-			glProgramUniform4f(mShader->mID, mColorLocation,
+			glUniform4f(mColorLocation,
 			    1, 0, 
 			    0, 1);
 

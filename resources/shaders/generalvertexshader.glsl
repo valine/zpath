@@ -13,4 +13,4 @@ varying vec3 vColor;
 void main() {
     gl_Position = (uProjectionMatrix * uViewMatrix) * vec4(vPos, 1.0);
     vColor = vNormal;
-};
+}

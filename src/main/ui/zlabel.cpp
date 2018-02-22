@@ -59,7 +59,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
             texture,
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-            face->glyph->advance.x
+            (GLuint) face->glyph->advance.x
         };
         Characters.insert(std::pair<GLchar, Character>(c, character));
     }
@@ -68,8 +68,8 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-        // Configure VAO/VBO for texture quads
-    glGenVertexArrays(1, &VAO);
+    //     // Configure VAO/VBO for texture quads
+     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);

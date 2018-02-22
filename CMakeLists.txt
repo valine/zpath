@@ -53,6 +53,8 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 #   endif()
 # endif()
 
+
+
 if (WIN32)
 
   include_directories("C:/glew/include")
@@ -71,22 +73,30 @@ else (WIN32)
   find_package (glm REQUIRED)
   link_libraries(zpath ${GLM_LIBRARY})
 
+
   # glfw
-find_package(glfw3 3.2 REQUIRED)
-include_directories(${GLFW_INCLUDE_DIRS})
+#find_package(glfw 3.2 REQUIRED)
+#include_directories(${GLFW_INCLUDE_DIRS})
 endif (WIN32)
 
 if (APPLE)
+  find_package(glfw3 3.2 REQUIRED)
   include_directories(/usr/local/include)
   find_library(COCOA_LIBRARY Cocoa REQUIRED)
   find_library(IOKIT_LIBRARY IOKit REQUIRED)
   find_library(COREVID_LIBRARY CoreVideo REQUIRED)
+  find_library(fr_coretext CoreText)
+  find_library(fr_corefoundation CoreFoundation)
+  find_library(fr_coregraphics CoreGraphics)
 
   target_link_libraries (zpath
-          glfw3
+          glfw ${GLFW_LIBRARIES}
           ${OPENGL_LIBRARIES}
           ${GLEW_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+          ${fr_coretext}
+          ${fr_corefoundation}
+          ${fr_coregraphics}
           ${FREETYPE_LIBRARIES})
 
 endif (APPLE)
@@ -102,26 +112,26 @@ if (WIN32)
     ${FREETYPE_LIBRARIES})
 endif (WIN32)
 
-if (UNIX)
+# if (UNIX)
 
-  find_package(X11 REQUIRED)
+#   find_package(X11 REQUIRED)
 
-  message(STATUS "X11_FOUND = ${X11_FOUND}")
-  message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
-  message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
+#   message(STATUS "X11_FOUND = ${X11_FOUND}")
+#   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
+#   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 
-  include_directories(${X11_INCLUDE_DIR})
+#   include_directories(${X11_INCLUDE_DIR})
 
-  target_link_libraries (zpath
-          ${OPENGL_LIBRARIES}
-          ${GLEW_LIBRARY}
-          glfw3
-          ${X11_LIBRARIES}
-          ${CMAKE_THREAD_LIBS_INIT}
-          ${CMAKE_DL_LIBS}
-          ${FREETYPE_LIBRARIES})
+#   target_link_libraries (zpath
+#           ${OPENGL_LIBRARIES}
+#           ${GLEW_LIBRARY}
+#           glfw3
+#           ${X11_LIBRARIES}
+#           ${CMAKE_THREAD_LIBS_INIT}
+#           ${CMAKE_DL_LIBS}
+#           ${FREETYPE_LIBRARIES})
 
-endif (UNIX)
+# endif (UNIX)
 
 ###############################################################################
 ## testing ####################################################################

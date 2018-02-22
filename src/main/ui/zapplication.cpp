@@ -3,6 +3,8 @@
 #include <unistd.h>
 
 static void error_callback(int error, const char* description) {
+    cout<<description;
+    cout<<"hello";
     fprintf(stderr, "Error: %s\n", description);
 }
 
@@ -96,6 +98,7 @@ ZApplication::ZApplication(std::string resourcePath) {
 
     glfwMakeContextCurrent(window);
     
+    glewExperimental = GL_TRUE; 
     GLenum err = glewInit();
 
     if (err != GLEW_OK) {
