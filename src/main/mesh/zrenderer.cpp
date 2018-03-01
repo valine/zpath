@@ -27,6 +27,7 @@ void ZRenderer::draw() {
 
 		vector<ZObject*> objects = mScene->getObjects();
 		for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+			ZObject *object = (*it);
 	    	ZMesh *mesh = (*it)->getMesh();
 
 	    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
@@ -42,9 +43,11 @@ void ZRenderer::draw() {
 			glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
 			                          sizeof(float) * 3, (void*) 0);
 
+
+			vec3 color = object->getColor();
 			glUniform4f(mColorLocation,
-			    1, 0, 
-			    0, 1);
+			    color.r, color.g, 
+			    color.b, 1);
 
 			vec3 cameraPos = mCamera->getPosition();
 			glUniform3f(mCameraPositionLocation, cameraPos.x, cameraPos.y, cameraPos.z);

@@ -1,7 +1,7 @@
 varying vec3 vPosition;
 varying vec3 vNormal;
 
-//uniform vec4 uColor;
+uniform vec4 uColor;
 uniform vec3 uCameraPosition;
 
 vec3 pointLightPositions[] = {
@@ -13,7 +13,6 @@ vec3 pointLightPositions[] = {
 
 
 void main() {
-	vec4 uColor = vec4(1.0, 0.9, 0.9, 1.0);
 
 	
 	vec3 result = vec3(0.0, 0.0, 0.0);
