@@ -18,9 +18,14 @@ public:
 	vector<ZObject*> getObjects();
 
 	ZCamera* getCamera();
+
+	void setExposure(float exposure);
+	float getExposure();
 private:
 	vector<ZObject*> mObjects;
 	ZCamera *mCamera;
+
+	float mExposure = 1.0;
 };
 
 #endif

@@ -85,6 +85,10 @@ void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);
 
 }
+
+ZScene* ZTiledView::getScene() {
+	return mScene;
+}
 	
 void ZTiledView::onCursorPosChange(double x, double y)  {
 	ZView::onCursorPosChange(x, y);

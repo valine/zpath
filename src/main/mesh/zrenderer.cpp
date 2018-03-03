@@ -55,7 +55,7 @@ void ZRenderer::draw() {
 
 		float width = mParentView->getWidth();
 		float height =  mParentView->getHeight();
-		
+
 	   	glBindTexture(GL_TEXTURE_2D, mColorBuffer);
 	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 	    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
@@ -125,7 +125,7 @@ void ZRenderer::draw() {
          glBindTexture(GL_TEXTURE_2D, mColorBuffer);
 
          glUniform1i(glGetUniformLocation(mHDRShader->mID, "hdr"), true); 
-         glUniform1f(glGetUniformLocation(mHDRShader->mID, "exposure"), 1.5); 
+         glUniform1f(glGetUniformLocation(mHDRShader->mID, "exposure"), mScene->getExposure()); 
 
          renderQuad();
 

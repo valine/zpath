@@ -1,3 +1,6 @@
+#ifndef ZBUTTON_H
+#define ZBUTTON_H
+
 #include "zview.h"
 
 #include <iostream>
@@ -9,7 +12,8 @@
 #include "zonclicklistener.h"
 
 using namespace std;
-  
+
+class ZOnClickListener;
 
 class ZButton : public ZView {
 	
@@ -32,3 +36,5 @@ int debug;
 
 
 };
+
+#endif

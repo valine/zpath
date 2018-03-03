@@ -1,17 +1,25 @@
 
 #include "zviewcontroller.h"
 
-void ZViewController::onClick() {
+void ZViewController::onClick(ZButton* sender) {
 
-    if (mIsQuadView) {
-        mIsQuadView = false;
-        mTileView->setTileCount(1,1);
-    } else {
-        mIsQuadView = true;
-        mTileView->setTileCount(3,2);
+    if (sender == mGridViewButton) {
+        if (mIsQuadView) {
+            mIsQuadView = false;
+            mTileView->setTileCount(1,1);
+        } else {
+            mIsQuadView = true;
+            mTileView->setTileCount(3,2);
+        }
+    } else if (sender == mIncrementButton) {
+        ZScene* scene = mTileView->getScene();
+        float currentExposure = scene->getExposure();
+        scene->setExposure(currentExposure + 0.1f);
+    } else if (sender == mDecrementButton) {
+        ZScene* scene = mTileView->getScene();
+        float currentExposure = scene->getExposure();
+        scene->setExposure(currentExposure - 0.1f);
     }
-
-    cout<<"buttonWorking"<<endl;
 }
 
 ZViewController::ZViewController(string resourcePath) {
@@ -48,27 +56,29 @@ ZViewController::ZViewController(string resourcePath) {
     label->setTextColor(vec3(0.1,0.1,0.1));
     propertiesPanel->addSubView(label);
 
-    ZButton* button = new ZButton(200, 40, resourcePath);
-    button->setOffset(0,50);
-    button->setMargin(10,10,10,10);
-    button->setBackgroundColor(highlightColor);
-    button->setText("Toggle Grid View");
-    button->setOnClickListener(this);
-    propertiesPanel->addSubView(button);
+    mGridViewButton = new ZButton(200, 40, resourcePath);
+    mGridViewButton->setOffset(0,50);
+    mGridViewButton->setMargin(10,10,10,10);
+    mGridViewButton->setBackgroundColor(highlightColor);
+    mGridViewButton->setText("Toggle Grid View");
+    mGridViewButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mGridViewButton);
 
-    ZButton* button2 = new ZButton(40, 40, resourcePath);
-    button2->setOffset(0,100);
-    button2->setMargin(10,10,10,10);
-    button2->setBackgroundColor(highlightColor);
-    button2->setText("+");
-    propertiesPanel->addSubView(button2);
+    mIncrementButton = new ZButton(40, 40, resourcePath);
+    mIncrementButton->setOffset(0,100);
+    mIncrementButton->setMargin(10,10,10,10);
+    mIncrementButton->setBackgroundColor(highlightColor);
+    mIncrementButton->setText("+");
+    mIncrementButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mIncrementButton);
 
-    ZButton* button3 = new ZButton(40, 40, resourcePath);
-    button3->setOffset(50,100);
-    button3->setMargin(10,10,10,10);
-    button3->setBackgroundColor(highlightColor);
-    button3->setText("-");
-    propertiesPanel->addSubView(button3);
+    mDecrementButton = new ZButton(40, 40, resourcePath);
+    mDecrementButton->setOffset(50,100);
+    mDecrementButton->setMargin(10,10,10,10);
+    mDecrementButton->setBackgroundColor(highlightColor);
+    mDecrementButton->setText("-");
+    mDecrementButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mDecrementButton);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
@@ -90,7 +100,6 @@ ZViewController::ZViewController(string resourcePath) {
     mTileView = new ZTiledView(10000, 10000, 3, 2, resourcePath);
     mTileView->setOffset(propertiesPanel->getWidth(), 22);
     mTileView->setGravity(ZView::topRight);
-    
     mRootView->addSubView(mTileView);
 }
 

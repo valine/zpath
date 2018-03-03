@@ -15,3 +15,11 @@ vector<ZObject*> ZScene::getObjects() {
 ZCamera* ZScene::getCamera() {
 	return mCamera;
 }
+
+void ZScene::setExposure(float exposure) {
+	mExposure = exposure;
+}
+
+float ZScene::getExposure() {
+	return mExposure;
+}

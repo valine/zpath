@@ -4,6 +4,6 @@ ZOnClickListener::ZOnClickListener() {
 	
 }
 
-void ZOnClickListener::onClick() {
+void ZOnClickListener::onClick(ZButton* sender) {
 
 }
