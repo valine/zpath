@@ -53,10 +53,22 @@ void ZRenderer::init() {
 void ZRenderer::draw() {
 	if (mScene != nullptr) {
 
+		float width = mParentView->getWidth();
+		float height =  mParentView->getHeight();
+		
+	   	glBindTexture(GL_TEXTURE_2D, mColorBuffer);
+	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+	    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
+	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+
+
 		// Render to 16 bit frame buffer
 		glBindFramebuffer(GL_FRAMEBUFFER, mHdrFBO);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f );
+ 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+ 		glViewport(0,0, width, height);
 		mShader->use();
 		glEnable(GL_DEPTH_TEST);
 
@@ -103,11 +115,17 @@ void ZRenderer::draw() {
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
          mHDRShader->use();
+
+
+		int yv = mParentView->getWindowHeight() - mParentView->getBottom();
+		glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+
+
          glActiveTexture(GL_TEXTURE0);
          glBindTexture(GL_TEXTURE_2D, mColorBuffer);
 
          glUniform1i(glGetUniformLocation(mHDRShader->mID, "hdr"), true); 
-         glUniform1i(glGetUniformLocation(mHDRShader->mID, "exposure"), 1.0); 
+         glUniform1f(glGetUniformLocation(mHDRShader->mID, "exposure"), 1.5); 
 
          renderQuad();
 

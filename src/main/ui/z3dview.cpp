@@ -84,6 +84,7 @@ void Z3DView::draw() {
 
     mRenderer->draw();
 
+	
     //glDepthMask(true);
 
     //glEnable(GL_DEPTH_TEST);
