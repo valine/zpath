@@ -43,7 +43,7 @@ public:
 	void onScrollChange(double x, double y);
 	void draw();
 
-	void onClick();
+	void onClick(ZButton* sender);
 private:
 	ZView *mRootView = nullptr;
 	int mParentWidth = 0;
@@ -53,6 +53,10 @@ private:
 	ZShader *mTextShader = nullptr;
 
 	ZTiledView *mTileView = nullptr;
+
+	ZButton *mGridViewButton;
+	ZButton *mIncrementButton;
+	ZButton *mDecrementButton;
 
 	bool mIsQuadView = true;
 

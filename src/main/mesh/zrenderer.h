@@ -28,11 +28,15 @@ public:
 	void setScene(ZScene *scene);
 	void draw();
 	void setParentView(Z3DView *view);	
+	void init();
+
 	ZCamera* getCamera();
 
 private:
 	ZScene *mScene = nullptr;
 	ZShader *mShader;
+
+	ZShader *mHDRShader = nullptr;
 
 	Z3DView *mParentView = nullptr;
 
@@ -46,6 +50,15 @@ private:
 	int mModelMatrixLocation;
 
 	ZCamera* mCamera;
+
+	unsigned int mHdrFBO;
+	unsigned int mColorBuffer;
+	unsigned int mRenderBuffer;
+
+	unsigned int quadVAO = 0;
+	unsigned int quadVBO;
+
+	void renderQuad();
 };
 
 #endif

@@ -38,7 +38,7 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 		setBackgroundColor(color);
 
 		if (mListener != nullptr) {
-			mListener->onClick();
+			mListener->onClick(this);
 		}
 	}
 }

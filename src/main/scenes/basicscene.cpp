@@ -11,7 +11,7 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2");
 	addObject(dbs2);
-	dbs2->setColor(vec3(0.5, 0.7, 1.0));
+	dbs2->setColor(vec3(0.058417, 0.326373, 1.000000));
 
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs");
 	addObject(dbs);

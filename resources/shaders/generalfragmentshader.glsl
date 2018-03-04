@@ -17,7 +17,8 @@ void main() {
 	
 	vec3 result = vec3(0.0, 0.0, 0.0);
 	// Ambitent light
-	vec3 uAmbitentLightColor = vec3(0.031373, 0.156863, 0.278431);
+
+	vec3 uAmbitentLightColor = vec3(0.002428, 0.021219, 0.063010);
 	float ambientStrength = 0.5;
     vec3 ambient = vec3(ambientStrength) * uAmbitentLightColor;
 
@@ -35,11 +36,11 @@ void main() {
 		vec3 diffuse = diff * uLightColor * lightBrightness;
 
 		// spectular light 
-		float specularStrength = 1.0;
+		float specularStrength = 2.0;
 		vec3 viewDir = normalize(uCameraPosition - vPosition);
 		vec3 reflectDir = reflect(-lightDir, norm);  
 		
-		float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64.0);
+		float spec = pow(max(dot(viewDir, reflectDir), 0.0), 128.0);
 		vec3 specular = specularStrength * spec * uLightColor  * lightBrightness;
 
 		result += diffuse;
@@ -55,7 +56,6 @@ void main() {
 
     gl_FragColor = vec4(result, 1.0);
 }
-
 
 
 
