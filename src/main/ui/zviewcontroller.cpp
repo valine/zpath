@@ -64,8 +64,14 @@ ZViewController::ZViewController(string resourcePath) {
     mGridViewButton->setOnClickListener(this);
     propertiesPanel->addSubView(mGridViewButton);
 
+    ZLabel* exposureLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", resourcePath);
+    exposureLabel->setOffset(10,120);
+    exposureLabel->setText("Exposure");
+    exposureLabel->setTextColor(vec3(0.1,0.1,0.1));
+    propertiesPanel->addSubView(exposureLabel);
+
     mIncrementButton = new ZButton(40, 40, resourcePath);
-    mIncrementButton->setOffset(0,100);
+    mIncrementButton->setOffset(0,150);
     mIncrementButton->setMargin(10,10,10,10);
     mIncrementButton->setBackgroundColor(highlightColor);
     mIncrementButton->setText("+");
@@ -73,7 +79,7 @@ ZViewController::ZViewController(string resourcePath) {
     propertiesPanel->addSubView(mIncrementButton);
 
     mDecrementButton = new ZButton(40, 40, resourcePath);
-    mDecrementButton->setOffset(50,100);
+    mDecrementButton->setOffset(50,150);
     mDecrementButton->setMargin(10,10,10,10);
     mDecrementButton->setBackgroundColor(highlightColor);
     mDecrementButton->setText("-");
