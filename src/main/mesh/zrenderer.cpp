@@ -91,7 +91,7 @@ void ZRenderer::draw() {
 			                          sizeof(float) * 3, (void*) 0);
 
 
-			vec3 color = object->getColor();
+			vec3 color = object->getMaterial()->getColor();
 			glUniform4f(mColorLocation,
 			    color.r, color.g, 
 			    color.b, 1);

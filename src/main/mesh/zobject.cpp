@@ -3,21 +3,23 @@
 #include "zobject.h"
 
 ZObject::ZObject() {
-	mColor = vec3(1.0,1.0,0.0);
+	mMaterial = new ZMaterial(vec3(0.8, 0.8, 0.8));
 }
 
 void ZObject::setMesh(ZMesh* mesh) {
 	mMesh = mesh;
+	mMaterial = new ZMaterial(vec3(0.8, 0.8, 0.8));
 }
 
 ZMesh* ZObject::getMesh() {
 	return mMesh;
 }
 
-void ZObject::setColor(vec3 color) {
-	mColor = color;
+void ZObject::setMaterial(ZMaterial* material) {
+	mMaterial = material;
 }
 
-vec3 ZObject::getColor() {
-	return mColor;
+ZMaterial* ZObject::getMaterial() {
+	return mMaterial;
 }
+	
