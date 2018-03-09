@@ -10,8 +10,8 @@ uniform vec3 uCameraPosition;
 uniform vec3 uLightPositions[lightCount];
 uniform vec3 uLightColors[lightCount];
 
-float uMetallic = 0.0;
-float uRoughness = 0.1;
+uniform float uMetallic;
+uniform float uRoughness;
 
 float ao = 1;
 

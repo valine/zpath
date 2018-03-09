@@ -90,6 +90,12 @@ void ZRenderer::draw() {
 			ZObject *object = (*it);
 	    	ZMesh *mesh = (*it)->getMesh();
 
+	    	ZMaterial* material = object->getMaterial();
+
+
+	  		glUniform1f(glGetUniformLocation(mShader->mID, "uMetallic"), material->getMetallic());
+	  		glUniform1f(glGetUniformLocation(mShader->mID, "uRoughness"), material->getRoughness());
+
 	    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
 
@@ -104,7 +110,7 @@ void ZRenderer::draw() {
 			                          sizeof(float) * 3, (void*) 0);
 
 
-			vec3 color = object->getMaterial()->getColor();
+			vec3 color = material->getColor();
 			glUniform4f(mColorLocation,
 			    color.r, color.g, 
 			    color.b, 1);
