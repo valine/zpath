@@ -6,6 +6,7 @@
 #include "ui/zshader.h"
 #include "ui/z3dview.h"
 #include "zcamera.h"
+#include "zpointlight.h"
 #include <iostream>
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -59,6 +60,8 @@ private:
 	unsigned int quadVBO;
 
 	void renderQuad();
+
+	int mMaxLightCount = 4;
 };
 
 #endif

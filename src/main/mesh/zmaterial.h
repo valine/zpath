@@ -14,11 +14,22 @@ class ZMaterial {
 
 public:
 	ZMaterial(vec3 color);
-	void setColor(vec3 color);
+
 	vec3 getColor();
+	void setColor(vec3 color);
+
+	float getMetallic();
+	void setMetallic(float factor);
+
+	float getRoughness();
+	void setRoughness(float factor);
+	
+
 
 private:
 	vec3 mColor;
+	float mMetallic;
+	float mRoughness;
 };
 
 #endif

@@ -5,8 +5,10 @@
 #include <string> 
 #include "mesh/zobject.h"
 #include "mesh/zmesh.h"
+#include "mesh/zpointlight.h"
 #include "zobjloader.h"
 #include "zcamera.h"
+#include "zpath_constants.h"
 using namespace std;
 
 
@@ -14,8 +16,15 @@ class ZScene {
 	
 public: 
     ZScene(string resourcePath);
-	void addObject(ZObject *object);
+	
+	void addObject(ZObject* object);
 	vector<ZObject*> getObjects();
+
+	void addLight(ZPointLight* light);
+	vector<ZPointLight*> getLights();
+
+	float* getLightPositions();
+	float* getLightColors();
 
 	ZCamera* getCamera();
 
@@ -23,9 +32,19 @@ public:
 	float getExposure();
 private:
 	vector<ZObject*> mObjects;
+	vector<ZPointLight*> mPointLights;
+
+	vector<vec3> mLightPositions;
+	vector<vec3> mLightColors;
+
+	float* mLightFlatPosition;
+	float* mLightFlatColor;
+
 	ZCamera *mCamera;
 
 	float mExposure = 1.0;
+
+	void updateLightFlatArrays();
 };
 
 #endif

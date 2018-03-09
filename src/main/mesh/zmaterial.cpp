@@ -12,3 +12,19 @@ vec3 ZMaterial::getColor() {
 void ZMaterial::setColor(vec3 color) {
 	mColor = color;
 }
+
+float ZMaterial::getMetallic() {
+	return mMetallic;
+}
+
+void ZMaterial::setMetallic(float factor) {
+	mMetallic = factor;
+}
+
+float ZMaterial::getRoughness() {
+	return mRoughness;
+}
+
+void ZMaterial::setRoughness(float factor) {
+	mRoughness = factor;
+}

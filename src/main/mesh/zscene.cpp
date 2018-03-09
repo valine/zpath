@@ -8,8 +8,25 @@ void ZScene::addObject(ZObject* object) {
 	mObjects.push_back(object);
 }
 
+void ZScene::addLight(ZPointLight* light) {
+	mPointLights.push_back(light);
+	updateLightFlatArrays();
+}
+
 vector<ZObject*> ZScene::getObjects() {
 	return mObjects;
+}
+
+vector<ZPointLight*> ZScene::getLights() {
+	return mPointLights;
+}
+
+float* ZScene::getLightPositions() {
+	return mLightFlatPosition;
+}
+
+float* ZScene::getLightColors() {
+	return mLightFlatColor;
 }
 
 ZCamera* ZScene::getCamera() {
@@ -22,4 +39,23 @@ void ZScene::setExposure(float exposure) {
 
 float ZScene::getExposure() {
 	return mExposure;
+}
+
+void ZScene::updateLightFlatArrays() {
+	mLightPositions.clear();
+	mLightColors.clear();
+
+	vector<ZPointLight*> lights = getLights();
+	for (vector<ZPointLight*>::iterator it = mPointLights.begin() ; it != mPointLights.end(); ++it) {
+		int index = mPointLights.begin() - it;
+
+		ZPointLight *light = (*it);
+		mLightPositions.push_back(light->getPosition());
+		mLightColors.push_back(light->getColor());
+	}
+
+
+	mLightFlatColor = static_cast<float*>(glm::value_ptr(mLightColors.front()));
+	mLightFlatPosition = static_cast<float*>(glm::value_ptr(mLightPositions.front()));
+
 }
