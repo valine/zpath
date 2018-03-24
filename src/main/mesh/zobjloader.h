@@ -23,11 +23,9 @@ public:
 	ZObject* loadObject(string fileName);
 	
 private:
-	template<typename Out>
-	void split(const string &s, char delim, Out result);
+	//template<typename Out>
 
-	vector<string> split(const string &s, char delim);
-
+	vector<string> split(string s, string delim);
 };
 
 #endif

@@ -2,7 +2,6 @@
 
 ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
 
-		//cout << vertexPathStr;
 		const char * vertexPath = vertexPathStr.c_str();
 		const char * fragmentPath = fragmentPathStr.c_str();
 
@@ -15,8 +14,6 @@ ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
 		stringstream fBuffer;
 		fBuffer << fT.rdbuf();
 		string fragmentCodeStr = fBuffer.str();
-
-		//cout << vertexCodeStr << "code";
 
 		const char* vertexCode = vertexCodeStr.c_str();
         const char * fragmentCode = fragmentCodeStr.c_str();
@@ -47,6 +44,52 @@ ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
 void ZShader::use() {
 
 	glUseProgram(mID);
+}
+
+void ZShader::setBool(const std::string &name, bool value) const {         
+        glUniform1i(glGetUniformLocation(mID, name.c_str()), (int)value); 
+}
+
+void ZShader::setInt(const std::string &name, int value) const { 
+    glUniform1i(glGetUniformLocation(mID, name.c_str()), value); 
+}
+
+void ZShader::setFloat(const std::string &name, float value) const { 
+    glUniform1f(glGetUniformLocation(mID, name.c_str()), value); 
+}
+
+void ZShader::setVec2(const std::string &name, const vec2 &value) const { 
+    glUniform2fv(glGetUniformLocation(mID, name.c_str()), 1, &value[0]); 
+}
+void ZShader::setVec2(const std::string &name, float x, float y) const { 
+    glUniform2f(glGetUniformLocation(mID, name.c_str()), x, y); 
+}
+
+void ZShader::setVec3(const std::string &name, const vec3 &value) const { 
+    glUniform3fv(glGetUniformLocation(mID, name.c_str()), 1, &value[0]); 
+}
+void ZShader::setVec3(const std::string &name, float x, float y, float z) const { 
+    glUniform3f(glGetUniformLocation(mID, name.c_str()), x, y, z); 
+}
+
+void ZShader::setVec4(const std::string &name, const vec4 &value) const { 
+    glUniform4fv(glGetUniformLocation(mID, name.c_str()), 1, &value[0]); 
+}
+
+void ZShader::setVec4(const std::string &name, float x, float y, float z, float w)  { 
+    glUniform4f(glGetUniformLocation(mID, name.c_str()), x, y, z, w); 
+}
+
+void ZShader::setMat2(const std::string &name, const mat2 &mat) const {
+    glUniformMatrix2fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+
+void ZShader::setMat3(const std::string &name, const mat3 &mat) const {
+    glUniformMatrix3fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+
+void ZShader::setMat4(const std::string &name, const mat4 &mat) const {
+    glUniformMatrix4fv(glGetUniformLocation(mID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
 void ZShader::checkCompileErrors(unsigned int shader, string type) {

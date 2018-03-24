@@ -10,10 +10,9 @@ void main()
 {             
     const float gamma = 2.2;
     vec4 hdrColor = texture(hdrBuffer, TexCoords);
-    if(hdr)
-    {
+    if(hdr){
         // exposure
-       // vec4 result = vec4(1.0) - exp(-hdrColor * exposure);
+        // vec4 result = vec4(1.0) - exp(-hdrColor * exposure);
         // also gamma correct while we're at it       
       
         hdrColor *= exposure;

@@ -72,15 +72,6 @@ void ZRenderer::draw() {
 		glEnable(GL_DEPTH_TEST);
 
 		vector<ZPointLight*> lights = mScene->getLights();
-		// for (vector<ZPointLight*>::iterator it = lights.begin() ; it != lights.end(); ++it) {
-		// 	int index = lights.begin() - it;
-
-		// 	ZPointLight *light = (*it);
-		// 	cout<<light->getColor().r<<endl;
-		// 	glUniform3fv(glGetUniformLocation(mShader->mID, "uLightPositions"), 1, glm::value_ptr(light->getPosition()));
-		// 	glUniform3fv(glGetUniformLocation(mShader->mID, "uLightColors"), 1, glm::value_ptr(light->getColor()));
-		// }
-
 
 		glUniform3fv(glGetUniformLocation(mShader->mID, "uLightPositions"), lights.size(), mScene->getLightPositions());
 		glUniform3fv(glGetUniformLocation(mShader->mID, "uLightColors"), lights.size(), mScene->getLightColors());

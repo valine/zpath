@@ -101,8 +101,6 @@ ZViewController::ZViewController(string resourcePath) {
          navBar->addSubView(menuItem);
     } 
 
-    int viewportWidth = mRootView->getWidth() - propertiesPanel->getWidth();
-    int viewportHeight = 1000;
     mTileView = new ZTiledView(10000, 10000, 2, 1, resourcePath);
     mTileView->setOffset(propertiesPanel->getWidth(), 22);
     mTileView->setGravity(ZView::topRight);
