@@ -212,8 +212,6 @@ ZViewController::ZViewController(string resourcePath) {
     // mDecrementButton->setOnClickListener(this);
     // propertiesPanel->addSubView(mDecrementButton);
 
-
-
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
     navBar->setGravity(ZView::topRight);

@@ -16,10 +16,7 @@
 
 using namespace glm;
 
-using std::string;
-using std::ifstream;
-using std::cout;
-using std::stringstream;
+using namespace std;
 
 class ZShader {
 
