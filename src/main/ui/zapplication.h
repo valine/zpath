@@ -14,7 +14,7 @@ using std::string;
 class ZApplication {
 	
 public: 
-	ZApplication(string resourcePath);
+	ZApplication(ZViewController* viewcontroller);
 	void onWindowResize(int width, int height);
 	void onWindowMove(GLFWwindow *window);
 	void onKeyPress(int key, int scancode, int action, int mods);

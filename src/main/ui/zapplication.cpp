@@ -34,7 +34,7 @@ void ZApplication::onScrollEvent(GLFWwindow* window, double xoffset, double yoff
     viewController->onScrollChange(xoffset, yoffset);
 }
 
-ZApplication::ZApplication(std::string resourcePath) {
+ZApplication::ZApplication(ZViewController* controller) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
 
@@ -113,9 +113,10 @@ ZApplication::ZApplication(std::string resourcePath) {
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    
-    viewController = new ZViewController(resourcePath);
 
+    viewController = controller;
+
+    viewController->onCreate();
     while (!glfwWindowShouldClose(window)) {
     
         glfwPollEvents();

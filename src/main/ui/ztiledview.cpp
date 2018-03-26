@@ -2,9 +2,9 @@
 #include "ztiledview.h"
 #include <iostream>
 
-ZTiledView::ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath) 
+ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
-   	mScene = new BasicScene(resourcePath);
+   	mScene = scene;
    	mResourcePath = resourcePath;
 
 	setTileCount(tilesX, tilesY);
@@ -68,22 +68,15 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 
 void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
-
-	// if (action == GLFW_PRESS) {
-	// 	float color[4] = {0.1,0.1,0.1,1.0};
-	// 	setBackgroundColor(color);
-	// 	mInitialTileWeightX = mTileWeightX;
-	// }
-
-	// if (action == GLFW_RELEASE) {
-	// 	float color[4] = {0,0,0,0};
-	// 	setBackgroundColor(color);
-	// }
 }
 
 void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);
 
+}
+
+void ZTiledView::setScene(ZScene* scene) {
+	mScene = scene;
 }
 
 ZScene* ZTiledView::getScene() {

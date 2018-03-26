@@ -1,3 +1,6 @@
+#ifndef ZVIEWCONTROLLER_H
+#define ZVIEWCONTROLLER_H
+
 
 #include <vector>
 #include <string>
@@ -34,16 +37,17 @@ class ZViewController : public ZOnClickListener {
 public:
 	ZViewController(string resourcePath);
 
-	ZView* getRootView();
+	virtual ZView* getRootView();
 
-	void onWindowChange(int width, int height);
-	void onKeyPress(int key, int scancode, int action, int mods);
-	void onMouseEvent(int button, int action, int mods, int x, int y);
-	void onCursorPosChange(double x, double y);
-	void onScrollChange(double x, double y);
-	void draw();
-
-	void onClick(ZButton* sender);
+	virtual void onCreate();
+	virtual void onWindowChange(int width, int height);
+	virtual void onKeyPress(int key, int scancode, int action, int mods);
+	virtual void onMouseEvent(int button, int action, int mods, int x, int y);
+	virtual void onCursorPosChange(double x, double y);
+	virtual void onScrollChange(double x, double y);
+	virtual void draw();
+	virtual void onClick(ZButton* sender);
+	string getResourcePath();
 private:
 	ZView *mRootView = nullptr;
 	int mParentWidth = 0;
@@ -52,21 +56,7 @@ private:
 	ZShader *mUIShader = nullptr;
 	ZShader *mTextShader = nullptr;
 
-	ZTiledView *mTileView = nullptr;
-
-	ZButton *mGridViewButton;
-	ZButton *mIncrementButton;
-	ZButton *mDecrementButton;
-	ZLabel *mExposureLabel;
-
-	ZButton *mRoughnessIncrementButton;
-	ZButton *mRoughnessDecrementButton;
-	ZLabel *mRoughnessLabel;
-
-	ZButton *mMetalIncrementButton;
-	ZButton *mMetalDecrementButton;
-	ZLabel *mMetalLabel;
-
-	bool mIsQuadView = true;
-
+	string mResourcePath;
 };
+
+#endif

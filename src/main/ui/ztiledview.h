@@ -12,7 +12,7 @@ class ZTiledView : public ZView {
 
 public:
 
-	ZTiledView(float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath);
+	ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath);
 	void setTileCount(int x, int y);
 	void computeBounds(int windowHeight, int maxWidth);
 	void setTileMargin(int margin);
@@ -20,6 +20,7 @@ public:
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
+	void setScene(ZScene* scene);
 
 	ZScene* getScene();
 private:
@@ -31,7 +32,7 @@ private:
 	int mInitialTileWeightX = 0;
 	int mTileWeightX = 0;
 
-	BasicScene* mScene;
+	ZScene* mScene;
 	string mResourcePath;
 	vector<ZView*> mTiles;
 };

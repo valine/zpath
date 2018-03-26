@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-using std::cout;
-using std::cin;
-using std::endl;
+
+using namespace std;
 
 #include <fstream>
 #include <string>
@@ -16,6 +15,8 @@ using std::endl;
 #include <unistd.h>
 
 #include <ui/zapplication.h>
+#include <ui/zviewcontroller.h>
+#include <zpath/zpathviewcontroller.h>
 
 void handler(int sig) {
   void *array[10];
@@ -51,5 +52,6 @@ int main(int argc, char* argv[]) {
     std::cout << "Name: " << name << std::endl;
 
 
-    ZApplication application(path);
+    ZPathViewController* viewController = new ZPathViewController(path);
+    ZApplication application(viewController);
 }

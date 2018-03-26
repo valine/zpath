@@ -21,6 +21,8 @@ ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
         GLuint vertex, fragment;
 
         vertex = glCreateShader(GL_VERTEX_SHADER);
+
+        
         glShaderSource(vertex, 1, &vertexCode, NULL);
         glCompileShader(vertex);
         checkCompileErrors(vertex, "VERTEX");
