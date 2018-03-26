@@ -57,9 +57,15 @@ private:
 	ZButton *mGridViewButton;
 	ZButton *mIncrementButton;
 	ZButton *mDecrementButton;
+	ZLabel *mExposureLabel;
 
 	ZButton *mRoughnessIncrementButton;
 	ZButton *mRoughnessDecrementButton;
+	ZLabel *mRoughnessLabel;
+
+	ZButton *mMetalIncrementButton;
+	ZButton *mMetalDecrementButton;
+	ZLabel *mMetalLabel;
 
 	bool mIsQuadView = true;
 
