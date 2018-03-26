@@ -47,7 +47,7 @@ void ZShader::use() {
 }
 
 void ZShader::setBool(const std::string &name, bool value) const {         
-        glUniform1i(glGetUniformLocation(mID, name.c_str()), (int)value); 
+    glUniform1i(glGetUniformLocation(mID, name.c_str()), (int)value); 
 }
 
 void ZShader::setInt(const std::string &name, int value) const { 
@@ -65,9 +65,14 @@ void ZShader::setVec2(const std::string &name, float x, float y) const {
     glUniform2f(glGetUniformLocation(mID, name.c_str()), x, y); 
 }
 
-void ZShader::setVec3(const std::string &name, const vec3 &value) const { 
-    glUniform3fv(glGetUniformLocation(mID, name.c_str()), 1, &value[0]); 
+void ZShader::setVec3(const std::string &name, vec3 value) const { 
+    glUniform3fv(glGetUniformLocation(mID, name.c_str()), 1,  &value[0]); 
 }
+
+void ZShader::setVec3(const std::string &name, uint size, float* value) const { 
+    glUniform3fv(glGetUniformLocation(mID, name.c_str()), size, value); 
+}
+
 void ZShader::setVec3(const std::string &name, float x, float y, float z) const { 
     glUniform3f(glGetUniformLocation(mID, name.c_str()), x, y, z); 
 }

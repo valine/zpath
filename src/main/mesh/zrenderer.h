@@ -41,14 +41,8 @@ private:
 
 	Z3DView *mParentView = nullptr;
 
-	int mColorLocation;
 	int mPositionLocation;
 	int mNormalLocation;
-	int mCameraPositionLocation;
-
-	int mViewMatrixLocation;
-	int mProjectionMatrixLocation;
-	int mModelMatrixLocation;
 
 	ZCamera* mCamera;
 

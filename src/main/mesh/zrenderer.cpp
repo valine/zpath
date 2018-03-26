@@ -12,11 +12,6 @@ ZRenderer::ZRenderer(string resourcePath) {
 
 	mPositionLocation = glGetAttribLocation(mShader->mID, "aPos");
 	mNormalLocation = glGetAttribLocation(mShader->mID, "aNormal");
-	mColorLocation = glGetUniformLocation(mShader->mID, "uColor");
-	mCameraPositionLocation = glGetUniformLocation(mShader->mID, "uCameraPosition");
-
-	mViewMatrixLocation = glGetUniformLocation(mShader->mID, "uViewMatrix");
-	mProjectionMatrixLocation = glGetUniformLocation(mShader->mID, "uProjectionMatrix");
 
 	glDepthFunc(GL_LEQUAL);
 	
@@ -37,7 +32,6 @@ void ZRenderer::init() {
     glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
 
-
     glBindFramebuffer(GL_FRAMEBUFFER, mHdrFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBuffer);
@@ -46,8 +40,7 @@ void ZRenderer::init() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     mHDRShader->use();
-    glUniform1i(glGetUniformLocation(mHDRShader->mID, "hdrBuffer"), 0); 
-
+    mHDRShader->setInt("hdrBuffer", 0);
 }
 
 void ZRenderer::draw() {
@@ -73,19 +66,13 @@ void ZRenderer::draw() {
 
 		vector<ZPointLight*> lights = mScene->getLights();
 
-		glUniform3fv(glGetUniformLocation(mShader->mID, "uLightPositions"), lights.size(), mScene->getLightPositions());
-		glUniform3fv(glGetUniformLocation(mShader->mID, "uLightColors"), lights.size(), mScene->getLightColors());
+		mShader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
+		mShader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 
 		vector<ZObject*> objects = mScene->getObjects();
 		for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
 			ZObject *object = (*it);
 	    	ZMesh *mesh = (*it)->getMesh();
-
-	    	ZMaterial* material = object->getMaterial();
-
-
-	  		glUniform1f(glGetUniformLocation(mShader->mID, "uMetallic"), material->getMetallic());
-	  		glUniform1f(glGetUniformLocation(mShader->mID, "uRoughness"), material->getRoughness());
 
 	    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
@@ -100,14 +87,15 @@ void ZRenderer::draw() {
 			glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
 			                          sizeof(float) * 3, (void*) 0);
 
+			ZMaterial* material = object->getMaterial();
 
-			vec3 color = material->getColor();
-			glUniform4f(mColorLocation,
-			    color.r, color.g, 
-			    color.b, 1);
+	    	vec3 color = material->getColor();
+			mShader->setVec4("uColor", color.r, color.g, color.b, 1);
 
-			vec3 cameraPos = mCamera->getPosition();
-			glUniform3f(mCameraPositionLocation, cameraPos.x, cameraPos.y, cameraPos.z);
+	    	mShader->setFloat("uMetallic", material->getMetallic());
+			mShader->setFloat("uRoughness", material->getRoughness());
+			mShader->setVec3("uCameraPosition", mCamera->getPosition());
+			
 
 			if (mParentView != nullptr) {
 				float width = mParentView->getWidth();
@@ -115,8 +103,8 @@ void ZRenderer::draw() {
 
 				mat4 projectionMatrix = perspective(glm::radians(35.0f), (float) width / (float) height, 0.1f, 100.0f);
 
-				glUniformMatrix4fv(mProjectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-				glUniformMatrix4fv(mViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(mCamera->getViewMatrix()));
+				mShader->setMat4("uProjectionMatrix", projectionMatrix);
+				mShader->setMat4("uViewMatrix", mCamera->getViewMatrix());
 			
 				glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
 			}
@@ -124,21 +112,17 @@ void ZRenderer::draw() {
 
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-         mHDRShader->use();
-
-
+        mHDRShader->use();
 		int yv = mParentView->getWindowHeight() - mParentView->getBottom();
 		glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mColorBuffer);
 
-         glActiveTexture(GL_TEXTURE0);
-         glBindTexture(GL_TEXTURE_2D, mColorBuffer);
-
-         glUniform1i(glGetUniformLocation(mHDRShader->mID, "hdr"), true); 
-         glUniform1f(glGetUniformLocation(mHDRShader->mID, "exposure"), mScene->getExposure()); 
-
-         renderQuad();
-
+        mHDRShader->setBool("hdr", true);
+        mHDRShader->setFloat("exposure", mScene->getExposure());
+    
+        renderQuad();
 
 	    glDisable(GL_DEPTH_TEST);
 	}

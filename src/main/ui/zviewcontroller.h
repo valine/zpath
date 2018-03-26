@@ -58,6 +58,9 @@ private:
 	ZButton *mIncrementButton;
 	ZButton *mDecrementButton;
 
+	ZButton *mRoughnessIncrementButton;
+	ZButton *mRoughnessDecrementButton;
+
 	bool mIsQuadView = true;
 
 };

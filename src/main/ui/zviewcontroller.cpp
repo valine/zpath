@@ -19,6 +19,19 @@ void ZViewController::onClick(ZButton* sender) {
         ZScene* scene = mTileView->getScene();
         float currentExposure = scene->getExposure();
         scene->setExposure(currentExposure - 0.1f);
+    } else if (sender == mRoughnessIncrementButton) {
+        ZScene* scene = mTileView->getScene();
+
+        ZObject* object = scene->getObjects().at(1);
+        ZMaterial* material = object->getMaterial();
+        material->setRoughness(material->getRoughness() + 0.05);
+
+    } else if (sender == mRoughnessDecrementButton) {
+         ZScene* scene = mTileView->getScene();
+
+        ZObject* object = scene->getObjects().at(1);
+        ZMaterial* material = object->getMaterial();
+        material->setRoughness(material->getRoughness() - 0.05);
     }
 }
 
@@ -85,6 +98,47 @@ ZViewController::ZViewController(string resourcePath) {
     mDecrementButton->setText("-");
     mDecrementButton->setOnClickListener(this);
     propertiesPanel->addSubView(mDecrementButton);
+
+    ZLabel* roughnessLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", resourcePath);
+    roughnessLabel->setOffset(10,220);
+    roughnessLabel->setText("Roughness");
+    roughnessLabel->setTextColor(vec3(0.1,0.1,0.1));
+    propertiesPanel->addSubView(roughnessLabel);
+
+    mRoughnessIncrementButton = new ZButton(40, 40, resourcePath);
+    mRoughnessIncrementButton->setOffset(0,250);
+    mRoughnessIncrementButton->setMargin(10,10,10,10);
+    mRoughnessIncrementButton->setBackgroundColor(highlightColor);
+    mRoughnessIncrementButton->setText("+");
+    mRoughnessIncrementButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mRoughnessIncrementButton);
+
+    mRoughnessDecrementButton = new ZButton(40, 40, resourcePath);
+    mRoughnessDecrementButton->setOffset(50,250);
+    mRoughnessDecrementButton->setMargin(10,10,10,10);
+    mRoughnessDecrementButton->setBackgroundColor(highlightColor);
+    mRoughnessDecrementButton->setText("-");
+    mRoughnessDecrementButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mRoughnessDecrementButton);
+
+
+    // mIncrementButton = new ZButton(40, 40, resourcePath);
+    // mIncrementButton->setOffset(0,150);
+    // mIncrementButton->setMargin(10,10,10,10);
+    // mIncrementButton->setBackgroundColor(highlightColor);
+    // mIncrementButton->setText("+");
+    // mIncrementButton->setOnClickListener(this);
+    // propertiesPanel->addSubView(mIncrementButton);
+
+    // mDecrementButton = new ZButton(40, 40, resourcePath);
+    // mDecrementButton->setOffset(50,150);
+    // mDecrementButton->setMargin(10,10,10,10);
+    // mDecrementButton->setBackgroundColor(highlightColor);
+    // mDecrementButton->setText("-");
+    // mDecrementButton->setOnClickListener(this);
+    // propertiesPanel->addSubView(mDecrementButton);
+
+
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
