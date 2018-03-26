@@ -21,6 +21,7 @@ public:
 	void onMouseEvent(GLFWwindow* window, int button, int action, int mods);
 	void onCursorPosChange(double x, double y);
 	void onScrollEvent(GLFWwindow *window, double xoffset, double yoffset);
+	void onFileDrop(GLFWwindow *window, int count, const char** paths);
 
 private:
 	ZViewController *viewController;

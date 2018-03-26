@@ -33,6 +33,10 @@ ZView* ZViewController::getRootView() {
 	return mRootView;
 }
 
+void ZViewController::onFileDrop(int count, const char** paths) {
+
+}
+
 void ZViewController::onWindowChange(int width, int height) {
 
 	mParentWidth = width;

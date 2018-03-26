@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "mesh/zobject.h"
 
 using namespace glm;
 using namespace std;
@@ -16,6 +17,8 @@ public:
  	ZPathViewController(string resources);
  	void onCreate();
  	void onClick(ZButton* sender);
+ 	void addObject(ZObject* object);
+ 	void onFileDrop(int count, const char** paths);
 
 private:
 	bool mIsQuadView = true;
@@ -34,5 +37,7 @@ private:
 	ZButton *mMetalIncrementButton;
 	ZButton *mMetalDecrementButton;
 	ZLabel *mMetalLabel;
+
+	ZScene* mScene;
 
 };

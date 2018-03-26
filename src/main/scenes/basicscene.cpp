@@ -9,7 +9,6 @@ BasicScene::BasicScene(string resourcePath)
 	ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
 	brainMaterial->setRoughness(0.1);
 
-
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
 	addObject(dbs2);
 	dbs2->setMaterial(brainMaterial);
@@ -31,7 +30,7 @@ BasicScene::BasicScene(string resourcePath)
 	leadMaterial->setRoughness(0.3);
 	lead->setMaterial(leadMaterial);
 
-	
+	setExposure(1.5);
 	ZPointLight* light = new ZPointLight(vec3(3.47, 3.31, 3.79), vec3(0,0.9,1));
 	addLight(light);
 

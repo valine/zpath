@@ -47,6 +47,7 @@ public:
 	virtual void onScrollChange(double x, double y);
 	virtual void draw();
 	virtual void onClick(ZButton* sender);
+	virtual void onFileDrop(int count, const char** paths);
 	string getResourcePath();
 private:
 	ZView *mRootView = nullptr;

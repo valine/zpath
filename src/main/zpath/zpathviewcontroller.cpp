@@ -4,11 +4,14 @@ ZPathViewController::ZPathViewController(string resources)
 : ZViewController(resources) {
 }
 
+void ZPathViewController::addObject(ZObject* object) {
+
+}
 
 void ZPathViewController::onCreate() {
 	ZViewController::onCreate();
 
-	BasicScene* scene = new BasicScene(getResourcePath());
+	mScene = new BasicScene(getResourcePath());
 
 	float panelColor[4] = {0.9, 0.9, 0.91, 1.0};
     float backgroundColor[4] = {0.4f, 0.4, 0.4, 1.000};
@@ -78,7 +81,6 @@ void ZPathViewController::onCreate() {
     mRoughnessDecrementButton->setOnClickListener(this);
     propertiesPanel->addSubView(mRoughnessDecrementButton);
 
-
     mMetalLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mMetalLabel->setOffset(10,320);
     mMetalLabel->setText("Metallic 0.00");
@@ -116,10 +118,29 @@ void ZPathViewController::onCreate() {
          navBar->addSubView(menuItem);
     } 
 
-    mTileView = new ZTiledView(scene, 10000, 10000, 2, 1, getResourcePath());
+    mTileView = new ZTiledView(mScene, 10000, 10000, 2, 1, getResourcePath());
     mTileView->setOffset(propertiesPanel->getWidth(), 22);
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
+}
+
+void ZPathViewController::onFileDrop(int count, const char** paths) {
+
+ 	for (int i = 0;  i < count;  i++) {
+
+ 		string path(paths[i]);   
+		
+		ZObjLoader loader = ZObjLoader("");
+        ZObject* object = loader.loadObject(path);
+		mScene->addObject(object);
+
+		ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
+		brainMaterial->setRoughness(0.1);
+
+
+		object->setMaterial(brainMaterial);
+
+    }
 }
 
 void ZPathViewController::onClick(ZButton* sender) {

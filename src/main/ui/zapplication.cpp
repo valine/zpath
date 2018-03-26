@@ -34,6 +34,10 @@ void ZApplication::onScrollEvent(GLFWwindow* window, double xoffset, double yoff
     viewController->onScrollChange(xoffset, yoffset);
 }
 
+void ZApplication::onFileDrop(GLFWwindow* window, int count, const char** paths) {
+    viewController->onFileDrop(count, paths);
+}
+
 ZApplication::ZApplication(ZViewController* controller) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
@@ -89,12 +93,20 @@ ZApplication::ZApplication(ZViewController* controller) {
            glfwSwapBuffers(window);
     });
 
+    glfwSetDropCallback(window,
+    [] (GLFWwindow* window, int count, const char** paths) {
+        auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
+           thiz->onFileDrop(window, count, paths);
+           glfwSwapBuffers(window);
+    });
+
     glfwSetScrollCallback(window,
     [] (GLFWwindow* window, double xoffset, double yoffset) {
         auto thiz = reinterpret_cast<ZApplication*>(glfwGetWindowUserPointer(window));
            thiz->onScrollEvent(window, xoffset, yoffset);
            glfwSwapBuffers(window);
     });
+
 
     glfwMakeContextCurrent(window);
     
