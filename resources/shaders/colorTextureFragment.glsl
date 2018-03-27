@@ -15,6 +15,7 @@ uniform float uMetallic;
 uniform float uRoughness;
 
 uniform sampler2D sColorTexture;
+uniform sampler2D sNormalTexture;
 
 float ao = 1;
 
@@ -65,8 +66,6 @@ void main() {
     vec3 Lo = vec3(0.0);
     vec3 texColor = texture2D(sColorTexture, vTextureCoords);
     for(int i = 0; i < lightCount; i++) {
-
-
 
     	vec3 L = normalize(uLightPositions[i] - vPosition);
     	vec3 H = normalize(V + L);
