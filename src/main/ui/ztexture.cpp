@@ -10,6 +10,9 @@ ZTexture::ZTexture(string path) {
 
 }
 
+uint ZTexture::getID() {
+    return mTextureID;
+}
 
 unsigned int ZTexture::loadTexture(char const * path){
     unsigned int textureID;

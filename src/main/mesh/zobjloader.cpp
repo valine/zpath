@@ -70,9 +70,7 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	}
 
 	for (unsigned i = 0; i < vertexNormalIndices.size(); ++i) {
-
 		int vertex = faceIndices[i];
-
 		vertexNormals.at(vertex * 3 + 0) = tmpNormals.at(vertexNormalIndices[i] * 3 + 0);
 	   	vertexNormals.at(vertex * 3 + 1) = tmpNormals.at(vertexNormalIndices[i] * 3 + 1);
 	   	vertexNormals.at(vertex * 3 + 2) = tmpNormals.at(vertexNormalIndices[i] * 3 + 2);
@@ -81,7 +79,7 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	for (unsigned i = 0; i < texCoordsIndices.size(); ++i) {
 		int vertex = faceIndices[i];
 		textureCoordinates.at(vertex * 2 + 0) = tmpTexCoords.at(texCoordsIndices[i] * 2 + 0);
-	   	textureCoordinates.at(vertex * 2 + 1) = tmpTexCoords.at(texCoordsIndices[i] * 2 + 1);
+	   	textureCoordinates.at(vertex * 2 + 1) = -tmpTexCoords.at(texCoordsIndices[i] * 2 + 1);
 	}
 
 	ZMesh* mesh = new ZMesh();

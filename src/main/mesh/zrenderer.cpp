@@ -82,6 +82,10 @@ void ZRenderer::draw() {
 
 	    	if (material->getColorTexture() != nullptr) {
 	    		shader = mColorTextureShader;
+	    		glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
+
+
 	    	} else {
 	    		shader = mShader;
 	    	}
@@ -96,6 +100,7 @@ void ZRenderer::draw() {
 
 			int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
 			int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
+			int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
 
 			glEnableVertexAttribArray(mPositionLocation);
 			glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
@@ -106,6 +111,12 @@ void ZRenderer::draw() {
 			glEnableVertexAttribArray(mNormalLocation);
 			glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
 			                          sizeof(float) * 3, (void*) 0);
+			
+			glBindBuffer(GL_ARRAY_BUFFER, mesh->getTextureCoordinatesBuffer());
+			glEnableVertexAttribArray(mTextureCoordLocation);
+			glVertexAttribPointer(mTextureCoordLocation, 2, GL_FLOAT, GL_FALSE,
+			                          sizeof(float) * 2, (void*) 0);
+
 
 
 	    	vec3 color = material->getColor();
@@ -127,6 +138,8 @@ void ZRenderer::draw() {
 				glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
 			}
 	    }
+
+	    glBindTexture(GL_TEXTURE_2D, 0);
 
 	    onDrawFinshed();
 

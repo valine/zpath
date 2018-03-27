@@ -26,9 +26,10 @@ class ZTexture {
 public:
 	ZTexture(string path);
 	unsigned int loadTexture(char const * path);
+	uint getID();
 
 private:
-	int mTextureID; 
+	uint mTextureID; 
 };
 
 #endif
