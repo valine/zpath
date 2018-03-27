@@ -14,6 +14,7 @@ uint ZTexture::getID() {
     return mTextureID;
 }
 
+
 unsigned int ZTexture::loadTexture(char const * path){
     unsigned int textureID;
     glGenTextures(1, &textureID);

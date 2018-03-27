@@ -87,7 +87,6 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	mesh->setFaceIndices(faceIndices);
 	mesh->setVertexNormals(vertexNormals);
 	mesh->setTextureCoordinates(textureCoordinates);
-
 	return mesh;
 }
 
