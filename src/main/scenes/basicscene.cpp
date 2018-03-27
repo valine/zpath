@@ -4,7 +4,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZObjLoader loader = ZObjLoader("");
+	ZObjLoader loader = ZObjLoader();
 
 	ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
 	brainMaterial->setRoughness(0.1);

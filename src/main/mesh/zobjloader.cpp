@@ -1,8 +1,6 @@
 #include "zobjloader.h"
 
-ZObjLoader::ZObjLoader(string resourcePath) {
-
-
+ZObjLoader::ZObjLoader() {
 }
 
 ZMesh* ZObjLoader::loadMesh(string fileName) {

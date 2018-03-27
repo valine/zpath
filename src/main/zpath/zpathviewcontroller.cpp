@@ -14,7 +14,6 @@ void ZPathViewController::onCreate() {
 	mScene = new BasicScene(getResourcePath());
 
 	float panelColor[4] = {0.9, 0.9, 0.91, 1.0};
-    float backgroundColor[4] = {0.4f, 0.4, 0.4, 1.000};
     float highlightColor[4] = {0.1, 0.2, 0.9, 1.0};
 
     ZView* propertiesPanel = new ZView(300, ZView::fillParent);
@@ -130,16 +129,13 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
 
  		string path(paths[i]);   
 		
-		ZObjLoader loader = ZObjLoader("");
+		ZObjLoader loader = ZObjLoader();
         ZObject* object = loader.loadObject(path);
 		mScene->addObject(object);
 
 		ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
 		brainMaterial->setRoughness(0.1);
-
-
 		object->setMaterial(brainMaterial);
-
     }
 }
 

@@ -17,7 +17,7 @@ using namespace std;
 class ZObjLoader {
 	
 public:
-	ZObjLoader(string resourcePath);
+	ZObjLoader();
 
 	ZMesh* loadMesh(string fileName);
 	ZObject* loadObject(string fileName);
