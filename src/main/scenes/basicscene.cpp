@@ -4,7 +4,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/noise-normal-map.png");
+	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/sample.png");
 
 	ZObjLoader loader = ZObjLoader();
 
