@@ -4,10 +4,13 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
+	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/sample.png");
+
 	ZObjLoader loader = ZObjLoader();
 
 	ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
 	brainMaterial->setRoughness(0.1);
+	brainMaterial->setColorTexture(testTexture);
 
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
 	addObject(dbs2);
@@ -42,6 +45,4 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZPointLight* light4 = new ZPointLight(vec3(42.0,42.2, 42.6), vec3(0, 10, 20));
 	addLight(light4);
-
 }
-

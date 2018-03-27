@@ -15,9 +15,11 @@ public:
 	void setVertices(vector<float> vertices);
 	void setVertexNormals(vector<float> normals);
 	void setFaceIndices(vector<int> indices);
+	void setTextureCoordinates(vector<float> coords);
 
 	vector<float> getVertices() const; 
 	vector<float> getVertexNormals() const;
+	vector<float> getTextureCoordinates() const;
 	vector<int> getFaceIndices() const; 
 
 	int getFaceIndiceCount();
@@ -25,16 +27,19 @@ public:
 	GLuint getVertexBuffer();
 	GLuint getVertexNormalBuffer();
 	GLuint getFaceIndicesBuffer();
+	GLuint getTextureCoordinatesBuffer();
 
 private:
 
 	vector<float> mVertices;
 	vector<float> mVertexNormals;
 	vector<int> mFaceIndices;
+	vector<float> mTextureCoordinates;
 
 	GLuint mVertexBuffer;
 	GLuint mVertexNormalBuffer;
 	GLuint mFaceIndicesBuffer;
+	GLuint mTextureCoordinatesBuffer;
 };
 
 #endif

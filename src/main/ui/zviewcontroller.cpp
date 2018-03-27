@@ -66,7 +66,6 @@ void ZViewController::onScrollChange(double x, double y) {
 }
 
 void ZViewController::draw() {
-
     mUIShader->use();
     GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
     mat4 matrix;

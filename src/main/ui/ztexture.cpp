@@ -1,5 +1,16 @@
 #include "ztexture.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "ui/stb_image.h"
+
+
+ZTexture::ZTexture(string path) {
+
+    mTextureID = loadTexture(path.c_str());
+
+}
+
+
 unsigned int ZTexture::loadTexture(char const * path){
     unsigned int textureID;
     glGenTextures(1, &textureID);

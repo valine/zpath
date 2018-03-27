@@ -13,8 +13,11 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	vector<float> vertices;
 	vector<int> faceIndices;
 	vector<float> vertexNormals;
+	vector<float> textureCoordinates;
 
 	vector<float> tmpNormals;
+	vector<float> tmpTexCoords;
+	vector<float> texCoordsIndices;
 	vector<float> vertexNormalIndices;
 
 	while (getline(infile, line)) {
@@ -30,17 +33,22 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   		vertexNormals.push_back(stod(tokens.at(1)));
 	   		vertexNormals.push_back(stod(tokens.at(2)));
 	   		vertexNormals.push_back(stod(tokens.at(3)));
+
+	   		textureCoordinates.push_back(stod(tokens.at(1)));
+	   		textureCoordinates.push_back(stod(tokens.at(2)));
 	   	}
 	   	else if (tokens.at(0) == "vn") {
 			tmpNormals.push_back(stod(tokens.at(1)));
 	   		tmpNormals.push_back(stod(tokens.at(2)));
 	   		tmpNormals.push_back(stod(tokens.at(3)));
 	   	}
-
-	   
+	   	else if (tokens.at(0) == "vt") {
+			tmpTexCoords.push_back(stod(tokens.at(1)));
+	   		tmpTexCoords.push_back(stod(tokens.at(2)));
+	   	}
 
 	   	else if (tokens.at(0) == "f") {
-	   		string delim = "//";
+	   		string delim = "/";
 	   		vector<string> indiceTokensA = split(tokens.at(1), delim);
 	   		vector<string> indiceTokensB = split(tokens.at(2), delim);
 	   		vector<string> indiceTokensC = split(tokens.at(3), delim);
@@ -52,6 +60,12 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   		vertexNormalIndices.push_back(stoi(indiceTokensA.at(2)) - 1);
 	   		vertexNormalIndices.push_back(stoi(indiceTokensB.at(2)) - 1);
 	   		vertexNormalIndices.push_back(stoi(indiceTokensC.at(2)) - 1);
+
+	   		if (indiceTokensA.at(1) != "") {
+		   		texCoordsIndices.push_back(stoi(indiceTokensA.at(1)) - 1);
+		   		texCoordsIndices.push_back(stoi(indiceTokensB.at(1)) - 1);
+	   			texCoordsIndices.push_back(stoi(indiceTokensC.at(1)) - 1);
+	   		}
 	   	}
 	}
 
@@ -64,10 +78,17 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   	vertexNormals.at(vertex * 3 + 2) = tmpNormals.at(vertexNormalIndices[i] * 3 + 2);
 	}
 
+	for (unsigned i = 0; i < texCoordsIndices.size(); ++i) {
+		int vertex = faceIndices[i];
+		textureCoordinates.at(vertex * 2 + 0) = tmpTexCoords.at(texCoordsIndices[i] * 2 + 0);
+	   	textureCoordinates.at(vertex * 2 + 1) = tmpTexCoords.at(texCoordsIndices[i] * 2 + 1);
+	}
+
 	ZMesh* mesh = new ZMesh();
 	mesh->setVertices(vertices);
 	mesh->setFaceIndices(faceIndices);
 	mesh->setVertexNormals(vertexNormals);
+	mesh->setTextureCoordinates(textureCoordinates);
 
 	return mesh;
 }

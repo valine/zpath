@@ -1,7 +1,6 @@
 #ifndef ZTEXTURE_H
 #define ZTEXTURE_H
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 #include <string>
@@ -25,10 +24,12 @@ using namespace std;
 class ZTexture {
 
 public:
+	ZTexture(string path);
 	unsigned int loadTexture(char const * path);
 
 private:
-
+	int mTextureID; 
 };
 
 #endif
+

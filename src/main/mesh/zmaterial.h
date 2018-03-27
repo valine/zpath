@@ -2,6 +2,7 @@
 #define ZMATERIAL_H
 #include <vector>
 #include "mesh/zmesh.h"
+#include "ui/ztexture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,6 +18,9 @@ public:
 
 	vec3 getColor();
 	void setColor(vec3 color);
+	
+	ZTexture* getColorTexture();
+	void setColorTexture(ZTexture* texture);
 
 	float getMetallic();
 	void setMetallic(float factor);
@@ -26,10 +30,13 @@ public:
 	
 
 
+
 private:
 	vec3 mColor;
 	float mMetallic = 0;
 	float mRoughness = 0.1;
+
+	ZTexture* mColorTexture = nullptr;
 };
 
 #endif

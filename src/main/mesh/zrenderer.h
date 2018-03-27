@@ -30,19 +30,18 @@ public:
 	void draw();
 	void setParentView(Z3DView *view);	
 	void init();
+	virtual void onDrawFinshed();
 
 	ZCamera* getCamera();
 
 private:
 	ZScene *mScene = nullptr;
 	ZShader *mShader;
+	ZShader *mColorTextureShader;
 
 	ZShader *mHDRShader = nullptr;
 
 	Z3DView *mParentView = nullptr;
-
-	int mPositionLocation;
-	int mNormalLocation;
 
 	ZCamera* mCamera;
 

@@ -3,6 +3,7 @@
 
 #include "mesh/zscene.h"
 #include "mesh/zpointlight.h"
+#include "ui/ztexture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,9 +17,9 @@ class BasicScene : public ZScene {
 public:
 
 	BasicScene(string resourcePath);
+	void draw();
 
 private:
-
 
 };
 

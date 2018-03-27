@@ -2,16 +2,17 @@
 
 ZRenderer::ZRenderer(string resourcePath) {
 
-	string vertexPath = resourcePath + "resources/shaders/generalvertexshader.glsl";
-    string fragmentPath = resourcePath + "resources/shaders/generalfragmentshader.glsl";
+	string vertexPath = resourcePath + "resources/shaders/baseVertex.glsl";
+    string fragmentPath = resourcePath + "resources/shaders/baseFragment.glsl";
     mShader = new ZShader(vertexPath, fragmentPath);
+
+    string colorTextureVertexPath = resourcePath + "resources/shaders/baseVertex.glsl";
+    string colorTextureFragmentPath = resourcePath + "resources/shaders/colorTextureFragment.glsl";
+    mColorTextureShader = new ZShader(colorTextureVertexPath, colorTextureFragmentPath);
 	
 	string fboVertexPath = resourcePath + "resources/shaders/fbovertex.glsl";
     string fboFragmentPath = resourcePath + "resources/shaders/fbofragment.glsl";
     mHDRShader = new ZShader(fboVertexPath, fboFragmentPath);
-
-	mPositionLocation = glGetAttribLocation(mShader->mID, "aPos");
-	mNormalLocation = glGetAttribLocation(mShader->mID, "aNormal");
 
 	glDepthFunc(GL_LEQUAL);
 	
@@ -43,6 +44,12 @@ void ZRenderer::init() {
     mHDRShader->setInt("hdrBuffer", 0);
 }
 
+// Experimental features
+void ZRenderer::onDrawFinshed() {
+	//renderQuad();
+
+}
+
 void ZRenderer::draw() {
 	if (mScene != nullptr) {
 
@@ -61,21 +68,34 @@ void ZRenderer::draw() {
  		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
  		glViewport(0,0, width, height);
-		mShader->use();
 		glEnable(GL_DEPTH_TEST);
 
 		vector<ZPointLight*> lights = mScene->getLights();
-
-		mShader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
-		mShader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 
 		vector<ZObject*> objects = mScene->getObjects();
 		for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
 			ZObject *object = (*it);
 	    	ZMesh *mesh = (*it)->getMesh();
+	    	ZMaterial* material = object->getMaterial();
+
+	    	ZShader* shader;
+
+	    	if (material->getColorTexture() != nullptr) {
+	    		shader = mColorTextureShader;
+	    	} else {
+	    		shader = mShader;
+	    	}
+
+	    	shader->use();
+			
+			shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
+			shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 
 	    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
+
+			int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
+			int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
 
 			glEnableVertexAttribArray(mPositionLocation);
 			glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
@@ -87,28 +107,28 @@ void ZRenderer::draw() {
 			glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
 			                          sizeof(float) * 3, (void*) 0);
 
-			ZMaterial* material = object->getMaterial();
 
 	    	vec3 color = material->getColor();
-			mShader->setVec4("uColor", color.r, color.g, color.b, 1);
+			shader->setVec4("uColor", color.r, color.g, color.b, 1);
 
-	    	mShader->setFloat("uMetallic", material->getMetallic());
-			mShader->setFloat("uRoughness", material->getRoughness());
-			mShader->setVec3("uCameraPosition", mCamera->getPosition());
+	    	shader->setFloat("uMetallic", material->getMetallic());
+			shader->setFloat("uRoughness", material->getRoughness());
+			shader->setVec3("uCameraPosition", mCamera->getPosition());
 			
-
 			if (mParentView != nullptr) {
 				float width = mParentView->getWidth();
 				float height = mParentView->getHeight();
 
 				mat4 projectionMatrix = perspective(glm::radians(35.0f), (float) width / (float) height, 0.1f, 100.0f);
 
-				mShader->setMat4("uProjectionMatrix", projectionMatrix);
-				mShader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+				shader->setMat4("uProjectionMatrix", projectionMatrix);
+				shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
 			
 				glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
 			}
 	    }
+
+	    onDrawFinshed();
 
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

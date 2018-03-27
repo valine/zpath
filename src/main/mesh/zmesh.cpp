@@ -18,6 +18,14 @@ void ZMesh::setVertexNormals(vector<float> normals) {
 	
 }
 
+void ZMesh::setTextureCoordinates(vector<float> coords) {
+	mTextureCoordinates = coords;
+
+    glGenBuffers(1, &mTextureCoordinatesBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mTextureCoordinatesBuffer);
+    glBufferData(GL_ARRAY_BUFFER, mTextureCoordinates.size() * sizeof(float), &mTextureCoordinates[0], GL_STATIC_DRAW);
+	
+}
 
 void ZMesh::setFaceIndices(vector<int> indices) {
 	mFaceIndices = indices;
@@ -35,6 +43,9 @@ vector<float> ZMesh::getVertexNormals() const {
 	return mVertexNormals;
 }
 
+vector<float> ZMesh::getTextureCoordinates() const {
+	return mTextureCoordinates;
+}
 
 vector<int> ZMesh::getFaceIndices() const {
 	return mFaceIndices;
@@ -46,6 +57,10 @@ GLuint ZMesh::getVertexBuffer() {
 
 GLuint ZMesh::getVertexNormalBuffer() {
 	return mVertexNormalBuffer;
+}
+
+GLuint ZMesh::getTextureCoordinatesBuffer() {
+	return mTextureCoordinatesBuffer;
 }
 
 
