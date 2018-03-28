@@ -65,6 +65,8 @@ void main() {
 
     vec3 Lo = vec3(0.0);
     vec3 texColor = texture2D(sColorTexture, vTextureCoords);
+    texColor = pow(texColor, vec4(2.2));
+
     for(int i = 0; i < lightCount; i++) {
 
     	vec3 L = normalize(uLightPositions[i] - vPosition);

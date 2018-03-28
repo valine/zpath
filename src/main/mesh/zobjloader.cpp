@@ -38,6 +38,7 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   		textureCoordinates.push_back(stod(tokens.at(2)));
 	   	}
 	   	else if (tokens.at(0) == "vn") {
+
 			tmpNormals.push_back(stod(tokens.at(1)));
 	   		tmpNormals.push_back(stod(tokens.at(2)));
 	   		tmpNormals.push_back(stod(tokens.at(3)));

@@ -43,6 +43,7 @@ int main(int argc, char* argv[]) {
     #else
         int pos = aux.rfind('/');
     #endif
+        
 
     // Get the path and the name
     std::string path = aux.substr(0,pos+1);
