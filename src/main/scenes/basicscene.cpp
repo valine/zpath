@@ -4,12 +4,13 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/noise-normal-map.png");
+	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/lead-stem-color.png");
+
 
 	ZObjLoader loader = ZObjLoader();
 
 	ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
-	brainMaterial->setRoughness(0.1);
+	brainMaterial->setRoughness(0.4);
 
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
 	addObject(dbs2);
@@ -20,16 +21,16 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
 	addObject(electrodes);
-	ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.191540, 0.204470, 0.266761));
-	electrodeMaterial->setMetallic(0.9);
-	electrodeMaterial->setRoughness(0.7);
+	ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.601540, 0.604470, 0.666761));
+	electrodeMaterial->setMetallic(1.0);
+	electrodeMaterial->setRoughness(0.2);
 	electrodes->setMaterial(electrodeMaterial);
 
 	ZObject* lead = loader.loadObject(resourcePath + "resources/meshes/dbs-lead.obj");
 	addObject(lead);
 	ZMaterial* leadMaterial = new ZMaterial(vec3(0.9, 0.9, 1.0));
 	leadMaterial->setMetallic(0);
-	leadMaterial->setRoughness(0.3);
+	leadMaterial->setRoughness(0.6);
 	leadMaterial->setColorTexture(testTexture);
 	lead->setMaterial(leadMaterial);
 
