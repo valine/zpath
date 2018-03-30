@@ -134,7 +134,7 @@ void ZRenderer::draw() {
 
 				shader->setMat4("uProjectionMatrix", projectionMatrix);
 				shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
-			
+		
 				glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
 			}
 	    }

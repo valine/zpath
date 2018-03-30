@@ -4,7 +4,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/lead-stem-color.png");
+	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/brain1-shadow-map.png");
 
 
 	ZObjLoader loader = ZObjLoader();
@@ -14,9 +14,14 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
 	addObject(dbs2);
+	
 	dbs2->setMaterial(brainMaterial);
 	
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1.0,1.0,1.0));
+	brainMaterialLarge->setColorTexture(testTexture);
+
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
+	dbs->setMaterial(brainMaterialLarge);
 	addObject(dbs);
 
 	ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
@@ -26,12 +31,13 @@ BasicScene::BasicScene(string resourcePath)
 	electrodeMaterial->setRoughness(0.2);
 	electrodes->setMaterial(electrodeMaterial);
 
+
 	ZObject* lead = loader.loadObject(resourcePath + "resources/meshes/dbs-lead.obj");
 	addObject(lead);
 	ZMaterial* leadMaterial = new ZMaterial(vec3(0.9, 0.9, 1.0));
 	leadMaterial->setMetallic(0);
 	leadMaterial->setRoughness(0.6);
-	leadMaterial->setColorTexture(testTexture);
+	
 	lead->setMaterial(leadMaterial);
 
 	setExposure(1.5);

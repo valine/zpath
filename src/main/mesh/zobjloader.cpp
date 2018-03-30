@@ -20,6 +20,8 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	vector<float> texCoordsIndices;
 	vector<float> vertexNormalIndices;
 
+	int additionVertexCount = 0;
+
 	while (getline(infile, line)) {
 
 		string space = " ";
@@ -58,17 +60,48 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	   		faceIndices.push_back(stoi(indiceTokensB.at(0)) - 1);
 	   		faceIndices.push_back(stoi(indiceTokensC.at(0)) - 1);
 
-	   		vertexNormalIndices.push_back(stoi(indiceTokensA.at(2)) - 1);
-	   		vertexNormalIndices.push_back(stoi(indiceTokensB.at(2)) - 1);
-	   		vertexNormalIndices.push_back(stoi(indiceTokensC.at(2)) - 1);
-
 	   		if (indiceTokensA.at(1) != "") {
 		   		texCoordsIndices.push_back(stoi(indiceTokensA.at(1)) - 1);
 		   		texCoordsIndices.push_back(stoi(indiceTokensB.at(1)) - 1);
 	   			texCoordsIndices.push_back(stoi(indiceTokensC.at(1)) - 1);
 	   		}
+
+	   		vertexNormalIndices.push_back(stoi(indiceTokensA.at(2)) - 1);
+	   		vertexNormalIndices.push_back(stoi(indiceTokensB.at(2)) - 1);
+	   		vertexNormalIndices.push_back(stoi(indiceTokensC.at(2)) - 1);
+
 	   	}
 	}
+
+
+	// vector<vector<int>> sharedVertexCount;
+
+	// for (unsigned i = 0; i < vertices.size(); ++i) {
+	// 	vector<int> v;
+	// 	sharedVertexCount.push_back(v);
+	// }
+
+
+	// // Check for texture coordinate seams
+	// for (unsigned i = 0; i < texCoordsIndices.size(); ++i) {
+	// 	sharedVertexCount.at(faceIndices.at(i)).push_back(i);
+	// }
+
+	// for (unsigned i = 0; i < texCoordsIndices.size(); ++i) {
+	// 	if (sharedVertexCount.at(faceIndices.at(i)).size() > 1) {
+			
+	// 		for (unsigned j = 0; j < sharedVertexCount.at(faceIndices.at(i)).size(); ++j) {
+				
+	// 			int index = sharedVertexCount.at(faceIndices.at(i)).at(j);
+
+
+	// 			cout<<sharedVertexCount.at(faceIndices.at(i)).at(j)<<endl;
+	// 		}
+
+	// 		cout<<endl;
+			
+	// 	}
+	// }
 
 	for (unsigned i = 0; i < vertexNormalIndices.size(); ++i) {
 		int vertex = faceIndices[i];
