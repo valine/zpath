@@ -19,3 +19,7 @@ mkdir build && cd build
 cmake ..
 make
 ```
+
+freeglut3-dev
+libglu1-mesa-dev
+libglu1-xorg-dev
