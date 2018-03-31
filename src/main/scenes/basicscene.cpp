@@ -18,7 +18,7 @@ BasicScene::BasicScene(string resourcePath)
 	dbs2->setMaterial(brainMaterial);
 	
 	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1.0,1.0,1.0));
-	brainMaterialLarge->setColorTexture(testTexture);
+	//brainMaterialLarge->setColorTexture(testTexture);
 
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
 	dbs->setMaterial(brainMaterialLarge);
