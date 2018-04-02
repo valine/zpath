@@ -1,0 +1,6 @@
+class ZWorld {
+	public:
+
+	private:
+
+};
