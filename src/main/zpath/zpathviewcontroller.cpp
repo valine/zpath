@@ -72,6 +72,7 @@ void ZPathViewController::onCreate() {
     mRoughnessIncrementButton->setOnClickListener(this);
     propertiesPanel->addSubView(mRoughnessIncrementButton);
 
+
     mRoughnessDecrementButton = new ZButton(40, 40, getResourcePath());
     mRoughnessDecrementButton->setOffset(50,250);
     mRoughnessDecrementButton->setMargin(10,10,10,10);

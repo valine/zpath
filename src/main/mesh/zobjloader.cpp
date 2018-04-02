@@ -53,8 +53,6 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 	ZMesh* outputMesh = new ZMesh();
 
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
-
-    	cout<<"vertex"<<endl;
     	vertices.push_back(mesh->mVertices[i].x);
     	vertices.push_back(mesh->mVertices[i].y);
     	vertices.push_back(mesh->mVertices[i].z);
