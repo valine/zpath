@@ -69,6 +69,25 @@ if (WIN32)
 
 
   include_directories("C:/glm")
+
+    # Find include files
+  find_path(
+    ASSIMP_INCLUDE_DIR
+    NAMES assimp/scene.h
+    PATHS
+      $ENV{PROGRAMFILES}/include
+      ${ASSIMP_ROOT_DIR}/include
+    DOC "The directory where assimp/scene.h resides")
+
+  # Find library files
+  find_library(
+    ASSIMP_LIBRARY
+    NAMES assimp
+    PATHS
+      $ENV{PROGRAMFILES}/lib
+      ${ASSIMP_ROOT_DIR}/lib)
+
+
 else (WIN32)
   find_package (GLEW REQUIRED STATIC)
 
@@ -76,11 +95,47 @@ else (WIN32)
   find_package (glm REQUIRED)
   link_libraries(zpath ${GLM_LIBRARY})
 
+  # Find include files
+  find_path(
+    ASSIMP_INCLUDE_DIR
+    NAMES assimp/scene.h
+    PATHS
+      /usr/include
+      /usr/local/include
+      /sw/include
+      /opt/local/include
+    DOC "The directory where assimp/scene.h resides")
+
+  # Find library files
+  find_library(
+    ASSIMP_LIBRARY
+    NAMES assimp
+    PATHS
+      /usr/lib64
+      /usr/lib
+      /usr/local/lib64
+      /usr/local/lib
+      /sw/lib
+      /opt/local/lib
+      ${ASSIMP_ROOT_DIR}/lib
+    DOC "The Assimp library")
+
 
   # glfw
 #find_package(glfw 3.2 REQUIRED)
 #include_directories(${GLFW_INCLUDE_DIRS})
 endif (WIN32)
+
+# Handle REQUIRD argument, define *_FOUND variable
+find_package_handle_standard_args(Assimp DEFAULT_MSG ASSIMP_INCLUDE_DIR ASSIMP_LIBRARY)
+
+
+if (ASSIMP_FOUND)
+  set(ASSIMP_LIBRARIES ${ASSIMP_LIBRARY})
+  set(ASSIMP_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIR})
+endif()
+
+
 
 if (APPLE)
   find_package(glfw3 3.2 REQUIRED)
@@ -123,7 +178,7 @@ if (LINUX)
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 
-  include_directories(${X11_INCLUDE_DIR})
+  include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
 
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
@@ -132,33 +187,35 @@ if (LINUX)
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
-          ${FREETYPE_LIBRARIES})
+          ${FREETYPE_LIBRARIES}
+          ${ASSIMP_LIBRARY})
 
 endif (LINUX)
+
 
 ###############################################################################
 ## testing ####################################################################
 ###############################################################################
 
-find_package(GTest)
+# find_package(GTest)
 
-if(GTEST_FOUND)
-  add_executable(unit_tests ${sources_test} ${sources})
+# if(GTEST_FOUND)
+#   add_executable(unit_tests ${sources_test} ${sources})
 
-  target_compile_definitions(unit_tests PUBLIC UNIT_TESTS)
+#   target_compile_definitions(unit_tests PUBLIC UNIT_TESTS)
 
-  set_target_properties(zpath PROPERTIES ENABLE_EXPORTS on)
+#   set_target_properties(zpath PROPERTIES ENABLE_EXPORTS on)
 
-  target_link_libraries(unit_tests PUBLIC
-    ${GTEST_BOTH_LIBRARIES}
-    zpath
-  )
+#   target_link_libraries(unit_tests PUBLIC
+#     ${GTEST_BOTH_LIBRARIES}
+#     zpath
+#   )
 
-  target_include_directories(unit_tests PUBLIC
-    ${GTEST_INCLUDE_DIRS} 
-  )
+#   target_include_directories(unit_tests PUBLIC
+#     ${GTEST_INCLUDE_DIRS} 
+#   )
   
-endif()
+# endif()
 
 ###############################################################################
 ## packaging ##################################################################

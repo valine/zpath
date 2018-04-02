@@ -12,6 +12,12 @@
 
 #include <algorithm>
 #include <iterator>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+
 using namespace std; 
 
 class ZObjLoader {
@@ -19,13 +25,14 @@ class ZObjLoader {
 public:
 	ZObjLoader();
 
+	vector<ZObject*> loadObjects(const std::string& pFile);
 	ZMesh* loadMesh(string fileName);
 	ZObject* loadObject(string fileName);
 	
 private:
-	//template<typename Out>
-
 	vector<string> split(string s, string delim);
+	vector<ZObject*> processNode(aiNode *node, const aiScene *scene);
+	ZMesh* convertAiMesh(aiMesh* mesh);
 };
 
 #endif

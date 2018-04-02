@@ -3,8 +3,92 @@
 ZObjLoader::ZObjLoader() {
 }
 
-ZMesh* ZObjLoader::loadMesh(string fileName) {
+vector<ZObject*> ZObjLoader::loadObjects(const std::string& pFile) {
+
+	Assimp::Importer importer;
+
+	const aiScene* scene = importer.ReadFile( pFile, 
+	aiProcess_CalcTangentSpace       | 
+	aiProcess_Triangulate            |
+	aiProcess_JoinIdenticalVertices  |
+	aiProcess_SortByPType);
+
+	vector<ZObject*> objects;
+
+	aiNode* node = scene->mRootNode;
+
+    return processNode(node, scene);
+}
+
+vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene) {
+	vector<ZObject*> objects;
+
+    // process all the node's meshes (if any)
+    for(unsigned int i = 0; i < node->mNumMeshes; i++) {
+
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+
+        ZObject* object = new ZObject();
+
+        object->setMesh(convertAiMesh(mesh));
+        objects.push_back(object);		
+    }
+    // then do the same for each of its children
+    for(unsigned int i = 0; i < node->mNumChildren; i++) {
+        vector<ZObject*> children = processNode(node->mChildren[i], scene);
+        objects.insert(objects.end(), children.begin(), children.end());
+    }
+
+    return objects;
+}  
+
+
+
+ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
+	vector<float> vertices;
+	vector<int> faceIndices;
+	vector<float> vertexNormals;
+	vector<float> textureCoordinates;
+
+	ZMesh* outputMesh = new ZMesh();
+
+    for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
+
+    	cout<<"vertex"<<endl;
+    	vertices.push_back(mesh->mVertices[i].x);
+    	vertices.push_back(mesh->mVertices[i].y);
+    	vertices.push_back(mesh->mVertices[i].z);
+
+    	vertexNormals.push_back(mesh->mNormals[i].x);
+    	vertexNormals.push_back(mesh->mNormals[i].y);
+    	vertexNormals.push_back(mesh->mNormals[i].z);
+
+    	if(mesh->mTextureCoords[0]) {
+
+			textureCoordinates.push_back(mesh->mTextureCoords[0][i].x); 
+			textureCoordinates.push_back(mesh->mTextureCoords[0][i].y); 
+    	}
+    }
+
+    for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
+		aiFace face = mesh->mFaces[i];
+		// retrieve all indices of the face and store them in the indices vector
+		for(unsigned int j = 0; j < face.mNumIndices; j++) {
+			faceIndices.push_back(face.mIndices[j]);
+		}
+    }
 	
+	outputMesh->setVertices(vertices);
+	outputMesh->setFaceIndices(faceIndices);
+	outputMesh->setVertexNormals(vertexNormals);
+	outputMesh->setTextureCoordinates(textureCoordinates);
+
+	return outputMesh;
+}
+
+
+
+ZMesh* ZObjLoader::loadMesh(string fileName) {
 	ifstream infile(fileName);
 	string line;
 
