@@ -37,7 +37,7 @@ BasicScene::BasicScene(string resourcePath)
 	ZMaterial* leadMaterial = new ZMaterial(vec3(0.9, 0.9, 1.0));
 	leadMaterial->setMetallic(0);
 	leadMaterial->setRoughness(0.6);
-	leadMaterial->setColorTexture(testTexture);
+	//leadMaterial->setColorTexture(testTexture);
 	
 	lead->setMaterial(leadMaterial);
 
