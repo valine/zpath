@@ -131,7 +131,7 @@ ZApplication::ZApplication(ZViewController* controller) {
     viewController->onCreate();
     while (!glfwWindowShouldClose(window)) {
     
-        glfwPollEvents();
+        glfwWaitEvents();
 
          int windowWidth, windowHeight;
          glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
