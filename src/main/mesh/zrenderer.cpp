@@ -2,16 +2,16 @@
 
 ZRenderer::ZRenderer(string resourcePath) {
 
-	string vertexPath = resourcePath + "resources/shaders/baseVertex.glsl";
-    string fragmentPath = resourcePath + "resources/shaders/baseFragment.glsl";
+	string vertexPath = resourcePath + "resources/shaders/base.vs";
+    string fragmentPath = resourcePath + "resources/shaders/base.fs";
     mShader = new ZShader(vertexPath, fragmentPath);
 
-    string colorTextureVertexPath = resourcePath + "resources/shaders/baseVertex.glsl";
-    string colorTextureFragmentPath = resourcePath + "resources/shaders/colorTextureFragment.glsl";
+    string colorTextureVertexPath = resourcePath + "resources/shaders/base.vs";
+    string colorTextureFragmentPath = resourcePath + "resources/shaders/colorTexture.fs";
     mColorTextureShader = new ZShader(colorTextureVertexPath, colorTextureFragmentPath);
 	
-	string fboVertexPath = resourcePath + "resources/shaders/fbovertex.glsl";
-    string fboFragmentPath = resourcePath + "resources/shaders/fbofragment.glsl";
+	string fboVertexPath = resourcePath + "resources/shaders/fbo.vs";
+    string fboFragmentPath = resourcePath + "resources/shaders/fbo.fs";
     mHDRShader = new ZShader(fboVertexPath, fboFragmentPath);
 
 	glDepthFunc(GL_LEQUAL);

@@ -9,12 +9,12 @@ ZViewController::ZViewController(string resourcePath) {
 }
 
 void ZViewController::onCreate() {
-    string vertexPath = mResourcePath + "resources/shaders/uivertexshader.glsl";
-    string fragmentPath = mResourcePath + "resources/shaders/uifragmentshader.glsl";
+    string vertexPath = mResourcePath + "resources/shaders/ui.vs";
+    string fragmentPath = mResourcePath + "resources/shaders/ui.fs";
     mUIShader = new ZShader(vertexPath, fragmentPath);
 
-    string vertexTextPath = mResourcePath + "resources/shaders/textvertexshader.glsl";
-    string fragmentTextPath = mResourcePath + "resources/shaders/textfragmentshader.glsl";
+    string vertexTextPath = mResourcePath + "resources/shaders/text.vs";
+    string fragmentTextPath = mResourcePath + "resources/shaders/text.fs";
     mTextShader = new ZShader(vertexTextPath, fragmentTextPath);
 
     float panelColor[4] = {0.9, 0.9, 0.91, 1.0};
