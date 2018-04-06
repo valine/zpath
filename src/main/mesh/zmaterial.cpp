@@ -13,7 +13,6 @@ void ZMaterial::setColor(vec3 color) {
 	mColor = color;
 }
 
-
 ZTexture* ZMaterial::getColorTexture() {
 	return mColorTexture;
 }
