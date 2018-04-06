@@ -20,6 +20,10 @@ ZRenderer::ZRenderer(string resourcePath) {
     string colorTextureVertexPath = resourcePath + "resources/shaders/base.vs";
     string colorTextureFragmentPath = resourcePath + "resources/shaders/colorTexture.fs";
     mColorTextureShader = new ZShader(colorTextureVertexPath, colorTextureFragmentPath);
+
+    string irradienceTextureVertexPath = resourcePath + "resources/shaders/cubemap.vs";
+    string irradienceTextureFragmentPath = resourcePath + "resources/shaders/irradiance.fs";
+    mIrradienceShader = new ZShader(irradienceTextureVertexPath, irradienceTextureFragmentPath);
 	
 	string fboVertexPath = resourcePath + "resources/shaders/fbo.vs";
     string fboFragmentPath = resourcePath + "resources/shaders/fbo.fs";
@@ -33,7 +37,7 @@ ZRenderer::ZRenderer(string resourcePath) {
 
 void ZRenderer::init() {
 	glGenFramebuffers(1, &mHdrFBO);
-
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
 	glGenTextures(1, &mColorBuffer);
     glBindTexture(GL_TEXTURE_2D, mColorBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
@@ -58,8 +62,6 @@ void ZRenderer::init() {
 
     if (mScene->getWorld()->getEnvironmentTexture() != nullptr) {
 
-	    	    // pbr: setup framebuffer
-	    // ----------------------
 	    unsigned int captureFBO;
 	    unsigned int captureRBO;
 	    glGenFramebuffers(1, &captureFBO);
@@ -67,29 +69,12 @@ void ZRenderer::init() {
 
 	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 1024, 1024);
 	    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-
-    	cout<<"this works"<<endl;
 	  
-	    glGenTextures(1, &envCubemap);
-	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-	    for (unsigned int i = 0; i < 6; ++i)
-	    {
-	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
-	    }
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
-	        // pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
-	    // ----------------------------------------------------------------------------------------------
-	    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-	    glm::mat4 captureViews[] =
-	    {
+	  	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+	    glm::mat4 captureViews[] = {
 	
 	    	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, 1.0f,  0.0f)),
 	       	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, 1.0f,  0.0f)),
@@ -102,8 +87,19 @@ void ZRenderer::init() {
 
 	    };
 
-	    // pbr: convert HDR equirectangular environment map to cubemap equivalent
-	    // ----------------------------------------------------------------------
+	  	// Create background cube map
+	  	glGenTextures(1, &envCubemap);
+	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+	    for (unsigned int i = 0; i < 6; ++i)
+	    {
+	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 1024, 1024, 0, GL_RGB, GL_FLOAT, nullptr);
+	    }
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
 	    mCubemapShader->use();
 	    mCubemapShader->setInt("equirectangularMap", 0);
@@ -111,16 +107,48 @@ void ZRenderer::init() {
 	    glActiveTexture(GL_TEXTURE0);
 	    glBindTexture(GL_TEXTURE_2D, mScene->getWorld()->getEnvironmentTexture()->getID());
 
-	    glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+	    glViewport(0, 0, 1024, 1024); // don't forget to configure the viewport to the capture dimensions.
 	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	    for (unsigned int i = 0; i < 6; ++i)
-	    {
+	    for (unsigned int i = 0; i < 6; ++i) {
 	        mCubemapShader->setMat4("view", captureViews[i]);
 	        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap, 0);
 	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	        renderCube();
 	    }
+	    
+	    // Create irradiance map
+	    glGenTextures(1, &irradienceCubemap);
+	    glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+	     for (unsigned int i = 0; i < 6; ++i) {
+	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
+	    }
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+
+	    mIrradienceShader->use();
+	    mIrradienceShader->setInt("equirectangularMap", 0);
+	    mIrradienceShader->setMat4("projection", captureProjection);
+	    glActiveTexture(GL_TEXTURE0);
+	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+
+	    glViewport(0, 0, 32, 32); 
+	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	    for (unsigned int i = 0; i < 6; ++i) {
+	        mCubemapShader->setMat4("view", captureViews[i]);
+	        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradienceCubemap, 0);
+	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	        renderCube();
+	    }
+
+	    // Unbind texture
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }
@@ -172,6 +200,9 @@ void ZRenderer::draw() {
 
 	    	} else {
 	    		shader = mShader;
+
+	    		glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
 	    	}
 
 	    	shader->use();
@@ -202,7 +233,6 @@ void ZRenderer::draw() {
 			                          sizeof(float) * 2, (void*) 0);
 
 
-
 	    	vec3 color = material->getColor();
 			shader->setVec4("uColor", color.r, color.g, color.b, 1);
 
@@ -230,7 +260,6 @@ void ZRenderer::draw() {
     	glActiveTexture(GL_TEXTURE0);
        	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
         renderCube();
-
 
 	    onDrawFinshed();
 

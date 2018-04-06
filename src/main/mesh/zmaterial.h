@@ -32,7 +32,6 @@ private:
 	vec3 mColor;
 	float mMetallic = 0;
 	float mRoughness = 0.1;
-
 	ZTexture* mColorTexture = nullptr;
 };
 

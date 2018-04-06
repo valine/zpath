@@ -1,5 +1,4 @@
 #define GLEW_STATIC
-
 #include "zobject.h"
 
 ZObject::ZObject() {

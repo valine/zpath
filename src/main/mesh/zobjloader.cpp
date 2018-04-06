@@ -41,8 +41,6 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene) {
     return objects;
 }  
 
-
-
 ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 	vector<float> vertices;
 	vector<int> faceIndices;
@@ -82,8 +80,6 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 
 	return outputMesh;
 }
-
-
 
 ZMesh* ZObjLoader::loadMesh(string fileName) {
 	ifstream infile(fileName);

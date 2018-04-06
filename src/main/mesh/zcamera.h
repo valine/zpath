@@ -22,7 +22,6 @@ public:
 	mat4 getViewMatrix();
 
 private:
-
 	vec3 mPosition;
 	vec3 mFront;
 	vec3 mUp;

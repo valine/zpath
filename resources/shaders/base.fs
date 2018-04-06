@@ -1,6 +1,8 @@
 #define lightCount 4
 #define PI 3.14159265359
 
+uniform samplerCube irradianceMap;
+
 varying vec3 vPosition;
 varying vec3 vNormal;
 
@@ -16,8 +18,8 @@ uniform float uRoughness;
 float ao = 1;
 
 
-vec3 fresnelSchlick(float cosTheta, vec3 F0) {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+vec3 fresnelSchlick(float cosTheta, vec3 F0, float roughness) {
+     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }  
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
@@ -61,6 +63,11 @@ void main() {
 
     vec3 Lo = vec3(0.0);
 
+    //vec3 ao = texture(irradianceMap, N).rgb;
+
+    vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, uColor.rgb, uMetallic);
+
     for(int i = 0; i < lightCount; i++) {
 
 
@@ -72,9 +79,8 @@ void main() {
     	float attenuation = 1.0 / (distance * distance);
     	vec3 radiance     = uLightColors[i] * attenuation; 
 
-    	vec3 F0 = vec3(0.04); 
-		F0      = mix(F0, uColor.rgb, uMetallic);
-		vec3 F  = fresnelSchlick(max(dot(H, V), 0.0), F0);
+
+		vec3 F  = fresnelSchlick(max(dot(H, V), 0.0), F0, uRoughness);
 
 		float NDF = DistributionGGX(N, H, uRoughness);       
 		float G   = GeometrySmith(N, V, L, uRoughness);     
@@ -92,10 +98,17 @@ void main() {
 
     }
 
- 	vec3 ambient = vec3(0.002428, 0.021219, 0.063010) * uColor * ao;
+ 	 // ambient lighting (we now use IBL as the ambient term)
+    vec3 kS = fresnelSchlick(max(dot(N, V), 0.0), F0, uRoughness);
+    vec3 kD = 1.0 - kS;
+    kD *= 1.0 - uMetallic;     
+    vec3 irradiance = texture(irradianceMap, N).rgb;
+    irradiance = pow(irradiance, vec4(2.2));
+    vec3 diffuse      = irradiance * uColor;
+    vec3 ambient = (kD * diffuse) * ao;
+    
     vec3 color = ambient + Lo;
 
- 
     gl_FragColor = vec4(color, 1.0);
 }
 
