@@ -11,7 +11,6 @@
 using namespace std;
 using namespace glm;
 class ZObject {
-	
 public:
 	ZObject();
 	void setMesh(ZMesh* mesh);

@@ -5,8 +5,8 @@ uniform mat4 view;
 
 varying vec3 WorldPos;
 
-void main()
-{
+void main() {
+   
     WorldPos = aPos;
 
 	mat4 rotView = mat4(mat3(view));

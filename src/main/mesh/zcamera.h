@@ -11,7 +11,6 @@ using namespace glm;
 class ZCamera {
 	
 public:
-
 	ZCamera();
 
 	void setPosition(vec3 position);
@@ -20,7 +19,6 @@ public:
 
 	vec3 getPosition();
 	vec3 getUp();
-
 	mat4 getViewMatrix();
 
 private:

@@ -22,7 +22,6 @@ void ZMaterial::setColorTexture(ZTexture* texture) {
 	mColorTexture = texture;
 }
 
-
 float ZMaterial::getMetallic() {
 	return mMetallic;
 }

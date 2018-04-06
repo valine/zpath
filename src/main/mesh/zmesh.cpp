@@ -15,7 +15,6 @@ void ZMesh::setVertexNormals(vector<float> normals) {
     glGenBuffers(1, &mVertexNormalBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexNormalBuffer);
     glBufferData(GL_ARRAY_BUFFER, mVertexNormals.size() * sizeof(float), &mVertexNormals[0], GL_STATIC_DRAW);
-	
 }
 
 void ZMesh::setTextureCoordinates(vector<float> coords) {

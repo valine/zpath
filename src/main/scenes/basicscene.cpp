@@ -18,7 +18,7 @@ BasicScene::BasicScene(string resourcePath)
 	brainMaterial->setRoughness(0.4);
 
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
-	addObject(dbs2);
+	//addObject(dbs2);
 	
 	dbs2->setMaterial(brainMaterial);
 	
@@ -27,7 +27,7 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
 	dbs->setMaterial(brainMaterialLarge);
-	addObject(dbs);
+	//addObject(dbs);
 
 	ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
 	addObject(electrodes);

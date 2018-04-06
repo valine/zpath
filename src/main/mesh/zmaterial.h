@@ -27,9 +27,6 @@ public:
 
 	float getRoughness();
 	void setRoughness(float factor);
-	
-
-
 
 private:
 	vec3 mColor;

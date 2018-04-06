@@ -27,7 +27,6 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene) {
     for(unsigned int i = 0; i < node->mNumMeshes; i++) {
 
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-
         ZObject* object = new ZObject();
 
         object->setMesh(convertAiMesh(mesh));
