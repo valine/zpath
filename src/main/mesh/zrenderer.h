@@ -59,6 +59,8 @@ private:
 	unsigned int cubeVAO = 0;
 	unsigned int cubeVBO = 0;
 
+	 unsigned int envCubemap;
+
 	void renderQuad();
 
 	int mMaxLightCount = 4;

@@ -37,6 +37,10 @@ void ZScene::setWorld(ZWorld* world) {
 	mWorld = world;
 }
 
+ZWorld* ZScene::getWorld() {
+	return mWorld;
+}
+
 void ZScene::setExposure(float exposure) {
 	mExposure = exposure;
 }

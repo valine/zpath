@@ -10,7 +10,7 @@ class ZWorld {
 	public:
 
 		void setEnvironmentTexture(ZTexture* texture);
-
+		ZTexture* getEnvironmentTexture();
 	private:
 		ZTexture* mEnvironmentTexture;
 

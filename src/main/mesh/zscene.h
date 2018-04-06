@@ -30,6 +30,7 @@ public:
 	ZCamera* getCamera();
 
 	void setWorld(ZWorld* world);
+	ZWorld* getWorld();
 
 	void setExposure(float exposure);
 	float getExposure();

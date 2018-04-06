@@ -4,7 +4,9 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
+	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/environment-loft.hdr");
 	ZWorld* world = new ZWorld();
+	world->setEnvironmentTexture(environmentTexture);
 	setWorld(world);
 
 	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/brain1-shadow-map.png");
@@ -41,7 +43,6 @@ BasicScene::BasicScene(string resourcePath)
 	leadMaterial->setMetallic(0);
 	leadMaterial->setRoughness(0.6);
 	//leadMaterial->setColorTexture(testTexture);
-	
 	lead->setMaterial(leadMaterial);
 
 	setExposure(1.5);
