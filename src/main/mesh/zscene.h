@@ -6,6 +6,7 @@
 #include "mesh/zobject.h"
 #include "mesh/zmesh.h"
 #include "mesh/zpointlight.h"
+#include "mesh/zworld.h"
 #include "zobjloader.h"
 #include "zcamera.h"
 #include "zpath_constants.h"
@@ -28,6 +29,8 @@ public:
 
 	ZCamera* getCamera();
 
+	void setWorld(ZWorld* world);
+
 	void setExposure(float exposure);
 	float getExposure();
 private:
@@ -41,6 +44,8 @@ private:
 	float* mLightFlatColor;
 
 	ZCamera *mCamera;
+
+	ZWorld* mWorld;
 
 	float mExposure = 1.0;
 

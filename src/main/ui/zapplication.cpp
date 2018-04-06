@@ -143,7 +143,6 @@ ZApplication::ZApplication(ZViewController* controller) {
         if (mShouldSwapBuffer) {
             viewController->onWindowChange(windowWidth, windowHeight);
         	glfwSwapBuffers(window);
-
 	    }
 
 	    mShouldSwapBuffer = true;

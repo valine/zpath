@@ -33,6 +33,10 @@ ZCamera* ZScene::getCamera() {
 	return mCamera;
 }
 
+void ZScene::setWorld(ZWorld* world) {
+	mWorld = world;
+}
+
 void ZScene::setExposure(float exposure) {
 	mExposure = exposure;
 }

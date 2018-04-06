@@ -4,6 +4,9 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
+	ZWorld* world = new ZWorld();
+	setWorld(world);
+
 	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/brain1-shadow-map.png");
 
 

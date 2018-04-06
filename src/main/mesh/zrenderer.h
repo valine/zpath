@@ -32,6 +32,8 @@ public:
 	void init();
 	virtual void onDrawFinshed();
 
+	void renderCube();
+
 	ZCamera* getCamera();
 
 private:
@@ -40,6 +42,8 @@ private:
 	ZShader *mColorTextureShader;
 
 	ZShader *mHDRShader = nullptr;
+	ZShader *mBackgroundShader = nullptr;
+	ZShader *mCubemapShader = nullptr;
 
 	Z3DView *mParentView = nullptr;
 
@@ -51,6 +55,9 @@ private:
 
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO;
+
+	unsigned int cubeVAO = 0;
+	unsigned int cubeVBO = 0;
 
 	void renderQuad();
 
