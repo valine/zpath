@@ -45,6 +45,7 @@ private:
 	ZShader *mBackgroundShader = nullptr;
 	ZShader *mCubemapShader = nullptr;
 	ZShader *mIrradienceShader = nullptr;
+	ZShader *mPrefilterShader = nullptr;
 
 	Z3DView *mParentView = nullptr;
 
@@ -62,6 +63,9 @@ private:
 
 	unsigned int envCubemap;
 	unsigned int irradienceCubemap;
+
+
+	unsigned int prefilterMap;
 
 	void renderQuad();
 

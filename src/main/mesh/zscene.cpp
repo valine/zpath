@@ -60,8 +60,6 @@ void ZScene::updateLightFlatArrays() {
 		mLightColors.push_back(light->getColor());
 	}
 
-
 	mLightFlatColor = static_cast<float*>(glm::value_ptr(mLightColors.front()));
 	mLightFlatPosition = static_cast<float*>(glm::value_ptr(mLightPositions.front()));
-
 }

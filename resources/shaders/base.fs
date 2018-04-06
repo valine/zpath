@@ -62,24 +62,16 @@ void main() {
     vec3 V = normalize(uCameraPosition - vPosition);
 
     vec3 Lo = vec3(0.0);
-
-    //vec3 ao = texture(irradianceMap, N).rgb;
-
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, uColor.rgb, uMetallic);
 
     for(int i = 0; i < lightCount; i++) {
-
-
-
     	vec3 L = normalize(uLightPositions[i] - vPosition);
     	vec3 H = normalize(V + L);
   
 		float distance    = length(uLightPositions[i] - vPosition);
     	float attenuation = 1.0 / (distance * distance);
     	vec3 radiance     = uLightColors[i] * attenuation; 
-
-
 		vec3 F  = fresnelSchlick(max(dot(H, V), 0.0), F0, uRoughness);
 
 		float NDF = DistributionGGX(N, H, uRoughness);       
@@ -102,7 +94,7 @@ void main() {
     vec3 kS = fresnelSchlick(max(dot(N, V), 0.0), F0, uRoughness);
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - uMetallic;     
-    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 irradiance = texture(irradianceMap, -N).rgb;
     irradiance = pow(irradiance, vec4(2.2));
     vec3 diffuse      = irradiance * uColor;
     vec3 ambient = (kD * diffuse) * ao;

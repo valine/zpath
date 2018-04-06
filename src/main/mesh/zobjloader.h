@@ -24,7 +24,6 @@ class ZObjLoader {
 	
 public:
 	ZObjLoader();
-
 	vector<ZObject*> loadObjects(const std::string& pFile);
 	ZMesh* loadMesh(string fileName);
 	ZObject* loadObject(string fileName);
