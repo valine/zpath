@@ -274,7 +274,7 @@ void ZRenderer::draw() {
 		glEnable(GL_DEPTH_TEST);
 
 
-		mat4 projectionMatrix = perspective(glm::radians(35.0f), (float) width / (float) height, 0.1f, 1000.0f);
+		mat4 projectionMatrix = perspective(glm::radians(80.0f), (float) width / (float) height, 0.1f, 1000.0f);
 
 		vector<ZPointLight*> lights = mScene->getLights();
 

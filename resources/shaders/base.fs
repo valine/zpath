@@ -105,7 +105,10 @@ void main() {
     vec3 kS = F;
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - uMetallic;     
-    vec3 irradiance = texture(irradianceMap, N).rgb;
+
+    vec3 iN = N;
+    iN.x = -iN.x;
+    vec3 irradiance = texture(irradianceMap, iN).rgb;
     irradiance = pow(irradiance, vec4(2.2));
     vec3 diffuse      = irradiance * uColor;
 

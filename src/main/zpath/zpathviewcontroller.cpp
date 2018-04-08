@@ -133,6 +133,11 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
         if (getFileExtension(path) == "hdr") {
             ZTexture* texture = new ZTexture(path);
             mScene->getWorld()->setEnvironmentTexture(texture);
+             if (mIsQuadView) {
+                mTileView->setTileCount(1,1);
+            } else {
+                mTileView->setTileCount(3,2);
+            }
 
         } else {
 		
