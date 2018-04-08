@@ -2,6 +2,7 @@
 
 #include "mesh/zscene.h"
 #include "mesh/zpointlight.h"
+#include "ui/ztexture.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -39,5 +40,7 @@ private:
 	ZLabel *mMetalLabel;
 
 	ZScene* mScene;
+
+	string getFileExtension(string path);
 
 };

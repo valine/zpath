@@ -129,21 +129,28 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
  	for (int i = 0;  i < count;  i++) {
 
  		string path(paths[i]);   
+
+        if (getFileExtension(path) == "hdr") {
+            ZTexture* texture = new ZTexture(path);
+            mScene->getWorld()->setEnvironmentTexture(texture);
+
+        } else {
 		
-		ZObjLoader loader = ZObjLoader();
+    		ZObjLoader loader = ZObjLoader();
 
-        vector<ZObject*> objects = loader.loadObjects(path);
+            vector<ZObject*> objects = loader.loadObjects(path);
 
-        for (unsigned i = 0; i < objects.size(); ++i) {
-            ZObject* object = objects.at(i);
+            for (unsigned i = 0; i < objects.size(); ++i) {
+                ZObject* object = objects.at(i);
 
-            mScene->addObject(object);
-            ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
-            brainMaterial->setRoughness(0.1);
-           // object->setMaterial(brainMaterial);
+                mScene->addObject(object);
+                ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
+                brainMaterial->setRoughness(0.1);
+               // object->setMaterial(brainMaterial);
+            }
+           // ZObject* object = loader.loadObject(path);
+    		//mScene->addObject(object)
         }
-       // ZObject* object = loader.loadObject(path);
-		//mScene->addObject(object);
     }
 }
 
@@ -228,4 +235,8 @@ void ZPathViewController::onClick(ZButton* sender) {
 
 	    material->setMetallic(newValue);
 	}
+}
+
+string ZPathViewController::getFileExtension(string path) {
+    return path.substr(path.find_last_of(".") + 1) ;
 }
