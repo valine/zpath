@@ -118,7 +118,8 @@ void ZPathViewController::onCreate() {
          navBar->addSubView(menuItem);
     } 
 
-    mTileView = new ZTiledView(mScene, 10000, 10000, 2, 1, getResourcePath());
+    mTileView = new ZTiledView(mScene, 10000, 10000, 1, 1, getResourcePath());
+    mIsQuadView = false;
     mTileView->setOffset(propertiesPanel->getWidth(), 22);
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
@@ -134,9 +135,9 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
             ZTexture* texture = new ZTexture(path);
             mScene->getWorld()->setEnvironmentTexture(texture);
              if (mIsQuadView) {
-                mTileView->setTileCount(1,1);
-            } else {
                 mTileView->setTileCount(3,2);
+            } else {
+                mTileView->setTileCount(1,1);
             }
 
         } else {
