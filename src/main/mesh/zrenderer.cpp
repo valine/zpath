@@ -29,6 +29,11 @@ ZRenderer::ZRenderer(string resourcePath) {
     string irradienceTextureFragmentPath = resourcePath + "resources/shaders/irradiance.fs";
     mIrradienceShader = new ZShader(irradienceTextureVertexPath, irradienceTextureFragmentPath);
 	
+
+    string brdfVertexPath = resourcePath + "resources/shaders/brdf.vs";
+    string brdfFragmentPath = resourcePath + "resources/shaders/brdf.fs";
+    mBrdfShader = new ZShader(brdfVertexPath, brdfFragmentPath);
+	
 	string fboVertexPath = resourcePath + "resources/shaders/fbo.vs";
     string fboFragmentPath = resourcePath + "resources/shaders/fbo.fs";
     mHDRShader = new ZShader(fboVertexPath, fboFragmentPath);
@@ -40,6 +45,12 @@ ZRenderer::ZRenderer(string resourcePath) {
 }
 
 void ZRenderer::init() {
+
+	mShader->use();
+	mShader->setInt("irradianceMap", 0);
+    mShader->setInt("prefilterMap", 1);
+    mShader->setInt("brdfLUT", 2);
+
 	glGenFramebuffers(1, &mHdrFBO);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
 	glGenTextures(1, &mColorBuffer);
@@ -120,6 +131,13 @@ void ZRenderer::init() {
 
 	        renderCube();
 	    }
+
+	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+   		 // then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
+    	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+    	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
 	    
 	    // Create irradiance map
 	    glGenTextures(1, &irradienceCubemap);
@@ -152,6 +170,8 @@ void ZRenderer::init() {
 	        renderCube();
 	    }
 
+	     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	    // Generate pre-filtered environment maps
 
 
@@ -168,8 +188,6 @@ void ZRenderer::init() {
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-
-
 
 	    mPrefilterShader->use();
 	    mPrefilterShader->setInt("environmentMap", 0);
@@ -200,6 +218,30 @@ void ZRenderer::init() {
 	        }
 	    }
 
+	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glGenTextures(1, &brdfLUTTexture);
+
+	    // pre-allocate enough memory for the LUT texture.
+	    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+	    // be sure to set wrapping mode to GL_CLAMP_TO_EDGE
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	    // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
+	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+
+	    glViewport(0, 0, 512, 512);
+	    mBrdfShader->use();
+	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	    renderQuad();
+
 	    // Unbind texture
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -209,6 +251,7 @@ void ZRenderer::init() {
 void ZRenderer::onDrawFinshed() {
 	//renderQuad();
 	//renderCube();
+
 }
 
 void ZRenderer::draw() {
@@ -237,6 +280,16 @@ void ZRenderer::draw() {
 		vector<ZPointLight*> lights = mScene->getLights();
 
 		vector<ZObject*> objects = mScene->getObjects();
+		
+	    glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
 		for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
 			ZObject *object = (*it);
 	    	ZMesh *mesh = (*it)->getMesh();
@@ -250,8 +303,7 @@ void ZRenderer::draw() {
 				glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
 	    	} else {
 	    		shader = mShader;
-	    		glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+				
 	    	}
 
 	    	shader->use();
@@ -290,8 +342,8 @@ void ZRenderer::draw() {
 			
 			if (mParentView != nullptr) {
 
-				float width = mParentView->getWidth();
-				float height = mParentView->getHeight();
+				// float width = mParentView->getWidth();
+				// float height = mParentView->getHeight();
 
 				shader->setMat4("uProjectionMatrix", projectionMatrix);
 				shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
@@ -306,7 +358,7 @@ void ZRenderer::draw() {
     	mBackgroundShader->setMat4("projection", projectionMatrix);
     	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
     	glActiveTexture(GL_TEXTURE0);
-       	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+       glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
         renderCube();
 
 	    onDrawFinshed();

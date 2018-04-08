@@ -49,7 +49,7 @@ void main()
 
 
 
-        gl_FragColor = vec4(result.rgb, 1.0);
+        gl_FragColor = vec4(retColor.rgb, 1.0);
     }
     else
     {

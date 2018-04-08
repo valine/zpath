@@ -4,7 +4,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/space.hdr");
+	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/Ice_Lake_Ref.hdr");
 	ZWorld* world = new ZWorld();
 	world->setEnvironmentTexture(environmentTexture);
 	setWorld(world);
@@ -22,7 +22,7 @@ BasicScene::BasicScene(string resourcePath)
 	
 	dbs2->setMaterial(brainMaterial);
 	
-	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1.0,1.0,1.0));
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1.0,1.0,1.1));
 	//brainMaterialLarge->setColorTexture(testTexture);
 
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
@@ -31,7 +31,7 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
 	addObject(electrodes);
-	ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.601540, 0.604470, 0.666761));
+	ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.501540, 0.504470, 0.566761));
 	electrodeMaterial->setMetallic(1.0);
 	electrodeMaterial->setRoughness(0.2);
 	electrodes->setMaterial(electrodeMaterial);
@@ -41,7 +41,7 @@ BasicScene::BasicScene(string resourcePath)
 	addObject(lead);
 	ZMaterial* leadMaterial = new ZMaterial(vec3(0.9, 0.9, 1.0));
 	leadMaterial->setMetallic(0);
-	leadMaterial->setRoughness(0.6);
+	leadMaterial->setRoughness(0.3);
 	//leadMaterial->setColorTexture(testTexture);
 	lead->setMaterial(leadMaterial);
 

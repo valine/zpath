@@ -20,4 +20,3 @@ vec3 ZPointLight::getPosition() {
 void ZPointLight::setPosition(vec3 position) {
 	mPosition = position;
 }
-

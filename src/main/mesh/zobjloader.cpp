@@ -16,7 +16,6 @@ vector<ZObject*> ZObjLoader::loadObjects(const std::string& pFile) {
 	vector<ZObject*> objects;
 
 	aiNode* node = scene->mRootNode;
-
     return processNode(node, scene);
 }
 

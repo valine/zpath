@@ -46,6 +46,7 @@ private:
 	ZShader *mCubemapShader = nullptr;
 	ZShader *mIrradienceShader = nullptr;
 	ZShader *mPrefilterShader = nullptr;
+	ZShader *mBrdfShader = nullptr;
 
 	Z3DView *mParentView = nullptr;
 
@@ -63,6 +64,8 @@ private:
 
 	unsigned int envCubemap;
 	unsigned int irradienceCubemap;
+
+	unsigned int brdfLUTTexture;
 
 
 	unsigned int prefilterMap;

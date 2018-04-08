@@ -6,7 +6,6 @@ void ZMesh::setVertices(vector<float> vertices) {
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), &mVertices[0], GL_STATIC_DRAW);
-	
 }
 
 void ZMesh::setVertexNormals(vector<float> normals) {

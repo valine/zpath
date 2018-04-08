@@ -1,6 +1,5 @@
 #include "zmaterial.h"
 
-
 ZMaterial::ZMaterial(vec3 color) {
 	mColor = color;
 }
