@@ -67,7 +67,7 @@ void main() {
     
     vec3 N = normalize(vNormal); 
     vec3 V = normalize(uCameraPosition - vPosition);
-    vec3 R = reflect(V, N); 
+    vec3 R = reflect(-V,N); 
 
     vec3 Lo = vec3(0.0);
     vec3 F0 = vec3(0.04); 
@@ -105,11 +105,13 @@ void main() {
     vec3 kS = F;
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - uMetallic;     
-    vec3 irradiance = texture(irradianceMap, -N).rgb;
+    vec3 irradiance = texture(irradianceMap, N).rgb;
     irradiance = pow(irradiance, vec4(2.2));
     vec3 diffuse      = irradiance * uColor;
 
 
+    R.y = -R.y;
+    R.x = -R.x;
  // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
     float MAX_REFLECTION_LOD = 4.0;
     vec3 prefilteredColor = textureLod(prefilterMap, R,  uRoughness * MAX_REFLECTION_LOD).rgb;    

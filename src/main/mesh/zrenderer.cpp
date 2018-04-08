@@ -172,14 +172,13 @@ void ZRenderer::init() {
 
 	     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	    // Generate pre-filtered environment maps
-
+	    // Generate pre-filtered environment map
 
 	    glGenTextures(1, &prefilterMap);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
 		for (unsigned int i = 0; i < 6; ++i)
 		{
-		    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, nullptr);
+		    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 256, 256, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -200,8 +199,8 @@ void ZRenderer::init() {
 	    for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
 	    {
 	        // reisze framebuffer according to mip-level size.
-	        unsigned int mipWidth  = 128 * std::pow(0.5, mip);
-	        unsigned int mipHeight = 128 * std::pow(0.5, mip);
+	        unsigned int mipWidth  = 256 * std::pow(0.5, mip);
+	        unsigned int mipHeight = 256 * std::pow(0.5, mip);
 	        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 	        glViewport(0, 0, mipWidth, mipHeight);
@@ -358,7 +357,7 @@ void ZRenderer::draw() {
     	mBackgroundShader->setMat4("projection", projectionMatrix);
     	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
     	glActiveTexture(GL_TEXTURE0);
-       glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+       glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
         renderCube();
 
 	    onDrawFinshed();
