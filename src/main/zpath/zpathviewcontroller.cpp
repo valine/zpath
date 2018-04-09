@@ -150,9 +150,9 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
                 ZObject* object = objects.at(i);
 
                 mScene->addObject(object);
-                ZMaterial* brainMaterial = new ZMaterial(vec3(1.0, 1.0, 1.0));
+                ZMaterial* brainMaterial = new ZMaterial(vec4(1.0, 1.0, 1.0, 0.5));
                 brainMaterial->setRoughness(0.01);
-                brainMaterial->setMetallic(1.0);
+                brainMaterial->setMetallic(0.0);
                 object->setMaterial(brainMaterial);
             }
            // ZObject* object = loader.loadObject(path);

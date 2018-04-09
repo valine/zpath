@@ -220,6 +220,7 @@ void ZRenderer::init() {
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glGenTextures(1, &brdfLUTTexture);
+		
 
 	    // pre-allocate enough memory for the LUT texture.
 	    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);

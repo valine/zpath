@@ -130,7 +130,7 @@ void main() {
     
     vec3 color = ambient + Lo;
 
-    float alpha = uColor.a + luma(prefilteredColor) / 1.8;
+    float alpha = uColor.a + luma(specular) + F;
 
     if (alpha > 1.0) {
         alpha = 1.0;
@@ -138,6 +138,9 @@ void main() {
 
     gl_FragColor = vec4(color, alpha);
 }
+
+
+
 
 
 

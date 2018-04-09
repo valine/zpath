@@ -22,7 +22,7 @@ BasicScene::BasicScene(string resourcePath)
 	
 	dbs2->setMaterial(brainMaterial);
 	
-	ZMaterial* brainMaterialLarge = new ZMaterial(vec4(0.5,0.8,1, 0.8));
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec4(0.023549, 0.017778, 0.119265, 0.8));
 	brainMaterialLarge->setRoughness(0.1);
 	brainMaterialLarge->setMetallic(0);
 	//brainMaterialLarge->setColorTexture(testTexture);
