@@ -10,40 +10,34 @@ BasicScene::BasicScene(string resourcePath)
 	setWorld(world);
 
 	ZTexture* testTexture = new ZTexture(resourcePath + "resources/textures/brain1-shadow-map.png");
-
-
 	ZObjLoader loader = ZObjLoader();
+
 
 	ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
 	brainMaterial->setRoughness(0.2);
-
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
 	addObject(dbs2);
-	
 	dbs2->setMaterial(brainMaterial);
 	
-	ZMaterial* brainMaterialLarge = new ZMaterial(vec4(0.023549, 0.017778, 0.119265, 0.8));
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec4(0.023549, 0.017778, 0.119265, 0.5));
 	brainMaterialLarge->setRoughness(0.1);
 	brainMaterialLarge->setMetallic(0);
-	//brainMaterialLarge->setColorTexture(testTexture);
-
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
 	dbs->setMaterial(brainMaterialLarge);
 	addObject(dbs);
 
 	ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
 	addObject(electrodes);
-	ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.501540, 0.504470, 0.566761));
+	ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.1, 0.1, 0.1));
 	electrodeMaterial->setMetallic(1.0);
 	electrodeMaterial->setRoughness(0.2);
 	electrodes->setMaterial(electrodeMaterial);
 
 	ZObject* lead = loader.loadObjects(resourcePath + "resources/meshes/dbs-lead.obj").at(0);
 	addObject(lead);
-	ZMaterial* leadMaterial = new ZMaterial(vec3(0.9, 0.9, 1.0));
+	ZMaterial* leadMaterial = new ZMaterial(vec3(0.6, 0.6, 0.6));
 	leadMaterial->setMetallic(0);
-	leadMaterial->setRoughness(0.3);
-	//leadMaterial->setColorTexture(testTexture);
+	leadMaterial->setRoughness(0.1);
 	lead->setMaterial(leadMaterial);
 
 	setExposure(2.3);
