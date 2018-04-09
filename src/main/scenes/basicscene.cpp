@@ -4,7 +4,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/Ice_Lake_Ref.hdr");
+	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/studio.hdr");
 	ZWorld* world = new ZWorld();
 	world->setEnvironmentTexture(environmentTexture);
 	setWorld(world);
@@ -15,14 +15,16 @@ BasicScene::BasicScene(string resourcePath)
 	ZObjLoader loader = ZObjLoader();
 
 	ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
-	brainMaterial->setRoughness(0.4);
+	brainMaterial->setRoughness(0.2);
 
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
 	addObject(dbs2);
 	
 	dbs2->setMaterial(brainMaterial);
 	
-	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1,1,1));
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1,0.6,0.6cd ));
+	brainMaterialLarge->setRoughness(0.1);
+	brainMaterialLarge->setMetallic(0.9);
 	//brainMaterialLarge->setColorTexture(testTexture);
 
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
