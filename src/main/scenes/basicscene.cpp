@@ -22,7 +22,7 @@ BasicScene::BasicScene(string resourcePath)
 	
 	dbs2->setMaterial(brainMaterial);
 	
-	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1,0.6,0.6));
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec4(0.5,0.8,1, 0.8));
 	brainMaterialLarge->setRoughness(0.1);
 	brainMaterialLarge->setMetallic(0);
 	//brainMaterialLarge->setColorTexture(testTexture);
@@ -37,7 +37,6 @@ BasicScene::BasicScene(string resourcePath)
 	electrodeMaterial->setMetallic(1.0);
 	electrodeMaterial->setRoughness(0.2);
 	electrodes->setMaterial(electrodeMaterial);
-
 
 	ZObject* lead = loader.loadObjects(resourcePath + "resources/meshes/dbs-lead.obj").at(0);
 	addObject(lead);

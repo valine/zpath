@@ -61,7 +61,9 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     return ggx1 * ggx2;
 }
 
-
+float luma(vec3 color) {
+  return dot(color, vec3(0.299, 0.587, 0.114));
+}
 
 void main() {
     
@@ -113,7 +115,7 @@ void main() {
     vec3 diffuse      = irradiance * uColor;
 
 
-    R.y = -R.y;
+      R.y = -R.y;
     R.x = -R.x;
  // sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
     float MAX_REFLECTION_LOD = 4.0;
@@ -128,7 +130,13 @@ void main() {
     
     vec3 color = ambient + Lo;
 
-    gl_FragColor = vec4(color, 1.0);
+    float alpha = uColor.a + luma(prefilteredColor) / 1.8;
+
+    if (alpha > 1.0) {
+        alpha = 1.0;
+    }
+
+    gl_FragColor = vec4(color, alpha);
 }
 
 

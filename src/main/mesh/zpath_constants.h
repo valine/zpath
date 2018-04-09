@@ -6,5 +6,4 @@ namespace ZPathConstants
   const int maxLightCount = 4;    
 }
 
-
 #endif

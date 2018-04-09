@@ -1,14 +1,24 @@
 #include "zmaterial.h"
 
 ZMaterial::ZMaterial(vec3 color) {
+	mColor = vec4(color, 1.0);
+}
+
+
+
+ZMaterial::ZMaterial(vec4 color) {
 	mColor = color;
 }
 
-vec3 ZMaterial::getColor() {
+vec4 ZMaterial::getColor() {
 	return mColor;
 }
 
 void ZMaterial::setColor(vec3 color) {
+	mColor = vec4(color, 1.0);
+}
+
+void ZMaterial::setColor(vec4 color) {
 	mColor = color;
 }
 

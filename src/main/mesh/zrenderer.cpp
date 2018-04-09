@@ -243,6 +243,9 @@ void ZRenderer::init() {
 
 	    // Unbind texture
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	    glBlendEquation (GL_FUNC_ADD);
+	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 }
 
@@ -273,8 +276,17 @@ void ZRenderer::draw() {
  		glViewport(0,0, width, height);
 		glEnable(GL_DEPTH_TEST);
 
-
+		// Draw background
 		mat4 projectionMatrix = perspective(glm::radians(80.0f), (float) width / (float) height, 0.1f, 1000.0f);
+
+		mBackgroundShader->use();
+    	mBackgroundShader->setMat4("projection", projectionMatrix);
+    	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
+    	glActiveTexture(GL_TEXTURE0);
+      	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+        renderCube();
+        //--------------
+
 
 		vector<ZPointLight*> lights = mScene->getLights();
 
@@ -332,8 +344,8 @@ void ZRenderer::draw() {
 			glVertexAttribPointer(mTextureCoordLocation, 2, GL_FLOAT, GL_FALSE,
 			                          sizeof(float) * 2, (void*) 0);
 
-	    	vec3 color = material->getColor();
-			shader->setVec4("uColor", color.r, color.g, color.b, 1);
+	    	vec4 color = material->getColor();
+			shader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
 	    	shader->setFloat("uMetallic", material->getMetallic());
 			shader->setFloat("uRoughness", material->getRoughness());
@@ -353,12 +365,6 @@ void ZRenderer::draw() {
 
 	    glBindTexture(GL_TEXTURE_2D, 0);
 
-	    mBackgroundShader->use();
-    	mBackgroundShader->setMat4("projection", projectionMatrix);
-    	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
-    	glActiveTexture(GL_TEXTURE0);
-       glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-        renderCube();
 
 	    onDrawFinshed();
 
