@@ -13,13 +13,13 @@ BasicScene::BasicScene(string resourcePath)
 	ZObjLoader loader = ZObjLoader();
 
 
-	ZMaterial* brainMaterial = new ZMaterial(vec3(0.093402, 0.211725, 0.420024));
+	ZMaterial* brainMaterial = new ZMaterial(vec3(0.8, 0.8, 0.8));
 	brainMaterial->setRoughness(0.2);
 	ZObject* dbs2 = loader.loadObject(resourcePath + "resources/meshes/dbs2.obj");
 	addObject(dbs2);
 	dbs2->setMaterial(brainMaterial);
 	
-	ZMaterial* brainMaterialLarge = new ZMaterial(vec4(0.023549, 0.017778, 0.119265, 0.5));
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec4(0.023549, 0.017778, 0.119265, 0.6));
 	brainMaterialLarge->setRoughness(0.1);
 	brainMaterialLarge->setMetallic(0);
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
@@ -35,7 +35,7 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZObject* lead = loader.loadObjects(resourcePath + "resources/meshes/dbs-lead.obj").at(0);
 	addObject(lead);
-	ZMaterial* leadMaterial = new ZMaterial(vec3(0.6, 0.6, 0.6));
+	ZMaterial* leadMaterial = new ZMaterial(vec4(0.6, 0.6, 0.6, 0.8));
 	leadMaterial->setMetallic(0);
 	leadMaterial->setRoughness(0.1);
 	lead->setMaterial(leadMaterial);
