@@ -22,9 +22,9 @@ BasicScene::BasicScene(string resourcePath)
 	
 	dbs2->setMaterial(brainMaterial);
 	
-	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1,0.6,0.6cd ));
+	ZMaterial* brainMaterialLarge = new ZMaterial(vec3(1,0.6,0.6));
 	brainMaterialLarge->setRoughness(0.1);
-	brainMaterialLarge->setMetallic(0.9);
+	brainMaterialLarge->setMetallic(0);
 	//brainMaterialLarge->setColorTexture(testTexture);
 
 	ZObject* dbs = loader.loadObject(resourcePath + "resources/meshes/dbs.obj");
@@ -47,7 +47,7 @@ BasicScene::BasicScene(string resourcePath)
 	//leadMaterial->setColorTexture(testTexture);
 	lead->setMaterial(leadMaterial);
 
-	setExposure(1.5);
+	setExposure(2.3);
 	ZPointLight* light = new ZPointLight(vec3(3.47, 3.31, 3.79), vec3(0,0.9,1));
 	addLight(light);
 
