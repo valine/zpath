@@ -220,7 +220,7 @@ void ZRenderer::init() {
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glGenTextures(1, &brdfLUTTexture);
-		
+
 
 	    // pre-allocate enough memory for the LUT texture.
 	    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
@@ -284,13 +284,11 @@ void ZRenderer::draw() {
     	mBackgroundShader->setMat4("projection", projectionMatrix);
     	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
     	glActiveTexture(GL_TEXTURE0);
-      	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+      	glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
         renderCube();
         //--------------
 
-
 		vector<ZPointLight*> lights = mScene->getLights();
-
 		vector<ZObject*> objects = mScene->getObjects();
 		
 	    glActiveTexture(GL_TEXTURE0);
@@ -302,26 +300,28 @@ void ZRenderer::draw() {
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
+		ZShader* shader;
+		shader = mShader;
+		shader->use();
+
+		shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
+		shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
+
+		shader->setMat4("uProjectionMatrix", projectionMatrix);
+		shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+
 		for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
 			ZObject *object = (*it);
 	    	ZMesh *mesh = (*it)->getMesh();
 	    	ZMaterial* material = object->getMaterial();
 
-	    	ZShader* shader;
-
+	    	
 	    	if (material->getColorTexture() != nullptr) {
 	    		shader = mColorTextureShader;
 	    		glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
-	    	} else {
-	    		shader = mShader;
-				
-	    	}
-
-	    	shader->use();
-			
-			shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
-			shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
+				shader->use();
+	    	} 
 
 	    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
@@ -352,21 +352,12 @@ void ZRenderer::draw() {
 			shader->setFloat("uRoughness", material->getRoughness());
 			shader->setVec3("uCameraPosition", mCamera->getPosition());
 			
-			if (mParentView != nullptr) {
 
-				// float width = mParentView->getWidth();
-				// float height = mParentView->getHeight();
-
-				shader->setMat4("uProjectionMatrix", projectionMatrix);
-				shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
-		
-				glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
-			}
+			glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+			//}
 	    }
 
 	    glBindTexture(GL_TEXTURE_2D, 0);
-
-
 	    onDrawFinshed();
 
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);

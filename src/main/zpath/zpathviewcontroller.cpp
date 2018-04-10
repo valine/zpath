@@ -139,7 +139,6 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
             } else {
                 mTileView->setTileCount(1,1);
             }
-
         } else {
 		
     		ZObjLoader loader = ZObjLoader();
@@ -150,8 +149,8 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
                 ZObject* object = objects.at(i);
 
                 mScene->addObject(object);
-                ZMaterial* brainMaterial = new ZMaterial(vec4(1.0, 1.0, 1.0, 0.5));
-                brainMaterial->setRoughness(0.01);
+                ZMaterial* brainMaterial = new ZMaterial(vec4(0.17, 0.01, ((float) (i % 5) / 16) + 0.09, 0.2));
+                brainMaterial->setRoughness(0.1);
                 brainMaterial->setMetallic(0.0);
                 object->setMaterial(brainMaterial);
             }
@@ -169,7 +168,7 @@ void ZPathViewController::onClick(ZButton* sender) {
 	        mTileView->setTileCount(1,1);
 	    } else {
 	        mIsQuadView = true;
-	        mTileView->setTileCount(3,2);
+	        mTileView->setTileCount(2,1);
 	    }
 	} else if (sender == mIncrementButton) {
 	    ZScene* scene = mTileView->getScene();
