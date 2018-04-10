@@ -4,7 +4,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/Ice_Lake_Ref.hdr");
+	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/QueenMary_Chimney_Ref.hdr");
 	ZWorld* world = new ZWorld();
 	world->setEnvironmentTexture(environmentTexture);
 	setWorld(world);
