@@ -18,19 +18,21 @@ BasicScene::BasicScene(string resourcePath)
 	electrodeMaterial->setRoughness(0.2);
 	electrodes->setMaterial(electrodeMaterial);
 
-	ZObject* lead = loader.loadObjects(resourcePath + "resources/meshes/dbs-lead.obj").at(0);
-	addObject(lead);
-	ZMaterial* leadMaterial = new ZMaterial(vec4(0.6, 0.6, 0.6, 0.8));
-	leadMaterial->setMetallic(0);
-	leadMaterial->setRoughness(0.1);
-	lead->setMaterial(leadMaterial);
-
+	
 	ZObject* brain = loader.loadObjects(resourcePath + "resources/meshes/brain-opaque.obj").at(0);
 	addObject(brain);
 	ZMaterial* brainMaterial = new ZMaterial(vec3(0.9, 0.1, 0.1));
 	brainMaterial->setMetallic(0);
 	brainMaterial->setRoughness(0.1);
 	brain->setMaterial(brainMaterial);
+
+
+	ZObject* lead = loader.loadObjects(resourcePath + "resources/meshes/dbs-lead.obj").at(0);
+	addObject(lead);
+	ZMaterial* leadMaterial = new ZMaterial(vec4(0.6, 0.6, 0.6, 0.8));
+	leadMaterial->setMetallic(0);
+	leadMaterial->setRoughness(0.1);
+	lead->setMaterial(leadMaterial);
 
 
 	ZObject* brainTransparent = loader.loadObjects(resourcePath + "resources/meshes/brain-transparent.obj").at(0);
