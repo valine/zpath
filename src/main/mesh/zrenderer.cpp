@@ -53,8 +53,8 @@ void ZRenderer::init() {
 
 	glGenFramebuffers(1, &mHdrFBO);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
-	glGenTextures(1, &mColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, mColorBuffer);
+	glGenTextures(1, &mHdrBuffer);
+    glBindTexture(GL_TEXTURE_2D, mHdrBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -64,7 +64,7 @@ void ZRenderer::init() {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mHdrFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mColorBuffer, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mHdrBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBuffer);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;
@@ -263,7 +263,7 @@ void ZRenderer::draw() {
 		float width = mParentView->getWidth();
 		float height =  mParentView->getHeight();
 
-	   	glBindTexture(GL_TEXTURE_2D, mColorBuffer);
+	   	glBindTexture(GL_TEXTURE_2D, mHdrBuffer);
 	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 	    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
 	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
@@ -289,7 +289,7 @@ void ZRenderer::draw() {
       	} else {
       		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
       	}
-      	
+
         renderCube();
         //--------------
 
@@ -372,7 +372,7 @@ void ZRenderer::draw() {
 		glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mColorBuffer);
+        glBindTexture(GL_TEXTURE_2D, mHdrBuffer);
 
         mHDRShader->setBool("hdr", true);
         mHDRShader->setFloat("exposure", mScene->getExposure());

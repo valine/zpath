@@ -53,7 +53,11 @@ private:
 	ZCamera* mCamera;
 
 	unsigned int mHdrFBO;
-	unsigned int mColorBuffer;
+	unsigned int mHdrBuffer;
+	
+	unsigned int mSelectionFBO;
+
+
 	unsigned int mRenderBuffer;
 
 	unsigned int quadVAO = 0;
