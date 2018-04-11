@@ -284,7 +284,12 @@ void ZRenderer::draw() {
     	mBackgroundShader->setMat4("projection", projectionMatrix);
     	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
     	glActiveTexture(GL_TEXTURE0);
-      	glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+    	if (mScene->getWorld()->isBackgroundBlurred()) {
+      		glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+      	} else {
+      		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+      	}
+      	
         renderCube();
         //--------------
 

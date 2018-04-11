@@ -27,6 +27,7 @@ private:
 	ZTiledView *mTileView = nullptr;
 
 	ZButton *mGridViewButton;
+	ZButton *mBackgroundBlurButton;
 	ZButton *mIncrementButton;
 	ZButton *mDecrementButton;
 	ZLabel *mExposureLabel;

@@ -36,6 +36,15 @@ void ZPathViewController::onCreate() {
     mGridViewButton->setOnClickListener(this);
     propertiesPanel->addSubView(mGridViewButton);
 
+    mBackgroundBlurButton = new ZButton(200, 40, getResourcePath());
+    mBackgroundBlurButton->setOffset(0,50);
+    mBackgroundBlurButton->setMargin(10,10,10,10);
+    mBackgroundBlurButton->setBackgroundColor(highlightColor);
+    mBackgroundBlurButton->setText("Toggle Background Blur");
+    mBackgroundBlurButton->setGravity(ZView::bottomLeft);
+    mBackgroundBlurButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mBackgroundBlurButton);
+
     mExposureLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mExposureLabel->setOffset(10,120);
     mExposureLabel->setText("Exposure 1.0");
@@ -149,9 +158,10 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
                 ZObject* object = objects.at(i);
 
                 mScene->addObject(object);
-                ZMaterial* brainMaterial = new ZMaterial(vec4(0.17, 0.01, ((float) (i % 5) / 16) + 0.09, 0.2));
-                brainMaterial->setRoughness(0.1);
-                brainMaterial->setMetallic(0.0);
+                //ZMaterial* brainMaterial = new ZMaterial(vec4(0.17, 0.01, ((float) (i % 5) / 16) + 0.09, 1.0));
+                ZMaterial* brainMaterial = new ZMaterial(vec3(1,1,1));
+                brainMaterial->setRoughness(1);
+                brainMaterial->setMetallic(0);
                 object->setMaterial(brainMaterial);
             }
            // ZObject* object = loader.loadObject(path);
@@ -240,7 +250,11 @@ void ZPathViewController::onClick(ZButton* sender) {
 	    mMetalLabel->setText("Metallic " + str);
 
 	    material->setMetallic(newValue);
-	}
+	} else if (sender == mBackgroundBlurButton) {
+        ZScene* scene = mTileView->getScene();
+        ZWorld* world = scene->getWorld();
+        world->blurBackground(!world->isBackgroundBlurred());
+    }
 }
 
 string ZPathViewController::getFileExtension(string path) {

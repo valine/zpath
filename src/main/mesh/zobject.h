@@ -23,5 +23,4 @@ private:
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
 };
-
 #endif

@@ -7,3 +7,11 @@ void ZWorld::setEnvironmentTexture(ZTexture* texture) {
 ZTexture* ZWorld::getEnvironmentTexture() {
 	return mEnvironmentTexture;
 }
+
+void ZWorld::blurBackground(bool shouldBlur) {
+	mBlurredBackground = shouldBlur;
+}
+
+bool ZWorld::isBackgroundBlurred() {
+	return mBlurredBackground;
+}

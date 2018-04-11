@@ -4,8 +4,6 @@ ZMaterial::ZMaterial(vec3 color) {
 	mColor = vec4(color, 1.0);
 }
 
-
-
 ZMaterial::ZMaterial(vec4 color) {
 	mColor = color;
 }

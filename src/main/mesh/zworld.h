@@ -10,8 +10,11 @@ class ZWorld {
 	public:
 		void setEnvironmentTexture(ZTexture* texture);
 		ZTexture* getEnvironmentTexture();
+		void blurBackground(bool shouldBlur);
+		bool isBackgroundBlurred();
 	private:
 		ZTexture* mEnvironmentTexture;
+		bool mBlurredBackground = false;
 };
 
 #endif
