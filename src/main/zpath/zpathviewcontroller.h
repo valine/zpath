@@ -40,6 +40,27 @@ private:
 	ZButton *mMetalDecrementButton;
 	ZLabel *mMetalLabel;
 
+	ZButton *mRedIncrementButton;
+	ZButton *mRedDecrementButton;
+	ZLabel *mRedLabel;
+
+
+	ZButton *mBlueIncrementButton;
+	ZButton *mBlueDecrementButton;
+	ZLabel *mBlueLabel;
+
+
+	ZButton *mGreenIncrementButton;
+	ZButton *mGreenDecrementButton;
+	ZLabel *mGreenLabel;
+
+
+	ZButton *mAlphaIncrementButton;
+	ZButton *mAlphaDecrementButton;
+	ZLabel *mAlphaLabel;
+
+
+
 	ZScene* mScene;
 
 	string getFileExtension(string path);
