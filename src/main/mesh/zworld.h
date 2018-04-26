@@ -14,7 +14,7 @@ class ZWorld {
 		bool isBackgroundBlurred();
 	private:
 		ZTexture* mEnvironmentTexture;
-		bool mBlurredBackground = false;
+		bool mBlurredBackground = true;
 };
 
 #endif
