@@ -33,7 +33,7 @@ void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
 	
 void Z3DView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
-	if (middleMouseIsDown()) {
+	if (middleMouseIsDown() || (mouseIsDown() && shiftKeyPressed())) {
 		int deltaX =  getLastX() - x;
 		int deltaY = getLastY() - y;
 
