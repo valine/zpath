@@ -18,9 +18,12 @@ public:
 
 	void setMaterial(ZMaterial* material);
 	ZMaterial* getMaterial();
+	void setSelected(bool selected);
+	bool isSelected();
 
 private: 
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
+	bool mSelected = false;
 };
 #endif

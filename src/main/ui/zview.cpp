@@ -309,7 +309,6 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
 
         glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
-    
 }
 
 void ZView::addSubView(ZView *view) {
@@ -343,6 +342,13 @@ bool ZView::mouseIsDown() {
     return mMouseDown;
 }
 
+bool ZView::middleMouseIsDown() {
+    return mMiddleMouseDown;
+}
+
+bool ZView::shiftKeyPressed() {
+    return mShiftKeyPressed;
+}
 
 int ZView::getMouseDownX() {
     return mMouseDownX;
@@ -385,6 +391,12 @@ void ZView::setMaxHeight(int height) {
 }
 
 void ZView::onKeyPress(int key, int scancode, int action, int mods) {
+    if ((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) && action == GLFW_PRESS) {
+        mShiftKeyPressed = true;
+    } else if ((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) && action == GLFW_RELEASE) {
+        mShiftKeyPressed = false;
+    }
+
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->onKeyPress(key, scancode, action, mods);
     }
@@ -396,10 +408,14 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
         mMouseDown  = true;
         mMouseDownX = x;
         mMouseDownY = y;
-
-
     } else {
         mMouseDown = false;
+    }
+
+    if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE) {
+        mMiddleMouseDown = false;
+    } else if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
+        mMiddleMouseDown = true;
     }
 
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
@@ -415,7 +431,6 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
         if (action == GLFW_RELEASE && view->mouseIsDown()) {
             view->onMouseEvent(button, action, mods, x, y);
         }
-       
     }
 }
 

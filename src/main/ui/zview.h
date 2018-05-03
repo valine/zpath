@@ -83,6 +83,9 @@ class ZView {
 		void setMaxHeight(int height);
 
 		bool mouseIsDown();
+		bool middleMouseIsDown();
+		bool shiftKeyPressed();
+
 		int getMouseDownX();
 		int getMouseDownY();
 
@@ -158,6 +161,10 @@ class ZView {
 		int mWindowHeight = 0;
 
 		bool mMouseDown = false;
+		bool mMiddleMouseDown = false;
+
+		bool mShiftKeyPressed = false;
+
 
 		vector<ZView*> mViews;
 };

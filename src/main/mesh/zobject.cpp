@@ -17,8 +17,17 @@ void ZObject::setMaterial(ZMaterial* material) {
 	mMaterial = material;
 }
 
+bool ZObject::isSelected() {
+	return mSelected;
+}
+
+void ZObject::setSelected(bool selected) {
+	mSelected = selected;
+}
+
 ZMaterial* ZObject::getMaterial() {
 	return mMaterial;
 }
+
 
 	
