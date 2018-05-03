@@ -480,7 +480,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-    else if (sender == mBackgroundBlurButton && selectionIndex != -1) {
+    else if (sender == mBackgroundBlurButton) {
         ZScene* scene = mTileView->getScene();
         ZWorld* world = scene->getWorld();
         world->blurBackground(!world->isBackgroundBlurred());
