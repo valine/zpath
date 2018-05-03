@@ -348,6 +348,7 @@ void ZRenderer::renderMain() {
 	int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
 	int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
 
+	int objectIndex = 0;
 	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
 		ZObject *object = (*it);
     	ZMesh *mesh = (*it)->getMesh();
@@ -382,11 +383,18 @@ void ZRenderer::renderMain() {
     	vec4 color = material->getColor();
 		shader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
+		float selected = 0;
+		if (mScene->getActiveObjectIndex() == objectIndex) {
+			selected = 1;
+		}
+
     	shader->setFloat("uMetallic", material->getMetallic());
+    	shader->setFloat("uSelected", selected);
 		shader->setFloat("uRoughness", material->getRoughness());
 		shader->setVec3("uCameraPosition", mCamera->getPosition());
 		
 		glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+		objectIndex++;
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);

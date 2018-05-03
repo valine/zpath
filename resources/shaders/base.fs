@@ -17,6 +17,8 @@ uniform vec3 uLightColors[lightCount];
 uniform float uMetallic;
 uniform float uRoughness;
 
+uniform float uSelected;
+
 float ao = 1;
 
 
@@ -134,6 +136,15 @@ void main() {
 
     if (alpha > 1.0) {
         alpha = 1.0;
+    }
+
+    if (uSelected == 1) {
+
+        vec3 selectedFactor = fresnelSchlick(max(dot(N, V), 0.0), vec3(1.5, 1.5, 1.5));
+        vec3 selectedColor = vec3(1.0,1.0,1.0);
+
+
+        gl_FragColor = vec4(mix(color,selectedColor, selectedFactor), alpha);
     }
 
     gl_FragColor = vec4(color, alpha);

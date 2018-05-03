@@ -30,7 +30,6 @@ public:
 	GLuint getTextureCoordinatesBuffer();
 
 private:
-
 	vector<float> mVertices;
 	vector<float> mVertexNormals;
 	vector<int> mFaceIndices;

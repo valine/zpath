@@ -46,11 +46,11 @@ BasicScene::BasicScene(string resourcePath)
 	lead->setMaterial(leadMaterial);
 
 
-	ZObject* brainTransparent = loader.loadObjects(resourcePath + "resources/meshes/brain-transparent.obj").at(0);
-	ZMaterial* transparentMaterial = new ZMaterial(vec4(0.01, 0.02, 0.06, 0.2));
-	transparentMaterial->setMetallic(0);
-	transparentMaterial->setRoughness(0.1);
-	brainTransparent->setMaterial(transparentMaterial);
+	// ZObject* brainTransparent = loader.loadObjects(resourcePath + "resources/meshes/brain-transparent.obj").at(0);
+	// ZMaterial* transparentMaterial = new ZMaterial(vec4(0.01, 0.02, 0.06, 0.2));
+	// transparentMaterial->setMetallic(0);
+	// transparentMaterial->setRoughness(0.1);
+	// brainTransparent->setMaterial(transparentMaterial);
 
 
 	// Add objects 
@@ -58,7 +58,7 @@ BasicScene::BasicScene(string resourcePath)
 	addObject(electrodes);
 	addObject(brain);
 	addObject(lead);
-	addObject(brainTransparent);
+	//addObject(brainTransparent);
 
 
 	//- Lighting setup ---------------------------------------------------------------

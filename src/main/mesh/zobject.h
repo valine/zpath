@@ -20,7 +20,6 @@ public:
 	ZMaterial* getMaterial();
 	void setSelected(bool selected);
 	bool isSelected();
-
 private: 
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
