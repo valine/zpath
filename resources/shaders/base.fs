@@ -23,13 +23,18 @@ float ao = 1;
 
 
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
-     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 2.0);
 }  
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
+
+vec3 fresnelSchlickSelection(float cosTheta, vec3 F0) {
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 10.0);
+}
+
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a      = roughness*roughness;
@@ -140,12 +145,10 @@ void main() {
 
     if (uSelected == 1) {
 
-        vec3 selectedFactor = fresnelSchlick(max(dot(N, V), 0.0), vec3(1.5, 1.5, 1.5));
-        vec3 selectedColor = vec3(1.0,1.0,1.0);
+        vec3 selectedFactor = fresnelSchlickSelection(max(dot(N, V), 0.0), vec3(0)) * 100;
+        gl_FragColor = vec4(color + vec3(0,0,selectedFactor), alpha);
+    } else {
 
-
-        gl_FragColor = vec4(mix(color,selectedColor, selectedFactor), alpha);
+        gl_FragColor = vec4(color, alpha);
     }
-
-    gl_FragColor = vec4(color, alpha);
 }
