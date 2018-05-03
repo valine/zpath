@@ -455,7 +455,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         mAlphaLabel->setText("Alpha " + str);
         material->setColor(color);
     } 
-
+    
     else if (sender == mAlphaDecrementButton) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
