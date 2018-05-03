@@ -34,6 +34,9 @@ public:
 
 	void setExposure(float exposure);
 	float getExposure();
+
+	void setActiveObjectIndex(int index);
+	int getActiveObjectIndex();
 private:
 	vector<ZObject*> mObjects;
 	vector<ZPointLight*> mPointLights;
@@ -51,6 +54,8 @@ private:
 	float mExposure = 1.0;
 
 	void updateLightFlatArrays();
+
+	int mActiveObjectIndex = 0;
 };
 
 #endif

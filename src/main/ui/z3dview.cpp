@@ -14,7 +14,15 @@ void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
  	
  	if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
- 		cout<<"click"<<endl;
+ 		int index = mRenderer->getObjectIndexAtLocation(getLeft() + x, getTop() + getHeight() - 1 - y);
+ 		// vector<ZObject*> objects = mRenderer->getScene()->getObjects();
+
+ 		// for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+			// ZObject *object = (*it);
+			// object->setSelected(false);
+ 		// }
+
+ 		mRenderer->getScene()->setActiveObjectIndex(index);
  	}
 
 }
@@ -38,8 +46,6 @@ void Z3DView::onCursorPosChange(double x, double y) {
 
 void Z3DView::onScrollChange(double x, double y) {
 	ZView::onScrollChange(x, y);
-
-
 	if (y > 0) {
 		mOrbitAnchorPoint.x -= mOrbitAnchorPoint.x / 5;
 	} else {
@@ -49,7 +55,6 @@ void Z3DView::onScrollChange(double x, double y) {
 			mOrbitAnchorPoint.x += mOrbitAnchorPoint.x / 5;
 		}
 	}
-
 
 	if (mOrbitAnchorPoint.x < 0) {
 		mOrbitAnchorPoint.x = 0.1;

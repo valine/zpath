@@ -264,7 +264,7 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
 
 void ZPathViewController::onClick(ZButton* sender) {
 
-    int selectionIndex = 3;
+    int selectionIndex = mScene->getActiveObjectIndex();
 
 	ZViewController::onClick(sender);
 	if (sender == mGridViewButton) {

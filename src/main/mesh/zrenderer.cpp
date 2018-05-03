@@ -6,16 +6,13 @@ ZRenderer::ZRenderer(string resourcePath) {
     string fragmentPath = resourcePath + "resources/shaders/base.fs";
     mShader = new ZShader(vertexPath, fragmentPath);
 
-
 	string cubeVertexPath = resourcePath + "resources/shaders/cubemap.vs";
     string cubeFragmentPath = resourcePath + "resources/shaders/cubemap.fs";
     mCubemapShader = new ZShader(cubeVertexPath, cubeFragmentPath);
 
-
     string backgroundVertexPath = resourcePath + "resources/shaders/background.vs";
     string backgroundFragmentPath = resourcePath + "resources/shaders/background.fs";
     mBackgroundShader = new ZShader(backgroundVertexPath, backgroundFragmentPath);
-
 
     string colorTextureVertexPath = resourcePath + "resources/shaders/base.vs";
     string colorTextureFragmentPath = resourcePath + "resources/shaders/colorTexture.fs";
@@ -28,7 +25,10 @@ ZRenderer::ZRenderer(string resourcePath) {
     string irradienceTextureVertexPath = resourcePath + "resources/shaders/cubemap.vs";
     string irradienceTextureFragmentPath = resourcePath + "resources/shaders/irradiance.fs";
     mIrradienceShader = new ZShader(irradienceTextureVertexPath, irradienceTextureFragmentPath);
-	
+
+    string selectionVertexPath = resourcePath + "resources/shaders/selection.vs";
+    string selectionFragmentPath = resourcePath + "resources/shaders/selection.fs";
+    mSelectionShader = new ZShader(selectionVertexPath, selectionFragmentPath);
 
     string brdfVertexPath = resourcePath + "resources/shaders/brdf.vs";
     string brdfFragmentPath = resourcePath + "resources/shaders/brdf.fs";
@@ -41,7 +41,6 @@ ZRenderer::ZRenderer(string resourcePath) {
 	glDepthFunc(GL_LEQUAL);
 	
 	mCamera = new ZCamera();
-
 }
 
 void ZRenderer::init() {
@@ -51,10 +50,10 @@ void ZRenderer::init() {
     mShader->setInt("prefilterMap", 1);
     mShader->setInt("brdfLUT", 2);
 
-	glGenFramebuffers(1, &mHdrFBO);
+	glGenFramebuffers(1, &mMainFBO);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
-	glGenTextures(1, &mHdrBuffer);
-    glBindTexture(GL_TEXTURE_2D, mHdrBuffer);
+	glGenTextures(1, &mMainBuffer);
+    glBindTexture(GL_TEXTURE_2D, mMainBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -63,8 +62,8 @@ void ZRenderer::init() {
     glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
 
-    glBindFramebuffer(GL_FRAMEBUFFER, mHdrFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mHdrBuffer, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mMainBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBuffer);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;
@@ -74,7 +73,6 @@ void ZRenderer::init() {
     mHDRShader->setInt("hdrBuffer", 0);
 
     // Create cube map
-
     if (mScene->getWorld()->getEnvironmentTexture() != nullptr) {
 
 	    unsigned int captureFBO;
@@ -86,7 +84,7 @@ void ZRenderer::init() {
 	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 2048, 2048);
 	    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	  
+	 
 
 	  	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 	    glm::mat4 captureViews[] = {
@@ -99,16 +97,15 @@ void ZRenderer::init() {
 	    
 	    	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, 1.0f,  0.0f)),
 	     	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, 1.0f,  0.0f))
-
 	    };
 
 	  	// Create background cube map
 	  	glGenTextures(1, &envCubemap);
 	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-	    for (unsigned int i = 0; i < 6; ++i)
-	    {
+	    for (unsigned int i = 0; i < 6; ++i) {
 	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 2048, 2048, 0, GL_RGB, GL_FLOAT, nullptr);
 	    }
+
 	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -138,7 +135,7 @@ void ZRenderer::init() {
     	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
     	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-	    
+	   
 	    // Create irradiance map
 	    glGenTextures(1, &irradienceCubemap);
 	    glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
@@ -221,17 +218,15 @@ void ZRenderer::init() {
 
 		glGenTextures(1, &brdfLUTTexture);
 
-
 	    // pre-allocate enough memory for the LUT texture.
 	    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-	    // be sure to set wrapping mode to GL_CLAMP_TO_EDGE
+
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	    // then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
 	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
@@ -242,9 +237,29 @@ void ZRenderer::init() {
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	    renderQuad();
 
-	    // Unbind texture
+	    // Create selection offscreen buffer
+
+		glGenFramebuffers(1, &mSelectionFBO);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
+		glGenTextures(1, &mSelectionBuffer);
+	    glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
+	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	 	glGenRenderbuffers(1, &mSelectionRenderBuffer);
+	    glBindRenderbuffer(GL_RENDERBUFFER, mSelectionRenderBuffer);
+	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
+
+	    glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
+	    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mSelectionBuffer, 0);
+	    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mSelectionRenderBuffer);
+	    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	        std::cout << "Framebuffer not complete!" << std::endl;
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	    // Transparency setup
+	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	    glBlendEquation (GL_FUNC_ADD);
 	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
@@ -254,7 +269,6 @@ void ZRenderer::init() {
 void ZRenderer::onDrawFinshed() {
 	//renderQuad();
 	//renderCube();
-
 }
 
 void ZRenderer::draw() {
@@ -263,124 +277,193 @@ void ZRenderer::draw() {
 		float width = mParentView->getWidth();
 		float height =  mParentView->getHeight();
 
-	   	glBindTexture(GL_TEXTURE_2D, mHdrBuffer);
+		mCamera->setWidth(width);
+		mCamera->setHeight(height);
+
+	   	glBindTexture(GL_TEXTURE_2D, mMainBuffer);
 	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 	    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
 	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 
-		// Render to 16 bit frame buffer
-		glBindFramebuffer(GL_FRAMEBUFFER, mHdrFBO);
-
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f );
- 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
- 		glViewport(0,0, width, height);
-		glEnable(GL_DEPTH_TEST);
-
-		// Draw background
-		mat4 projectionMatrix = perspective(glm::radians(80.0f), (float) width / (float) height, 0.1f, 1000.0f);
-
-		mBackgroundShader->use();
-    	mBackgroundShader->setMat4("projection", projectionMatrix);
-    	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
-    	glActiveTexture(GL_TEXTURE0);
-    	if (mScene->getWorld()->isBackgroundBlurred()) {
-      		glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
-      	} else {
-      		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-      	}
-
-        renderCube();
-        //--------------
-
-		vector<ZPointLight*> lights = mScene->getLights();
-		vector<ZObject*> objects = mScene->getObjects();
-		
-	    glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-
-		ZShader* shader;
-		shader = mShader;
-		shader->use();
-
-		shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
-		shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
-
-		shader->setMat4("uProjectionMatrix", projectionMatrix);
-		shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
-
-		for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-			ZObject *object = (*it);
-	    	ZMesh *mesh = (*it)->getMesh();
-	    	ZMaterial* material = object->getMaterial();
-
-	    	
-	    	if (material->getColorTexture() != nullptr) {
-	    		shader = mColorTextureShader;
-	    		glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
-				shader->use();
-	    	} 
-
-	    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
-
-			int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
-			int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
-			int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
-
-			glEnableVertexAttribArray(mPositionLocation);
-			glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-			                          sizeof(float) * 3, (void*) 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexNormalBuffer());
-
-			glEnableVertexAttribArray(mNormalLocation);
-			glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
-			                          sizeof(float) * 3, (void*) 0);
-			
-			glBindBuffer(GL_ARRAY_BUFFER, mesh->getTextureCoordinatesBuffer());
-			glEnableVertexAttribArray(mTextureCoordLocation);
-			glVertexAttribPointer(mTextureCoordLocation, 2, GL_FLOAT, GL_FALSE,
-			                          sizeof(float) * 2, (void*) 0);
-
-	    	vec4 color = material->getColor();
-			shader->setVec4("uColor", color.r, color.g, color.b, color.a);
-
-	    	shader->setFloat("uMetallic", material->getMetallic());
-			shader->setFloat("uRoughness", material->getRoughness());
-			shader->setVec3("uCameraPosition", mCamera->getPosition());
-			
-
-			glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
-			//}
-	    }
-
-	    glBindTexture(GL_TEXTURE_2D, 0);
-	    onDrawFinshed();
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        mHDRShader->use();
-		int yv = mParentView->getWindowHeight() - mParentView->getBottom();
-		glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mHdrBuffer);
-
-        mHDRShader->setBool("hdr", true);
-        mHDRShader->setFloat("exposure", mScene->getExposure());
-    
-        renderQuad();
+		renderMain();
+		renderSelection();
+	   	renderToScreen();
 
 	    glDisable(GL_DEPTH_TEST);
 	}
+}
+
+void ZRenderer::renderMain() {
+
+	float width = mParentView->getWidth();
+	float height =  mParentView->getHeight();
+
+
+	// Render to 16 bit frame buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f );
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glViewport(0,0, width, height);
+	glEnable(GL_DEPTH_TEST);
+
+	// Draw background
+	
+	mBackgroundShader->use();
+	mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
+	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
+	glActiveTexture(GL_TEXTURE0);
+	if (mScene->getWorld()->isBackgroundBlurred()) {
+  		glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+  	} else {
+  		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+  	}
+
+    renderCube();
+
+	vector<ZPointLight*> lights = mScene->getLights();
+	vector<ZObject*> objects = mScene->getObjects();
+	
+    glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
+	ZShader* shader;
+	shader = mShader;
+	shader->use();
+
+	shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
+	shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
+
+	shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
+	shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+
+	int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
+	int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
+	int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
+
+	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+		ZObject *object = (*it);
+    	ZMesh *mesh = (*it)->getMesh();
+    	ZMaterial* material = object->getMaterial();
+
+    	
+    	if (material->getColorTexture() != nullptr) {
+    		shader = mColorTextureShader;
+    		glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
+			shader->use();
+    	} 
+
+    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
+
+		glEnableVertexAttribArray(mPositionLocation);
+		glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+		                          sizeof(float) * 3, (void*) 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexNormalBuffer());
+
+		glEnableVertexAttribArray(mNormalLocation);
+		glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
+		                          sizeof(float) * 3, (void*) 0);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->getTextureCoordinatesBuffer());
+		glEnableVertexAttribArray(mTextureCoordLocation);
+		glVertexAttribPointer(mTextureCoordLocation, 2, GL_FLOAT, GL_FALSE,
+		                          sizeof(float) * 2, (void*) 0);
+
+    	vec4 color = material->getColor();
+		shader->setVec4("uColor", color.r, color.g, color.b, color.a);
+
+    	shader->setFloat("uMetallic", material->getMetallic());
+		shader->setFloat("uRoughness", material->getRoughness());
+		shader->setVec3("uCameraPosition", mCamera->getPosition());
+		
+		glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    onDrawFinshed();
+}
+
+void ZRenderer::renderSelection() {
+	float width = mParentView->getWidth();
+	float height =  mParentView->getHeight();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
+
+	mSelectionShader->use();
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glViewport(0,0, width, height);
+	glEnable(GL_DEPTH_TEST);
+
+
+	mSelectionShader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
+	mSelectionShader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+
+	vector<ZObject*> objects = mScene->getObjects();
+
+	int mPositionLocation = glGetAttribLocation(mSelectionShader->mID, "aPos");
+
+	int objectIndex = 0;
+	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+		ZObject *object = (*it);
+    	ZMesh *mesh = (*it)->getMesh();
+
+    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
+
+		glEnableVertexAttribArray(mPositionLocation);
+		glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+		                          sizeof(float) * 3, (void*) 0);
+
+    	vec4 color = vec4((float) objectIndex / 256,0,0,1.0);
+		mSelectionShader->setVec4("uColor", color.r, color.g, color.b, color.a);
+
+		glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+
+		objectIndex++;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void ZRenderer::renderToScreen() {
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    mHDRShader->use();
+	int yv = mParentView->getWindowHeight() - mParentView->getBottom();
+	glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+
+    mHDRShader->setBool("hdr", true);
+    mHDRShader->setFloat("exposure", mScene->getExposure());
+
+    renderQuad();
+}
+
+int ZRenderer::getObjectIndexAtLocation(int x, int y) {
+	GLubyte rgba[4];
+	glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
+	glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+	return (int) (rgba[0]);
+}
+
+ZScene* ZRenderer::getScene() {
+	return mScene;
 }
 
 void ZRenderer::setScene(ZScene *scene) {

@@ -49,6 +49,14 @@ float ZScene::getExposure() {
 	return mExposure;
 }
 
+void ZScene::setActiveObjectIndex(int index) {
+	mActiveObjectIndex = index;
+}
+
+int ZScene::getActiveObjectIndex() {
+	return mActiveObjectIndex;
+}
+
 void ZScene::updateLightFlatArrays() {
 	mLightPositions.clear();
 	mLightColors.clear();

@@ -26,6 +26,7 @@ class ZRenderer {
 
 public:
 	ZRenderer(string debug);
+	ZScene* getScene();
 	void setScene(ZScene *scene);
 	void draw();
 	void setParentView(Z3DView *view);	
@@ -33,7 +34,7 @@ public:
 	virtual void onDrawFinshed();
 
 	void renderCube();
-
+	int getObjectIndexAtLocation(int x, int y);
 	ZCamera* getCamera();
 
 private:
@@ -41,24 +42,25 @@ private:
 	ZShader *mShader;
 	ZShader *mColorTextureShader;
 
-	ZShader *mHDRShader = nullptr;
-	ZShader *mBackgroundShader = nullptr;
-	ZShader *mCubemapShader = nullptr;
-	ZShader *mIrradienceShader = nullptr;
-	ZShader *mPrefilterShader = nullptr;
-	ZShader *mBrdfShader = nullptr;
+	ZShader *mHDRShader;
+	ZShader *mBackgroundShader;
+	ZShader *mCubemapShader;
+	ZShader *mIrradienceShader;
+	ZShader *mPrefilterShader;
+	ZShader *mBrdfShader;
+	ZShader *mSelectionShader;
 
 	Z3DView *mParentView = nullptr;
 
 	ZCamera* mCamera;
 
-	unsigned int mHdrFBO;
-	unsigned int mHdrBuffer;
+	unsigned int mMainFBO;
+	unsigned int mMainBuffer;
+	unsigned int mRenderBuffer;
 	
 	unsigned int mSelectionFBO;
-
-
-	unsigned int mRenderBuffer;
+	unsigned int mSelectionBuffer;
+	unsigned int mSelectionRenderBuffer;
 
 	unsigned int quadVAO = 0;
 	unsigned int quadVBO;
@@ -73,6 +75,10 @@ private:
 
 
 	unsigned int prefilterMap;
+
+	void renderMain();
+	void renderSelection();
+	void renderToScreen();
 
 	void renderQuad();
 

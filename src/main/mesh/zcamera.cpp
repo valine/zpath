@@ -29,6 +29,19 @@ vec3 ZCamera::getUp() {
 	return mUp;
 }
 
+void ZCamera::setWidth(int width) {
+	mWidth = width;
+}
+
+void ZCamera::setHeight(int height) {
+	mHeight = height;
+}
+
+mat4 ZCamera::getProjectionMatrix() {
+	mat4 projectionMatrix = perspective(glm::radians(80.0f), (float) mWidth / (float) mHeight, 0.1f, 1000.0f);
+	return projectionMatrix;
+}
+
 mat4 ZCamera::getViewMatrix() {
 
 	mat4 mViewMatrix = glm::lookAt(
