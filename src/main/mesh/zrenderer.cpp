@@ -467,6 +467,9 @@ int ZRenderer::getObjectIndexAtLocation(int x, int y) {
 	GLubyte rgba[4];
 	glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
 	glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+	if (rgba[3] == 0) {
+		return -1;
+	}
 	return (int) (rgba[0]);
 }
 
