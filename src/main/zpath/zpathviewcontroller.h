@@ -28,6 +28,7 @@ private:
 
 	ZButton *mGridViewButton;
 	ZButton *mBackgroundBlurButton;
+	ZButton *mDeleteButton;
 	ZButton *mIncrementButton;
 	ZButton *mDecrementButton;
 	ZLabel *mExposureLabel;
@@ -44,22 +45,17 @@ private:
 	ZButton *mRedDecrementButton;
 	ZLabel *mRedLabel;
 
-
 	ZButton *mBlueIncrementButton;
 	ZButton *mBlueDecrementButton;
 	ZLabel *mBlueLabel;
-
 
 	ZButton *mGreenIncrementButton;
 	ZButton *mGreenDecrementButton;
 	ZLabel *mGreenLabel;
 
-
 	ZButton *mAlphaIncrementButton;
 	ZButton *mAlphaDecrementButton;
 	ZLabel *mAlphaLabel;
-
-
 
 	ZScene* mScene;
 

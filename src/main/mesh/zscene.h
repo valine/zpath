@@ -37,6 +37,8 @@ public:
 
 	void setActiveObjectIndex(int index);
 	int getActiveObjectIndex();
+
+	void deleteSelectedObject();
 private:
 	vector<ZObject*> mObjects;
 	vector<ZPointLight*> mPointLights;

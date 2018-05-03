@@ -45,6 +45,15 @@ void ZPathViewController::onCreate() {
     mBackgroundBlurButton->setOnClickListener(this);
     propertiesPanel->addSubView(mBackgroundBlurButton);
 
+    mDeleteButton = new ZButton(200, 40, getResourcePath());
+    mDeleteButton->setOffset(0,100);
+    mDeleteButton->setMargin(10,10,10,10);
+    mDeleteButton->setBackgroundColor(highlightColor);
+    mDeleteButton->setText("Delete Object");
+    mDeleteButton->setGravity(ZView::bottomLeft);
+    mDeleteButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mDeleteButton);
+
     mExposureLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mExposureLabel->setOffset(10,120);
     mExposureLabel->setText("Exposure 1.0");
@@ -295,7 +304,7 @@ void ZPathViewController::onClick(ZButton* sender) {
 	    mExposureLabel->setText("Exposure " + str);
 
 	    scene->setExposure(newExposure);
-	} else if (sender == mRoughnessIncrementButton) {
+	} else if (sender == mRoughnessIncrementButton && selectionIndex != -1) {
 	    ZScene* scene = mTileView->getScene();
 	    ZObject* object = scene->getObjects().at(selectionIndex);
 	    ZMaterial* material = object->getMaterial();
@@ -308,7 +317,7 @@ void ZPathViewController::onClick(ZButton* sender) {
 
 
 	    material->setRoughness(newValue);
-	} else if (sender == mRoughnessDecrementButton) {
+	} else if (sender == mRoughnessDecrementButton && selectionIndex != -1) {
 	    ZScene* scene = mTileView->getScene();
 	    ZObject* object = scene->getObjects().at(selectionIndex);
 	    ZMaterial* material = object->getMaterial();
@@ -323,7 +332,7 @@ void ZPathViewController::onClick(ZButton* sender) {
 	    material->setRoughness(newValue);
 	} 
 
-    else if (sender == mMetalIncrementButton) {
+    else if (sender == mMetalIncrementButton && selectionIndex != -1) {
 	    ZScene* scene = mTileView->getScene();
 	    ZObject* object = scene->getObjects().at(selectionIndex);
 	    ZMaterial* material = object->getMaterial();
@@ -337,21 +346,21 @@ void ZPathViewController::onClick(ZButton* sender) {
 	    material->setMetallic(newValue);
 	} 
 
-    else if (sender == mMetalDecrementButton) {
-	          ZScene* scene = mTileView->getScene();
-	    ZObject* object = scene->getObjects().at(selectionIndex);
-	    ZMaterial* material = object->getMaterial();
+    else if (sender == mMetalDecrementButton && selectionIndex != -1) {
+        ZScene* scene = mTileView->getScene();
+        ZObject* object = scene->getObjects().at(selectionIndex);
+        ZMaterial* material = object->getMaterial();
 
-	    float currentValue = material->getMetallic();
-	    float newValue = currentValue -  0.05;
-	    string str = to_string(newValue);
-	    str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-	    mMetalLabel->setText("Metallic " + str);
+        float currentValue = material->getMetallic();
+        float newValue = currentValue -  0.05;
+        string str = to_string(newValue);
+        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
+        mMetalLabel->setText("Metallic " + str);
 
-	    material->setMetallic(newValue);
+        material->setMetallic(newValue);
     } 
 
-     else if (sender == mRedIncrementButton) {
+     else if (sender == mRedIncrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -366,7 +375,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-    else if (sender == mRedDecrementButton) {
+    else if (sender == mRedDecrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -381,7 +390,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-    else if (sender == mBlueIncrementButton) {
+    else if (sender == mBlueIncrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -396,7 +405,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-    else if (sender == mBlueDecrementButton) {
+    else if (sender == mBlueDecrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -411,7 +420,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-    else if (sender == mGreenIncrementButton) {
+    else if (sender == mGreenIncrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -426,7 +435,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-    else if (sender == mGreenDecrementButton) {
+    else if (sender == mGreenDecrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -441,7 +450,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-    else if (sender == mAlphaIncrementButton) {
+    else if (sender == mAlphaIncrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -456,7 +465,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
     
-    else if (sender == mAlphaDecrementButton) {
+    else if (sender == mAlphaDecrementButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         ZMaterial* material = object->getMaterial();
@@ -471,11 +480,15 @@ void ZPathViewController::onClick(ZButton* sender) {
         material->setColor(color);
     } 
 
-
-    else if (sender == mBackgroundBlurButton) {
+    else if (sender == mBackgroundBlurButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         ZWorld* world = scene->getWorld();
         world->blurBackground(!world->isBackgroundBlurred());
+    }
+
+    else if (sender == mDeleteButton && selectionIndex != -1) {
+        ZScene* scene = mTileView->getScene();
+        scene->deleteSelectedObject();
     }
 }
 

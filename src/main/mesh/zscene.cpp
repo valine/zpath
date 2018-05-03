@@ -57,6 +57,11 @@ int ZScene::getActiveObjectIndex() {
 	return mActiveObjectIndex;
 }
 
+void ZScene::deleteSelectedObject() {
+	mObjects.erase(mObjects.begin() + mActiveObjectIndex);
+	mActiveObjectIndex = -1;
+}
+
 void ZScene::updateLightFlatArrays() {
 	mLightPositions.clear();
 	mLightColors.clear();
