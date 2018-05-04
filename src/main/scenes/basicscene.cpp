@@ -11,18 +11,17 @@ BasicScene::BasicScene(string resourcePath)
 
 	ZObjLoader loader = ZObjLoader();
 
- 	// vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/textures/light-blue.hdr");
+ 	 vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/brain.obj");
 
-  //   for (unsigned i = 0; i < objects.size(); ++i) {
-  //       ZObject* object = objects.at(i);
+    for (unsigned i = 0; i < objects.size(); ++i) {
+        ZObject* object = objects.at(i);
 
-  //       mScene->addObject(object);
-  //       //ZMaterial* brainMaterial = new ZMaterial(vec4(0.17, 0.01, ((float) (i % 5) / 16) + 0.09, 1.0));
-  //       ZMaterial* brainMaterial = new ZMaterial(vec3(0.1,0.5,1));
-  //       brainMaterial->setRoughness(0.1);
-  //       brainMaterial->setMetallic(0);
-  //       object->setMaterial(brainMaterial);
-  //   }
+        addObject(object);
+        ZMaterial* brainMaterial = new ZMaterial(vec3(0.9, 0.1, 0.1));
+        brainMaterial->setRoughness(0.1);
+        brainMaterial->setMetallic(0);
+        object->setMaterial(brainMaterial);
+    }
 
 	ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
 	
@@ -30,14 +29,6 @@ BasicScene::BasicScene(string resourcePath)
 	electrodeMaterial->setMetallic(1.0);
 	electrodeMaterial->setRoughness(0.2);
 	electrodes->setMaterial(electrodeMaterial);
-
-
-	ZObject* brain = loader.loadObjects(resourcePath + "resources/meshes/brain-opaque.obj").at(0);
-	ZMaterial* brainMaterial = new ZMaterial(vec3(0.9, 0.1, 0.1));
-	brainMaterial->setMetallic(0);
-	brainMaterial->setRoughness(0.1);
-	brain->setMaterial(brainMaterial);
-
 
 	ZObject* lead = loader.loadObjects(resourcePath + "resources/meshes/dbs-lead.obj").at(0);
 	ZMaterial* leadMaterial = new ZMaterial(vec4(0.6, 0.6, 0.6, 0.8));
@@ -56,7 +47,7 @@ BasicScene::BasicScene(string resourcePath)
 	// Add objects 
 	
 	addObject(electrodes);
-	addObject(brain);
+	//addObject(brain);
 	addObject(lead);
 	//addObject(brainTransparent);
 
