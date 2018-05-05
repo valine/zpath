@@ -18,6 +18,7 @@ public:
  	ZPathViewController(string resources);
  	void onCreate();
  	void onClick(ZButton* sender);
+ 	void onSliderValueChanged(ZSlider* sender, float value);
  	void addObject(ZObject* object);
  	void onFileDrop(int count, const char** paths);
 
@@ -32,6 +33,14 @@ private:
 	ZButton *mIncrementButton;
 	ZButton *mDecrementButton;
 	ZLabel *mExposureLabel;
+
+	ZSlider* mExposureSlider;
+	ZSlider* mRoughnessSlider;
+	ZSlider* mMetalSlider;
+	ZSlider* mRedSlider;
+	ZSlider* mBlueSlider;
+	ZSlider* mGreenSlider;
+	ZSlider* mAlphaSlider;
 
 	ZButton *mRoughnessIncrementButton;
 	ZButton *mRoughnessDecrementButton;

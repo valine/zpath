@@ -37,6 +37,10 @@ void ZViewController::onFileDrop(int count, const char** paths) {
 
 }
 
+void ZViewController::onSliderValueChanged(ZSlider* sender, float value) {
+    
+}
+
 void ZViewController::onWindowChange(int width, int height) {
 
 	mParentWidth = width;

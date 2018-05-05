@@ -22,11 +22,11 @@ void ZPathViewController::onCreate() {
     propertiesPanel->setGravity(ZView::topRight);
     getRootView()->addSubView(propertiesPanel);
 
-    ZLabel* label = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    ZLabel* label = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     label->setOffset(10,0);
     label->setText("Properties");
     label->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(label);
+    propertiesPanel->addSubView(label);
 
     mGridViewButton = new ZButton(200, 40, getResourcePath());
     mGridViewButton->setOffset(0,50);
@@ -34,7 +34,7 @@ void ZPathViewController::onCreate() {
     mGridViewButton->setBackgroundColor(highlightColor);
     mGridViewButton->setText("Toggle Grid View");
     mGridViewButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mGridViewButton);
+    propertiesPanel->addSubView(mGridViewButton);
 
     mBackgroundBlurButton = new ZButton(200, 40, getResourcePath());
     mBackgroundBlurButton->setOffset(0,50);
@@ -43,7 +43,7 @@ void ZPathViewController::onCreate() {
     mBackgroundBlurButton->setText("Toggle Background Blur");
     mBackgroundBlurButton->setGravity(ZView::bottomLeft);
     mBackgroundBlurButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mBackgroundBlurButton);
+    propertiesPanel->addSubView(mBackgroundBlurButton);
 
     mDeleteButton = new ZButton(200, 40, getResourcePath());
     mDeleteButton->setOffset(0,100);
@@ -52,73 +52,95 @@ void ZPathViewController::onCreate() {
     mDeleteButton->setText("Delete Object");
     mDeleteButton->setGravity(ZView::bottomLeft);
     mDeleteButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mDeleteButton);
+    propertiesPanel->addSubView(mDeleteButton);
 
-    mExposureLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    mExposureLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mExposureLabel->setOffset(10,120);
     mExposureLabel->setText("Exposure 1.0");
     mExposureLabel->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(mExposureLabel);
+    propertiesPanel->addSubView(mExposureLabel);
 
-    mIncrementButton = new ZButton(40, 40, getResourcePath());
-    mIncrementButton->setOffset(0,150);
-    mIncrementButton->setMargin(10,10,10,10);
-    mIncrementButton->setBackgroundColor(highlightColor);
-    mIncrementButton->setText("+");
-    mIncrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mIncrementButton);
+    mExposureSlider = new ZSlider(10000, 30, getResourcePath());
+    mExposureSlider->setOffset(0,150);
+    mExposureSlider->setMargin(10, 10, 10, 10);
+    mExposureSlider->setListener(this);
+    propertiesPanel->addSubView(mExposureSlider);
+    mExposureSlider->setMaxValue(3);
+    mExposureSlider->setMinValue(0);
+    mExposureSlider->setValue(mScene->getExposure());
 
-    mDecrementButton = new ZButton(40, 40, getResourcePath());
-    mDecrementButton->setOffset(50,150);
-    mDecrementButton->setMargin(10,10,10,10);
-    mDecrementButton->setBackgroundColor(highlightColor);
-    mDecrementButton->setText("-");
-    mDecrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mDecrementButton);
+
+    // mIncrementButton = new ZButton(40, 40, getResourcePath());
+    // mIncrementButton->setOffset(0,150);
+    // mIncrementButton->setMargin(10,10,10,10);
+    // mIncrementButton->setBackgroundColor(highlightColor);
+    // mIncrementButton->setText("+");
+    // mIncrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mIncrementButton);
+
+    // mDecrementButton = new ZButton(40, 40, getResourcePath());
+    // mDecrementButton->setOffset(50,150);
+    // mDecrementButton->setMargin(10,10,10,10);
+    // mDecrementButton->setBackgroundColor(highlightColor);
+    // mDecrementButton->setText("-");
+    // mDecrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mDecrementButton);
 
     mRoughnessLabel = new ZLabel(200, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mRoughnessLabel->setOffset(10,220);
     mRoughnessLabel->setText("Roughness 0.1");
     mRoughnessLabel->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(mRoughnessLabel);
+    propertiesPanel->addSubView(mRoughnessLabel);
 
-    mRoughnessIncrementButton = new ZButton(40, 40, getResourcePath());
-    mRoughnessIncrementButton->setOffset(0,250);
-    mRoughnessIncrementButton->setMargin(10,10,10,10);
-    mRoughnessIncrementButton->setBackgroundColor(highlightColor);
-    mRoughnessIncrementButton->setText("+");
-    mRoughnessIncrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mRoughnessIncrementButton);
+    mRoughnessSlider = new ZSlider(10000, 30, getResourcePath());
+    mRoughnessSlider->setOffset(0,250);
+    mRoughnessSlider->setMargin(10, 10, 10, 10);
+    mRoughnessSlider->setListener(this);
+    propertiesPanel->addSubView(mRoughnessSlider);
+
+    // mRoughnessIncrementButton = new ZButton(40, 40, getResourcePath());
+    // mRoughnessIncrementButton->setOffset(0,250);
+    // mRoughnessIncrementButton->setMargin(10,10,10,10);
+    // mRoughnessIncrementButton->setBackgroundColor(highlightColor);
+    // mRoughnessIncrementButton->setText("+");
+    // mRoughnessIncrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mRoughnessIncrementButton);
 
 
-    mRoughnessDecrementButton = new ZButton(40, 40, getResourcePath());
-    mRoughnessDecrementButton->setOffset(50,250);
-    mRoughnessDecrementButton->setMargin(10,10,10,10);
-    mRoughnessDecrementButton->setBackgroundColor(highlightColor);
-    mRoughnessDecrementButton->setText("-");
-    mRoughnessDecrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mRoughnessDecrementButton);
+    // mRoughnessDecrementButton = new ZButton(40, 40, getResourcePath());
+    // mRoughnessDecrementButton->setOffset(50,250);
+    // mRoughnessDecrementButton->setMargin(10,10,10,10);
+    // mRoughnessDecrementButton->setBackgroundColor(highlightColor);
+    // mRoughnessDecrementButton->setText("-");
+    // mRoughnessDecrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mRoughnessDecrementButton);
 
     mMetalLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mMetalLabel->setOffset(10,320);
     mMetalLabel->setText("Metallic 0.00");
     mMetalLabel->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(mMetalLabel);
+    propertiesPanel->addSubView(mMetalLabel);
 
-    mMetalIncrementButton = new ZButton(40, 40, getResourcePath());
-    mMetalIncrementButton->setOffset(0,350);
-    mMetalIncrementButton->setMargin(10,10,10,10);
-    mMetalIncrementButton->setBackgroundColor(highlightColor);
-    mMetalIncrementButton->setText("+");
-    mMetalIncrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mMetalIncrementButton);
+    mMetalSlider = new ZSlider(10000, 30, getResourcePath());
+    mMetalSlider->setOffset(0,350);
+    mMetalSlider->setMargin(10, 10, 10, 10);
+    mMetalSlider->setListener(this);
+    propertiesPanel->addSubView(mMetalSlider);
 
-    mMetalDecrementButton = new ZButton(40, 40, getResourcePath());
-    mMetalDecrementButton->setOffset(50,350);
-    mMetalDecrementButton->setMargin(10,10,10,10);
-    mMetalDecrementButton->setBackgroundColor(highlightColor);
-    mMetalDecrementButton->setText("-");
-    mMetalDecrementButton->setOnClickListener(this);
+    // mMetalIncrementButton = new ZButton(40, 40, getResourcePath());
+    // mMetalIncrementButton->setOffset(0,350);
+    // mMetalIncrementButton->setMargin(10,10,10,10);
+    // mMetalIncrementButton->setBackgroundColor(highlightColor);
+    // mMetalIncrementButton->setText("+");
+    // mMetalIncrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mMetalIncrementButton);
+
+    // mMetalDecrementButton = new ZButton(40, 40, getResourcePath());
+    // mMetalDecrementButton->setOffset(50,350);
+    // mMetalDecrementButton->setMargin(10,10,10,10);
+    // mMetalDecrementButton->setBackgroundColor(highlightColor);
+    // mMetalDecrementButton->setText("-");
+    // mMetalDecrementButton->setOnClickListener(this);
     //propertiesPanel->addSubView(mMetalDecrementButton);
 
     // Red control ----------------------
@@ -126,22 +148,28 @@ void ZPathViewController::onCreate() {
     mRedLabel->setOffset(10,320 + (100 * 1));
     mRedLabel->setText("Red");
     mRedLabel->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(mRedLabel);
+    propertiesPanel->addSubView(mRedLabel);
 
-    mRedIncrementButton = new ZButton(40, 40, getResourcePath());
-    mRedIncrementButton->setOffset(0,350 + (100 * 1));
-    mRedIncrementButton->setMargin(10,10,10,10);
-    mRedIncrementButton->setBackgroundColor(highlightColor);
-    mRedIncrementButton->setText("+");
-    mRedIncrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mRedIncrementButton);
+    mRedSlider = new ZSlider(10000, 30, getResourcePath());
+    mRedSlider->setOffset(0,350 + (100 * 1));
+    mRedSlider->setMargin(10, 10, 10, 10);
+    mRedSlider->setListener(this);
+    propertiesPanel->addSubView(mRedSlider);
 
-    mRedDecrementButton = new ZButton(40, 40, getResourcePath());
-    mRedDecrementButton->setOffset(50,350 + (100 * 1));
-    mRedDecrementButton->setMargin(10,10,10,10);
-    mRedDecrementButton->setBackgroundColor(highlightColor);
-    mRedDecrementButton->setText("-");
-    mRedDecrementButton->setOnClickListener(this);
+    // mRedIncrementButton = new ZButton(40, 40, getResourcePath());
+    // mRedIncrementButton->setOffset(0,350 + (100 * 1));
+    // mRedIncrementButton->setMargin(10,10,10,10);
+    // mRedIncrementButton->setBackgroundColor(highlightColor);
+    // mRedIncrementButton->setText("+");
+    // mRedIncrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mRedIncrementButton);
+
+    // mRedDecrementButton = new ZButton(40, 40, getResourcePath());
+    // mRedDecrementButton->setOffset(50,350 + (100 * 1));
+    // mRedDecrementButton->setMargin(10,10,10,10);
+    // mRedDecrementButton->setBackgroundColor(highlightColor);
+    // mRedDecrementButton->setText("-");
+    // mRedDecrementButton->setOnClickListener(this);
     //propertiesPanel->addSubView(mRedDecrementButton);
 
     // Blue control ----------------------
@@ -149,45 +177,57 @@ void ZPathViewController::onCreate() {
     mBlueLabel->setOffset(10,320 + (100 * 2));
     mBlueLabel->setText("Blue");
     mBlueLabel->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(mBlueLabel);
+    propertiesPanel->addSubView(mBlueLabel);
 
-    mBlueIncrementButton = new ZButton(40, 40, getResourcePath());
-    mBlueIncrementButton->setOffset(0,350 + (100 * 2));
-    mBlueIncrementButton->setMargin(10,10,10,10);
-    mBlueIncrementButton->setBackgroundColor(highlightColor);
-    mBlueIncrementButton->setText("+");
-    mBlueIncrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mBlueIncrementButton);
+    mBlueSlider = new ZSlider(10000, 30, getResourcePath());
+    mBlueSlider->setOffset(0,350 + (100 * 2));
+    mBlueSlider->setMargin(10, 10, 10, 10);
+    mBlueSlider->setListener(this);
+    propertiesPanel->addSubView(mBlueSlider);
 
-    mBlueDecrementButton = new ZButton(40, 40, getResourcePath());
-    mBlueDecrementButton->setOffset(50,350 + (100 * 2));
-    mBlueDecrementButton->setMargin(10,10,10,10);
-    mBlueDecrementButton->setBackgroundColor(highlightColor);
-    mBlueDecrementButton->setText("-");
-    mBlueDecrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mBlueDecrementButton);
+    // mBlueIncrementButton = new ZButton(40, 40, getResourcePath());
+    // mBlueIncrementButton->setOffset(0,350 + (100 * 2));
+    // mBlueIncrementButton->setMargin(10,10,10,10);
+    // mBlueIncrementButton->setBackgroundColor(highlightColor);
+    // mBlueIncrementButton->setText("+");
+    // mBlueIncrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mBlueIncrementButton);
+
+    // mBlueDecrementButton = new ZButton(40, 40, getResourcePath());
+    // mBlueDecrementButton->setOffset(50,350 + (100 * 2));
+    // mBlueDecrementButton->setMargin(10,10,10,10);
+    // mBlueDecrementButton->setBackgroundColor(highlightColor);
+    // mBlueDecrementButton->setText("-");
+    // mBlueDecrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mBlueDecrementButton);
 
     // Green control ----------------------
     mGreenLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mGreenLabel->setOffset(10,320 + (100 * 3));
     mGreenLabel->setText("Green");
     mGreenLabel->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(mGreenLabel);
+    propertiesPanel->addSubView(mGreenLabel);
 
-    mGreenIncrementButton = new ZButton(40, 40, getResourcePath());
-    mGreenIncrementButton->setOffset(0,350 + (100 * 3));
-    mGreenIncrementButton->setMargin(10,10,10,10);
-    mGreenIncrementButton->setBackgroundColor(highlightColor);
-    mGreenIncrementButton->setText("+");
-    mGreenIncrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mGreenIncrementButton);
+    mGreenSlider = new ZSlider(10000, 30, getResourcePath());
+    mGreenSlider->setOffset(0,350 + (100 * 3));
+    mGreenSlider->setMargin(10, 10, 10, 10);
+    mGreenSlider->setListener(this);
+    propertiesPanel->addSubView(mGreenSlider);
 
-    mGreenDecrementButton = new ZButton(40, 40, getResourcePath());
-    mGreenDecrementButton->setOffset(50,350 + (100 * 3));
-    mGreenDecrementButton->setMargin(10,10,10,10);
-    mGreenDecrementButton->setBackgroundColor(highlightColor);
-    mGreenDecrementButton->setText("-");
-    mGreenDecrementButton->setOnClickListener(this);
+    // mGreenIncrementButton = new ZButton(40, 40, getResourcePath());
+    // mGreenIncrementButton->setOffset(0,350 + (100 * 3));
+    // mGreenIncrementButton->setMargin(10,10,10,10);
+    // mGreenIncrementButton->setBackgroundColor(highlightColor);
+    // mGreenIncrementButton->setText("+");
+    // mGreenIncrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mGreenIncrementButton);
+
+    // mGreenDecrementButton = new ZButton(40, 40, getResourcePath());
+    // mGreenDecrementButton->setOffset(50,350 + (100 * 3));
+    // mGreenDecrementButton->setMargin(10,10,10,10);
+    // mGreenDecrementButton->setBackgroundColor(highlightColor);
+    // mGreenDecrementButton->setText("-");
+    // mGreenDecrementButton->setOnClickListener(this);
     //propertiesPanel->addSubView(mGreenDecrementButton);
 
     // Alpha control ----------------------
@@ -195,22 +235,28 @@ void ZPathViewController::onCreate() {
     mAlphaLabel->setOffset(10,320 + (100 * 4));
     mAlphaLabel->setText("Alpha");
     mAlphaLabel->setTextColor(vec3(0.1,0.1,0.1));
-    //propertiesPanel->addSubView(mAlphaLabel);
+    propertiesPanel->addSubView(mAlphaLabel);
 
-    mAlphaIncrementButton = new ZButton(40, 40, getResourcePath());
-    mAlphaIncrementButton->setOffset(0,350 + (100 * 4));
-    mAlphaIncrementButton->setMargin(10,10,10,10);
-    mAlphaIncrementButton->setBackgroundColor(highlightColor);
-    mAlphaIncrementButton->setText("+");
-    mAlphaIncrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mAlphaIncrementButton);
+    mAlphaSlider = new ZSlider(10000, 30, getResourcePath());
+    mAlphaSlider->setOffset(0,350 + (100 * 4));
+    mAlphaSlider->setMargin(10, 10, 10, 10);
+    mAlphaSlider->setListener(this);
+    propertiesPanel->addSubView(mAlphaSlider);
 
-    mAlphaDecrementButton = new ZButton(40, 40, getResourcePath());
-    mAlphaDecrementButton->setOffset(50,350 + (100 * 4));
-    mAlphaDecrementButton->setMargin(10,10,10,10);
-    mAlphaDecrementButton->setBackgroundColor(highlightColor);
-    mAlphaDecrementButton->setText("-");
-    mAlphaDecrementButton->setOnClickListener(this);
+    // mAlphaIncrementButton = new ZButton(40, 40, getResourcePath());
+    // mAlphaIncrementButton->setOffset(0,350 + (100 * 4));
+    // mAlphaIncrementButton->setMargin(10,10,10,10);
+    // mAlphaIncrementButton->setBackgroundColor(highlightColor);
+    // mAlphaIncrementButton->setText("+");
+    // mAlphaIncrementButton->setOnClickListener(this);
+    // //propertiesPanel->addSubView(mAlphaIncrementButton);
+
+    // mAlphaDecrementButton = new ZButton(40, 40, getResourcePath());
+    // mAlphaDecrementButton->setOffset(50,350 + (100 * 4));
+    // mAlphaDecrementButton->setMargin(10,10,10,10);
+    // mAlphaDecrementButton->setBackgroundColor(highlightColor);
+    // mAlphaDecrementButton->setText("-");
+    // mAlphaDecrementButton->setOnClickListener(this);
     //propertiesPanel->addSubView(mAlphaDecrementButton);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
@@ -234,11 +280,7 @@ void ZPathViewController::onCreate() {
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
 
-    ZSlider* slider = new ZSlider(10000, 100, getResourcePath());
-    float sliderColor[4] = {0.8, 0.8, 0.8, 1.0};
-    slider->setMargin(20, 20, 20, 20);
-    slider->setBackgroundColor(sliderColor);
-    propertiesPanel->addSubView(slider);
+
 }
 
 void ZPathViewController::onFileDrop(int count, const char** paths) {
@@ -277,6 +319,30 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
     }
 }
 
+void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
+    int selectionIndex = mScene->getActiveObjectIndex();
+    
+    if (sender == mExposureSlider) {
+        ZScene* scene = mTileView->getScene();
+        float newExposure = value;
+        string str = to_string(newExposure);
+        str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+        mExposureLabel->setText("Exposure " + str);
+        scene->setExposure(value);
+    } 
+
+    else if (sender == mRoughnessSlider) {
+        ZScene* scene = mTileView->getScene();
+        ZObject* object = scene->getObjects().at(selectionIndex);
+        ZMaterial* material = object->getMaterial();
+
+        string str = to_string(value);
+        str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+        mRoughnessLabel->setText("Roughness " + str);
+        material->setRoughness(value);
+    } 
+}
+
 void ZPathViewController::onClick(ZButton* sender) {
 
     int selectionIndex = mScene->getActiveObjectIndex();
@@ -290,7 +356,9 @@ void ZPathViewController::onClick(ZButton* sender) {
 	        mIsQuadView = true;
 	        mTileView->setTileCount(2,1);
 	    }
-	} else if (sender == mIncrementButton) {
+	} 
+
+    else if (sender == mIncrementButton) {
 	    ZScene* scene = mTileView->getScene();
 	    float currentExposure = scene->getExposure();
 	   
@@ -300,7 +368,9 @@ void ZPathViewController::onClick(ZButton* sender) {
 	    mExposureLabel->setText("Exposure " + str);
 
 	    scene->setExposure(currentExposure + 0.1f);
-	} else if (sender == mDecrementButton) {
+	} 
+
+    else if (sender == mDecrementButton) {
 	    ZScene* scene = mTileView->getScene();
 	    float currentExposure = scene->getExposure();
 	    float newExposure = currentExposure - 0.1;
@@ -310,7 +380,9 @@ void ZPathViewController::onClick(ZButton* sender) {
 	    mExposureLabel->setText("Exposure " + str);
 
 	    scene->setExposure(newExposure);
-	} else if (sender == mRoughnessIncrementButton && selectionIndex != -1) {
+	} 
+
+    else if (sender == mRoughnessIncrementButton && selectionIndex != -1) {
 	    ZScene* scene = mTileView->getScene();
 	    ZObject* object = scene->getObjects().at(selectionIndex);
 	    ZMaterial* material = object->getMaterial();
@@ -323,7 +395,9 @@ void ZPathViewController::onClick(ZButton* sender) {
 
 
 	    material->setRoughness(newValue);
-	} else if (sender == mRoughnessDecrementButton && selectionIndex != -1) {
+	} 
+
+    else if (sender == mRoughnessDecrementButton && selectionIndex != -1) {
 	    ZScene* scene = mTileView->getScene();
 	    ZObject* object = scene->getObjects().at(selectionIndex);
 	    ZMaterial* material = object->getMaterial();

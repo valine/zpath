@@ -5,9 +5,13 @@
 #include <iostream>
 #include "zview.h"
 #include "mesh/zpath_constants.h"
+#include "zsliderlistener.h"
 
 using namespace std;
 using namespace ZPathConstants;
+
+class ZSliderListener;
+
 
 class ZSlider : public ZView {
 
@@ -18,11 +22,24 @@ public:
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void onScrollChange(double x, double y);
+	void setListener(ZSliderListener* listener);
+
+	void setMaxValue(float max);
+	void setMinValue(float min);
+
+	void setValue(float value);
 
 private:
 
 	ZView* mThumb;
 	ZView* mLine;
+
+	float mMaxValue = 1.0;
+	float mMinValue = 0.0;
+
+	ZSliderListener* mListener = nullptr;
+
+	void valueChanged(int offset);
 
 };
 

@@ -28,13 +28,15 @@
 #include "zonclicklistener.h"
 
 #include "zslider.h"
+#include "zsliderlistener.h"
+
 
 using glm::mat4;
 using glm::ortho;
 using std::vector;
 using std::string;
 
-class ZViewController : public ZOnClickListener {
+class ZViewController : public ZOnClickListener, public ZSliderListener {
 
 public:
 	ZViewController(string resourcePath);
@@ -49,6 +51,7 @@ public:
 	virtual void onScrollChange(double x, double y);
 	virtual void draw();
 	virtual void onClick(ZButton* sender);
+	virtual void onSliderValueChanged(ZSlider* sender, float value);
 	virtual void onFileDrop(int count, const char** paths);
 	string getResourcePath();
 private:

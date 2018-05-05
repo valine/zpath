@@ -3,6 +3,6 @@
 ZSliderListener::ZSliderListener() {
 }
 
-void ZSliderListener::onSliderValueChanged(ZSlider* sender, float newValue) {
+void ZSliderListener::onSliderValueChanged(ZSlider* sender, float value) {
 
 }
