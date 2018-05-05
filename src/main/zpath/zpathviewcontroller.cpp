@@ -65,28 +65,11 @@ void ZPathViewController::onCreate() {
     mExposureSlider->setMargin(10, 10, 10, 10);
     mExposureSlider->setListener(this);
     propertiesPanel->addSubView(mExposureSlider);
-    mExposureSlider->setMaxValue(3);
+    mExposureSlider->setMaxValue(5);
     mExposureSlider->setMinValue(0);
     mExposureSlider->setValue(mScene->getExposure());
 
-
-    // mIncrementButton = new ZButton(40, 40, getResourcePath());
-    // mIncrementButton->setOffset(0,150);
-    // mIncrementButton->setMargin(10,10,10,10);
-    // mIncrementButton->setBackgroundColor(highlightColor);
-    // mIncrementButton->setText("+");
-    // mIncrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mIncrementButton);
-
-    // mDecrementButton = new ZButton(40, 40, getResourcePath());
-    // mDecrementButton->setOffset(50,150);
-    // mDecrementButton->setMargin(10,10,10,10);
-    // mDecrementButton->setBackgroundColor(highlightColor);
-    // mDecrementButton->setText("-");
-    // mDecrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mDecrementButton);
-
-    mRoughnessLabel = new ZLabel(200, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    mRoughnessLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mRoughnessLabel->setOffset(10,220);
     mRoughnessLabel->setText("Roughness 0.1");
     mRoughnessLabel->setTextColor(vec3(0.1,0.1,0.1));
@@ -97,23 +80,6 @@ void ZPathViewController::onCreate() {
     mRoughnessSlider->setMargin(10, 10, 10, 10);
     mRoughnessSlider->setListener(this);
     propertiesPanel->addSubView(mRoughnessSlider);
-
-    // mRoughnessIncrementButton = new ZButton(40, 40, getResourcePath());
-    // mRoughnessIncrementButton->setOffset(0,250);
-    // mRoughnessIncrementButton->setMargin(10,10,10,10);
-    // mRoughnessIncrementButton->setBackgroundColor(highlightColor);
-    // mRoughnessIncrementButton->setText("+");
-    // mRoughnessIncrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mRoughnessIncrementButton);
-
-
-    // mRoughnessDecrementButton = new ZButton(40, 40, getResourcePath());
-    // mRoughnessDecrementButton->setOffset(50,250);
-    // mRoughnessDecrementButton->setMargin(10,10,10,10);
-    // mRoughnessDecrementButton->setBackgroundColor(highlightColor);
-    // mRoughnessDecrementButton->setText("-");
-    // mRoughnessDecrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mRoughnessDecrementButton);
 
     mMetalLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mMetalLabel->setOffset(10,320);
@@ -127,24 +93,8 @@ void ZPathViewController::onCreate() {
     mMetalSlider->setListener(this);
     propertiesPanel->addSubView(mMetalSlider);
 
-    // mMetalIncrementButton = new ZButton(40, 40, getResourcePath());
-    // mMetalIncrementButton->setOffset(0,350);
-    // mMetalIncrementButton->setMargin(10,10,10,10);
-    // mMetalIncrementButton->setBackgroundColor(highlightColor);
-    // mMetalIncrementButton->setText("+");
-    // mMetalIncrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mMetalIncrementButton);
-
-    // mMetalDecrementButton = new ZButton(40, 40, getResourcePath());
-    // mMetalDecrementButton->setOffset(50,350);
-    // mMetalDecrementButton->setMargin(10,10,10,10);
-    // mMetalDecrementButton->setBackgroundColor(highlightColor);
-    // mMetalDecrementButton->setText("-");
-    // mMetalDecrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mMetalDecrementButton);
-
     // Red control ----------------------
-    mRedLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    mRedLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mRedLabel->setOffset(10,320 + (100 * 1));
     mRedLabel->setText("Red");
     mRedLabel->setTextColor(vec3(0.1,0.1,0.1));
@@ -156,82 +106,35 @@ void ZPathViewController::onCreate() {
     mRedSlider->setListener(this);
     propertiesPanel->addSubView(mRedSlider);
 
-    // mRedIncrementButton = new ZButton(40, 40, getResourcePath());
-    // mRedIncrementButton->setOffset(0,350 + (100 * 1));
-    // mRedIncrementButton->setMargin(10,10,10,10);
-    // mRedIncrementButton->setBackgroundColor(highlightColor);
-    // mRedIncrementButton->setText("+");
-    // mRedIncrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mRedIncrementButton);
-
-    // mRedDecrementButton = new ZButton(40, 40, getResourcePath());
-    // mRedDecrementButton->setOffset(50,350 + (100 * 1));
-    // mRedDecrementButton->setMargin(10,10,10,10);
-    // mRedDecrementButton->setBackgroundColor(highlightColor);
-    // mRedDecrementButton->setText("-");
-    // mRedDecrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mRedDecrementButton);
-
-    // Blue control ----------------------
-    mBlueLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
-    mBlueLabel->setOffset(10,320 + (100 * 2));
-    mBlueLabel->setText("Blue");
-    mBlueLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mBlueLabel);
-
-    mBlueSlider = new ZSlider(10000, 30, getResourcePath());
-    mBlueSlider->setOffset(0,350 + (100 * 2));
-    mBlueSlider->setMargin(10, 10, 10, 10);
-    mBlueSlider->setListener(this);
-    propertiesPanel->addSubView(mBlueSlider);
-
-    // mBlueIncrementButton = new ZButton(40, 40, getResourcePath());
-    // mBlueIncrementButton->setOffset(0,350 + (100 * 2));
-    // mBlueIncrementButton->setMargin(10,10,10,10);
-    // mBlueIncrementButton->setBackgroundColor(highlightColor);
-    // mBlueIncrementButton->setText("+");
-    // mBlueIncrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mBlueIncrementButton);
-
-    // mBlueDecrementButton = new ZButton(40, 40, getResourcePath());
-    // mBlueDecrementButton->setOffset(50,350 + (100 * 2));
-    // mBlueDecrementButton->setMargin(10,10,10,10);
-    // mBlueDecrementButton->setBackgroundColor(highlightColor);
-    // mBlueDecrementButton->setText("-");
-    // mBlueDecrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mBlueDecrementButton);
-
-    // Green control ----------------------
-    mGreenLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
-    mGreenLabel->setOffset(10,320 + (100 * 3));
+  // Green control ----------------------
+    mGreenLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    mGreenLabel->setOffset(10,320 + (100 * 2));
     mGreenLabel->setText("Green");
     mGreenLabel->setTextColor(vec3(0.1,0.1,0.1));
     propertiesPanel->addSubView(mGreenLabel);
 
     mGreenSlider = new ZSlider(10000, 30, getResourcePath());
-    mGreenSlider->setOffset(0,350 + (100 * 3));
+    mGreenSlider->setOffset(0,350 + (100 * 2));
     mGreenSlider->setMargin(10, 10, 10, 10);
     mGreenSlider->setListener(this);
     propertiesPanel->addSubView(mGreenSlider);
 
-    // mGreenIncrementButton = new ZButton(40, 40, getResourcePath());
-    // mGreenIncrementButton->setOffset(0,350 + (100 * 3));
-    // mGreenIncrementButton->setMargin(10,10,10,10);
-    // mGreenIncrementButton->setBackgroundColor(highlightColor);
-    // mGreenIncrementButton->setText("+");
-    // mGreenIncrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mGreenIncrementButton);
 
-    // mGreenDecrementButton = new ZButton(40, 40, getResourcePath());
-    // mGreenDecrementButton->setOffset(50,350 + (100 * 3));
-    // mGreenDecrementButton->setMargin(10,10,10,10);
-    // mGreenDecrementButton->setBackgroundColor(highlightColor);
-    // mGreenDecrementButton->setText("-");
-    // mGreenDecrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mGreenDecrementButton);
+    // Blue control ----------------------
+    mBlueLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    mBlueLabel->setOffset(10,320 + (100 * 3));
+    mBlueLabel->setText("Blue");
+    mBlueLabel->setTextColor(vec3(0.1,0.1,0.1));
+    propertiesPanel->addSubView(mBlueLabel);
+
+    mBlueSlider = new ZSlider(10000, 30, getResourcePath());
+    mBlueSlider->setOffset(0,350 + (100 * 3));
+    mBlueSlider->setMargin(10, 10, 10, 10);
+    mBlueSlider->setListener(this);
+    propertiesPanel->addSubView(mBlueSlider);
 
     // Alpha control ----------------------
-    mAlphaLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    mAlphaLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mAlphaLabel->setOffset(10,320 + (100 * 4));
     mAlphaLabel->setText("Alpha");
     mAlphaLabel->setTextColor(vec3(0.1,0.1,0.1));
@@ -242,22 +145,6 @@ void ZPathViewController::onCreate() {
     mAlphaSlider->setMargin(10, 10, 10, 10);
     mAlphaSlider->setListener(this);
     propertiesPanel->addSubView(mAlphaSlider);
-
-    // mAlphaIncrementButton = new ZButton(40, 40, getResourcePath());
-    // mAlphaIncrementButton->setOffset(0,350 + (100 * 4));
-    // mAlphaIncrementButton->setMargin(10,10,10,10);
-    // mAlphaIncrementButton->setBackgroundColor(highlightColor);
-    // mAlphaIncrementButton->setText("+");
-    // mAlphaIncrementButton->setOnClickListener(this);
-    // //propertiesPanel->addSubView(mAlphaIncrementButton);
-
-    // mAlphaDecrementButton = new ZButton(40, 40, getResourcePath());
-    // mAlphaDecrementButton->setOffset(50,350 + (100 * 4));
-    // mAlphaDecrementButton->setMargin(10,10,10,10);
-    // mAlphaDecrementButton->setBackgroundColor(highlightColor);
-    // mAlphaDecrementButton->setText("-");
-    // mAlphaDecrementButton->setOnClickListener(this);
-    //propertiesPanel->addSubView(mAlphaDecrementButton);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
@@ -313,15 +200,13 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
                 brainMaterial->setMetallic(0);
                 object->setMaterial(brainMaterial);
             }
-           // ZObject* object = loader.loadObject(path);
-    		//mScene->addObject(object)
         }
     }
 }
 
 void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
     int selectionIndex = mScene->getActiveObjectIndex();
-    
+
     if (sender == mExposureSlider) {
         ZScene* scene = mTileView->getScene();
         float newExposure = value;
@@ -331,16 +216,82 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
         scene->setExposure(value);
     } 
 
-    else if (sender == mRoughnessSlider) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
+    if (selectionIndex != -1) {
+        if (sender == mRoughnessSlider) {
+            ZScene* scene = mTileView->getScene();
+            ZObject* object = scene->getObjects().at(selectionIndex);
+            ZMaterial* material = object->getMaterial();
 
-        string str = to_string(value);
-        str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
-        mRoughnessLabel->setText("Roughness " + str);
-        material->setRoughness(value);
-    } 
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mRoughnessLabel->setText("Roughness " + str);
+            material->setRoughness(value);
+        } 
+
+        else if (sender == mMetalSlider) {
+            ZScene* scene = mTileView->getScene();
+            ZObject* object = scene->getObjects().at(selectionIndex);
+            ZMaterial* material = object->getMaterial();
+
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mMetalLabel->setText("Metallic " + str);
+            material->setMetallic(value);
+        } 
+
+        else if (sender == mRedSlider) {
+            ZScene* scene = mTileView->getScene();
+            ZObject* object = scene->getObjects().at(selectionIndex);
+            ZMaterial* material = object->getMaterial();
+
+            vec4 color = material->getColor();
+            color.r = value;
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mRedLabel->setText("Red " + str);
+            material->setColor(color);
+        } 
+
+        else if (sender == mGreenSlider) {
+            ZScene* scene = mTileView->getScene();
+            ZObject* object = scene->getObjects().at(selectionIndex);
+            ZMaterial* material = object->getMaterial();
+
+            vec4 color = material->getColor();
+            color.g = value;
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mGreenLabel->setText("Green " + str);
+            material->setColor(color);
+        }
+
+         else if (sender == mBlueSlider) {
+            ZScene* scene = mTileView->getScene();
+            ZObject* object = scene->getObjects().at(selectionIndex);
+            ZMaterial* material = object->getMaterial();
+
+            vec4 color = material->getColor();
+            color.b = value;
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mBlueLabel->setText("Blue " + str);
+            material->setColor(color);
+        } 
+
+        else if (sender == mAlphaSlider) {
+            ZScene* scene = mTileView->getScene();
+            ZObject* object = scene->getObjects().at(selectionIndex);
+            ZMaterial* material = object->getMaterial();
+
+            vec4 color = material->getColor();
+            color.a = value;
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mAlphaLabel->setText("Alpha " + str);
+            material->setColor(color);
+        }
+
+    }
 }
 
 void ZPathViewController::onClick(ZButton* sender) {
@@ -357,208 +308,6 @@ void ZPathViewController::onClick(ZButton* sender) {
 	        mTileView->setTileCount(2,1);
 	    }
 	} 
-
-    else if (sender == mIncrementButton) {
-	    ZScene* scene = mTileView->getScene();
-	    float currentExposure = scene->getExposure();
-	   
-	    float newExposure = currentExposure + 0.1;
-	    string str = to_string(newExposure);
-	    str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-	    mExposureLabel->setText("Exposure " + str);
-
-	    scene->setExposure(currentExposure + 0.1f);
-	} 
-
-    else if (sender == mDecrementButton) {
-	    ZScene* scene = mTileView->getScene();
-	    float currentExposure = scene->getExposure();
-	    float newExposure = currentExposure - 0.1;
-
-	    string str = to_string(newExposure);
-	    str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-	    mExposureLabel->setText("Exposure " + str);
-
-	    scene->setExposure(newExposure);
-	} 
-
-    else if (sender == mRoughnessIncrementButton && selectionIndex != -1) {
-	    ZScene* scene = mTileView->getScene();
-	    ZObject* object = scene->getObjects().at(selectionIndex);
-	    ZMaterial* material = object->getMaterial();
-
-	    float currentValue = material->getRoughness();
-	    float newValue = currentValue +  0.03;
-	    string str = to_string(newValue);
-	    str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-	    mRoughnessLabel->setText("Roughness " + str);
-
-
-	    material->setRoughness(newValue);
-	} 
-
-    else if (sender == mRoughnessDecrementButton && selectionIndex != -1) {
-	    ZScene* scene = mTileView->getScene();
-	    ZObject* object = scene->getObjects().at(selectionIndex);
-	    ZMaterial* material = object->getMaterial();
-
-	    float currentValue = material->getRoughness();
-	    float newValue = currentValue -  0.03;
-	    string str = to_string(newValue);
-	    str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-	    mRoughnessLabel->setText("Roughness " + str);
-
-
-	    material->setRoughness(newValue);
-	} 
-
-    else if (sender == mMetalIncrementButton && selectionIndex != -1) {
-	    ZScene* scene = mTileView->getScene();
-	    ZObject* object = scene->getObjects().at(selectionIndex);
-	    ZMaterial* material = object->getMaterial();
-
-	    float currentValue = material->getMetallic();
-	    float newValue = currentValue + 0.05;
-	    string str = to_string(newValue);
-	    str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-	    mMetalLabel->setText("Metallic " + str);
-
-	    material->setMetallic(newValue);
-	} 
-
-    else if (sender == mMetalDecrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        float currentValue = material->getMetallic();
-        float newValue = currentValue -  0.05;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mMetalLabel->setText("Metallic " + str);
-
-        material->setMetallic(newValue);
-    } 
-
-     else if (sender == mRedIncrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.r;
-        float newValue = currentValue + 0.05;
-        color.r = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mRedLabel->setText("Red " + str);
-        material->setColor(color);
-    } 
-
-    else if (sender == mRedDecrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.r;
-        float newValue = currentValue - 0.05;
-        color.r = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mRedLabel->setText("Red " + str);
-        material->setColor(color);
-    } 
-
-    else if (sender == mBlueIncrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.b;
-        float newValue = currentValue + 0.05;
-        color.b = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mBlueLabel->setText("Blue " + str);
-        material->setColor(color);
-    } 
-
-    else if (sender == mBlueDecrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.b;
-        float newValue = currentValue - 0.05;
-        color.b = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mBlueLabel->setText("Blue " + str);
-        material->setColor(color);
-    } 
-
-    else if (sender == mGreenIncrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.g;
-        float newValue = currentValue + 0.05;
-        color.g = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mGreenLabel->setText("Green " + str);
-        material->setColor(color);
-    } 
-
-    else if (sender == mGreenDecrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.g;
-        float newValue = currentValue - 0.05;
-        color.g = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mGreenLabel->setText("Green " + str);
-        material->setColor(color);
-    } 
-
-    else if (sender == mAlphaIncrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.a;
-        float newValue = currentValue + 0.05;
-        color.a = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mAlphaLabel->setText("Alpha " + str);
-        material->setColor(color);
-    } 
-    
-    else if (sender == mAlphaDecrementButton && selectionIndex != -1) {
-        ZScene* scene = mTileView->getScene();
-        ZObject* object = scene->getObjects().at(selectionIndex);
-        ZMaterial* material = object->getMaterial();
-
-        vec4 color = material->getColor();
-        float currentValue = color.a;
-        float newValue = currentValue - 0.05;
-        color.a = newValue;
-        string str = to_string(newValue);
-        str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
-        mAlphaLabel->setText("Alpha " + str);
-        material->setColor(color);
-    } 
 
     else if (sender == mBackgroundBlurButton) {
         ZScene* scene = mTileView->getScene();
