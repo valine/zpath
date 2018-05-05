@@ -26,7 +26,7 @@ void ZPathViewController::onCreate() {
     label->setOffset(10,0);
     label->setText("Properties");
     label->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(label);
+    //propertiesPanel->addSubView(label);
 
     mGridViewButton = new ZButton(200, 40, getResourcePath());
     mGridViewButton->setOffset(0,50);
@@ -34,7 +34,7 @@ void ZPathViewController::onCreate() {
     mGridViewButton->setBackgroundColor(highlightColor);
     mGridViewButton->setText("Toggle Grid View");
     mGridViewButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mGridViewButton);
+    //propertiesPanel->addSubView(mGridViewButton);
 
     mBackgroundBlurButton = new ZButton(200, 40, getResourcePath());
     mBackgroundBlurButton->setOffset(0,50);
@@ -43,7 +43,7 @@ void ZPathViewController::onCreate() {
     mBackgroundBlurButton->setText("Toggle Background Blur");
     mBackgroundBlurButton->setGravity(ZView::bottomLeft);
     mBackgroundBlurButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mBackgroundBlurButton);
+    //propertiesPanel->addSubView(mBackgroundBlurButton);
 
     mDeleteButton = new ZButton(200, 40, getResourcePath());
     mDeleteButton->setOffset(0,100);
@@ -52,13 +52,13 @@ void ZPathViewController::onCreate() {
     mDeleteButton->setText("Delete Object");
     mDeleteButton->setGravity(ZView::bottomLeft);
     mDeleteButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mDeleteButton);
+    //propertiesPanel->addSubView(mDeleteButton);
 
     mExposureLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mExposureLabel->setOffset(10,120);
     mExposureLabel->setText("Exposure 1.0");
     mExposureLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mExposureLabel);
+    //propertiesPanel->addSubView(mExposureLabel);
 
     mIncrementButton = new ZButton(40, 40, getResourcePath());
     mIncrementButton->setOffset(0,150);
@@ -66,7 +66,7 @@ void ZPathViewController::onCreate() {
     mIncrementButton->setBackgroundColor(highlightColor);
     mIncrementButton->setText("+");
     mIncrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mIncrementButton);
+    //propertiesPanel->addSubView(mIncrementButton);
 
     mDecrementButton = new ZButton(40, 40, getResourcePath());
     mDecrementButton->setOffset(50,150);
@@ -74,13 +74,13 @@ void ZPathViewController::onCreate() {
     mDecrementButton->setBackgroundColor(highlightColor);
     mDecrementButton->setText("-");
     mDecrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mDecrementButton);
+    //propertiesPanel->addSubView(mDecrementButton);
 
     mRoughnessLabel = new ZLabel(200, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mRoughnessLabel->setOffset(10,220);
     mRoughnessLabel->setText("Roughness 0.1");
     mRoughnessLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mRoughnessLabel);
+    //propertiesPanel->addSubView(mRoughnessLabel);
 
     mRoughnessIncrementButton = new ZButton(40, 40, getResourcePath());
     mRoughnessIncrementButton->setOffset(0,250);
@@ -88,7 +88,7 @@ void ZPathViewController::onCreate() {
     mRoughnessIncrementButton->setBackgroundColor(highlightColor);
     mRoughnessIncrementButton->setText("+");
     mRoughnessIncrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mRoughnessIncrementButton);
+    //propertiesPanel->addSubView(mRoughnessIncrementButton);
 
 
     mRoughnessDecrementButton = new ZButton(40, 40, getResourcePath());
@@ -97,13 +97,13 @@ void ZPathViewController::onCreate() {
     mRoughnessDecrementButton->setBackgroundColor(highlightColor);
     mRoughnessDecrementButton->setText("-");
     mRoughnessDecrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mRoughnessDecrementButton);
+    //propertiesPanel->addSubView(mRoughnessDecrementButton);
 
     mMetalLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mMetalLabel->setOffset(10,320);
     mMetalLabel->setText("Metallic 0.00");
     mMetalLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mMetalLabel);
+    //propertiesPanel->addSubView(mMetalLabel);
 
     mMetalIncrementButton = new ZButton(40, 40, getResourcePath());
     mMetalIncrementButton->setOffset(0,350);
@@ -111,7 +111,7 @@ void ZPathViewController::onCreate() {
     mMetalIncrementButton->setBackgroundColor(highlightColor);
     mMetalIncrementButton->setText("+");
     mMetalIncrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mMetalIncrementButton);
+    //propertiesPanel->addSubView(mMetalIncrementButton);
 
     mMetalDecrementButton = new ZButton(40, 40, getResourcePath());
     mMetalDecrementButton->setOffset(50,350);
@@ -119,14 +119,14 @@ void ZPathViewController::onCreate() {
     mMetalDecrementButton->setBackgroundColor(highlightColor);
     mMetalDecrementButton->setText("-");
     mMetalDecrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mMetalDecrementButton);
+    //propertiesPanel->addSubView(mMetalDecrementButton);
 
     // Red control ----------------------
     mRedLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mRedLabel->setOffset(10,320 + (100 * 1));
     mRedLabel->setText("Red");
     mRedLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mRedLabel);
+    //propertiesPanel->addSubView(mRedLabel);
 
     mRedIncrementButton = new ZButton(40, 40, getResourcePath());
     mRedIncrementButton->setOffset(0,350 + (100 * 1));
@@ -134,7 +134,7 @@ void ZPathViewController::onCreate() {
     mRedIncrementButton->setBackgroundColor(highlightColor);
     mRedIncrementButton->setText("+");
     mRedIncrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mRedIncrementButton);
+    //propertiesPanel->addSubView(mRedIncrementButton);
 
     mRedDecrementButton = new ZButton(40, 40, getResourcePath());
     mRedDecrementButton->setOffset(50,350 + (100 * 1));
@@ -142,14 +142,14 @@ void ZPathViewController::onCreate() {
     mRedDecrementButton->setBackgroundColor(highlightColor);
     mRedDecrementButton->setText("-");
     mRedDecrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mRedDecrementButton);
+    //propertiesPanel->addSubView(mRedDecrementButton);
 
     // Blue control ----------------------
     mBlueLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mBlueLabel->setOffset(10,320 + (100 * 2));
     mBlueLabel->setText("Blue");
     mBlueLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mBlueLabel);
+    //propertiesPanel->addSubView(mBlueLabel);
 
     mBlueIncrementButton = new ZButton(40, 40, getResourcePath());
     mBlueIncrementButton->setOffset(0,350 + (100 * 2));
@@ -157,7 +157,7 @@ void ZPathViewController::onCreate() {
     mBlueIncrementButton->setBackgroundColor(highlightColor);
     mBlueIncrementButton->setText("+");
     mBlueIncrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mBlueIncrementButton);
+    //propertiesPanel->addSubView(mBlueIncrementButton);
 
     mBlueDecrementButton = new ZButton(40, 40, getResourcePath());
     mBlueDecrementButton->setOffset(50,350 + (100 * 2));
@@ -165,14 +165,14 @@ void ZPathViewController::onCreate() {
     mBlueDecrementButton->setBackgroundColor(highlightColor);
     mBlueDecrementButton->setText("-");
     mBlueDecrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mBlueDecrementButton);
+    //propertiesPanel->addSubView(mBlueDecrementButton);
 
     // Green control ----------------------
     mGreenLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mGreenLabel->setOffset(10,320 + (100 * 3));
     mGreenLabel->setText("Green");
     mGreenLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mGreenLabel);
+    //propertiesPanel->addSubView(mGreenLabel);
 
     mGreenIncrementButton = new ZButton(40, 40, getResourcePath());
     mGreenIncrementButton->setOffset(0,350 + (100 * 3));
@@ -180,7 +180,7 @@ void ZPathViewController::onCreate() {
     mGreenIncrementButton->setBackgroundColor(highlightColor);
     mGreenIncrementButton->setText("+");
     mGreenIncrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mGreenIncrementButton);
+    //propertiesPanel->addSubView(mGreenIncrementButton);
 
     mGreenDecrementButton = new ZButton(40, 40, getResourcePath());
     mGreenDecrementButton->setOffset(50,350 + (100 * 3));
@@ -188,14 +188,14 @@ void ZPathViewController::onCreate() {
     mGreenDecrementButton->setBackgroundColor(highlightColor);
     mGreenDecrementButton->setText("-");
     mGreenDecrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mGreenDecrementButton);
+    //propertiesPanel->addSubView(mGreenDecrementButton);
 
     // Alpha control ----------------------
     mAlphaLabel = new ZLabel(100, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mAlphaLabel->setOffset(10,320 + (100 * 4));
     mAlphaLabel->setText("Alpha");
     mAlphaLabel->setTextColor(vec3(0.1,0.1,0.1));
-    propertiesPanel->addSubView(mAlphaLabel);
+    //propertiesPanel->addSubView(mAlphaLabel);
 
     mAlphaIncrementButton = new ZButton(40, 40, getResourcePath());
     mAlphaIncrementButton->setOffset(0,350 + (100 * 4));
@@ -203,7 +203,7 @@ void ZPathViewController::onCreate() {
     mAlphaIncrementButton->setBackgroundColor(highlightColor);
     mAlphaIncrementButton->setText("+");
     mAlphaIncrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mAlphaIncrementButton);
+    //propertiesPanel->addSubView(mAlphaIncrementButton);
 
     mAlphaDecrementButton = new ZButton(40, 40, getResourcePath());
     mAlphaDecrementButton->setOffset(50,350 + (100 * 4));
@@ -211,12 +211,12 @@ void ZPathViewController::onCreate() {
     mAlphaDecrementButton->setBackgroundColor(highlightColor);
     mAlphaDecrementButton->setText("-");
     mAlphaDecrementButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mAlphaDecrementButton);
+    //propertiesPanel->addSubView(mAlphaDecrementButton);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
     navBar->setGravity(ZView::topRight);
-     getRootView()->addSubView(navBar);
+    getRootView()->addSubView(navBar);
 
     string menuItemNames[4] = {"File", "Edit", "View", "Render"};
     for (int i = 0; i < 4; i++) {
@@ -234,8 +234,10 @@ void ZPathViewController::onCreate() {
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
 
-
-    ZSlider* slider = new ZSlider(100, 100, getResourcePath());
+    ZSlider* slider = new ZSlider(10000, 100, getResourcePath());
+    float sliderColor[4] = {0.8, 0.8, 0.8, 1.0};
+    slider->setMargin(20, 20, 20, 20);
+    slider->setBackgroundColor(sliderColor);
     propertiesPanel->addSubView(slider);
 }
 
