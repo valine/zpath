@@ -27,6 +27,8 @@
 #include "zlabel.h"
 #include "zonclicklistener.h"
 
+#include "zslider.h"
+
 using glm::mat4;
 using glm::ortho;
 using std::vector;

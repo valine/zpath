@@ -5,7 +5,9 @@ ZScene::ZScene(string resourcePath) {
 }
 
 void ZScene::addObject(ZObject* object) {
-	mObjects.push_back(object);
+	if (object != nullptr) {
+		mObjects.push_back(object);
+	}
 }
 
 void ZScene::addLight(ZPointLight* light) {

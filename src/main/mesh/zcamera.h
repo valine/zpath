@@ -19,6 +19,7 @@ public:
 
 	vec3 getPosition();
 	vec3 getUp();
+	vec3 getFront();
 	mat4 getViewMatrix();
 	mat4 getProjectionMatrix();
 

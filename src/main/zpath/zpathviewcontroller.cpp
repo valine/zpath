@@ -233,6 +233,10 @@ void ZPathViewController::onCreate() {
     mTileView->setOffset(propertiesPanel->getWidth(), 22);
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
+
+
+    ZSlider* slider = new ZSlider(100, 100, getResourcePath());
+    propertiesPanel->addSubView(slider);
 }
 
 void ZPathViewController::onFileDrop(int count, const char** paths) {

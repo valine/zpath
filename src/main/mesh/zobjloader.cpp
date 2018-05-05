@@ -15,6 +15,11 @@ vector<ZObject*> ZObjLoader::loadObjects(const std::string& pFile) {
 
 	vector<ZObject*> objects;
 
+	if(!scene) {
+	    cout << importer.GetErrorString() << endl;
+	    return objects;
+	}
+
 	aiNode* node = scene->mRootNode;
     return processNode(node, scene);
 }
@@ -82,6 +87,11 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 
 ZMesh* ZObjLoader::loadMesh(string fileName) {
 	ifstream infile(fileName);
+
+	if (!infile.good()) {
+		return nullptr;
+	}
+
 	string line;
 
 	cout<<fileName<<endl;
@@ -215,7 +225,6 @@ vector<string> ZObjLoader::split(string str, string delims) {
 }
 
 ZObject* ZObjLoader::loadObject(string fileName) {
-
 	ZMesh* mesh = loadMesh(fileName);
 
 	ZObject* object = new ZObject();

@@ -33,15 +33,19 @@ void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
 	
 void Z3DView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
-	if (middleMouseIsDown() || (mouseIsDown() && shiftKeyPressed())) {
-		int deltaX =  getLastX() - x;
+	int deltaX =  getLastX() - x;
 		int deltaY = getLastY() - y;
-
+	if (middleMouseIsDown() && !shiftKeyPressed()) {
+		//Orbit 
 		mRotationX += deltaX;
 		mRotationY -= deltaY;
-
-		updateCameraPosition();
+	} else if (middleMouseIsDown() && shiftKeyPressed()) {
+		// Pan
+		mTranslation.y += deltaX / 1;
+		mTranslation.z += deltaY / 1;
 	}
+
+	updateCameraPosition();
 }
 
 void Z3DView::onScrollChange(double x, double y) {
@@ -79,8 +83,20 @@ void Z3DView::updateCameraPosition() {
 
 	vec3 newPosition = vec3(rotationMatrix * vec4(mOrbitAnchorPoint, 1.0));
 	vec3 newUp = vec3(rotationMatrix * vec4(up, 1.0));
+	vec3 newFront = camera->getFront();
+
+	// newFront.y = mTranslation.y;
+	// newFront.z = mTranslation.z;
+
+	// newPosition.y += mTranslation.y;
+	// newPosition.z += mTranslation.z;
+
+	// newUp.y += mTranslation.y;
+	// newUp.z += mTranslation.z;
+
 	camera->setPosition(newPosition);
 	camera->setUp(newUp);
+	camera->setFront(newFront);
 }
 
 void Z3DView::draw() {

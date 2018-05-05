@@ -21,6 +21,10 @@ void ZCamera::setFront(vec3 front) {
 	mFront = front;
 }
 
+vec3 ZCamera::getFront() {
+	return mFront;
+}
+
 vec3 ZCamera::getPosition() {
 	return mPosition;
 }

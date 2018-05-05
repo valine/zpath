@@ -41,6 +41,8 @@ private:
 	float mRotationX = 0;
 	float mRotationY = 0;
 
+	vec3 mTranslation;
+	
 	void updateCameraPosition();
 
 	vec3 mOrbitAnchorPoint = vec3(15,0,0);
