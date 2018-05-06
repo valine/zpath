@@ -17,9 +17,7 @@ void ZViewController::onCreate() {
     string fragmentTextPath = mResourcePath + "resources/shaders/text.fs";
     mTextShader = new ZShader(vertexTextPath, fragmentTextPath);
 
-    float panelColor[4] = {0.9, 0.9, 0.91, 1.0};
     float backgroundColor[4] = {0.4f, 0.4, 0.4, 1.000};
-    float highlightColor[4] = {0.1, 0.2, 0.9, 1.0};
 
     mRootView = new ZView(ZView::fillParent, ZView::fillParent);
     mRootView->setOffset(0,0);

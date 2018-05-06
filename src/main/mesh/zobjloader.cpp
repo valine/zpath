@@ -106,8 +106,6 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	vector<float> texCoordsIndices;
 	vector<float> vertexNormalIndices;
 
-	int additionVertexCount = 0;
-
 	while (getline(infile, line)) {
 
 		string space = " ";

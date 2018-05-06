@@ -56,8 +56,6 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     return ggx1 * ggx2;
 }
 
-
-
 void main() {
 	
     vec3 N = normalize(vNormal); 

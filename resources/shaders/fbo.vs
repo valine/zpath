@@ -4,8 +4,7 @@ attribute vec2 aTexCoords;
 
 varying vec2 TexCoords;
 
-void main()
-{
+void main() {
     TexCoords = aTexCoords;
     gl_Position = vec4(aPos, 1.0);
 }

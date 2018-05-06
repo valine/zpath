@@ -425,7 +425,6 @@ void ZRenderer::renderSelection() {
 
 	int objectIndex = 0;
 	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-		ZObject *object = (*it);
     	ZMesh *mesh = (*it)->getMesh();
 
     	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
