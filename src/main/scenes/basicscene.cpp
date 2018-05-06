@@ -21,6 +21,7 @@ BasicScene::BasicScene(string resourcePath)
 	        brainMaterial->setRoughness(0.1);
 	        brainMaterial->setMetallic(0);
 	        object->setMaterial(brainMaterial);
+
 	    }
 	}
 

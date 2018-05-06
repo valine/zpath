@@ -15,20 +15,21 @@ void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
  	
  	if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
  		int index = mRenderer->getObjectIndexAtLocation(getLeft() + x, getTop() + getHeight() - 1 - y);
- 		// vector<ZObject*> objects = mRenderer->getScene()->getObjects();
-
- 		// for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-			// ZObject *object = (*it);
-			// object->setSelected(false);
- 		// }
-
  		mRenderer->getScene()->setActiveObjectIndex(index);
- 	}
-
+ 	} 
 }
 
 void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);
+
+	if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+ 		ZScene* scene = mRenderer->getScene();
+ 		int activeObjectIndex = scene->getActiveObjectIndex();
+ 		if (activeObjectIndex != -1) {
+ 			mTranslation = vec3(0);
+ 			updateCameraPosition();
+ 		}
+ 	}
 }
 	
 void Z3DView::onCursorPosChange(double x, double y) {
@@ -43,7 +44,6 @@ void Z3DView::onCursorPosChange(double x, double y) {
 		// Pan
 		mTranslation.x -= (float) deltaX / 40.0;
 		mTranslation.y += (float) deltaY / 40.0;
-		mTranslation.z = 0;
 	}
 
 	updateCameraPosition();

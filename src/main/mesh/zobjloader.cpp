@@ -33,7 +33,12 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         ZObject* object = new ZObject();
 
-        object->setMesh(convertAiMesh(mesh));
+        ZMesh* convertedMesh = convertAiMesh(mesh);
+        object->setMesh(convertedMesh);
+       
+        ZMeshUtils meshutils = ZMeshUtils();
+		object->setOrigin(meshutils.calculateBoundingBoxCenter(convertedMesh));
+
         objects.push_back(object);		
     }
     // then do the same for each of its children
@@ -224,9 +229,10 @@ vector<string> ZObjLoader::split(string str, string delims) {
 
 ZObject* ZObjLoader::loadObject(string fileName) {
 	ZMesh* mesh = loadMesh(fileName);
-
+	ZMeshUtils meshutils = ZMeshUtils();
 	ZObject* object = new ZObject();
 	object->setMesh(mesh);
+	object->setOrigin(meshutils.calculateBoundingBoxCenter(mesh));
 
 	return object;
 }

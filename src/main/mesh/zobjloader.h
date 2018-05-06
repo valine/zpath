@@ -4,6 +4,7 @@
 #include <string>
 #include "mesh/zmesh.h"
 #include "mesh/zobject.h"
+#include "mesh/zmeshutils.h"
 #include <vector>
 #include <fstream>
 #include <sstream>
