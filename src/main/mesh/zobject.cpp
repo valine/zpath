@@ -29,5 +29,12 @@ ZMaterial* ZObject::getMaterial() {
 	return mMaterial;
 }
 
+vec3 ZObject::getOrigin() {
+	return mOrigin;
+}
+
+void ZObject::setOrigin(vec3 origin) {
+	mOrigin = origin;
+}
 
 	

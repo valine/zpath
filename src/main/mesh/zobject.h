@@ -20,9 +20,12 @@ public:
 	ZMaterial* getMaterial();
 	void setSelected(bool selected);
 	bool isSelected();
+	vec3 getOrigin();
+	void setOrigin(vec3 origin);
 private: 
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
 	bool mSelected = false;
+	vec3 mOrigin = vec3(0);
 };
 #endif
