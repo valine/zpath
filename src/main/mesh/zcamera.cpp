@@ -26,7 +26,10 @@ vec3 ZCamera::getFront() {
 }
 
 vec3 ZCamera::getPosition() {
-	return mPosition;
+	vec4 tmpTranslation = vec4(mTranslation.x, mTranslation.y, mTranslation.z, 1.0);
+	vec4 viewTranslation = tmpTranslation * getViewMatrix();
+	vec3 tmpViewTranslation = vec3(viewTranslation.x, viewTranslation.y, viewTranslation.z);
+	return mPosition - tmpViewTranslation;
 }
 
 vec3 ZCamera::getUp() {
@@ -39,6 +42,14 @@ void ZCamera::setWidth(int width) {
 
 void ZCamera::setHeight(int height) {
 	mHeight = height;
+}
+
+void ZCamera::setTranslation(vec3 translation) {
+	mTranslation = translation;
+}
+
+vec3 ZCamera::getTranslation() {
+	return mTranslation;
 }
 
 mat4 ZCamera::getProjectionMatrix() {
@@ -54,6 +65,8 @@ mat4 ZCamera::getViewMatrix() {
 	    mUp  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 
+	mat4 translationMat = mat4(1);
+	translationMat = translate(translationMat, mTranslation);
 	//mViewMatrix = glm::rotate(mViewMatrix, (float)glfwGetTime() / 5, glm::vec3(0, 1, 0)); // where x, y, z is axis of rotation (e.g. 0 1 0)
-	return mViewMatrix;
+	return translationMat * mViewMatrix;
 }

@@ -41,8 +41,9 @@ void Z3DView::onCursorPosChange(double x, double y) {
 		mRotationY -= deltaY;
 	} else if (middleMouseIsDown() && shiftKeyPressed()) {
 		// Pan
-		mTranslation.y += deltaX / 1;
-		mTranslation.z += deltaY / 1;
+		mTranslation.x -= (float) deltaX / 40.0;
+		mTranslation.y += (float) deltaY / 40.0;
+		mTranslation.z = 0;
 	}
 
 	updateCameraPosition();
@@ -97,6 +98,8 @@ void Z3DView::updateCameraPosition() {
 	camera->setPosition(newPosition);
 	camera->setUp(newUp);
 	camera->setFront(newFront);
+
+	camera->setTranslation(mTranslation);
 }
 
 void Z3DView::draw() {

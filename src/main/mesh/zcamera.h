@@ -26,10 +26,15 @@ public:
 	void setWidth(int width);
 	void setHeight(int height);
 
+	void setTranslation(vec3 translation);
+	vec3 getTranslation();
+
 private:
 	vec3 mPosition;
 	vec3 mFront;
 	vec3 mUp;
+
+	vec3 mTranslation = vec3(0,0,0);
 
 	int mWidth;
 	int mHeight;
