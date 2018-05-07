@@ -104,9 +104,10 @@ void ZPathViewController::onCreate() {
     mRedSlider->setOffset(0,350 + (100 * 1));
     mRedSlider->setMargin(10, 10, 10, 10);
     mRedSlider->setListener(this);
+    mRedSlider->setLineColor(vec4(1,0,0,1));
     propertiesPanel->addSubView(mRedSlider);
 
-  // Green control ----------------------
+    // Green control ----------------------
     mGreenLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mGreenLabel->setOffset(10,320 + (100 * 2));
     mGreenLabel->setText("Green");
@@ -117,8 +118,8 @@ void ZPathViewController::onCreate() {
     mGreenSlider->setOffset(0,350 + (100 * 2));
     mGreenSlider->setMargin(10, 10, 10, 10);
     mGreenSlider->setListener(this);
+    mGreenSlider->setLineColor(vec4(0,1,0,1));
     propertiesPanel->addSubView(mGreenSlider);
-
 
     // Blue control ----------------------
     mBlueLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
@@ -131,6 +132,7 @@ void ZPathViewController::onCreate() {
     mBlueSlider->setOffset(0,350 + (100 * 3));
     mBlueSlider->setMargin(10, 10, 10, 10);
     mBlueSlider->setListener(this);
+    mBlueSlider->setLineColor(vec4(0,0,1,1));
     propertiesPanel->addSubView(mBlueSlider);
 
     // Alpha control ----------------------
@@ -166,8 +168,6 @@ void ZPathViewController::onCreate() {
     mTileView->setOffset(propertiesPanel->getWidth(), 22);
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
-
-
 }
 
 void ZPathViewController::onFileDrop(int count, const char** paths) {

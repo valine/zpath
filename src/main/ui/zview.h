@@ -18,11 +18,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H  
 
-using std::string; 
-using std::cout;
-using std::endl;
-using glm::mat4;
-using std::vector;
+using namespace std;
+using namespace glm;
 
 class ZView {
 	
@@ -77,6 +74,8 @@ class ZView {
 		int getWindowWidth();
 
 		void setBackgroundColor(float color[4]);
+		void setBackgroundColor(vec4 color);
+
 		void setGravity(ZView::Gravity gravity);
 
 		void setMaxWidth(int width);
@@ -121,7 +120,7 @@ class ZView {
 		float mMaxWidth = 0; 
 		float mMaxHeight = 0;
 
-		float mBackgroundColor[4] = {0,0,0,0};
+		vec4 mBackgroundColor = vec4(0);
 
 		GLuint mVertexBuffer;
 		GLuint mFaceIndicesBuffer;

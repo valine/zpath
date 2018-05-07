@@ -13,6 +13,7 @@ void ZObject::setMesh(ZMesh* mesh) {
 ZMesh* ZObject::getMesh() {
 	return mMesh;
 }
+
 void ZObject::setMaterial(ZMaterial* material) {
 	mMaterial = material;
 }

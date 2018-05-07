@@ -28,6 +28,7 @@ public:
 	void setMinValue(float min);
 
 	void setValue(float value);
+	void setLineColor(vec4 color);
 
 private:
 
@@ -40,7 +41,6 @@ private:
 	ZSliderListener* mListener = nullptr;
 
 	void valueChanged(int offset);
-
 };
 
 #endif

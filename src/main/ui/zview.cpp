@@ -29,9 +29,8 @@ void ZView::draw() {
     glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
                           sizeof(float) * 3, (void*) 0);
 
-    glUniform4f(mColorLocation,
-        mBackgroundColor[0], mBackgroundColor[1], 
-        mBackgroundColor[2], mBackgroundColor[3]);
+    glUniform4f(mColorLocation, 
+        mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
 
     glViewport(0, 0, mWindowWidth, mWindowHeight);
 
@@ -372,10 +371,11 @@ vector<ZView*> ZView::getSubViews() {
 }
 
 void ZView::setBackgroundColor(float color[4]) {
-    mBackgroundColor[0] = color[0];
-    mBackgroundColor[1] = color[1];
-    mBackgroundColor[2] = color[2];
-    mBackgroundColor[3] = color[3];
+    mBackgroundColor = vec4(color[0], color[1], color[2], color[3]);
+}
+
+void ZView::setBackgroundColor(vec4 color) {
+    mBackgroundColor = color;
 }
 
 void ZView::setGravity(Gravity gravity) {

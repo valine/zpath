@@ -95,7 +95,10 @@ void ZSlider::setValue(float value) {
 	int offset = (mMinValue - value) / (-mMaxValue + mMinValue);
 	int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
 	mThumb->setOffset(offset, yPosition);
+}
 
+void ZSlider::setLineColor(vec4 color) {
+	mLine->setBackgroundColor(color);
 }
 
 
