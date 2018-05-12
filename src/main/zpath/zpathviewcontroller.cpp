@@ -313,7 +313,7 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             mTileView->setFocalLength(180 - value);
             string str = to_string(value);
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
-            mFocalLengthLabel->setText("FocalLength " + str);
+            mFocalLengthLabel->setText("Focal Length " + str);
         }
 
     }
