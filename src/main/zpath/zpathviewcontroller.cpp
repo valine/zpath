@@ -160,8 +160,8 @@ void ZPathViewController::onCreate() {
     mFocalLengthSlider->setOffset(0,350 + (100 * 5));
     mFocalLengthSlider->setMargin(10, 10, 10, 10);
     mFocalLengthSlider->setListener(this);
-    mFocalLengthSlider->setMaxValue(200);
-    mFocalLengthSlider->setMinValue(0);
+    mFocalLengthSlider->setMaxValue(179);
+    mFocalLengthSlider->setMinValue(1);
     propertiesPanel->addSubView(mFocalLengthSlider);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
@@ -310,7 +310,7 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
         else if (sender == mFocalLengthSlider) {
             ZScene* scene = mTileView->getScene();
 
-            mTileView->setFocalLength(value);
+            mTileView->setFocalLength(180 - value);
             string str = to_string(value);
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mFocalLengthLabel->setText("FocalLength " + str);

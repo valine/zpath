@@ -106,6 +106,10 @@ void Z3DView::updateCameraPosition() {
 	camera->setTranslation(mTranslation);
 }
 
+ZScene* Z3DView::getScene() {
+	return mRenderer->getScene();
+}
+
 void Z3DView::draw() {
 
 	ZView::draw();
