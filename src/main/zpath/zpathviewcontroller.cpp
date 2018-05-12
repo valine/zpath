@@ -232,6 +232,15 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
         scene->setExposure(value);
     } 
 
+    else if (sender == mFocalLengthSlider) {
+        ZScene* scene = mTileView->getScene();
+
+        mTileView->setFocalLength(180 - value);
+        string str = to_string(value);
+        str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+        mFocalLengthLabel->setText("Focal Length " + str);
+    }
+
     if (selectionIndex != -1) {
         if (sender == mRoughnessSlider) {
             ZScene* scene = mTileView->getScene();
@@ -305,15 +314,6 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mAlphaLabel->setText("Alpha " + str);
             material->setColor(color);
-        }
-
-        else if (sender == mFocalLengthSlider) {
-            ZScene* scene = mTileView->getScene();
-
-            mTileView->setFocalLength(180 - value);
-            string str = to_string(value);
-            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
-            mFocalLengthLabel->setText("Focal Length " + str);
         }
 
     }
