@@ -29,6 +29,9 @@ public:
 	void setTranslation(vec3 translation);
 	vec3 getTranslation();
 
+	void setFocalLength(float focalLength);
+	float getFocalLength();
+
 private:
 	vec3 mPosition;
 	vec3 mFront;
@@ -38,6 +41,8 @@ private:
 
 	int mWidth;
 	int mHeight;
+
+	float mFocalLength = 80.0;
 };
 
 #endif

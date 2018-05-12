@@ -9,34 +9,34 @@ BasicScene::BasicScene(string resourcePath)
 	world->setEnvironmentTexture(environmentTexture);
 	setWorld(world);
 
-	ZObjLoader loader = ZObjLoader();
+	// ZObjLoader loader = ZObjLoader();
 
- 	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/brain.obj");
- 	if (objects.size() > 0) {
-	    for (unsigned i = 0; i < objects.size(); ++i) {
-	        ZObject* object = objects.at(i);
+ // 	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/brain.obj");
+ // 	if (objects.size() > 0) {
+	//     for (unsigned i = 0; i < objects.size(); ++i) {
+	//         ZObject* object = objects.at(i);
 
-	        addObject(object);
-	        ZMaterial* brainMaterial = new ZMaterial(vec3(0.9, 0.1, 0.1));
-	        brainMaterial->setRoughness(0.1);
-	        brainMaterial->setMetallic(0);
-	        object->setMaterial(brainMaterial);
+	//         addObject(object);
+	//         ZMaterial* brainMaterial = new ZMaterial(vec3(0.9, 0.1, 0.1));
+	//         brainMaterial->setRoughness(0.1);
+	//         brainMaterial->setMetallic(0);
+	//         object->setMaterial(brainMaterial);
 
-	    }
-	}
+	//     }
+	// }
 
-	ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
+	// ZObject* electrodes = loader.loadObject(resourcePath + "resources/meshes/dbs-electrodes.obj");
 	
-	ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.1, 0.1, 0.1));
-	electrodeMaterial->setMetallic(1.0);
-	electrodeMaterial->setRoughness(0.2);
-	electrodes->setMaterial(electrodeMaterial);
+	// ZMaterial* electrodeMaterial = new ZMaterial(vec3(0.1, 0.1, 0.1));
+	// electrodeMaterial->setMetallic(1.0);
+	// electrodeMaterial->setRoughness(0.2);
+	// electrodes->setMaterial(electrodeMaterial);
 
-	ZObject* lead = loader.loadObject(resourcePath + "resources/meshes/dbs-lead.obj");
-	ZMaterial* leadMaterial = new ZMaterial(vec4(0.6, 0.6, 0.6, 0.8));
-	leadMaterial->setMetallic(0);
-	leadMaterial->setRoughness(0.1);
-	lead->setMaterial(leadMaterial);
+	// ZObject* lead = loader.loadObject(resourcePath + "resources/meshes/dbs-lead.obj");
+	// ZMaterial* leadMaterial = new ZMaterial(vec4(0.6, 0.6, 0.6, 0.8));
+	// leadMaterial->setMetallic(0);
+	// leadMaterial->setRoughness(0.1);
+	// lead->setMaterial(leadMaterial);
 
 
 	// ZObject* brainTransparent = loader.loadObjects(resourcePath + "resources/meshes/brain-transparent.obj").at(0);

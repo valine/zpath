@@ -22,6 +22,7 @@ public:
 	void onCursorPosChange(double x, double y);
 	void setScene(ZScene* scene);
 
+	void setFocalLength(float focalLength);
 	ZScene* getScene();
 private:
 	int mTileCountX;
@@ -34,5 +35,5 @@ private:
 
 	ZScene* mScene;
 	string mResourcePath;
-	vector<ZView*> mTiles;
+	vector<Z3DView*> mTiles;
 };

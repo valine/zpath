@@ -11,8 +11,6 @@ ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tiles
 }
 
 void ZTiledView::setTileCount(int tilesX, int tilesY) {
-
-
     clearSubViews();
 
 	mTileCountX = tilesX;
@@ -21,7 +19,6 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 	int width = (getWidth() - (mTileMargin * tilesX)) / tilesX;
 	int height = (getHeight() - (mTileMargin * tilesY)) / tilesY;
    
-
 	float backgroundColor[4] = {0.002428, 0.021219, 0.063010, 1.0};
 	for (int x = 0; x < tilesX; x++) {
 		for (int y = 0; y < tilesY; y++) {
@@ -32,6 +29,7 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 			tile->setOffset(x * (width + mTileMargin), y * (height + mTileMargin));
 			tile->setMargin(mTileMargin, mTileMargin, mTileMargin, mTileMargin);
 			tile->setBackgroundColor(backgroundColor);
+			mTiles.push_back(tile);
 			addSubView(tile);
 		}
 	}
@@ -57,8 +55,6 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 			tile->setMaxHeight(height);
 
 			tile->setOffset(x * (width + mTileMargin), y * (height + mTileMargin));
-
-			mTiles.push_back(tile);
 			i++;
 		}
 	}
@@ -72,7 +68,6 @@ void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
 
 void ZTiledView::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);
-
 }
 
 void ZTiledView::setScene(ZScene* scene) {
@@ -81,6 +76,12 @@ void ZTiledView::setScene(ZScene* scene) {
 
 ZScene* ZTiledView::getScene() {
 	return mScene;
+}
+
+void ZTiledView::setFocalLength(float focalLength) {
+	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+    	(*it)->getRenderer()->getCamera()->setFocalLength(focalLength);
+    }
 }
 	
 void ZTiledView::onCursorPosChange(double x, double y)  {

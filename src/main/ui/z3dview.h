@@ -35,6 +35,7 @@ public:
 	void onScrollChange(double x, double y);
 	void draw();
 	void setRenderer(ZRenderer *renderer);
+	ZRenderer* getRenderer();
 private:
 	ZRenderer *mRenderer;
 

@@ -41,6 +41,7 @@ private:
 	ZSlider* mBlueSlider;
 	ZSlider* mGreenSlider;
 	ZSlider* mAlphaSlider;
+	ZSlider* mFocalLengthSlider;
 
 	ZLabel *mRoughnessLabel;
 	ZLabel *mMetalLabel;
@@ -48,6 +49,7 @@ private:
 	ZLabel *mBlueLabel;
 	ZLabel *mGreenLabel;
 	ZLabel *mAlphaLabel;
+	ZLabel *mFocalLengthLabel;
 
 	ZScene* mScene;
 

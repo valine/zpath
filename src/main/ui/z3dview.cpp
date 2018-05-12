@@ -68,6 +68,10 @@ void Z3DView::onScrollChange(double x, double y) {
 	updateCameraPosition();
 }
 
+ZRenderer* Z3DView::getRenderer() {
+	return mRenderer;
+}
+
 void Z3DView::setRenderer(ZRenderer *renderer) {
     mRenderer = renderer;
     renderer->setParentView(this);

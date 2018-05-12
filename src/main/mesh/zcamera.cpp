@@ -53,8 +53,16 @@ vec3 ZCamera::getTranslation() {
 }
 
 mat4 ZCamera::getProjectionMatrix() {
-	mat4 projectionMatrix = perspective(glm::radians(80.0f), (float) mWidth / (float) mHeight, 0.1f, 1000.0f);
+	mat4 projectionMatrix = perspective(glm::radians(mFocalLength), (float) mWidth / (float) mHeight, 0.1f, 1000.0f);
 	return projectionMatrix;
+}
+
+void ZCamera::setFocalLength(float focalLength) {
+	mFocalLength = focalLength;
+}
+
+float ZCamera::getFocalLength() {
+	return mFocalLength;
 }
 
 mat4 ZCamera::getViewMatrix() {

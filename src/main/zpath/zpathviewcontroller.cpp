@@ -36,17 +36,17 @@ void ZPathViewController::onCreate() {
     mGridViewButton->setOnClickListener(this);
     propertiesPanel->addSubView(mGridViewButton);
 
-    mBackgroundBlurButton = new ZButton(200, 40, getResourcePath());
-    mBackgroundBlurButton->setOffset(0,50);
+    mBackgroundBlurButton = new ZButton(130, 40, getResourcePath());
+    mBackgroundBlurButton->setOffset(0,20);
     mBackgroundBlurButton->setMargin(10,10,10,10);
     mBackgroundBlurButton->setBackgroundColor(highlightColor);
-    mBackgroundBlurButton->setText("Toggle Background Blur");
+    mBackgroundBlurButton->setText("Background Blur");
     mBackgroundBlurButton->setGravity(ZView::bottomLeft);
     mBackgroundBlurButton->setOnClickListener(this);
     propertiesPanel->addSubView(mBackgroundBlurButton);
 
-    mDeleteButton = new ZButton(200, 40, getResourcePath());
-    mDeleteButton->setOffset(0,100);
+    mDeleteButton = new ZButton(130, 40, getResourcePath());
+    mDeleteButton->setOffset(140,20);
     mDeleteButton->setMargin(10,10,10,10);
     mDeleteButton->setBackgroundColor(highlightColor);
     mDeleteButton->setText("Delete Object");
@@ -147,6 +147,22 @@ void ZPathViewController::onCreate() {
     mAlphaSlider->setMargin(10, 10, 10, 10);
     mAlphaSlider->setListener(this);
     propertiesPanel->addSubView(mAlphaSlider);
+
+
+ // Alpha control ----------------------
+    mFocalLengthLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
+    mFocalLengthLabel->setOffset(10,320 + (100 * 5));
+    mFocalLengthLabel->setText("Focal Length");
+    mFocalLengthLabel->setTextColor(vec3(0.1,0.1,0.1));
+    propertiesPanel->addSubView(mFocalLengthLabel);
+
+    mFocalLengthSlider = new ZSlider(10000, 30, getResourcePath());
+    mFocalLengthSlider->setOffset(0,350 + (100 * 5));
+    mFocalLengthSlider->setMargin(10, 10, 10, 10);
+    mFocalLengthSlider->setListener(this);
+    mFocalLengthSlider->setMaxValue(200);
+    mFocalLengthSlider->setMinValue(0);
+    propertiesPanel->addSubView(mFocalLengthSlider);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
@@ -289,6 +305,15 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mAlphaLabel->setText("Alpha " + str);
             material->setColor(color);
+        }
+
+        else if (sender == mFocalLengthSlider) {
+            ZScene* scene = mTileView->getScene();
+
+            mTileView->setFocalLength(value);
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mFocalLengthLabel->setText("FocalLength " + str);
         }
 
     }
