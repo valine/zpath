@@ -93,7 +93,6 @@ class ZView {
 
 		ZView* getParentView();
 
-
 		virtual void draw();
 		virtual void setShader(ZShader *shader);
 		virtual void setTextShader(ZShader *shader);
@@ -106,6 +105,9 @@ class ZView {
 		virtual void onMouseEvent(int button, int action, int mods, int x, int y);
 		virtual void onCursorPosChange(double x, double y);
 		virtual void onScrollChange(double x, double y);
+
+		void setVisibility(bool visible);
+		bool getVisibility();
 
 		vector<ZView*> getSubViews();
 	private:
@@ -164,6 +166,7 @@ class ZView {
 
 		bool mShiftKeyPressed = false;
 
+		bool mVisible = true;
 
 		vector<ZView*> mViews;
 };

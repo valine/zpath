@@ -1,14 +1,9 @@
 #include "zrenderer.h"
 
 ZRenderer::ZRenderer(string resourcePath) {
-
 	string vertexPath = resourcePath + "resources/shaders/base.vs";
     string fragmentPath = resourcePath + "resources/shaders/base.fs";
     mShader = new ZShader(vertexPath, fragmentPath);
-
-	string cubeVertexPath = resourcePath + "resources/shaders/cubemap.vs";
-    string cubeFragmentPath = resourcePath + "resources/shaders/cubemap.fs";
-    mCubemapShader = new ZShader(cubeVertexPath, cubeFragmentPath);
 
     string backgroundVertexPath = resourcePath + "resources/shaders/background.vs";
     string backgroundFragmentPath = resourcePath + "resources/shaders/background.fs";
@@ -18,22 +13,10 @@ ZRenderer::ZRenderer(string resourcePath) {
     string colorTextureFragmentPath = resourcePath + "resources/shaders/colorTexture.fs";
     mColorTextureShader = new ZShader(colorTextureVertexPath, colorTextureFragmentPath);
 
-    string prefTextureVertexPath = resourcePath + "resources/shaders/cubemap.vs";
-    string prefTextureFragmentPath = resourcePath + "resources/shaders/prefilter.fs";
-    mPrefilterShader = new ZShader(prefTextureVertexPath, prefTextureFragmentPath);
-
-    string irradienceTextureVertexPath = resourcePath + "resources/shaders/cubemap.vs";
-    string irradienceTextureFragmentPath = resourcePath + "resources/shaders/irradiance.fs";
-    mIrradienceShader = new ZShader(irradienceTextureVertexPath, irradienceTextureFragmentPath);
-
     string selectionVertexPath = resourcePath + "resources/shaders/selection.vs";
     string selectionFragmentPath = resourcePath + "resources/shaders/selection.fs";
     mSelectionShader = new ZShader(selectionVertexPath, selectionFragmentPath);
 
-    string brdfVertexPath = resourcePath + "resources/shaders/brdf.vs";
-    string brdfFragmentPath = resourcePath + "resources/shaders/brdf.fs";
-    mBrdfShader = new ZShader(brdfVertexPath, brdfFragmentPath);
-	
 	string fboVertexPath = resourcePath + "resources/shaders/fbo.vs";
     string fboFragmentPath = resourcePath + "resources/shaders/fbo.fs";
     mHDRShader = new ZShader(fboVertexPath, fboFragmentPath);
@@ -44,7 +27,6 @@ ZRenderer::ZRenderer(string resourcePath) {
 }
 
 void ZRenderer::init() {
-
 	mShader->use();
 	mShader->setInt("irradianceMap", 0);
     mShader->setInt("prefilterMap", 1);
@@ -69,194 +51,31 @@ void ZRenderer::init() {
         std::cout << "Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+
+    // Create selection offscreen buffer
+	glGenFramebuffers(1, &mSelectionFBO);
+	glGenTextures(1, &mSelectionBuffer);
+    glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+ 	glGenRenderbuffers(1, &mSelectionRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, mSelectionRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
+
+    glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mSelectionBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mSelectionRenderBuffer);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     mHDRShader->use();
     mHDRShader->setInt("hdrBuffer", 0);
 
     // Create cube map
     if (mScene->getWorld()->getEnvironmentTexture() != nullptr) {
-
-	    unsigned int captureFBO;
-	    unsigned int captureRBO;
-	    glGenFramebuffers(1, &captureFBO);
-	    glGenRenderbuffers(1, &captureRBO);
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 2048, 2048);
-	    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	 
-
-	  	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-	    glm::mat4 captureViews[] = {
-	
-	    	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, 1.0f,  0.0f)),
-	       	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, 1.0f,  0.0f)),
-
-	        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, 1.0f)),
-	        glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  -1.0f)),
-	    
-	    	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, 1.0f,  0.0f)),
-	     	glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, 1.0f,  0.0f))
-	    };
-
-	  	// Create background cube map
-	  	glGenTextures(1, &envCubemap);
-	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-	    for (unsigned int i = 0; i < 6; ++i) {
-	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 2048, 2048, 0, GL_RGB, GL_FLOAT, nullptr);
-	    }
-
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-
-	    mCubemapShader->use();
-	    mCubemapShader->setInt("equirectangularMap", 0);
-	    mCubemapShader->setMat4("projection", captureProjection);
-	    glActiveTexture(GL_TEXTURE0);
-	    glBindTexture(GL_TEXTURE_2D, mScene->getWorld()->getEnvironmentTexture()->getID());
-
-	    glViewport(0, 0, 2048, 2048); // don't forget to configure the viewport to the capture dimensions.
-	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	    for (unsigned int i = 0; i < 6; ++i) {
-	        mCubemapShader->setMat4("view", captureViews[i]);
-	        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap, 0);
-	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	        renderCube();
-	    }
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-   		 // then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
-    	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-    	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-
-	   
-	    // Create irradiance map
-	    glGenTextures(1, &irradienceCubemap);
-	    glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
-	     for (unsigned int i = 0; i < 6; ++i) {
-	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
-	    }
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
-
-	    mIrradienceShader->use();
-	    mIrradienceShader->setInt("equirectangularMap", 0);
-	    mIrradienceShader->setMat4("projection", captureProjection);
-	    glActiveTexture(GL_TEXTURE0);
-	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-
-	    glViewport(0, 0, 32, 32); 
-	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	    for (unsigned int i = 0; i < 6; ++i) {
-	        mCubemapShader->setMat4("view", captureViews[i]);
-	        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradienceCubemap, 0);
-	        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	        renderCube();
-	    }
-
-	     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	    // Generate pre-filtered environment map
-
-	    glGenTextures(1, &prefilterMap);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-		for (unsigned int i = 0; i < 6; ++i)
-		{
-		    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 256, 256, 0, GL_RGB, GL_FLOAT, nullptr);
-		}
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-
-	    mPrefilterShader->use();
-	    mPrefilterShader->setInt("environmentMap", 0);
-	    mPrefilterShader->setMat4("projection", captureProjection);
-	    glActiveTexture(GL_TEXTURE0);
-	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	    unsigned int maxMipLevels = 5;
-	    for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
-	    {
-	        // reisze framebuffer according to mip-level size.
-	        unsigned int mipWidth  = 256 * std::pow(0.5, mip);
-	        unsigned int mipHeight = 256 * std::pow(0.5, mip);
-	        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
-	        glViewport(0, 0, mipWidth, mipHeight);
-
-	        float roughness = (float)mip / (float)(maxMipLevels - 1);
-	        mPrefilterShader->setFloat("roughness", roughness);
-	        for (unsigned int i = 0; i < 6; ++i)
-	        {
-	            mPrefilterShader->setMat4("view", captureViews[i]);
-	            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
-
-	            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	            renderCube();
-	        }
-	    }
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		glGenTextures(1, &brdfLUTTexture);
-
-	    // pre-allocate enough memory for the LUT texture.
-	    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
-
-	    glViewport(0, 0, 512, 512);
-	    mBrdfShader->use();
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	    renderQuad();
-
-	    // Create selection offscreen buffer
-
-		glGenFramebuffers(1, &mSelectionFBO);
-		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
-		glGenTextures(1, &mSelectionBuffer);
-	    glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
-	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	 	glGenRenderbuffers(1, &mSelectionRenderBuffer);
-	    glBindRenderbuffer(GL_RENDERBUFFER, mSelectionRenderBuffer);
-	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
-
-	    glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
-	    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mSelectionBuffer, 0);
-	    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mSelectionRenderBuffer);
-	    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	        std::cout << "Framebuffer not complete!" << std::endl;
-	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	    // Transparency setup
 	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -274,30 +93,35 @@ void ZRenderer::onDrawFinshed() {
 void ZRenderer::draw() {
 	if (mScene != nullptr) {
 
-		float width = mParentView->getWidth();
-		float height =  mParentView->getHeight();
+		if (mParentView->getVisibility()) {
 
-		mCamera->setWidth(width);
-		mCamera->setHeight(height);
+			float width = mParentView->getWidth();
+			float height =  mParentView->getHeight();
 
-	   	glBindTexture(GL_TEXTURE_2D, mMainBuffer);
-	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
-	    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
-	    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+			mCamera->setWidth(width);
+			mCamera->setHeight(height);
 
-		renderMain();
-		renderSelection();
-	   	renderToScreen();
+		   	glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+		    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+		    
+		    glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
+		    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 
-	    glDisable(GL_DEPTH_TEST);
+		    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
+		    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+
+			renderMain();
+			renderSelection();
+		   	renderToScreen();
+
+		    glDisable(GL_DEPTH_TEST);
+		}
 	}
 }
 
 void ZRenderer::renderMain() {
-
 	float width = mParentView->getWidth();
 	float height =  mParentView->getHeight();
-
 
 	// Render to 16 bit frame buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
@@ -309,15 +133,14 @@ void ZRenderer::renderMain() {
 	glEnable(GL_DEPTH_TEST);
 
 	// Draw background
-	
 	mBackgroundShader->use();
 	mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
 	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
 	glActiveTexture(GL_TEXTURE0);
 	if (mScene->getWorld()->isBackgroundBlurred()) {
-  		glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+  		glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
   	} else {
-  		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
+  		glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getBackgroundID());
   	}
 
     renderCube();
@@ -326,13 +149,13 @@ void ZRenderer::renderMain() {
 	vector<ZObject*> objects = mScene->getObjects();
 	
     glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, irradienceCubemap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getPrefilteredID());
 
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+	glBindTexture(GL_TEXTURE_2D, mScene->getWorld()->getBrdfLutID());
 
 	ZShader* shader;
 	shader = mShader;
@@ -402,19 +225,12 @@ void ZRenderer::renderMain() {
 }
 
 void ZRenderer::renderSelection() {
-	float width = mParentView->getWidth();
-	float height =  mParentView->getHeight();
-
 	glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
 
 	mSelectionShader->use();
 
-	// glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glViewport(0,0, width, height);
-	glEnable(GL_DEPTH_TEST);
-
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	mSelectionShader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
 	mSelectionShader->setMat4("uViewMatrix", mCamera->getViewMatrix());

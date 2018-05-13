@@ -21,25 +21,28 @@ ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
 
 
 void ZView::draw() {
-    mShader->use();
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+    if (mVisible) {
+        mShader->use();
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
 
-    glEnableVertexAttribArray(mPositionLocation);
-    glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 3, (void*) 0);
+        glEnableVertexAttribArray(mPositionLocation);
+        glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * 3, (void*) 0);
 
-    glUniform4f(mColorLocation, 
-        mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
+        glUniform4f(mColorLocation, 
+            mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
 
-    glViewport(0, 0, mWindowWidth, mWindowHeight);
+        glViewport(0, 0, mWindowWidth, mWindowHeight);
 
-    if (mParentView != this) {
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-    }
+        if (mParentView != this) {
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        }
 
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-       (*it)->draw();
+        for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+            (*it)->draw();
+            
+        }
     }
 }
 
@@ -432,6 +435,14 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             view->onMouseEvent(button, action, mods, x, y);
         }
     }
+}
+
+void ZView::setVisibility(bool visible) {
+    mVisible = visible;
+}
+
+bool ZView::getVisibility() {
+    return mVisible;
 }
 
 void ZView::onScrollChange(double x, double y) {

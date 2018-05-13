@@ -44,10 +44,6 @@ private:
 
 	ZShader *mHDRShader;
 	ZShader *mBackgroundShader;
-	ZShader *mCubemapShader;
-	ZShader *mIrradienceShader;
-	ZShader *mPrefilterShader;
-	ZShader *mBrdfShader;
 	ZShader *mSelectionShader;
 
 	Z3DView *mParentView = nullptr;
@@ -67,14 +63,6 @@ private:
 
 	unsigned int cubeVAO = 0;
 	unsigned int cubeVBO = 0;
-
-	unsigned int envCubemap;
-	unsigned int irradienceCubemap;
-
-	unsigned int brdfLUTTexture;
-
-
-	unsigned int prefilterMap;
 
 	void renderMain();
 	void renderSelection();

@@ -148,8 +148,7 @@ void ZPathViewController::onCreate() {
     mAlphaSlider->setListener(this);
     propertiesPanel->addSubView(mAlphaSlider);
 
-
- // Alpha control ----------------------
+    // Alpha control ----------------------
     mFocalLengthLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mFocalLengthLabel->setOffset(10,320 + (100 * 5));
     mFocalLengthLabel->setText("Focal Length");
@@ -189,28 +188,19 @@ void ZPathViewController::onCreate() {
 void ZPathViewController::onFileDrop(int count, const char** paths) {
 
  	for (int i = 0;  i < count;  i++) {
-
  		string path(paths[i]);   
 
         if (getFileExtension(path) == "hdr") {
             ZTexture* texture = new ZTexture(path);
             mScene->getWorld()->setEnvironmentTexture(texture);
-             if (mIsQuadView) {
-                mTileView->setTileCount(3,2);
-            } else {
-                mTileView->setTileCount(1,1);
-            }
         } else {
-		
+	
     		ZObjLoader loader = ZObjLoader();
-
             vector<ZObject*> objects = loader.loadObjects(path);
-
             for (unsigned i = 0; i < objects.size(); ++i) {
                 ZObject* object = objects.at(i);
 
                 mScene->addObject(object);
-                //ZMaterial* brainMaterial = new ZMaterial(vec4(0.17, 0.01, ((float) (i % 5) / 16) + 0.09, 1.0));
                 ZMaterial* brainMaterial = new ZMaterial(vec3(0.1,0.5,1));
                 brainMaterial->setRoughness(0.1);
                 brainMaterial->setMetallic(0);
@@ -315,7 +305,6 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             mAlphaLabel->setText("Alpha " + str);
             material->setColor(color);
         }
-
     }
 }
 
@@ -330,7 +319,7 @@ void ZPathViewController::onClick(ZButton* sender) {
 	        mTileView->setTileCount(1,1);
 	    } else {
 	        mIsQuadView = true;
-	        mTileView->setTileCount(2,1);
+	        mTileView->setTileCount(2,2);
 	    }
 	} 
 
