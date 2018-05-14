@@ -12,7 +12,6 @@
 #include "zpath_constants.h"
 using namespace std;
 
-
 class ZScene {
 	
 public: 
@@ -57,7 +56,7 @@ private:
 
 	void updateLightFlatArrays();
 
-	int mActiveObjectIndex = 0;
+	int mActiveObjectIndex = -1;
 };
 
 #endif

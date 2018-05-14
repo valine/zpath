@@ -4,6 +4,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
+	
 	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/light-blue.hdr");
 	ZWorld* world = new ZWorld(resourcePath);
 	world->setEnvironmentTexture(environmentTexture);

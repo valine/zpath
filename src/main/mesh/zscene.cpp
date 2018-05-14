@@ -2,6 +2,8 @@
 
 ZScene::ZScene(string resourcePath) {
 	mCamera = new ZCamera();
+	ZWorld* world = new ZWorld(resourcePath);
+	setWorld(world);
 }
 
 void ZScene::addObject(ZObject* object) {

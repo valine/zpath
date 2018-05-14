@@ -4,6 +4,8 @@
 #include "ui/ztexture.h"
 #include "ui/zshader.h"
 #include <string>
+#include <iostream>
+#include <thread>
 
 using namespace std;
 

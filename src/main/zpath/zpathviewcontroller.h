@@ -53,6 +53,9 @@ private:
 
 	ZScene* mScene;
 
+	static int mGridSizeX;
+	static int mGridSizeY;
+
 	string getFileExtension(string path);
 
 };

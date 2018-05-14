@@ -1,5 +1,9 @@
 #include "zpathviewcontroller.h"
 
+int ZPathViewController::mGridSizeX = 3;
+int ZPathViewController::mGridSizeY = 2;
+
+
 ZPathViewController::ZPathViewController(string resources) 
 : ZViewController(resources) {
 }
@@ -223,8 +227,6 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
     } 
 
     else if (sender == mFocalLengthSlider) {
-        ZScene* scene = mTileView->getScene();
-
         mTileView->setFocalLength(180 - value);
         string str = to_string(value);
         str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
@@ -319,7 +321,7 @@ void ZPathViewController::onClick(ZButton* sender) {
 	        mTileView->setTileCount(1,1);
 	    } else {
 	        mIsQuadView = true;
-	        mTileView->setTileCount(2,2);
+	        mTileView->setTileCount(mGridSizeX,mGridSizeY);
 	    }
 	} 
 
