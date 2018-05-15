@@ -1,9 +1,6 @@
 #ifndef Z3DVIEW_H
 #define Z3DVIEW_H
-
-#define GLEW_STATIC
-
-#include <GL/glew.h>
+#include "glad/glad.h"
 #include "zview.h"
 #include <iostream>
 #include <ui/zshader.h>

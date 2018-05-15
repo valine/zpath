@@ -1,23 +1,14 @@
 cmake_minimum_required(VERSION 3.0) # setting this is required
 project(zpath)            # this sets the project name
 
-macro(use_cxx11)
-  if (CMAKE_VERSION VERSION_LESS "3.1")
-    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-    endif ()
-  else ()
-    set (CMAKE_CXX_STANDARD 11)
-  endif ()
-endmacro(use_cxx11)
-
 ###############################################################################
 ## file globbing ##############################################################
 ###############################################################################
 
-file(GLOB_RECURSE sources      src/main/*.cpp src/main/*.h)
+file(GLOB_RECURSE sources      src/main/*.cpp src/main/*.c src/main/*.h)
 file(GLOB_RECURSE sources_test src/test/*.cpp)
 file(GLOB_RECURSE data resources/*)
+
 
 ###############################################################################
 ## target definitions #########################################################
@@ -70,9 +61,6 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 
 if (WIN32)
 
-  include_directories("C:/glew/include")
-  link_directories("C:/glew/lib/release/Win32")
-
 
   include_directories("C:/Program Files (x86)/glfw3/lib")
   link_directories("C:/Program Files (x86)/glfw3/include/GLFW")
@@ -99,8 +87,6 @@ if (WIN32)
 
 
 else (WIN32)
-  find_package (GLEW REQUIRED STATIC)
-
     #glm
   find_package (glm REQUIRED)
   link_libraries(zpath ${GLM_LIBRARY})
@@ -145,8 +131,6 @@ if (ASSIMP_FOUND)
   set(ASSIMP_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIR})
 endif()
 
-
-
 if (APPLE)
   find_package(glfw3 3.2 REQUIRED)
   include_directories(/usr/local/include)
@@ -160,7 +144,6 @@ if (APPLE)
   target_link_libraries (zpath
           glfw ${GLFW_LIBRARIES}
           ${OPENGL_LIBRARIES}
-          ${GLEW_LIBRARY}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
           ${fr_coretext}
           ${fr_corefoundation}
@@ -175,7 +158,6 @@ if (WIN32)
     ${OPENGL_LIBRARIES} 
     gdi32
     glfw3
-    glew32s 
     opengl32
     ${FREETYPE_LIBRARIES})
 endif (WIN32)
@@ -192,7 +174,6 @@ if (LINUX)
 
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
-          ${GLEW_LIBRARY}
           glfw3
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}

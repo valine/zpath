@@ -1,6 +1,7 @@
 #ifndef ZRENDERER_H
 #define ZRENDERER_H
 
+#include "glad/glad.h"
 #include <string>
 #include "zscene.h"
 #include "ui/zshader.h"
@@ -8,8 +9,7 @@
 #include "zcamera.h"
 #include "zpointlight.h"
 #include <iostream>
-#define GLEW_STATIC
-#include <GL/glew.h>
+
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>

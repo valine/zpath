@@ -2,15 +2,11 @@
 #define ZTEXTURE_H
 
 #include "stb_image.h"
-
+#include "glad/glad.h"
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

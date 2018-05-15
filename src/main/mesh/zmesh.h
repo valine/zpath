@@ -1,11 +1,9 @@
 #ifndef ZMESH_H
 #define ZMESH_H
-#define GLEW_STATIC
 
-#include <GL/glew.h>
+#include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <vector> 
-
 
 using std::vector;
 

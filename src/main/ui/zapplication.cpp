@@ -109,13 +109,14 @@ ZApplication::ZApplication(ZViewController* controller) {
 
 
     glfwMakeContextCurrent(window);
-    
-    glewExperimental = GL_TRUE; 
-    GLenum err = glewInit();
 
-    if (err != GLEW_OK) {
-    	exit(EXIT_FAILURE);
-    }
+    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    
+   // GLenum err = glewInit();
+
+    // if (err != GLEW_OK) {
+    // 	exit(EXIT_FAILURE);
+    // }
 
     glEnable(GL_MULTISAMPLE);  
     glfwSwapInterval(0);

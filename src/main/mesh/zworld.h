@@ -1,6 +1,6 @@
 #ifndef ZWORLD_H
 #define ZWORLD_H
-
+#include "glad/glad.h"
 #include "ui/ztexture.h"
 #include "ui/zshader.h"
 #include <string>

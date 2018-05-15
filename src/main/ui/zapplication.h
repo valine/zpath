@@ -1,12 +1,8 @@
 
 #include <string> 
-
+#include "glad/glad.h"
 #include "zview.h"
 #include "zviewcontroller.h"
-
-#define GLEW_STATIC
-
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 using std::string;
