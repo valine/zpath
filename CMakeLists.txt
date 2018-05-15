@@ -34,15 +34,67 @@ add_custom_command(TARGET zpath PRE_BUILD
 ## dependencies ###############################################################
 ###############################################################################
 
+
+#glfw
+include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
+#
+#   GLFW
+#
+set(glfw_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/build/deps/glfw")
+set(glfw_install_dir "${glfw_prefix}")
+set(glfw_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glfw_install_dir}")
+externalproject_add(glfw
+                    PREFIX         ${glfw_prefix}
+                    GIT_REPOSITORY https://github.com/glfw/glfw.git
+                    UPDATE_COMMAND git pull
+                    INSTALL_DIR    ${glfw_install_dir}
+                    CMAKE_ARGS     ${glfw_cmake_args}
+                    )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/glfw/include)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/glfw/lib)
+add_dependencies(zpath glfw)
+
+#
+#   assimp
+#
+set(assimp_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/build/deps/assimp")
+set(assimp_install_dir "${assimp_prefix}")
+set(assimp_cmake_args  "-DCMAKE_INSTALL_PREFIX=${assimp_install_dir}")
+externalproject_add(assimp
+                    PREFIX         ${assimp_prefix}
+                    GIT_REPOSITORY https://github.com/assimp/assimp.git
+                    UPDATE_COMMAND git pull
+                    INSTALL_DIR    ${assimp_install_dir}
+                    CMAKE_ARGS     ${assimp_cmake_args}
+                    )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/assimp/include)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/assimp/lib)
+add_dependencies(zpath assimp)
+
+#
+#   glm
+#
+ExternalProject_Add(glm PREFIX glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 0.9.7.4
+
+        UPDATE_COMMAND "" BUILD_COMMAND "" INSTALL_COMMAND ""
+
+        LOG_DOWNLOAD 1 LOG_UPDATE 1 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
+    )
+
+    ExternalProject_Get_Property(glm SOURCE_DIR)
+    set(GLM_INCLUDE_DIRS ${SOURCE_DIR})
+    set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIRS} CACHE STRING "")
+
 #Opengl
 find_package (OpenGL REQUIRED)
 include_directories(zpath ${OPENGL_INCLUDE_DIR})
 link_libraries(zpath ${OPENGL_gl_LIBRARY})
-
 find_package (Threads)
-
 find_package(Freetype REQUIRED)
 include_directories(${FREETYPE_INCLUDE_DIRS})
+
 
 
 # Check that the steamVR SDK is installed 
@@ -55,81 +107,10 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 # endif()
 
 
-  if(UNIX AND NOT APPLE)
-      set(LINUX TRUE)
-  endif()
-
-if (WIN32)
-
-
-  include_directories("C:/Program Files (x86)/glfw3/lib")
-  link_directories("C:/Program Files (x86)/glfw3/include/GLFW")
-
-
-  include_directories("C:/glm")
-
-    # Find include files
-  find_path(
-    ASSIMP_INCLUDE_DIR
-    NAMES assimp/scene.h
-    PATHS
-      $ENV{PROGRAMFILES}/include
-      ${ASSIMP_ROOT_DIR}/include
-    DOC "The directory where assimp/scene.h resides")
-
-  # Find library files
-  find_library(
-    ASSIMP_LIBRARY
-    NAMES assimp
-    PATHS
-      $ENV{PROGRAMFILES}/lib
-      ${ASSIMP_ROOT_DIR}/lib)
-
-
-else (WIN32)
-    #glm
-  find_package (glm REQUIRED)
-  link_libraries(zpath ${GLM_LIBRARY})
-
-  # Find include files
-  find_path(
-    ASSIMP_INCLUDE_DIR
-    NAMES assimp/scene.h
-    PATHS
-      /usr/include
-      /usr/local/include
-      /sw/include
-      /opt/local/include
-    DOC "The directory where assimp/scene.h resides")
-
-  # Find library files
-  find_library(
-    ASSIMP_LIBRARY
-    NAMES assimp
-    PATHS
-      /usr/lib64
-      /usr/lib
-      /usr/local/lib64
-      /usr/local/lib
-      /sw/lib
-      /opt/local/lib
-      ${ASSIMP_ROOT_DIR}/lib
-    DOC "The Assimp library")
-
-
-  # glfw
-#find_package(glfw 3.2 REQUIRED)
-#include_directories(${GLFW_INCLUDE_DIRS})
-endif (WIN32)
-
-# Handle REQUIRD argument, define *_FOUND variable
-find_package_handle_standard_args(Assimp DEFAULT_MSG ASSIMP_INCLUDE_DIR ASSIMP_LIBRARY)
-
-
-if (ASSIMP_FOUND)
-  set(ASSIMP_LIBRARIES ${ASSIMP_LIBRARY})
-  set(ASSIMP_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIR})
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
 endif()
+
 
 if (APPLE)
   find_package(glfw3 3.2 REQUIRED)
@@ -152,82 +133,36 @@ if (APPLE)
 
 endif (APPLE)
 
-if (WIN32)
-  target_link_libraries (
-    zpath
-    ${OPENGL_LIBRARIES} 
-    gdi32
-    glfw3
-    opengl32
-    ${FREETYPE_LIBRARIES})
-endif (WIN32)
-
 if (LINUX)
-
   find_package(X11 REQUIRED)
-
   message(STATUS "X11_FOUND = ${X11_FOUND}")
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
-
   include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
-
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
-          glfw3
+          "${glfw_install_dir}/lib/libglfw3.a"
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
           ${FREETYPE_LIBRARIES}
-          ${ASSIMP_LIBRARY})
+          "${assimp_install_dir}/lib/libassimp.so")
 
 endif (LINUX)
 
-
-###############################################################################
-## testing ####################################################################
-###############################################################################
-
-# find_package(GTest)
-
-# if(GTEST_FOUND)
-#   add_executable(unit_tests ${sources_test} ${sources})
-
-#   target_compile_definitions(unit_tests PUBLIC UNIT_TESTS)
-
-#   set_target_properties(zpath PROPERTIES ENABLE_EXPORTS on)
-
-#   target_link_libraries(unit_tests PUBLIC
-#     ${GTEST_BOTH_LIBRARIES}
-#     zpath
-#   )
-
-#   target_include_directories(unit_tests PUBLIC
-#     ${GTEST_INCLUDE_DIRS} 
-#   )
-  
-# endif()
 
 ###############################################################################
 ## packaging ##################################################################
 ###############################################################################
 
 SET(CPACK_OUTPUT_FILE_PREFIX packages)
-
 set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
-
 install(TARGETS zpath DESTINATION ".")
-
 install(DIRECTORY resources DESTINATION ".")
 
-if (WIN32)
-  install(FILES "C:/zpath-libs/MSVCP140D.dll" DESTINATION .)
-  install(FILES "C:/zpath-libs/ucrtbased.dll" DESTINATION .)
-  install(FILES "C:/zpath-libs/VCRUNTIME140D.dll" DESTINATION .)
-endif (WIN32)
 
 set(CPACK_PACKAGE_NAME "Zpath")
-set(CPACK_PACKAGE_VERSION "0.1.1")
+set(CPACK_PACKAGE_VERSION "0.3")
 
 set(CPACK_MONOLITHIC_INSTALL 1)
 
