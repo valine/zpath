@@ -170,7 +170,6 @@ endif (LINUX)
 
 SET(CPACK_OUTPUT_FILE_PREFIX packages)
 set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
-install(TARGETS zpath DESTINATION ".")
 install(DIRECTORY resources DESTINATION ".")
 
 
