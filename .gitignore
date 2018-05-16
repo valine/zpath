@@ -1,4 +1,5 @@
 build/*
+deps/*
 CMakeCache.txt
 CMakeFiles
 CMakeScripts

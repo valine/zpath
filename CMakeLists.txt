@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0) # setting this is required
 project(zpath)            # this sets the project name
 
+
+option(BUILD_LIB "help string describing option" OFF)
+
+
 ###############################################################################
 ## file globbing ##############################################################
 ###############################################################################
@@ -18,17 +22,22 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(zpath ${sources} ${data})
 
-target_compile_options(zpath PUBLIC -std=c++1y -Wall)
+if (BUILD_LIB) 
+  add_library(zpath STATIC ${sources})
+  target_include_directories(zpath PUBLIC src/main)
+  target_compile_options(zpath PUBLIC -std=c++1y -Wall)
+else(BUILD_LIB)
+  add_executable(zpath ${sources} ${data})
+  target_compile_options(zpath PUBLIC -std=c++1y -Wall)
+  target_include_directories(zpath PUBLIC src/main)
+  file(COPY ${data} DESTINATION resources)
+  add_custom_command(TARGET zpath PRE_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy_directory
+                        ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:zpath>/resources)
+endif()
 
-target_include_directories(zpath PUBLIC src/main)
 
-file(COPY ${data} DESTINATION resources)
-
-add_custom_command(TARGET zpath PRE_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:zpath>/resources)
 
 ###############################################################################
 ## dependencies ###############################################################
@@ -40,7 +49,7 @@ include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 #
 #   GLFW
 #
-set(glfw_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/build/deps/glfw")
+set(glfw_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw")
 set(glfw_install_dir "${glfw_prefix}")
 set(glfw_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glfw_install_dir}")
 externalproject_add(glfw
@@ -50,14 +59,14 @@ externalproject_add(glfw
                     INSTALL_DIR    ${glfw_install_dir}
                     CMAKE_ARGS     ${glfw_cmake_args}
                     )
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/glfw/include)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/glfw/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/include)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/lib)
 add_dependencies(zpath glfw)
 
 #
 #   assimp
 #
-set(assimp_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/build/deps/assimp")
+set(assimp_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp")
 set(assimp_install_dir "${assimp_prefix}")
 set(assimp_cmake_args  "-DCMAKE_INSTALL_PREFIX=${assimp_install_dir}")
 externalproject_add(assimp
@@ -67,19 +76,24 @@ externalproject_add(assimp
                     INSTALL_DIR    ${assimp_install_dir}
                     CMAKE_ARGS     ${assimp_cmake_args}
                     )
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/assimp/include)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/build/deps/assimp/lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/include)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/lib)
 add_dependencies(zpath assimp)
 
 #
 #   glm
 #
-ExternalProject_Add(glm PREFIX glm
+set(glm_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/glm")
+set(glm_install_dir "${glm_prefix}")
+set(glm_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glm_install_dir}")
+ExternalProject_Add(glm
+        PREFIX  ${assimp_prefix}
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG 0.9.7.4
 
         UPDATE_COMMAND "" BUILD_COMMAND "" INSTALL_COMMAND ""
-
+        INSTALL_DIR    ${glm_install_dir}
+        CMAKE_ARGS     ${glm_cmake_args}
         LOG_DOWNLOAD 1 LOG_UPDATE 1 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
     )
 
@@ -149,7 +163,6 @@ if (LINUX)
           "${assimp_install_dir}/lib/libassimp.so")
 
 endif (LINUX)
-
 
 ###############################################################################
 ## packaging ##################################################################
