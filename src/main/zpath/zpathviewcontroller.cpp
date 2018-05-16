@@ -1,4 +1,4 @@
-#include "zpathviewcontroller.h"
+#include "zpath/zpathviewcontroller.h"
 
 int ZPathViewController::mGridSizeX = 3;
 int ZPathViewController::mGridSizeY = 2;

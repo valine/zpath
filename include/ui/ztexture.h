@@ -13,9 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace glm;
-
 using namespace std;
-
 
 class ZTexture {
 

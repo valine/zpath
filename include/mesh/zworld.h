@@ -47,31 +47,6 @@ class ZWorld {
 
 		void renderQuad();
 		void renderCube();
-
-		// Shader code 
-		const string cubemap_vs =
-		#include "shaders/cubemap.vs"
-		;
-
-		const string cubemap_fs =
-		#include "shaders/cubemap.fs"
-		;
-
-		const string prefilter_fs =
-		#include "shaders/prefilter.fs"
-		;
-
-		const string irradiance_fs =
-		#include "shaders/irradiance.fs"
-		;
-
-		const string brdf_vs =
-		#include "shaders/brdf.vs"
-		;
-
-		const string brdf_fs =
-		#include "shaders/brdf.fs"
-		;
 };
 
 #endif

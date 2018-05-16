@@ -1,5 +1,4 @@
-#include "zbutton.h"
-
+#include "ui/zbutton.h"
 
 ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) : 
 ZView(maxWidth, maxHeight) {

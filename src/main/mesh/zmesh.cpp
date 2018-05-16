@@ -1,4 +1,4 @@
-#include "zmesh.h"
+#include "mesh/zmesh.h"
 
 void ZMesh::setVertices(vector<float> vertices) {
 	mVertices = vertices;

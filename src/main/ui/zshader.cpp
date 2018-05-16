@@ -1,4 +1,4 @@
-#include "zshader.h"
+#include "ui/zshader.h"
 
 ZShader::ZShader(string vertexCodeStr, string fragmentCodeStr) {
 

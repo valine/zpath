@@ -1,4 +1,4 @@
-#include "zsliderlistener.h" 
+#include "ui/zsliderlistener.h" 
 
 ZSliderListener::ZSliderListener() {
 }

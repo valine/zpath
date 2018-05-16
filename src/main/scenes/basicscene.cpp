@@ -1,5 +1,5 @@
 
-#include "basicscene.h"
+#include "scenes/basicscene.h"
 
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {

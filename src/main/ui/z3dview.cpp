@@ -1,4 +1,4 @@
-#include "z3dview.h"
+#include "ui/z3dview.h"
 
 /**
 	Z3DView constructor 

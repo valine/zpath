@@ -1,8 +1,7 @@
-#include "ztexture.h"
+#include "ui/ztexture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "ui/stb_image.h"
-
 
 ZTexture::ZTexture(string path) {
 

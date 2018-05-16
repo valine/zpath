@@ -9,10 +9,12 @@ option(BUILD_LIB "help string describing option" OFF)
 ## file globbing ##############################################################
 ###############################################################################
 
-file(GLOB_RECURSE sources      src/main/*.cpp src/main/*.c src/main/*.h src/main/*.vs src/main/*.fs)
+
+file(GLOB_RECURSE sources      src/main/*.cpp src/main/*.vs src/main/*.fs)
 file(GLOB_RECURSE sources_test src/test/*.cpp)
 file(GLOB_RECURSE data resources/*)
 
+include_directories(include)
 
 ###############################################################################
 ## target definitions #########################################################
@@ -24,19 +26,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 
 if (BUILD_LIB) 
-  add_library(zpath STATIC ${sources})
-  target_include_directories(zpath PUBLIC src/main)
+  add_library(zpath STATIC ${sources} ${headers})
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
+   target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
   add_executable(zpath ${sources} ${data})
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
-  target_include_directories(zpath PUBLIC src/main)
   file(COPY ${data} DESTINATION resources)
   add_custom_command(TARGET zpath PRE_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy_directory
                         ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:zpath>/resources)
+  target_include_directories(zpath PUBLIC src/main)
 endif()
-
 
 
 ###############################################################################

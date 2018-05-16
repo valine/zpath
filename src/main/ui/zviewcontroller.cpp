@@ -1,4 +1,4 @@
-#include "zviewcontroller.h"
+#include "ui/zviewcontroller.h"
 
 void ZViewController::onClick(ZButton* sender) {
 

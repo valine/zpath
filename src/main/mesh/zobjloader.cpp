@@ -1,4 +1,4 @@
-#include "zobjloader.h"
+#include "mesh/zobjloader.h"
 
 ZObjLoader::ZObjLoader() {
 }

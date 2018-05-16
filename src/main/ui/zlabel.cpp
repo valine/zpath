@@ -1,5 +1,4 @@
-#include "zlabel.h"
-
+#include "ui/zlabel.h"
 
 ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath) 
 : ZView(maxWidth, maxHeight) {

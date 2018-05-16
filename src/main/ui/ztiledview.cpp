@@ -1,5 +1,4 @@
-
-#include "ztiledview.h"
+#include "ui/ztiledview.h"
 #include <iostream>
 
 ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath) 

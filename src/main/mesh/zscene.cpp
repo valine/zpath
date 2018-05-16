@@ -1,4 +1,4 @@
-#include "zscene.h"
+#include "mesh/zscene.h"
 
 ZScene::ZScene(string resourcePath) {
 	mCamera = new ZCamera();

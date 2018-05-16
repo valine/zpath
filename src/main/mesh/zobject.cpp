@@ -1,5 +1,5 @@
 #define GLEW_STATIC
-#include "zobject.h"
+#include "mesh/zobject.h"
 
 ZObject::ZObject() {
 	mMaterial = new ZMaterial(vec3(0.8, 0.8, 0.8));

@@ -1,4 +1,4 @@
-#include "zrenderer.h"
+#include "mesh/zrenderer.h"
 
 
 ZRenderer::ZRenderer(string resourcePath) {

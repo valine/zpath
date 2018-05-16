@@ -1,4 +1,4 @@
-#include "zmeshutils.h"
+#include "mesh/zmeshutils.h"
 
 ZMeshUtils::ZMeshUtils() {
 

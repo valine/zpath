@@ -1,6 +1,4 @@
-
-#include "zview.h"
-
+#include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
 

@@ -1,4 +1,4 @@
-#include "zpointlight.h"
+#include "mesh/zpointlight.h"
 
 ZPointLight::ZPointLight(vec3 color, vec3 position) {
 	mColor = color;

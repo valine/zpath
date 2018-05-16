@@ -1,4 +1,4 @@
-#include "zmaterial.h"
+#include "mesh/zmaterial.h"
 
 ZMaterial::ZMaterial(vec3 color) {
 	mColor = vec4(color, 1.0);
