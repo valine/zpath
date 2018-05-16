@@ -168,6 +168,13 @@ endif (LINUX)
 ## packaging ##################################################################
 ###############################################################################
 
+install (TARGETS zpath
+         ARCHIVE DESTINATION lib
+         LIBRARY DESTINATION lib
+         RUNTIME DESTINATION bin)
+
+
+
 SET(CPACK_OUTPUT_FILE_PREFIX packages)
 set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 
