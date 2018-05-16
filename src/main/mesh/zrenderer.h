@@ -71,6 +71,44 @@ private:
 	void renderQuad();
 
 	int mMaxLightCount = 4;
+
+	// Shader code
+
+	const string base_vs =
+	 #include "shaders/base.vs"
+	;
+
+	const string base_fs =
+	 #include "shaders/base.fs"
+	;
+
+	const string background_vs =
+	 #include "shaders/background.vs"
+	;
+
+	const string background_fs =
+	 #include "shaders/background.fs"
+	;
+
+	const string color_texture_fs =
+	 #include "shaders/colorTexture.fs"
+	;
+
+	const string selection_vs =
+	 #include "shaders/selection.vs"
+	;
+
+	const string selection_fs =
+	 #include "shaders/selection.fs"
+	;
+
+	const string fbo_vs =
+	 #include "shaders/fbo.vs"
+	;
+
+	const string fbo_fs =
+	 #include "shaders/fbo.fs"
+	;
 };
 
 #endif

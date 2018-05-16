@@ -1,23 +1,10 @@
 #include "zworld.h"
 
-
-ZWorld::ZWorld(string resourcePath) {
-
-	string cubeVertexPath = resourcePath + "resources/shaders/cubemap.vs";
-    string cubeFragmentPath = resourcePath + "resources/shaders/cubemap.fs";
-    mCubemapShader = new ZShader(cubeVertexPath, cubeFragmentPath);
-
-    string prefTextureVertexPath = resourcePath + "resources/shaders/cubemap.vs";
-    string prefTextureFragmentPath = resourcePath + "resources/shaders/prefilter.fs";
-    mPrefilterShader = new ZShader(prefTextureVertexPath, prefTextureFragmentPath);
-
-    string irradienceTextureVertexPath = resourcePath + "resources/shaders/cubemap.vs";
-    string irradienceTextureFragmentPath = resourcePath + "resources/shaders/irradiance.fs";
-    mIrradienceShader = new ZShader(irradienceTextureVertexPath, irradienceTextureFragmentPath);
-
-    string brdfVertexPath = resourcePath + "resources/shaders/brdf.vs";
-    string brdfFragmentPath = resourcePath + "resources/shaders/brdf.fs";
-    mBrdfShader = new ZShader(brdfVertexPath, brdfFragmentPath);
+ZWorld::ZWorld() {
+    mCubemapShader = new ZShader(cubemap_vs, cubemap_fs);
+    mPrefilterShader = new ZShader(cubemap_vs, prefilter_fs);
+    mIrradienceShader = new ZShader(cubemap_vs, irradiance_fs);
+    mBrdfShader = new ZShader(brdf_vs, brdf_fs);
 }
 
 void ZWorld::initEnvironment() {

@@ -2,7 +2,7 @@
 
 ZScene::ZScene(string resourcePath) {
 	mCamera = new ZCamera();
-	ZWorld* world = new ZWorld(resourcePath);
+	ZWorld* world = new ZWorld();
 	setWorld(world);
 }
 

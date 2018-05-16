@@ -1,28 +1,14 @@
 #include "zrenderer.h"
 
+
 ZRenderer::ZRenderer(string resourcePath) {
-	string vertexPath = resourcePath + "resources/shaders/base.vs";
-    string fragmentPath = resourcePath + "resources/shaders/base.fs";
-    mShader = new ZShader(vertexPath, fragmentPath);
-
-    string backgroundVertexPath = resourcePath + "resources/shaders/background.vs";
-    string backgroundFragmentPath = resourcePath + "resources/shaders/background.fs";
-    mBackgroundShader = new ZShader(backgroundVertexPath, backgroundFragmentPath);
-
-    string colorTextureVertexPath = resourcePath + "resources/shaders/base.vs";
-    string colorTextureFragmentPath = resourcePath + "resources/shaders/colorTexture.fs";
-    mColorTextureShader = new ZShader(colorTextureVertexPath, colorTextureFragmentPath);
-
-    string selectionVertexPath = resourcePath + "resources/shaders/selection.vs";
-    string selectionFragmentPath = resourcePath + "resources/shaders/selection.fs";
-    mSelectionShader = new ZShader(selectionVertexPath, selectionFragmentPath);
-
-	string fboVertexPath = resourcePath + "resources/shaders/fbo.vs";
-    string fboFragmentPath = resourcePath + "resources/shaders/fbo.fs";
-    mHDRShader = new ZShader(fboVertexPath, fboFragmentPath);
+    mShader = new ZShader(base_vs, base_fs);
+    mBackgroundShader = new ZShader(background_vs, background_fs);
+    mColorTextureShader = new ZShader(base_vs, color_texture_fs);
+    mSelectionShader = new ZShader(selection_vs, selection_fs);
+    mHDRShader = new ZShader(fbo_vs, fbo_fs);
 
 	glDepthFunc(GL_LEQUAL);
-	
 	mCamera = new ZCamera();
 }
 

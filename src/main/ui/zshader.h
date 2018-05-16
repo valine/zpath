@@ -38,6 +38,8 @@ public:
 
 private:
 	void checkCompileErrors(GLuint shader, string type);
+	string mVsName;
+	string mFsName;
 };
 
 #endif

@@ -1,44 +1,32 @@
 #include "zshader.h"
 
-ZShader::ZShader(string vertexPathStr, string fragmentPathStr) {
+ZShader::ZShader(string vertexCodeStr, string fragmentCodeStr) {
 
-		const char * vertexPath = vertexPathStr.c_str();
-		const char * fragmentPath = fragmentPathStr.c_str();
+    mVsName = vertexCodeStr;
+    mFsName = fragmentCodeStr;
+    const char* vertexCode = vertexCodeStr.c_str();
+    const char * fragmentCode = fragmentCodeStr.c_str();
 
-		ifstream vT(vertexPath);
-		stringstream vBuffer;
-		vBuffer << vT.rdbuf();
-		string vertexCodeStr = vBuffer.str();
+    GLuint vertex, fragment;
 
-		ifstream fT(fragmentPath);
-		stringstream fBuffer;
-		fBuffer << fT.rdbuf();
-		string fragmentCodeStr = fBuffer.str();
+    vertex = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex, 1, &vertexCode, NULL);
+    glCompileShader(vertex);
+    checkCompileErrors(vertex, "VERTEX");
+  
+    fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragment, 1, &fragmentCode, NULL);
+    glCompileShader(fragment);
+    checkCompileErrors(fragment, "FRAGMENT");
 
-		const char* vertexCode = vertexCodeStr.c_str();
-        const char * fragmentCode = fragmentCodeStr.c_str();
+    mID = glCreateProgram();
+    glAttachShader(mID, vertex);
+    glAttachShader(mID, fragment);
+    glLinkProgram(mID);
+    checkCompileErrors(mID, "PROGRAM");
 
-        GLuint vertex, fragment;
-
-        vertex = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertex, 1, &vertexCode, NULL);
-        glCompileShader(vertex);
-        checkCompileErrors(vertex, "VERTEX");
-      
-        fragment = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragment, 1, &fragmentCode, NULL);
-        glCompileShader(fragment);
-        checkCompileErrors(fragment, "FRAGMENT");
-
-        mID = glCreateProgram();
-        glAttachShader(mID, vertex);
-        glAttachShader(mID, fragment);
-        glLinkProgram(mID);
-        checkCompileErrors(mID, "PROGRAM");
-
-        glDeleteShader(vertex);
-        glDeleteShader(fragment);
-
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
 }
 
 void ZShader::use() {
@@ -106,7 +94,7 @@ void ZShader::checkCompileErrors(unsigned int shader, string type) {
             if (!success)
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << mVsName << " " << mFsName << " " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
         else
@@ -115,7 +103,7 @@ void ZShader::checkCompileErrors(unsigned int shader, string type) {
             if (!success)
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << mVsName << " " << mFsName << " "  << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
             }
         }
 }

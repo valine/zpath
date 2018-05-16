@@ -9,13 +9,8 @@ ZViewController::ZViewController(string resourcePath) {
 }
 
 void ZViewController::onCreate() {
-    string vertexPath = mResourcePath + "resources/shaders/ui.vs";
-    string fragmentPath = mResourcePath + "resources/shaders/ui.fs";
-    mUIShader = new ZShader(vertexPath, fragmentPath);
-
-    string vertexTextPath = mResourcePath + "resources/shaders/text.vs";
-    string fragmentTextPath = mResourcePath + "resources/shaders/text.fs";
-    mTextShader = new ZShader(vertexTextPath, fragmentTextPath);
+    mUIShader = new ZShader(ui_vs, ui_fs);
+    mTextShader = new ZShader(text_vs, text_fs);
 
     float backgroundColor[4] = {0.4f, 0.4, 0.4, 1.000};
 

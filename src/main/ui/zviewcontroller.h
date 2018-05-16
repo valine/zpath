@@ -60,6 +60,23 @@ private:
 	ZShader *mTextShader = nullptr;
 
 	string mResourcePath;
+
+	// Shader code 
+	const string ui_vs =
+	#include "shaders/ui.vs"
+	;
+
+	const string ui_fs =
+	#include "shaders/ui.fs"
+	;
+
+	const string text_vs =
+	#include "shaders/text.vs"
+	;
+
+	const string text_fs =
+	#include "shaders/text.fs"
+	;
 };
 
 #endif

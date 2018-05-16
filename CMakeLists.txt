@@ -9,7 +9,7 @@ option(BUILD_LIB "help string describing option" OFF)
 ## file globbing ##############################################################
 ###############################################################################
 
-file(GLOB_RECURSE sources      src/main/*.cpp src/main/*.c src/main/*.h)
+file(GLOB_RECURSE sources      src/main/*.cpp src/main/*.c src/main/*.h src/main/*.vs src/main/*.fs)
 file(GLOB_RECURSE sources_test src/test/*.cpp)
 file(GLOB_RECURSE data resources/*)
 
@@ -170,12 +170,9 @@ endif (LINUX)
 
 SET(CPACK_OUTPUT_FILE_PREFIX packages)
 set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
-install(DIRECTORY resources DESTINATION ".")
-
 
 set(CPACK_PACKAGE_NAME "Zpath")
 set(CPACK_PACKAGE_VERSION "0.3")
-
 set(CPACK_MONOLITHIC_INSTALL 1)
 
 include(CPack)
