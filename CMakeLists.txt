@@ -102,13 +102,101 @@ ExternalProject_Add(glm
     set(GLM_INCLUDE_DIRS ${SOURCE_DIR})
     set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIRS} CACHE STRING "")
 
+#
+#Freetype 
+#
+
+find_package( ZLIB REQUIRED )
+if ( ZLIB_FOUND )
+    include_directories( ${ZLIB_INCLUDE_DIRS} )
+    target_link_libraries( zpath ${ZLIB_LIBRARIES} )
+endif( ZLIB_FOUND )
+
+
+set(freetypea_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetypea")
+set(freetypea_install_dir "${freetypea_prefix}")
+ExternalProject_Add(
+  freetype2a
+  GIT_REPOSITORY git://git.sv.nongnu.org/freetype/freetype2.git
+  GIT_TAG 7e50824288fac5a36c2938fdb3e1c949ea53f982
+  CMAKE_ARGS -DCMAKE_PREFIX_PATH=${freetypea_prefix}} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${freetypea_install_dir} -DWITH_HARFBUZZ=Off
+  UPDATE_COMMAND ""
+  )
+
+set(HARF_PATCH  ${CMAKE_CURRENT_SOURCE_DIR}/./harfbuzz_freetype_fix.patch)
+
+ExternalProject_Get_Property(freetype2a install_dir)
+set(freetype2a_install_dir install_dir)
+ExternalProject_Add(
+  harfbuzz
+  DEPENDS freetype2a
+  #PATCH_COMMAND git apply ${HARF_PATCH}
+  #PATCH_COMMAND patch -p1 < ${HARF_PATCH}
+  GIT_REPOSITORY https://github.com/harfbuzz/harfbuzz.git
+  CMAKE_ARGS -DCMAKE_PREFIX_PATH=${freetype2a_install_dir} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${freetypea_prefix} -DHB_HAVE_FREETYPE=On 
+  UPDATE_COMMAND ""
+  )
+
+set(freetypeb_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetypeb")
+set(freetypeb_install_dir "${freetypeb_prefix}")
+ExternalProject_Add(
+  freetype2b
+  DEPENDS harfbuzz
+  GIT_REPOSITORY git://git.sv.nongnu.org/freetype/freetype2.git
+  GIT_TAG 7e50824288fac5a36c2938fdb3e1c949ea53f982
+  PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/freetype_harfbuzz_fix.patch
+  CMAKE_ARGS -DCMAKE_PREFIX_PATH=${freetypea_prefix} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${freetypeb_install_dir} -DWITH_PNG=On
+  UPDATE_COMMAND ""
+  )
+
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}/deps/freetypea/include/harfbuzz
+  ${freetypeb_prefix}/include/freetype2
+  )
+
+
+if (WIN32)
+  if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    list(APPEND libs ${CMAKE_INSTALL_PREFIX}/lib/freetype.lib)
+  else()
+    list(APPEND libs ${CMAKE_INSTALL_PREFIX}/lib/freetyped.lib)
+  endif()
+  list(APPEND libs ${CMAKE_INSTALL_PREFIX}/lib/harfbuzz.lib )
+endif()
+
+if (UNIX)
+  list(APPEND libs
+    ${freetypeb_install_dir}/lib/libfreetype.a
+     ${freetypea_install_dir}/lib/libharfbuzz.a
+    -lz
+    -lbz2
+  )
+endif()
+
+if (APPLE)
+  find_library(fr_coretext CoreText)
+  find_library(fr_corefoundation CoreFoundation)
+  find_library(fr_coregraphics CoreGraphics)
+  list(APPEND libs
+    ${fr_coretext}
+    ${fr_corefoundation}
+    ${fr_coregraphics}
+    )
+endif()
+#link_libraries(zpath ${libs})
+
+add_dependencies(zpath freetype2a harfbuzz freetype2b)
+
+
 #Opengl
 find_package (OpenGL REQUIRED)
 include_directories(zpath ${OPENGL_INCLUDE_DIR})
 link_libraries(zpath ${OPENGL_gl_LIBRARY})
 find_package (Threads)
-find_package(Freetype REQUIRED)
-include_directories(${FREETYPE_INCLUDE_DIRS})
+# find_package(Freetype REQUIRED)
+# include_directories(${FREETYPE_INCLUDE_DIRS})
+
 
 
 
@@ -155,12 +243,12 @@ if (LINUX)
   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
   include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
   target_link_libraries (zpath
+          ${libs}
           ${OPENGL_LIBRARIES}
           "${glfw_install_dir}/lib/libglfw3.a"
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
-          ${FREETYPE_LIBRARIES}
           "${assimp_install_dir}/lib/libassimp.so")
 
 endif (LINUX)
