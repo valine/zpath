@@ -38,6 +38,15 @@ void ZApplication::onFileDrop(GLFWwindow* window, int count, const char** paths)
 }
 
 ZApplication::ZApplication(ZViewController* controller) {
+    init(controller, "ZPath");
+}
+
+ZApplication::ZApplication(ZViewController* controller, string name) {
+    init(controller, name);
+}
+
+void ZApplication::init(ZViewController* controller, string windowName) {
+
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
 
@@ -49,7 +58,8 @@ ZApplication::ZApplication(ZViewController* controller) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_MAXIMIZED, true);
-    window = glfwCreateWindow(1000, 700, "ZPath", NULL, NULL);
+    const char * c = windowName.c_str();
+    window = glfwCreateWindow(1000, 700, c, NULL, NULL);
 
     if (!window) {
         glfwTerminate();

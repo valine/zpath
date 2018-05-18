@@ -11,6 +11,7 @@ class ZApplication {
 	
 public: 
 	ZApplication(ZViewController* viewcontroller);
+	ZApplication(ZViewController* viewcontroller, string windowName);
 	void onWindowResize(int width, int height);
 	void onWindowMove(GLFWwindow *window);
 	void onKeyPress(int key, int scancode, int action, int mods);
@@ -22,4 +23,5 @@ public:
 private:
 	ZViewController *viewController;
 	bool mShouldSwapBuffer = true;
+	void init(ZViewController* viewcontroller, string windowName);
 };
