@@ -102,3 +102,8 @@ void ZSlider::setLineColor(vec4 color) {
 }
 
 
+void ZSlider::setThumbColor(vec4 color) {
+	mThumb->setBackgroundColor(color);
+}
+
+

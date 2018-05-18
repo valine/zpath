@@ -2,6 +2,7 @@ R"(
 varying vec3 WorldPos;
 
 uniform samplerCube environmentMap;
+uniform vec3 uColorFactor;
 
 void main()
 {		
@@ -9,7 +10,7 @@ void main()
     
     // HDR tonemap and gamma correct
    // envColor = envColor / (envColor + vec3(1.0));
-    envColor = pow(envColor, vec3(2.2)); 
+    envColor = pow(envColor * uColorFactor, vec3(2.2)); 
     gl_FragColor = vec4(envColor, 1.0);
 }
 

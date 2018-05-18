@@ -21,6 +21,9 @@ class ZWorld {
 		unsigned int getIrradienceID();
 		unsigned int getPrefilteredID();
 		unsigned int getBrdfLutID();
+
+		void setColor(vec3);
+		vec3 getColor();
 	private:
 
 		void initEnvironment();
@@ -44,6 +47,8 @@ class ZWorld {
 
 		unsigned int brdfLUTTexture;
 		unsigned int prefilterMap;
+
+		vec3 mWorldColor = vec3(1);
 
 		void renderQuad();
 		void renderCube();

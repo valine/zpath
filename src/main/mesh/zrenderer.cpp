@@ -122,6 +122,7 @@ void ZRenderer::renderMain() {
 	mBackgroundShader->use();
 	mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
 	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
+    mBackgroundShader->setVec3("uColorFactor", mScene->getWorld()->getColor());
 	glActiveTexture(GL_TEXTURE0);
 	if (mScene->getWorld()->isBackgroundBlurred()) {
   		glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
@@ -146,7 +147,7 @@ void ZRenderer::renderMain() {
 	ZShader* shader;
 	shader = mShader;
 	shader->use();
-
+    shader->setVec3("uWorldColor", mScene->getWorld()->getColor());
 	shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
 	shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 

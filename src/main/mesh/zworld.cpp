@@ -230,7 +230,13 @@ unsigned int ZWorld::getBrdfLutID() {
 	return brdfLUTTexture;
 }
 
+void ZWorld::setColor(vec3 color) {
+	mWorldColor = color;
+}
 
+vec3 ZWorld::getColor() {
+	return mWorldColor;
+}
 
 void ZWorld::renderCube() {
     // initialize (if necessary)

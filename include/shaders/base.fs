@@ -2,6 +2,8 @@ R"(
 #define lightCount 4
 #define PI 3.14159265359
 
+uniform vec3 uWorldColor;
+
 uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;  
@@ -114,7 +116,7 @@ void main() {
     vec3 kD = 1.0 - kS;
     kD *= 1.0 - uMetallic;     
 
-    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 irradiance = texture(irradianceMap, N).rgb * uWorldColor;
     irradiance = pow(irradiance, vec4(2.2));
     vec3 diffuse      = irradiance * uColor;
 
@@ -122,7 +124,7 @@ void main() {
     R.x = -R.x;
 
     float MAX_REFLECTION_LOD = 4.0;
-    vec3 prefilteredColor = textureLod(prefilterMap, R,  uRoughness * MAX_REFLECTION_LOD).rgb;    
+    vec3 prefilteredColor = textureLod(prefilterMap, R,  uRoughness * MAX_REFLECTION_LOD).rgb * uWorldColor;    
     prefilteredColor = pow(prefilteredColor, vec4(2.2));
     
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), uRoughness)).rg;

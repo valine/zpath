@@ -29,7 +29,8 @@ public:
 
 	void setValue(float value);
 	void setLineColor(vec4 color);
-
+	void setThumbColor(vec4 color);
+	
 private:
 
 	ZView* mThumb;
