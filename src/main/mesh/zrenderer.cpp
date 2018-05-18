@@ -105,6 +105,15 @@ void ZRenderer::draw() {
 	}
 }
 
+mat4 ZRenderer::getModelMatrix(ZObject* object) {
+
+    mat4 modelMatrix = mat4();
+     modelMatrix = scale(modelMatrix, object->getScale());
+    modelMatrix = translate(modelMatrix, object->getTranslation());
+   
+    return modelMatrix;
+}
+
 void ZRenderer::renderMain() {
 	float width = mParentView->getWidth();
 	float height =  mParentView->getHeight();
@@ -158,12 +167,17 @@ void ZRenderer::renderMain() {
 	int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
 	int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
 
+    mat4 identityMatrix = mat4();
+    shader->setMat4("uModelMatrix", identityMatrix);
+
+
 	int objectIndex = 0;
 	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
 		ZObject *object = (*it);
     	ZMesh *mesh = (*it)->getMesh();
     	ZMaterial* material = object->getMaterial();
 
+        shader->setMat4("uModelMatrix", getModelMatrix(object));
     	
     	if (material->getColorTexture() != nullptr) {
     		shader = mColorTextureShader;
@@ -230,6 +244,8 @@ void ZRenderer::renderSelection() {
 	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
     	ZMesh *mesh = (*it)->getMesh();
 
+        mSelectionShader->setMat4("uModelMatrix", getModelMatrix((*it)));
+        
     	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
 

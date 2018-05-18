@@ -8,6 +8,7 @@ uniform mat4 uModelMatrix;
 attribute vec3 aPos;
 
 void main() {
-    gl_Position = (uProjectionMatrix * uViewMatrix) * vec4(aPos, 1.0);
+    gl_Position = (uProjectionMatrix * uViewMatrix * uModelMatrix) * vec4(aPos, 1.0);
 }
 )"
+

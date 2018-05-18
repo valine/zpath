@@ -16,8 +16,8 @@ varying vec3 vPosition;
 varying vec2 vTextureCoords;
 
 void main() {
-    gl_Position = (uProjectionMatrix * uViewMatrix) * vec4(aPos, 1.0);
-    vPosition = aPos;
+    gl_Position = (uProjectionMatrix * uViewMatrix * uModelMatrix) * vec4(aPos, 1.0);
+    vPosition = (uModelMatrix * vec4(aPos, 1.0)).xyz;
     vNormal = aNormal;
     vTextureCoords = aTextureCoords;
 }

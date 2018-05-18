@@ -38,4 +38,29 @@ void ZObject::setOrigin(vec3 origin) {
 	mOrigin = origin;
 }
 
-	
+void ZObject::setTranslation(vec3 translation) {
+	mTranslation = translation;
+}
+
+vec3 ZObject::getTranslation() {
+	return mTranslation;
+}
+
+void ZObject::setRotation(vec3 rotation) {
+	mRotation = rotation;
+}
+
+vec3 ZObject::getRotation() {
+	return mRotation;
+}
+
+void ZObject::setScale(vec3 scale) {
+	mScale = scale;
+}
+
+vec3 ZObject::getScale() {
+	return mScale;
+}
+
+
+

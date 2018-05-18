@@ -67,8 +67,9 @@ private:
 	void renderMain();
 	void renderSelection();
 	void renderToScreen();
-
 	void renderQuad();
+
+	mat4 getModelMatrix(ZObject* object);
 
 	int mMaxLightCount = 4;
 

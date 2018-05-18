@@ -22,10 +22,24 @@ public:
 	bool isSelected();
 	vec3 getOrigin();
 	void setOrigin(vec3 origin);
+
+	void setTranslation(vec3);
+	vec3 getTranslation();
+
+	void setRotation(vec3);
+	vec3 getRotation();
+
+	void setScale(vec3);
+	vec3 getScale();
+
 private: 
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
 	bool mSelected = false;
 	vec3 mOrigin = vec3(0);
+
+	vec3 mTranslation = vec3(0);
+	vec3 mRotation = vec3(0);
+	vec3 mScale = vec3(1);
 };
 #endif
