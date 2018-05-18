@@ -26,15 +26,14 @@ void ZButton::setText(string text) {
 
 void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
+	vec4 highlight = vec4(0.2,0.2,0.2,0);
 
-	float color[4] = {0.1, 0.2, 0.9, 1.0};
-	float highlightColor[4] = {0.2, 0.3, 1.0, 1.0};
 	if (action == GLFW_PRESS) {
-		setBackgroundColor(highlightColor);
+		setBackgroundColor(getBackgroundColor() + highlight);
 	}
 
 	if (action == GLFW_RELEASE) {
-		setBackgroundColor(color);
+		setBackgroundColor(getBackgroundColor() - highlight);
 
 		if (mListener != nullptr) {
 			mListener->onClick(this);

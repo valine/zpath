@@ -379,6 +379,10 @@ void ZView::setBackgroundColor(vec4 color) {
     mBackgroundColor = color;
 }
 
+vec4 ZView::getBackgroundColor() {
+    return mBackgroundColor;
+}
+
 void ZView::setGravity(Gravity gravity) {
     mGravity = gravity;
 }

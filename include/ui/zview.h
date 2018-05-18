@@ -75,6 +75,8 @@ class ZView {
 		void setBackgroundColor(float color[4]);
 		void setBackgroundColor(vec4 color);
 
+		vec4 getBackgroundColor();
+		
 		void setGravity(ZView::Gravity gravity);
 
 		void setMaxWidth(int width);
