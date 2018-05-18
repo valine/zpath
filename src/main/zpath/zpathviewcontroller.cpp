@@ -215,7 +215,7 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
 }
 
 void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
-    int selectionIndex = mScene->getActiveObjectIndex();
+  int selectionIndex = mScene->getActiveObjectIndex();
 
     if (sender == mExposureSlider) {
         ZScene* scene = mTileView->getScene();
@@ -233,8 +233,9 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
         mFocalLengthLabel->setText("Focal Length " + str);
     }
 
-    if (selectionIndex != -1) {
-        if (sender == mRoughnessSlider) {
+  
+    if (sender == mRoughnessSlider) {
+        if (selectionIndex != -1) {
             ZScene* scene = mTileView->getScene();
             ZObject* object = scene->getObjects().at(selectionIndex);
             ZMaterial* material = object->getMaterial();
@@ -243,9 +244,11 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mRoughnessLabel->setText("Roughness " + str);
             material->setRoughness(value);
-        } 
+        }
+    } 
 
-        else if (sender == mMetalSlider) {
+    else if (sender == mMetalSlider) {
+        if (selectionIndex != -1) {
             ZScene* scene = mTileView->getScene();
             ZObject* object = scene->getObjects().at(selectionIndex);
             ZMaterial* material = object->getMaterial();
@@ -254,9 +257,11 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mMetalLabel->setText("Metallic " + str);
             material->setMetallic(value);
-        } 
+        }
+    } 
 
-        else if (sender == mRedSlider) {
+    else if (sender == mRedSlider) {
+        if (selectionIndex != -1) {
             ZScene* scene = mTileView->getScene();
             ZObject* object = scene->getObjects().at(selectionIndex);
             ZMaterial* material = object->getMaterial();
@@ -267,9 +272,21 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mRedLabel->setText("Red " + str);
             material->setColor(color);
-        } 
+        } else {
+            ZScene* scene = mTileView->getScene();
+            ZWorld* world = scene->getWorld();
 
-        else if (sender == mGreenSlider) {
+            vec3 color = world->getColor();
+            color.r = value;
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mRedLabel->setText("Red " + str);
+            world->setColor(color);
+        }
+    } 
+
+    else if (sender == mGreenSlider) {
+        if (selectionIndex != -1) {
             ZScene* scene = mTileView->getScene();
             ZObject* object = scene->getObjects().at(selectionIndex);
             ZMaterial* material = object->getMaterial();
@@ -280,9 +297,22 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mGreenLabel->setText("Green " + str);
             material->setColor(color);
-        }
 
-         else if (sender == mBlueSlider) {
+        } else {
+            ZScene* scene = mTileView->getScene();
+            ZWorld* world = scene->getWorld();
+
+            vec3 color = world->getColor();
+            color.g = value;
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mGreenLabel->setText("Green " + str);
+            world->setColor(color);
+        }
+    }
+
+     else if (sender == mBlueSlider) {
+        if (selectionIndex != -1) {
             ZScene* scene = mTileView->getScene();
             ZObject* object = scene->getObjects().at(selectionIndex);
             ZMaterial* material = object->getMaterial();
@@ -293,9 +323,21 @@ void ZPathViewController::onSliderValueChanged(ZSlider* sender, float value) {
             str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
             mBlueLabel->setText("Blue " + str);
             material->setColor(color);
-        } 
+        } else {
+            ZScene* scene = mTileView->getScene();
+            ZWorld* world = scene->getWorld();
 
-        else if (sender == mAlphaSlider) {
+            vec3 color = world->getColor();
+            color.b = value;
+            string str = to_string(value);
+            str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+            mBlueLabel->setText("Blue " + str);
+            world->setColor(color);
+        }
+    } 
+
+    else if (sender == mAlphaSlider) {
+        if (selectionIndex != -1) {
             ZScene* scene = mTileView->getScene();
             ZObject* object = scene->getObjects().at(selectionIndex);
             ZMaterial* material = object->getMaterial();
