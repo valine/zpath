@@ -46,6 +46,7 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 	}
 
 	computeBounds(getWindowHeight(), getWindowWidth());
+	invalidate();
 }
 
 void ZTiledView::setTileMargin(int margin) {

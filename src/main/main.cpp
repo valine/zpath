@@ -54,5 +54,5 @@ int main(int argc, char* argv[]) {
 
 
     ZPathViewController* viewController = new ZPathViewController(path);
-    ZApplication application(viewController, "hello");
+    ZApplication application(viewController, "ZPath");
 }

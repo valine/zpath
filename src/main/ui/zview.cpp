@@ -133,18 +133,23 @@ void ZView::setOffset(int x, int y) {
     mOffsetY = y;
 }
 
+void ZView::offsetBy(int x, int y) {
+    mOffsetX += x;
+    mOffsetY += y;
+}
+
 int ZView::getOffsetX() {
-    if (mParentView == this) {
+    //if (mParentView == this) {
         return mOffsetX;
-    }
-    return mOffsetX  + mParentView->getOffsetX();
+    //}
+   // return mOffsetX  + mParentView->getOffsetX();
 }
 
 int ZView::getOffsetY() {
-    if (mParentView == this) {
+    //if (mParentView == this) {
         return mOffsetY; 
-    } 
-    return mOffsetY + mParentView->getOffsetY();
+    //} 
+    //return mOffsetY + mParentView->getOffsetY();
 }
 
 int ZView::getMaxWidth() {
@@ -177,6 +182,10 @@ int ZView::getMarginRight() {
 
 int ZView::getMarginBottom() {
     return mMarginBottom;
+}
+
+void ZView::invalidate() {
+    glfwPostEmptyEvent();
 }
 
 int ZView::getLeft() {

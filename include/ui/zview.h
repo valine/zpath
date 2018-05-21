@@ -42,13 +42,15 @@ class ZView {
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
 		void setOffset(int x, int y);
 
-		void addSubView(ZView *view);
+		virtual void addSubView(ZView *view);
 		void clearSubViews();
 
 		void setParentView(ZView *parentView);
 
 		int getOffsetX();
 		int getOffsetY();
+
+		void offsetBy(int x, int y);
 
 		int getMarginLeft();
 		int getMarginTop();
@@ -106,6 +108,7 @@ class ZView {
 		virtual void onMouseEvent(int button, int action, int mods, int x, int y);
 		virtual void onCursorPosChange(double x, double y);
 		virtual void onScrollChange(double x, double y);
+		void invalidate();
 
 		void setVisibility(bool visible);
 		bool getVisibility();

@@ -24,6 +24,7 @@ void ZPathViewController::onCreate() {
     propertiesPanel->setOffset(0, 22);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
+    propertiesPanel->setInnerViewHeight(1000);
     getRootView()->addSubView(propertiesPanel);
 
     ZLabel* label = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
@@ -39,24 +40,6 @@ void ZPathViewController::onCreate() {
     mGridViewButton->setText("Toggle Grid View");
     mGridViewButton->setOnClickListener(this);
     propertiesPanel->addSubView(mGridViewButton);
-
-    mBackgroundBlurButton = new ZButton(130, 40, getResourcePath());
-    mBackgroundBlurButton->setOffset(0,20);
-    mBackgroundBlurButton->setMargin(10,10,10,10);
-    mBackgroundBlurButton->setBackgroundColor(highlightColor);
-    mBackgroundBlurButton->setText("Background Blur");
-    mBackgroundBlurButton->setGravity(ZView::bottomLeft);
-    mBackgroundBlurButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mBackgroundBlurButton);
-
-    mDeleteButton = new ZButton(130, 40, getResourcePath());
-    mDeleteButton->setOffset(140,20);
-    mDeleteButton->setMargin(10,10,10,10);
-    mDeleteButton->setBackgroundColor(highlightColor);
-    mDeleteButton->setText("Delete Object");
-    mDeleteButton->setGravity(ZView::bottomLeft);
-    mDeleteButton->setOnClickListener(this);
-    propertiesPanel->addSubView(mDeleteButton);
 
     mExposureLabel = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
     mExposureLabel->setOffset(10,120);
@@ -167,6 +150,22 @@ void ZPathViewController::onCreate() {
     mFocalLengthSlider->setMinValue(1);
     propertiesPanel->addSubView(mFocalLengthSlider);
 
+    mBackgroundBlurButton = new ZButton(130, 40, getResourcePath());
+    mBackgroundBlurButton->setOffset(0, 300 + (100 * 6));
+    mBackgroundBlurButton->setMargin(10,10,10,10);
+    mBackgroundBlurButton->setBackgroundColor(highlightColor);
+    mBackgroundBlurButton->setText("Background Blur");
+    mBackgroundBlurButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mBackgroundBlurButton);
+
+    mDeleteButton = new ZButton(130, 40, getResourcePath());
+    mDeleteButton->setOffset(140, 300 + (100 * 6));
+    mDeleteButton->setMargin(10,10,10,10);
+    mDeleteButton->setBackgroundColor(highlightColor);
+    mDeleteButton->setText("Delete Object");
+    mDeleteButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mDeleteButton);
+
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
     navBar->setGravity(ZView::topRight);
@@ -184,7 +183,7 @@ void ZPathViewController::onCreate() {
 
     mTileView = new ZTiledView(mScene, 10000, 10000, 1, 1, getResourcePath());
     mIsQuadView = false;
-    mTileView->setOffset(propertiesPanel->getWidth(), 22);
+    mTileView->setOffset(propertiesPanel->getWidth(), 24);
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
 }
