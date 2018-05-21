@@ -39,7 +39,6 @@ void ZView::draw() {
 
         for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
             (*it)->draw();
-            
         }
     }
 }

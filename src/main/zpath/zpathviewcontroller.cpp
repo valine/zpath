@@ -20,7 +20,7 @@ void ZPathViewController::onCreate() {
 	float panelColor[4] = {0.9, 0.9, 0.91, 1.0};
     float highlightColor[4] = {0.1, 0.2, 0.9, 1.0};
 
-    ZView* propertiesPanel = new ZView(300, ZView::fillParent);
+    ZScrollView* propertiesPanel = new ZScrollView(300, ZView::fillParent);
     propertiesPanel->setOffset(0, 22);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);

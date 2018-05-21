@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "mesh/zobject.h"
+#include "ui/zscrollview.h"
 
 using namespace glm;
 using namespace std;

@@ -6,16 +6,17 @@ Render engine and cross platform UI framework
 Dependencies
 
 * CMake https://cmake.org/download/
-* GLFW git@github.com:glfw/glfw.git // downloaded automatically
-* GLM https://github.com/g-truc/glm/archive/0.9.8.5.tar.gz // downloaded automatically
-* Freetype https://www.freetype.org/ // sudo apt-get install libfreetype6-dev
-* Assimp git@github.com:assimp/assimp.git // downloaded automatically
+* GLFW git@github.com:glfw/glfw.git 
+* GLM https://github.com/g-truc/glm/archive/0.9.8.5.tar.gz 
+* Freetype https://www.freetype.org/ 
+* Assimp git@github.com:assimp/assimp.git
 
-Other packages for linux
+Packages to install on ubuntu
 
-freeglut3-dev
-libglu1-mesa-dev
-libglu1-xorg-dev
+* libfreetype6-dev
+* freeglut3-dev
+* libglu1-mesa-dev
+* libglu1-xorg-dev
 
 ### To build
 

@@ -71,7 +71,8 @@ void ZViewController::draw() {
     glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(projection));
 
     if (mRootView != nullptr) {
-	   mRootView->draw();
+        glViewport(0, 0, mParentWidth, mParentHeight);
+        mRootView->draw();
     }
 }
 
