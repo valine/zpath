@@ -299,7 +299,7 @@ void ZRenderer::setScene(ZScene *scene) {
 	mScene = scene;
 }
 
-void ZRenderer::setParentView(Z3DView* view) {
+void ZRenderer::setParentView(ZView* view) {
 	mParentView = view;
 }
 

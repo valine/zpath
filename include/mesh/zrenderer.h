@@ -20,7 +20,7 @@ using namespace glm;
 
 using std::string;
 
-class Z3DView; 
+class ZView; 
 
 class ZRenderer {
 
@@ -29,7 +29,7 @@ public:
 	ZScene* getScene();
 	void setScene(ZScene *scene);
 	void draw();
-	void setParentView(Z3DView *view);	
+	void setParentView(ZView *view);	
 	void init();
 	virtual void onDrawFinshed();
 
@@ -46,7 +46,7 @@ private:
 	ZShader *mBackgroundShader;
 	ZShader *mSelectionShader;
 
-	Z3DView *mParentView = nullptr;
+	ZView *mParentView = nullptr;
 
 	ZCamera* mCamera;
 
