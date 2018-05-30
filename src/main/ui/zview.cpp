@@ -17,7 +17,6 @@ ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
     init(100000, 100000);
 }
 
-
 void ZView::draw() {
     if (mVisible) {
         mShader->use();
@@ -62,11 +61,9 @@ void ZView::init(int maxWidth, int maxHeight) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
 
     mParentView = this;
-
 }
 
 void ZView::setShader(ZShader *shader) {
-
     mShader = shader;
 
     mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
@@ -77,11 +74,8 @@ void ZView::setShader(ZShader *shader) {
     }
 }
 
-
 void ZView::setTextShader(ZShader *shader) {
-
     mTextShader = shader;
-
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->setTextShader(shader);
     }
@@ -104,7 +98,6 @@ void ZView::setWindowHeight(int height) {
         (*it)->setWindowHeight(height);
     }
 }
-
 
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
     if (mParentView == this) {
@@ -131,25 +124,22 @@ void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int margin
 void ZView::setOffset(int x, int y) {
     mOffsetX = x;
     mOffsetY = y;
+    computeBounds(mParentWidth, mParentWidth);
 }
 
 void ZView::offsetBy(int x, int y) {
     mOffsetX += x;
     mOffsetY += y;
+    computeBounds(mParentWidth, mParentWidth);
 }
 
 int ZView::getOffsetX() {
-    //if (mParentView == this) {
-        return mOffsetX;
-    //}
-   // return mOffsetX  + mParentView->getOffsetX();
+    return mOffsetX;
 }
 
 int ZView::getOffsetY() {
-    //if (mParentView == this) {
-        return mOffsetY; 
-    //} 
-    //return mOffsetY + mParentView->getOffsetY();
+   
+    return mOffsetY; 
 }
 
 int ZView::getMaxWidth() {
@@ -462,6 +452,8 @@ void ZView::onScrollChange(double x, double y) {
 
         bool isInViewX = view->getLeft() < mMouseX && view->getRight() > mMouseX;
         bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
+
+        computeBounds(mMaxWidth, mMaxHeight);
 
         if (isInViewX && isInViewY) {
             view->onScrollChange(x, y);

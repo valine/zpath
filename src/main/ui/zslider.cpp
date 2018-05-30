@@ -75,9 +75,8 @@ void ZSlider::setListener(ZSliderListener* listener) {
 void ZSlider::valueChanged(int offset) {
 	float maxOffset = (float) (getWidth() - SLIDER_THUMB_SIZE);
 	float factor = (float) offset / maxOffset;
-
 	float value = ((mMaxValue - mMinValue) * factor) + mMinValue;
-
+	
 	if (mListener != nullptr) {
 		mListener->onSliderValueChanged(this, value);
 	}

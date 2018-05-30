@@ -38,7 +38,7 @@ class ZView {
 		ZView(Bounds maxWidth, float maxHeight);
 		ZView(float maxWidth, Bounds maxHeight);
 		ZView(Bounds maxWidth, Bounds maxHeight);
-		void onWindowChange(int windowWidth, int windowHeight);
+		
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
 		void setOffset(int x, int y);
 
@@ -104,10 +104,12 @@ class ZView {
 
 		virtual void computeBounds(int windowHeight, int maxWidth);
 
+		virtual void onWindowChange(int windowWidth, int windowHeight);
 		virtual void onKeyPress(int key, int scancode, int action, int mods);
 		virtual void onMouseEvent(int button, int action, int mods, int x, int y);
 		virtual void onCursorPosChange(double x, double y);
 		virtual void onScrollChange(double x, double y);
+
 		void invalidate();
 
 		void setVisibility(bool visible);

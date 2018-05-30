@@ -16,7 +16,6 @@ class ZSliderListener;
 class ZSlider : public ZView {
 
 public:
-
 	ZSlider(float maxWidth, float maxHeight, string title);
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
@@ -32,7 +31,6 @@ public:
 	void setThumbColor(vec4 color);
 	
 private:
-
 	ZView* mThumb;
 	ZView* mLine;
 

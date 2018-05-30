@@ -50,6 +50,7 @@ public:
 	virtual void onClick(ZButton* sender);
 	virtual void onSliderValueChanged(ZSlider* sender, float value);
 	virtual void onFileDrop(int count, const char** paths);
+	void setDrawingEnabled(bool);
 	string getResourcePath();
 private:
 	ZView *mRootView = nullptr;
@@ -58,6 +59,8 @@ private:
 
 	ZShader *mUIShader = nullptr;
 	ZShader *mTextShader = nullptr;
+
+	bool mDrawingEnabled = true;
 
 	string mResourcePath;
 

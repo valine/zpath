@@ -37,6 +37,11 @@ public:
 	int getObjectIndexAtLocation(int x, int y);
 	ZCamera* getCamera();
 
+	unsigned int getMainTexture();
+	void setRenderToTexture(bool);
+
+	void recreateBuffers();
+
 private:
 	ZScene *mScene = nullptr;
 	ZShader *mShader;
@@ -47,13 +52,17 @@ private:
 	ZShader *mSelectionShader;
 
 	ZView *mParentView = nullptr;
-
 	ZCamera* mCamera;
 
 	unsigned int mMainFBO;
 	unsigned int mMainBuffer;
 	unsigned int mRenderBuffer;
 	
+	unsigned int mFinalFBO;
+	unsigned int mFinalBuffer;
+	unsigned int mFinalRenderBuffer;
+
+
 	unsigned int mSelectionFBO;
 	unsigned int mSelectionBuffer;
 	unsigned int mSelectionRenderBuffer;
@@ -63,6 +72,8 @@ private:
 
 	unsigned int cubeVAO = 0;
 	unsigned int cubeVBO = 0;
+
+	bool mRenderToTexture = false;
 
 	void renderMain();
 	void renderSelection();

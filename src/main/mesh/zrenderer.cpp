@@ -8,217 +8,241 @@ ZRenderer::ZRenderer(string resourcePath) {
     mSelectionShader = new ZShader(selection_vs, selection_fs);
     mHDRShader = new ZShader(fbo_vs, fbo_fs);
 
-	glDepthFunc(GL_LEQUAL);
-	mCamera = new ZCamera();
+    glDepthFunc(GL_LEQUAL);
+    mCamera = new ZCamera();
 }
 
 void ZRenderer::init() {
-	mShader->use();
-	mShader->setInt("irradianceMap", 0);
+    mShader->use();
+    mShader->setInt("irradianceMap", 0);
     mShader->setInt("prefilterMap", 1);
     mShader->setInt("brdfLUT", 2);
 
-	glGenFramebuffers(1, &mMainFBO);
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
-	glGenTextures(1, &mMainBuffer);
+    glGenFramebuffers(1, &mMainFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
+    //glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
+    glGenTextures(1, &mMainBuffer);
     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mCamera->getWidth(), mCamera->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
- 	glGenRenderbuffers(1, &mRenderBuffer);
+    glGenRenderbuffers(1, &mRenderBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mCamera->getWidth(), mCamera->getHeight());
 
-    glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mMainBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBuffer);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "Framebuffer not complete!" << std::endl;
+        std::cout << "Main Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
     // Create selection offscreen buffer
-	glGenFramebuffers(1, &mSelectionFBO);
-	glGenTextures(1, &mSelectionBuffer);
+    glGenFramebuffers(1, &mSelectionFBO);
+    glGenTextures(1, &mSelectionBuffer);
     glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mParentView->getWidth(), mParentView->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mCamera->getWidth(), mCamera->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
- 	glGenRenderbuffers(1, &mSelectionRenderBuffer);
+    glGenRenderbuffers(1, &mSelectionRenderBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, mSelectionRenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mParentView->getWidth(), mParentView->getHeight());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mCamera->getWidth(), mCamera->getHeight());
 
     glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mSelectionBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mSelectionRenderBuffer);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "Framebuffer not complete!" << std::endl;
+        std::cout << "Selection Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    if (mRenderToTexture) {
+        // Final texture
+        glGenFramebuffers(1, &mFinalFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+        glGenTextures(1, &mFinalBuffer);
+        glBindTexture(GL_TEXTURE_2D, mFinalBuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mCamera->getWidth(), mCamera->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFinalBuffer, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBuffer);
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "Final Framebuffer not complete!" << std::endl;
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 
     mHDRShader->use();
     mHDRShader->setInt("hdrBuffer", 0);
 
-    // Create cube map
-    if (mScene->getWorld()->getEnvironmentTexture() != nullptr) {
+    // Transparency 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBlendEquation (GL_FUNC_ADD);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	    // Transparency setup
-	    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	    glBlendEquation (GL_FUNC_ADD);
-	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
+}
+
+void ZRenderer::setRenderToTexture(bool toTexture) {
+    mRenderToTexture = toTexture;
 }
 
 // Experimental features
 void ZRenderer::onDrawFinshed() {
-	//renderQuad();
-	//renderCube();
+//renderQuad();
+//renderCube();
 }
 
 void ZRenderer::draw() {
-	if (mScene != nullptr) {
+    if (mScene != nullptr) {
+        if (mParentView->getVisibility()) {
 
-		if (mParentView->getVisibility()) {
+    
+            renderMain();
+            renderSelection();
+            renderToScreen();
 
-			float width = mParentView->getWidth();
-			float height =  mParentView->getHeight();
+            glDisable(GL_DEPTH_TEST);
+        }
+    }
+}
 
-			mCamera->setWidth(width);
-			mCamera->setHeight(height);
+void ZRenderer::recreateBuffers() {
+    float width = mCamera->getWidth();
+    float height =  mCamera->getHeight();
 
-		   	glBindTexture(GL_TEXTURE_2D, mMainBuffer);
-		    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
-		    
-		    glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
-		    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 
-		    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
-		    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+    glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 
-			renderMain();
-			renderSelection();
-		   	renderToScreen();
+    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 
-		    glDisable(GL_DEPTH_TEST);
-		}
-	}
+    glBindRenderbuffer(GL_RENDERBUFFER, mSelectionRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 }
 
 mat4 ZRenderer::getModelMatrix(ZObject* object) {
 
     mat4 modelMatrix = mat4();
-     modelMatrix = scale(modelMatrix, object->getScale());
+    modelMatrix = scale(modelMatrix, object->getScale());
     modelMatrix = translate(modelMatrix, object->getTranslation());
-   
+
     return modelMatrix;
 }
 
+unsigned int ZRenderer::getMainTexture() {
+    return mFinalBuffer;
+}
+
+
 void ZRenderer::renderMain() {
-	float width = mParentView->getWidth();
-	float height =  mParentView->getHeight();
+    float width = mCamera->getWidth();
+    float height =  mCamera->getHeight();
 
-	// Render to 16 bit frame buffer
-	glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
+    // Render to 16 bit frame buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f );
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glViewport(0,0, width, height);
-	glEnable(GL_DEPTH_TEST);
+    glViewport(0,0, width, height);
+    glEnable(GL_DEPTH_TEST);
 
-	// Draw background
-	mBackgroundShader->use();
-	mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
-	mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
+    // Draw background
+    mBackgroundShader->use();
+    mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
+    mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
     mBackgroundShader->setVec3("uColorFactor", mScene->getWorld()->getColor());
-	glActiveTexture(GL_TEXTURE0);
-	if (mScene->getWorld()->isBackgroundBlurred()) {
-  		glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
-  	} else {
-  		glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getBackgroundID());
-  	}
+    glActiveTexture(GL_TEXTURE0);
+    if (mScene->getWorld()->isBackgroundBlurred()) {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
+    } else {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getBackgroundID());
+    }
 
     renderCube();
 
-	vector<ZPointLight*> lights = mScene->getLights();
-	vector<ZObject*> objects = mScene->getObjects();
-	
+    vector<ZPointLight*> lights = mScene->getLights();
+    vector<ZObject*> objects = mScene->getObjects();
+
     glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getPrefilteredID());
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getPrefilteredID());
 
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, mScene->getWorld()->getBrdfLutID());
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, mScene->getWorld()->getBrdfLutID());
 
-	ZShader* shader;
-	shader = mShader;
-	shader->use();
+    ZShader* shader;
+    shader = mShader;
+    shader->use();
     shader->setVec3("uWorldColor", mScene->getWorld()->getColor());
-	shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
-	shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
+    shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
+    shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 
-	shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
-	shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+    shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
+    shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
 
-	int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
-	int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
-	int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
+    int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
+    int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
+    int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
 
     mat4 identityMatrix = mat4();
     shader->setMat4("uModelMatrix", identityMatrix);
 
 
-	int objectIndex = 0;
-	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-		ZObject *object = (*it);
-    	ZMesh *mesh = (*it)->getMesh();
-    	ZMaterial* material = object->getMaterial();
+    int objectIndex = 0;
+    for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+        ZObject *object = (*it);
+        ZMesh *mesh = (*it)->getMesh();
+        ZMaterial* material = object->getMaterial();
 
         shader->setMat4("uModelMatrix", getModelMatrix(object));
-    	
-    	if (material->getColorTexture() != nullptr) {
-    		shader = mColorTextureShader;
-    		glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
-			shader->use();
-    	} 
 
-    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
+        if (material->getColorTexture() != nullptr) {
+            shader = mColorTextureShader;
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
+            shader->use();
+        } 
 
-		glEnableVertexAttribArray(mPositionLocation);
-		glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-		                          sizeof(float) * 3, (void*) 0);
+        glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
 
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexNormalBuffer());
+        glEnableVertexAttribArray(mPositionLocation);
+        glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+          sizeof(float) * 3, (void*) 0);
 
-		glEnableVertexAttribArray(mNormalLocation);
-		glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
-		                          sizeof(float) * 3, (void*) 0);
-		
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->getTextureCoordinatesBuffer());
-		glEnableVertexAttribArray(mTextureCoordLocation);
-		glVertexAttribPointer(mTextureCoordLocation, 2, GL_FLOAT, GL_FALSE,
-		                          sizeof(float) * 2, (void*) 0);
+        glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexNormalBuffer());
 
-    	vec4 color = material->getColor();
-		shader->setVec4("uColor", color.r, color.g, color.b, color.a);
+        glEnableVertexAttribArray(mNormalLocation);
+        glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
+          sizeof(float) * 3, (void*) 0);
 
-		float selected = 0;
-		if (mScene->getActiveObjectIndex() == objectIndex) {
-			selected = 1;
-		}
+        glBindBuffer(GL_ARRAY_BUFFER, mesh->getTextureCoordinatesBuffer());
+        glEnableVertexAttribArray(mTextureCoordLocation);
+        glVertexAttribPointer(mTextureCoordLocation, 2, GL_FLOAT, GL_FALSE,
+          sizeof(float) * 2, (void*) 0);
 
-    	shader->setFloat("uMetallic", material->getMetallic());
-    	shader->setFloat("uSelected", selected);
-		shader->setFloat("uRoughness", material->getRoughness());
-		shader->setVec3("uCameraPosition", mCamera->getPosition());
-		
-		glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
-		objectIndex++;
+        vec4 color = material->getColor();
+        shader->setVec4("uColor", color.r, color.g, color.b, color.a);
+
+        float selected = 0;
+        if (mScene->getActiveObjectIndex() == objectIndex) {
+            selected = 1;
+        }
+
+        shader->setFloat("uMetallic", material->getMetallic());
+        shader->setFloat("uSelected", selected);
+        shader->setFloat("uRoughness", material->getRoughness());
+
+        shader->setVec3("uCameraPosition", mCamera->getPosition());
+
+        glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+        objectIndex++;
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -226,85 +250,95 @@ void ZRenderer::renderMain() {
 }
 
 void ZRenderer::renderSelection() {
-	glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
+    if (!mRenderToTexture) {
+        glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        mSelectionShader->use();
+        mSelectionShader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
+        mSelectionShader->setMat4("uViewMatrix", mCamera->getViewMatrix());
 
-	mSelectionShader->use();
+        vector<ZObject*> objects = mScene->getObjects();
 
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        int mPositionLocation = glGetAttribLocation(mSelectionShader->mID, "aPos");
 
-	mSelectionShader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
-	mSelectionShader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+        int objectIndex = 0;
+        for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+            ZMesh *mesh = (*it)->getMesh();
 
-	vector<ZObject*> objects = mScene->getObjects();
+            mSelectionShader->setMat4("uModelMatrix", getModelMatrix((*it)));
 
-	int mPositionLocation = glGetAttribLocation(mSelectionShader->mID, "aPos");
+            glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
 
-	int objectIndex = 0;
-	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-    	ZMesh *mesh = (*it)->getMesh();
+            glEnableVertexAttribArray(mPositionLocation);
+            glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+              sizeof(float) * 3, (void*) 0);
 
-        mSelectionShader->setMat4("uModelMatrix", getModelMatrix((*it)));
-        
-    	glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
+            vec4 color = vec4((float) objectIndex / 256,0,0,1.0);
+            mSelectionShader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
-		glEnableVertexAttribArray(mPositionLocation);
-		glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-		                          sizeof(float) * 3, (void*) 0);
+            glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
 
-    	vec4 color = vec4((float) objectIndex / 256,0,0,1.0);
-		mSelectionShader->setVec4("uColor", color.r, color.g, color.b, color.a);
+            objectIndex++;
+        }
 
-		glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
-
-		objectIndex++;
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void ZRenderer::renderToScreen() {
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (mRenderToTexture) {
+        glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    mHDRShader->use();
-	int yv = mParentView->getWindowHeight() - mParentView->getBottom();
-	glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+        mHDRShader->use();
+        glViewport(0,0,mCamera->getWidth(),mCamera->getHeight());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mMainBuffer);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+        mHDRShader->setBool("hdr", true);
+        mHDRShader->setFloat("exposure", mScene->getExposure());
 
-    mHDRShader->setBool("hdr", true);
-    mHDRShader->setFloat("exposure", mScene->getExposure());
+        renderQuad();
+    } else {
 
-    renderQuad();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        mHDRShader->use();
+        int yv = mParentView->getWindowHeight() - mParentView->getBottom();
+        glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+        mHDRShader->setBool("hdr", true);
+        mHDRShader->setFloat("exposure", mScene->getExposure());
+        renderQuad();
+    }
 }
 
 int ZRenderer::getObjectIndexAtLocation(int x, int y) {
-	GLubyte rgba[4];
-	glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
-	glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
-	if (rgba[3] == 0) {
-		return -1;
-	}
-	return (int) (rgba[0]);
+    GLubyte rgba[4];
+    glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
+    glReadPixels(x, y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+    if (rgba[3] == 0) {
+        return -1;
+    }
+    return (int) (rgba[0]);
 }
 
 ZScene* ZRenderer::getScene() {
-	return mScene;
+    return mScene;
 }
 
 void ZRenderer::setScene(ZScene *scene) {
-	mScene = scene;
+    mScene = scene;
 }
 
 void ZRenderer::setParentView(ZView* view) {
-	mParentView = view;
+    mParentView = view;
 }
 
 ZCamera* ZRenderer::getCamera() {
-	return mCamera;
+    return mCamera;
 }
 
 void ZRenderer::renderQuad() {
@@ -314,8 +348,8 @@ void ZRenderer::renderQuad() {
             // positions        // texture Coords
             -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
             -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+            1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
         };
         // setup plane VAO
         glGenVertexArrays(1, &quadVAO);
@@ -335,70 +369,69 @@ void ZRenderer::renderQuad() {
 
 void ZRenderer::renderCube() {
     // initialize (if necessary)
-    if (cubeVAO == 0)
-    {
+    if (cubeVAO == 0) {
         float vertices[] = {
-            // back face
-            
-             1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-             -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-             1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-           
-             1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-             -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-            -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-            
-            // front face
-            -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-             1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-             1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+        // back face
+        1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+        -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+        1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
 
-             1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-             -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-            -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-           
-            // left face
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-            
-          
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-             -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-           
-            // right face
-             1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-             1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right     
-             1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-                
-            
-             1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-             1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-             1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-            
-            // bottom face
-            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-              1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-             1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-          
-            
-             -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-             1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-             -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-           
-            
-            // top face
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-             1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-             1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-          
-           
-             1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-            -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,// bottom-left      
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-              
+        1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+        -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+        -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+
+        // front face
+        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+        1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+        1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+
+        1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+        -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+        -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+
+        // left face
+        -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+        -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+        -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+
+
+        -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+        -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+        -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+
+        // right face
+        1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+        1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right     
+        1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+
+
+        1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+        1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+        1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+
+        // bottom face
+        -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+        1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+        1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+
+
+        -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+        1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+        -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+
+
+        // top face
+        -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+        1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+        1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+
+
+        1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+        -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,// bottom-left      
+        -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+
         };
+
         glGenVertexArrays(1, &cubeVAO);
         glGenBuffers(1, &cubeVBO);
         // fill buffer
@@ -414,9 +447,9 @@ void ZRenderer::renderCube() {
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-    }
-    // render Cube
-    glBindVertexArray(cubeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+        }
+        // render Cube
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
 }

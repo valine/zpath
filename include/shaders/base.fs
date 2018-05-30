@@ -1,5 +1,5 @@
 R"(
-#define lightCount 4
+#define lightCount 1
 #define PI 3.14159265359
 
 uniform vec3 uWorldColor;

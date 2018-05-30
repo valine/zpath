@@ -4,15 +4,12 @@
 #include "ui/stb_image.h"
 
 ZTexture::ZTexture(string path) {
-
     mTextureID = loadTexture(path.c_str());
-
 }
 
 uint ZTexture::getID() {
     return mTextureID;
 }
-
 
 unsigned int ZTexture::loadTexture(char const * path){
     unsigned int textureID;
@@ -20,8 +17,7 @@ unsigned int ZTexture::loadTexture(char const * path){
 
     int width, height, nrComponents;
     unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
-    if (data)
-    {
+    if (data) {
         GLenum format;
         if (nrComponents == 1)
             format = GL_RED;
@@ -40,9 +36,7 @@ unsigned int ZTexture::loadTexture(char const * path){
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         stbi_image_free(data);
-    }
-    else
-    {
+    } else {
         std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }

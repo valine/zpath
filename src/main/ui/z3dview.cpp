@@ -6,6 +6,7 @@
 Z3DView::Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer) 
 : ZView(maxWidth, maxHeight) {
     mRenderer = renderer;
+    mRenderer->setRenderToTexture(false);
     renderer->setParentView(this);
     renderer->init();
 }
@@ -48,6 +49,13 @@ void Z3DView::onCursorPosChange(double x, double y) {
 	}
 
 	updateCameraPosition();
+}
+
+void Z3DView::onWindowChange(int width, int height) {
+	ZView::onWindowChange(width, height);
+	mRenderer->getCamera()->setWidth(getWidth());
+	mRenderer->getCamera()->setHeight(getHeight());
+	mRenderer->recreateBuffers();
 }
 
 void Z3DView::onScrollChange(double x, double y) {
@@ -103,7 +111,6 @@ void Z3DView::updateCameraPosition() {
 	camera->setPosition(newPosition);
 	camera->setUp(newUp);
 	camera->setFront(newFront);
-
 	camera->setTranslation(mTranslation);
 }
 

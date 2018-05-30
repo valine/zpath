@@ -25,11 +25,9 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
         // Load first 128 characters of ASCII set
-        for (GLubyte c = 0; c < 128; c++)
-        {
+        for (GLubyte c = 0; c < 128; c++) {
             // Load character glyph 
-            if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-            {
+            if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
                 std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
                 continue;
             }
@@ -87,7 +85,6 @@ void ZLabel::draw() {
 	glViewport(getLeft(),yv,getWidth(),getHeight());
     GLfloat scale = 1.0;
    
-
 	// Activate corresponding render state	
     getTextShader()->use();
     glUniform3f(glGetUniformLocation(getTextShader()->mID, "textColor"), mTextColor.x, mTextColor.y, mTextColor.z);
