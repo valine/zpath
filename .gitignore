@@ -1,5 +1,6 @@
 build/*
 buildapp/*
+appbuild/*
 deps/*
 CMakeCache.txt
 CMakeFiles
