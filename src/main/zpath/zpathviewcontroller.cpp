@@ -24,7 +24,7 @@ void ZPathViewController::onCreate() {
     propertiesPanel->setOffset(0, 22);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
-    propertiesPanel->setInnerViewHeight(1000);
+    propertiesPanel->setInnerViewHeight(1200);
     getRootView()->addSubView(propertiesPanel);
 
     ZLabel* label = new ZLabel(1000, 21, "roboto/Roboto-Bold.ttf", getResourcePath());
@@ -158,6 +158,7 @@ void ZPathViewController::onCreate() {
     mBackgroundBlurButton->setOnClickListener(this);
     propertiesPanel->addSubView(mBackgroundBlurButton);
 
+    
     mDeleteButton = new ZButton(130, 40, getResourcePath());
     mDeleteButton->setOffset(140, 300 + (100 * 6));
     mDeleteButton->setMargin(10,10,10,10);
@@ -165,6 +166,14 @@ void ZPathViewController::onCreate() {
     mDeleteButton->setText("Delete Object");
     mDeleteButton->setOnClickListener(this);
     propertiesPanel->addSubView(mDeleteButton);
+
+    mBillboardButton = new ZButton(130, 40, getResourcePath());
+    mBillboardButton->setOffset(140, 300 + (100 * 7));
+    mBillboardButton->setMargin(10,10,10,10);
+    mBillboardButton->setBackgroundColor(highlightColor);
+    mBillboardButton->setText("Billboard");
+    mBillboardButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mBillboardButton);
 
     ZView* navBar = new ZView(ZView::fillParent, 24);
     navBar->setBackgroundColor(panelColor);
@@ -375,6 +384,12 @@ void ZPathViewController::onClick(ZButton* sender) {
     else if (sender == mDeleteButton && selectionIndex != -1) {
         ZScene* scene = mTileView->getScene();
         scene->deleteSelectedObject();
+    }
+
+    else if (sender == mBillboardButton && selectionIndex != -1) {
+        ZScene* scene = mTileView->getScene();
+        ZObject* object = scene->getObjects().at(selectionIndex);
+        object->setBillboard(!object->isBillboard());
     }
 }
 

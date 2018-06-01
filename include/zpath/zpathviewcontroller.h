@@ -34,6 +34,7 @@ private:
 	ZButton *mIncrementButton;
 	ZButton *mDecrementButton;
 	ZLabel *mExposureLabel;
+	ZButton *mBillboardButton;
 
 	ZSlider* mExposureSlider;
 	ZSlider* mRoughnessSlider;
