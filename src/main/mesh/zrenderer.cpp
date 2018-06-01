@@ -141,7 +141,7 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
 
         mat4 lookAt = glm::lookAt(
             vec3(0), // Camera is at (4,3,3), in World Space
-            mCamera->getPosition(), // and looks at the origin
+            mCamera->getPosition() - objectCenter, // and looks at the origin
             mCamera->getUp()  // Head is up (set to 0,-1,0 to look upside-down)
         );
 
@@ -213,7 +213,6 @@ void ZRenderer::renderMain() {
 
     mat4 identityMatrix = mat4();
     shader->setMat4("uModelMatrix", identityMatrix);
-
 
     int objectIndex = 0;
     for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {

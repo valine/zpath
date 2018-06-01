@@ -21,10 +21,9 @@ BasicScene::BasicScene(string resourcePath)
 	int i = 0;
 	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
 		ZObject *object = (*it);
-
-		if (i % 3 ==0) {
+		//if (i % 3 ==0) {
 			object->setBillboard(true);
-		}
+		//}
 		addObject(object);
 		i++;
 	}
