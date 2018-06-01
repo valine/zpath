@@ -32,6 +32,9 @@ public:
 	void setScale(vec3);
 	vec3 getScale();
 
+	bool isBillboard();
+	void setBillboard(bool billboard);
+
 private: 
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
@@ -41,5 +44,7 @@ private:
 	vec3 mTranslation = vec3(0);
 	vec3 mRotation = vec3(0);
 	vec3 mScale = vec3(1);
+
+	bool mIsBillboard = false;
 };
 #endif

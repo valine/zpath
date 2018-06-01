@@ -63,4 +63,13 @@ vec3 ZObject::getScale() {
 }
 
 
+bool ZObject::isBillboard() {
+	return mIsBillboard;
+}
+
+void ZObject::setBillboard(bool billboard) {
+	mIsBillboard = billboard;
+}
+
+
 

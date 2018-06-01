@@ -1,3 +1,7 @@
+#ifndef ZMEHSUTILS_H
+#define ZMEHSUTILS_H
+
+
 #include "zmesh.h"
 #include <iostream>
 #include <vector> 
@@ -18,3 +22,5 @@ public:
 private:
 
 };
+
+#endif

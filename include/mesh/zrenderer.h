@@ -9,6 +9,9 @@
 #include "zcamera.h"
 #include "zpointlight.h"
 #include <iostream>
+#include "zmeshutils.h"
+#include <glm/gtc/quaternion.hpp> 
+#include <glm/gtx/quaternion.hpp>
 
 #include <GLFW/glfw3.h>
 
@@ -53,6 +56,7 @@ private:
 
 	ZView *mParentView = nullptr;
 	ZCamera* mCamera;
+	ZMeshUtils meshUtils = ZMeshUtils();
 
 	unsigned int mMainFBO;
 	unsigned int mMainBuffer;
