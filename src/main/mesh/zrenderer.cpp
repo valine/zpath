@@ -130,25 +130,27 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
     modelMatrix = scale(modelMatrix, object->getScale());
     modelMatrix = translate(modelMatrix, object->getTranslation());
 
-    if (object->isBillboard()) {
-        vec3 objectCenter = meshUtils.calculateBoundingBoxCenter(object->getMesh());
-        vec3 objectCenterWS = vec4(objectCenter.x, objectCenter.y, objectCenter.z, 1.0) * mCamera->getViewMatrix();
+    mat4 billboard = mat4(1);
 
-        
+    if (object->isBillboard()) {
+        vec4 objectCenterTmp = modelMatrix * vec4(object->getOrigin().x, object->getOrigin().y, object->getOrigin().z, 1.0);
+        vec3 objectCenter = vec3(objectCenterTmp.x, objectCenterTmp.y, objectCenterTmp.z);
 
         mat4 snapToCenter = mat4(1);
         snapToCenter = inverse(translate(snapToCenter, objectCenter));
 
         mat4 lookAt = glm::lookAt(
             vec3(0), // Camera is at (4,3,3), in World Space
-            mCamera->getPosition() - objectCenter, // and looks at the origin
+            mCamera->getBillboardTarget() - objectCenter, // and looks at the origin
             mCamera->getUp()  // Head is up (set to 0,-1,0 to look upside-down)
         );
 
         mat4 retranslation = mat4(1);
         retranslation = translate(retranslation, objectCenter);
 
-        modelMatrix = retranslation * inverse(lookAt) * snapToCenter;
+       
+        billboard = retranslation * inverse(lookAt) * snapToCenter;
+        return billboard * modelMatrix;
     } 
 
     return modelMatrix;

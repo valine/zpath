@@ -123,3 +123,16 @@ mat4 ZCamera::getViewMatrix() {
 bool ZCamera::isManualView() {
 	return mManualViewMode;
 }
+
+void ZCamera::setBillboardTarget(vec3 target) {
+	mBillboardTargetSet = true;
+	mBillboardTarget = target;
+}
+
+vec3 ZCamera::getBillboardTarget() {
+	if (mBillboardTargetSet) {
+		return mBillboardTarget;
+	} else {
+		return getPosition();
+	}
+}

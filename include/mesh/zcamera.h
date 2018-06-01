@@ -36,18 +36,23 @@ public:
 
 	void setViewMatrix(mat4 viewmatrix);
 	void setProjectionMatrix(mat4 projectionMatrix);
+	void setBillboardTarget(vec3);
+	vec3 getBillboardTarget();
 
 	bool isManualView();
 
 private:
 	bool mManualViewMode = false;
 	bool mManualProjectionMode = false;
+	bool mBillboardTargetSet = false;
 	
 	vec3 mPosition;
 	vec3 mFront;
 	vec3 mUp;
 
-	vec3 mTranslation = vec3(0,0,0);
+	vec3 mBillboardTarget;
+
+	vec3 mTranslation = vec3(0);
 
 	int mWidth = 1;
 	int mHeight = 1;
