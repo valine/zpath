@@ -54,6 +54,14 @@ vec3 ZObject::getRotation() {
 	return mRotation;
 }
 
+void ZObject::setRotationAngle(float angle) {
+	mRotationAngle = angle;
+}
+
+float ZObject::getRotationAngle() {
+	return mRotationAngle;
+}
+
 void ZObject::setScale(vec3 scale) {
 	mScale = scale;
 }

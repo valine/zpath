@@ -29,6 +29,9 @@ public:
 	void setRotation(vec3);
 	vec3 getRotation();
 
+	void setRotationAngle(float);
+	float getRotationAngle();
+
 	void setScale(vec3);
 	vec3 getScale();
 
@@ -42,8 +45,10 @@ private:
 	vec3 mOrigin = vec3(0);
 
 	vec3 mTranslation = vec3(0);
-	vec3 mRotation = vec3(0);
+	vec3 mRotation = vec3(1);
 	vec3 mScale = vec3(1);
+
+	float mRotationAngle = 0;
 
 	bool mIsBillboard = false;
 };
