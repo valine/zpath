@@ -41,7 +41,7 @@ vec3 ZCamera::getPosition() {
 	if (mManualViewMode) {
 		vec4 tmpTranslation = vec4(mTranslation.x, mTranslation.y, mTranslation.z, 1.0);
 		vec4 viewTranslation = inverse(getViewMatrix()) * tmpTranslation;
-		return viewTranslation;
+		return vec3(viewTranslation.x, viewTranslation.y, viewTranslation.z);
 	} else {
 		vec4 tmpTranslation = vec4(mTranslation.x, mTranslation.y, mTranslation.z, 1.0);
 		vec4 viewTranslation = tmpTranslation * getViewMatrix();
