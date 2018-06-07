@@ -79,5 +79,18 @@ void ZObject::setBillboard(bool billboard) {
 	mIsBillboard = billboard;
 }
 
+void ZObject::setModelMatrix(mat4 matrix) {
+	mModelMatrix = matrix;
+	mModelMatrixSet = true;
+}
+
+mat4 ZObject::getModelMatrix() {
+	return mModelMatrix;
+}
+
+bool ZObject::getModelMatrixSet() {
+	return mModelMatrixSet;
+}
+
 
 

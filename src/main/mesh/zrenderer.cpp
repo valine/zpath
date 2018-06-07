@@ -126,6 +126,10 @@ void ZRenderer::recreateBuffers() {
 
 mat4 ZRenderer::getModelMatrix(ZObject* object) {
 
+    if (object->getModelMatrixSet()) {
+        return object->getModelMatrix();
+    } 
+    
     mat4 modelMatrix = mat4();
     modelMatrix = scale(modelMatrix, object->getScale());
     modelMatrix = translate(modelMatrix, object->getTranslation());

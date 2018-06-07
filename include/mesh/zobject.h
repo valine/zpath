@@ -38,6 +38,10 @@ public:
 	bool isBillboard();
 	void setBillboard(bool billboard);
 
+	void setModelMatrix(mat4);
+	mat4 getModelMatrix();
+	bool getModelMatrixSet();
+
 private: 
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
@@ -50,6 +54,8 @@ private:
 
 	float mRotationAngle = 0;
 
+	mat4 mModelMatrix;
+	bool mModelMatrixSet = false;
 	bool mIsBillboard = false;
 };
 #endif
