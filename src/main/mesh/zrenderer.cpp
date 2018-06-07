@@ -129,8 +129,7 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
     mat4 modelMatrix = mat4();
     modelMatrix = scale(modelMatrix, object->getScale());
     modelMatrix = translate(modelMatrix, object->getTranslation());
-    modelMatrix = rotate(modelMatrix, radians(object->getRotationAngle()), object->getRotation());
-
+    
     mat4 billboard = mat4(1);
 
     if (object->isBillboard()) {
@@ -148,11 +147,12 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
 
         mat4 retranslation = mat4(1);
         retranslation = translate(retranslation, objectCenter);
-
-       
         billboard = retranslation * inverse(lookAt) * snapToCenter;
+
         return billboard * modelMatrix;
-    } 
+    } else {
+        modelMatrix = rotate(modelMatrix, radians(object->getRotationAngle()), object->getRotation());
+    }
 
     return modelMatrix;
 }
