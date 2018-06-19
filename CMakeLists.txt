@@ -88,7 +88,7 @@ set(glm_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/glm")
 set(glm_install_dir "${glm_prefix}")
 set(glm_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glm_install_dir}")
 ExternalProject_Add(glm
-        PREFIX  ${assimp_prefix}
+        PREFIX  ${glm_prefix}
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG 0.9.7.4
 
