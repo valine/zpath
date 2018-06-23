@@ -101,6 +101,8 @@ ExternalProject_Add(glm
     ExternalProject_Get_Property(glm SOURCE_DIR)
     set(GLM_INCLUDE_DIRS ${SOURCE_DIR})
     set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIRS} CACHE STRING "")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
+
 
 #Opengl
 find_package (OpenGL REQUIRED)
