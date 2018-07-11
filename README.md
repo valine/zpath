@@ -14,9 +14,7 @@ Dependencies
 Packages to install on ubuntu
 
 * libfreetype6-dev
-* freeglut3-dev
 * libglu1-mesa-dev
-* libglu1-xorg-dev
 
 ### To build
 

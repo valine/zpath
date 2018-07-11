@@ -46,9 +46,9 @@ private:
 	bool mManualProjectionMode = false;
 	bool mBillboardTargetSet = false;
 	
-	vec3 mPosition;
-	vec3 mFront;
-	vec3 mUp;
+	vec3 mPosition = vec3(0);
+	vec3 mFront = vec3(1);
+	vec3 mUp = vec3(1);
 
 	vec3 mBillboardTarget;
 
@@ -58,7 +58,7 @@ private:
 	int mHeight = 1;
 
 	mat4 mProjectionMatrix;
-	mat4 mViewMatrix;
+	mat4 mViewMatrix = mat4(1);
 
 	float mFocalLength = 80.0;
 };

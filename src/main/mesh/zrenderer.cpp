@@ -1,4 +1,6 @@
 #include "mesh/zrenderer.h"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 
 ZRenderer::ZRenderer(string resourcePath) {
@@ -210,6 +212,8 @@ void ZRenderer::renderMain() {
     shader->setVec3("uWorldColor", mScene->getWorld()->getColor());
     shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
     shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
+
+    cout<<glm::to_string(mCamera->getViewMatrix())<<endl;
 
     shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
     shader->setMat4("uViewMatrix", mCamera->getViewMatrix());

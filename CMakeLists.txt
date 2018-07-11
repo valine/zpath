@@ -87,15 +87,13 @@ add_dependencies(zpath assimp)
 set(glm_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/glm")
 set(glm_install_dir "${glm_prefix}")
 set(glm_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glm_install_dir}")
-ExternalProject_Add(glm
+externalproject_add(glm
         PREFIX  ${glm_prefix}
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG 0.9.7.4
-
-        UPDATE_COMMAND "" BUILD_COMMAND "" INSTALL_COMMAND ""
+        UPDATE_COMMAND git pull origin master 
         INSTALL_DIR    ${glm_install_dir}
         CMAKE_ARGS     ${glm_cmake_args}
-        LOG_DOWNLOAD 1 LOG_UPDATE 1 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
     )
 
     ExternalProject_Get_Property(glm SOURCE_DIR)
@@ -103,6 +101,7 @@ ExternalProject_Add(glm
     set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIRS} CACHE STRING "")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
 
+add_dependencies(zpath glm)
 
 #Opengl
 find_package (OpenGL REQUIRED)
