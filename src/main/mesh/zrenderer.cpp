@@ -213,8 +213,6 @@ void ZRenderer::renderMain() {
     shader->setVec3("uLightPositions", (uint) lights.size(), mScene->getLightPositions());
     shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 
-    cout<<glm::to_string(mCamera->getViewMatrix())<<endl;
-
     shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
     shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
 
