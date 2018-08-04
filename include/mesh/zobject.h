@@ -28,6 +28,7 @@ public:
 
 	void setRotation(vec3);
 	vec3 getRotation();
+	void rotateBy(float angle);
 
 	void setRotationAngle(float);
 	float getRotationAngle();

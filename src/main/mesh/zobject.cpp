@@ -62,6 +62,10 @@ float ZObject::getRotationAngle() {
 	return mRotationAngle;
 }
 
+void ZObject::rotateBy(float angle) {
+	mRotationAngle += angle;
+}
+
 void ZObject::setScale(vec3 scale) {
 	mScale = scale;
 }

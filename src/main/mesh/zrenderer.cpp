@@ -93,6 +93,14 @@ void ZRenderer::setRenderToTexture(bool toTexture) {
 void ZRenderer::onDrawFinshed() {
 //renderQuad();
 //renderCube();
+
+    if ( mScene->getObjects().size() > 0) { 
+        ZObject* object = mScene->getObjects().at(0);
+        object->setRotation(vec3(0,0,1));
+        mScene->getObjects().at(0)->rotateBy(0.1f);
+
+    }
+
 }
 
 void ZRenderer::draw() {

@@ -18,13 +18,14 @@ BasicScene::BasicScene(string resourcePath)
 	ZObjLoader loader = ZObjLoader();
 	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/monkey.3ds");
 
-	// int i = 0;
-	// for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-	// 	ZObject *object = (*it);
-	// 	//if (i % 3 ==0) {
-	// 		object->setBillboard(true);
-	// 	//}
-	// 	addObject(object);
-	// 	i++;
-	// }
+	int i = 0;
+	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+		ZObject *object = (*it);
+		//if (i % 3 ==0) {
+			//object->setBillboard(true);
+		//}
+		
+		addObject(object);
+		i++;
+	}
 }
