@@ -110,7 +110,7 @@ mat4 ZCamera::getViewMatrix() {
 		mat4 mViewMatrix = glm::lookAt(
 		    mPosition, // Camera is at (4,3,3), in World Space
 		    mFront, // and looks at the origin
-		    mUp  // Head is up (set to 0,-1,0 to look upside-down)
+		    glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 
 		mat4 translationMat = mat4(1);

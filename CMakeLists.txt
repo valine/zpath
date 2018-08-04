@@ -90,7 +90,7 @@ set(glm_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glm_install_dir}")
 externalproject_add(glm
         PREFIX  ${glm_prefix}
         GIT_REPOSITORY https://github.com/g-truc/glm.git
-        GIT_TAG 0.9.7.4
+        GIT_TAG 0.9.7.0
         UPDATE_COMMAND git pull origin master 
         INSTALL_DIR    ${glm_install_dir}
         CMAKE_ARGS     ${glm_cmake_args}
