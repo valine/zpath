@@ -33,14 +33,22 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         ZObject* object = new ZObject();
 
+        aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
+		aiColor3D color;
+		mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+		ZMaterial* zmaterial = new ZMaterial(vec3(color.r,color.g,color.b));
+		cout<<"color r "<<color.r<<" color g "<<color.g<<" color b "<<color.b<<endl;
+
         ZMesh* convertedMesh = convertAiMesh(mesh);
         object->setMesh(convertedMesh);
        
         ZMeshUtils meshutils = ZMeshUtils();
 		object->setOrigin(meshutils.calculateBoundingBoxCenter(convertedMesh));
 
+		object->setMaterial(zmaterial);
         objects.push_back(object);		
     }
+
     // then do the same for each of its children
     for(unsigned int i = 0; i < node->mNumChildren; i++) {
         vector<ZObject*> children = processNode(node->mChildren[i], scene);

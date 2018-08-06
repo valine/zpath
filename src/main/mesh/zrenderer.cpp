@@ -152,11 +152,18 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
     mat4 billboard = mat4(1);
 
     if (object->isBillboard()) {
-        mat4 cameraMat = getModelMatrix(mCamera);
+        mat4 cameraMat;
+        if (mCamera->isManualView()) {
+            cameraMat = inverse(mCamera->getViewMatrix());
+        } else {
+            cameraMat = getModelMatrix(mCamera);
+        }
+
         vec4 cameraPos = cameraMat * vec4(0,0,0,1);
         vec4 up = cameraMat * vec4(0,1,0,0);
         vec3 up3 = vec3(up.x, up.y, up.z);
         vec3 cameraPos3 = vec3(cameraPos.x, cameraPos.y, cameraPos.z);
+
         vec4 objectCenterTmp = modelMatrix * vec4(object->getOrigin().x, object->getOrigin().y, object->getOrigin().z, 1.0);
         vec3 objectCenter = vec3(objectCenterTmp.x, objectCenterTmp.y, objectCenterTmp.z);
 
