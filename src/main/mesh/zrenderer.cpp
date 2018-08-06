@@ -176,7 +176,6 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
         return billboard * modelMatrix;
     } else {
         modelMatrix = rotate(modelMatrix, radians(object->getRotationAngle()), object->getRotation());
-
         modelMatrix = parentMat * modelMatrix;
     }
 
@@ -300,8 +299,11 @@ void ZRenderer::renderMain() {
         shader->setFloat("uSelected", selected);
         shader->setFloat("uRoughness", material->getRoughness());
 
-
-        shader->setVec3("uCameraPosition", getModelMatrix(mCamera) * vec4(0,0,0,1));
+        if (mCamera->isManualView()) {
+            shader->setVec3("uCameraPosition", inverse(mCamera->getViewMatrix()) * vec4(0,0,0,1));
+        } else {
+            shader->setVec3("uCameraPosition", getModelMatrix(mCamera) * vec4(0,0,0,1));
+        }
 
         glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
         objectIndex++;

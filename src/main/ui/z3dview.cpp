@@ -37,8 +37,9 @@ void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
  		ZScene* scene = mRenderer->getScene();
  		int activeObjectIndex = scene->getActiveObjectIndex();
  		if (activeObjectIndex != -1) {
- 			mTranslation = vec3(0);
- 			updateCameraPosition();
+ 			mSpinRig->setTranslation(scene->getObjects().at(activeObjectIndex)->getOrigin());
+ 		} else {
+ 			mSpinRig->setTranslation(vec3(0));
  		}
  	}
 }

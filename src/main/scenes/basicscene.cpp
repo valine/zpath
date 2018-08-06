@@ -8,6 +8,7 @@ BasicScene::BasicScene(string resourcePath)
 	ZWorld* world = new ZWorld();
 	world->setColor(vec3(1,1,1));
 	world->setEnvironmentTexture(environmentTexture);
+	world->blurBackground(true);
 	setWorld(world);
 
 	//- Lighting setup ---------------------------------------------------------------
