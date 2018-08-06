@@ -151,7 +151,6 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
     
     mat4 billboard = mat4(1);
 
-
     if (object->isBillboard()) {
         mat4 cameraMat = getModelMatrix(mCamera);
         vec4 cameraPos = cameraMat * vec4(0,0,0,1);
@@ -187,6 +186,11 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
 mat4 ZRenderer::getViewMatrix(ZObject *object) {
     mat4 viewMatrix = getModelMatrix(object);
     viewMatrix = inverse(viewMatrix);
+
+    if (mCamera->isManualView()) {
+        viewMatrix = mCamera->getViewMatrix();
+    } 
+
     return viewMatrix;
 
 }
