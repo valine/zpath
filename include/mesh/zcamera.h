@@ -4,10 +4,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <GLFW/glfw3.h>
+#include "mesh/zobject.h"
 using namespace glm;
 
-class ZCamera {
+class ZCamera : public ZObject {
 	
 public:
 	ZCamera();
@@ -38,7 +38,6 @@ public:
 	void setProjectionMatrix(mat4 projectionMatrix);
 	void setBillboardTarget(vec3);
 	vec3 getBillboardTarget();
-
 	bool isManualView();
 
 private:

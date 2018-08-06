@@ -25,6 +25,7 @@ public:
 
 	void setTranslation(vec3);
 	vec3 getTranslation();
+	void translateBy(vec3);
 
 	void setRotation(vec3);
 	vec3 getRotation();
@@ -43,6 +44,11 @@ public:
 	mat4 getModelMatrix();
 	bool getModelMatrixSet();
 
+	ZObject* getParent();
+	void setParent(ZObject* parent);
+	vector<ZObject*> getChildren();
+
+
 private: 
 	ZMesh* mMesh;
 	ZMaterial* mMaterial;
@@ -50,7 +56,7 @@ private:
 	vec3 mOrigin = vec3(0);
 
 	vec3 mTranslation = vec3(0);
-	vec3 mRotation = vec3(1);
+	vec3 mRotation = vec3(1,0,0);
 	vec3 mScale = vec3(1);
 
 	float mRotationAngle = 0;
@@ -58,5 +64,11 @@ private:
 	mat4 mModelMatrix;
 	bool mModelMatrixSet = false;
 	bool mIsBillboard = false;
+
+	ZObject* mParent = nullptr;
+	vector<ZObject*> mChildren;
+
+	void addChild(ZObject *child);
+
 };
 #endif

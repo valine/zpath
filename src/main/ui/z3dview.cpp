@@ -9,6 +9,15 @@ Z3DView::Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer)
     mRenderer->setRenderToTexture(false);
     renderer->setParentView(this);
     renderer->init();
+
+    mTiltRig = new ZObject();
+    mSpinRig = new ZObject();
+
+    mTiltRig->setParent(mSpinRig);
+    renderer->getCamera()->setParent(mTiltRig);
+
+    mTiltRig->setRotation(vec3(1,0,0));
+    mSpinRig->setRotation(vec3(0,1,0));
 }
 
 void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -36,10 +45,14 @@ void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
 	
 void Z3DView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
-	int deltaX =  getLastX() - x;
+	int deltaX = getLastX() - x;
 	int deltaY = getLastY() - y;
 	if (middleMouseIsDown() && !shiftKeyPressed()) {
 		//Orbit 
+
+		mSpinRig->rotateBy(deltaX);
+		mTiltRig->rotateBy(deltaY);
+
 		mRotationX += deltaX;
 		mRotationY -= deltaY;
 	} else if (middleMouseIsDown() && shiftKeyPressed()) {
@@ -74,6 +87,7 @@ void Z3DView::onScrollChange(double x, double y) {
 		mOrbitAnchorPoint.x = 0.1;
 	}
 	
+	mRenderer->getCamera()->translateBy(vec3(0,0,-y));
 	updateCameraPosition();
 }
 
@@ -87,31 +101,7 @@ void Z3DView::setRenderer(ZRenderer *renderer) {
 }
 
 void Z3DView::updateCameraPosition() {
-	ZCamera* camera = mRenderer->getCamera();
 
-	vec3 up = glm::vec3(0,1,0);
-
-	mat4 rotationMatrix = mat4();
-    rotationMatrix = glm::rotate(rotationMatrix, (float) mRotationX / 100, glm::vec3(0, 1, 0));
-	rotationMatrix = glm::rotate(rotationMatrix, (float) mRotationY / 100, glm::vec3(0, 0, 1));
-
-	vec3 newPosition = vec3(rotationMatrix * vec4(mOrbitAnchorPoint, 1.0));
-	vec3 newUp = vec3(rotationMatrix * vec4(up, 1.0));
-	vec3 newFront = camera->getFront();
-
-	// newFront.y = mTranslation.y;
-	// newFront.z = mTranslation.z;
-
-	// newPosition.y += mTranslation.y;
-	// newPosition.z += mTranslation.z;
-
-	// newUp.y += mTranslation.y;
-	// newUp.z += mTranslation.z;
-
-	camera->setPosition(newPosition);
-	camera->setUp(newUp);
-	camera->setFront(newFront);
-	camera->setTranslation(mTranslation);
 }
 
 ZScene* Z3DView::getScene() {
@@ -133,4 +123,4 @@ void Z3DView::draw() {
     //glDepthMask(true);
 
     //glEnable(GL_DEPTH_TEST);
-}
+}   

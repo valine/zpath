@@ -3,6 +3,7 @@
 #include <glm/gtx/string_cast.hpp>
 
 
+
 ZRenderer::ZRenderer(string resourcePath) {
     mShader = new ZShader(base_vs, base_fs);
     mBackgroundShader = new ZShader(background_vs, background_fs);
@@ -94,20 +95,18 @@ void ZRenderer::onDrawFinshed() {
 //renderQuad();
 //renderCube();
 
-    if ( mScene->getObjects().size() > 0) { 
-        ZObject* object = mScene->getObjects().at(0);
-        object->setRotation(vec3(0,0,1));
-        mScene->getObjects().at(0)->rotateBy(0.1f);
+    // if ( mScene->getObjects().size() > 0) { 
+    //     ZObject* object = mScene->getObjects().at(0);
 
-    }
+    //     object->setRotation(vec3(0,0,1));
+    //     mScene->getObjects().at(0)->rotateBy(0.1f);
+    // }
 
 }
 
 void ZRenderer::draw() {
     if (mScene != nullptr) {
         if (mParentView->getVisibility()) {
-
-    
             renderMain();
             renderSelection();
             renderToScreen();
@@ -140,13 +139,25 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
         return object->getModelMatrix();
     } 
     
-    mat4 modelMatrix = mat4();
+    mat4 modelMatrix = mat4(1);
+    
+    mat4 parentMat = mat4(1);
+    if (object->getParent() != nullptr) {
+        parentMat = getModelMatrix(object->getParent());
+    }
+
     modelMatrix = scale(modelMatrix, object->getScale());
     modelMatrix = translate(modelMatrix, object->getTranslation());
     
     mat4 billboard = mat4(1);
 
+
     if (object->isBillboard()) {
+        mat4 cameraMat = getModelMatrix(mCamera);
+        vec4 cameraPos = cameraMat * vec4(0,0,0,1);
+        vec4 up = cameraMat * vec4(0,1,0,0);
+        vec3 up3 = vec3(up.x, up.y, up.z);
+        vec3 cameraPos3 = vec3(cameraPos.x, cameraPos.y, cameraPos.z);
         vec4 objectCenterTmp = modelMatrix * vec4(object->getOrigin().x, object->getOrigin().y, object->getOrigin().z, 1.0);
         vec3 objectCenter = vec3(objectCenterTmp.x, objectCenterTmp.y, objectCenterTmp.z);
 
@@ -155,8 +166,8 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
 
         mat4 lookAt = glm::lookAt(
             vec3(0), // Camera is at (4,3,3), in World Space
-            mCamera->getBillboardTarget() - objectCenter, // and looks at the origin
-            mCamera->getUp()  // Head is up (set to 0,-1,0 to look upside-down)
+            cameraPos3 - objectCenter, // and looks at the origin
+            up3  // Head is up (set to 0,-1,0 to look upside-down)
         );
 
         mat4 retranslation = mat4(1);
@@ -166,9 +177,18 @@ mat4 ZRenderer::getModelMatrix(ZObject* object) {
         return billboard * modelMatrix;
     } else {
         modelMatrix = rotate(modelMatrix, radians(object->getRotationAngle()), object->getRotation());
+
+        modelMatrix = parentMat * modelMatrix;
     }
 
     return modelMatrix;
+}
+
+mat4 ZRenderer::getViewMatrix(ZObject *object) {
+    mat4 viewMatrix = getModelMatrix(object);
+    viewMatrix = inverse(viewMatrix);
+    return viewMatrix;
+
 }
 
 unsigned int ZRenderer::getMainTexture() {
@@ -191,7 +211,7 @@ void ZRenderer::renderMain() {
     // Draw background
     mBackgroundShader->use();
     mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
-    mBackgroundShader->setMat4("view", mCamera->getViewMatrix());
+    mBackgroundShader->setMat4("view", getViewMatrix(mCamera));
     mBackgroundShader->setVec3("uColorFactor", mScene->getWorld()->getColor());
     glActiveTexture(GL_TEXTURE0);
     if (mScene->getWorld()->isBackgroundBlurred()) {
@@ -222,7 +242,7 @@ void ZRenderer::renderMain() {
     shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 
     shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
-    shader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+    shader->setMat4("uViewMatrix", getViewMatrix(mCamera));
 
     int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
     int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
@@ -276,7 +296,8 @@ void ZRenderer::renderMain() {
         shader->setFloat("uSelected", selected);
         shader->setFloat("uRoughness", material->getRoughness());
 
-        shader->setVec3("uCameraPosition", mCamera->getPosition());
+
+        shader->setVec3("uCameraPosition", getModelMatrix(mCamera) * vec4(0,0,0,1));
 
         glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
         objectIndex++;
@@ -292,7 +313,7 @@ void ZRenderer::renderSelection() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mSelectionShader->use();
         mSelectionShader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
-        mSelectionShader->setMat4("uViewMatrix", mCamera->getViewMatrix());
+        mSelectionShader->setMat4("uViewMatrix", getViewMatrix(mCamera));
 
         vector<ZObject*> objects = mScene->getObjects();
 

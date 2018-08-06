@@ -46,6 +46,10 @@ vec3 ZObject::getTranslation() {
 	return mTranslation;
 }
 
+void ZObject::translateBy(vec3 translate) {
+	mTranslation = mTranslation + translate;
+}
+
 void ZObject::setRotation(vec3 rotation) {
 	mRotation = rotation;
 }
@@ -74,7 +78,6 @@ vec3 ZObject::getScale() {
 	return mScale;
 }
 
-
 bool ZObject::isBillboard() {
 	return mIsBillboard;
 }
@@ -96,5 +99,20 @@ bool ZObject::getModelMatrixSet() {
 	return mModelMatrixSet;
 }
 
+ZObject* ZObject::getParent() {
+	return mParent;
+}
 
+void ZObject::setParent(ZObject* parent) {
+	mParent = parent;
+	parent->addChild(this);
+}
+
+void ZObject::addChild(ZObject* child) {
+	mChildren.push_back(child);
+}
+
+vector<ZObject*> ZObject::getChildren() {
+	return mChildren;
+}
 

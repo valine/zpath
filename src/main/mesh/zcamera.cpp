@@ -113,6 +113,8 @@ mat4 ZCamera::getViewMatrix() {
 		    glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 		);
 
+		mViewMatrix = mat4(1);
+
 		mat4 translationMat = mat4(1);
 		translationMat = translate(translationMat, mTranslation);
 		//mViewMatrix = glm::rotate(mViewMatrix, (float)glfwGetTime() / 5, glm::vec3(0, 1, 0)); // where x, y, z is axis of rotation (e.g. 0 1 0)

@@ -24,7 +24,7 @@ BasicScene::BasicScene(string resourcePath)
 		//if (i % 3 ==0) {
 			//object->setBillboard(true);
 		//}
-		
+
 		addObject(object);
 		i++;
 	}

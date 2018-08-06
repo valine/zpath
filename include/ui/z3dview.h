@@ -6,6 +6,7 @@
 #include <ui/zshader.h>
 #include "mesh/zobjloader.h"
 #include "mesh/zrenderer.h"
+#include "mesh/zobject.h"
 #include "mesh/zscene.h"
 #include <vector> 
 #include <string>
@@ -46,6 +47,9 @@ private:
 	void updateCameraPosition();
 
 	vec3 mOrbitAnchorPoint = vec3(15,0,0);
+	ZObject* mTiltRig;
+	ZObject* mSpinRig;
+
 };
 
 #endif
