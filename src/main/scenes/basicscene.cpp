@@ -16,17 +16,17 @@ BasicScene::BasicScene(string resourcePath)
 	ZPointLight* light = new ZPointLight(vec3(3.47, 3.31, 3.79), vec3(0,0.9,1));
 	addLight(light);
 
-	//ZObjLoader loader = ZObjLoader();
-	//vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/monkey.3ds");
+	ZObjLoader loader = ZObjLoader();
+	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/monkey.3ds");
 
-	// int i = 0;
-	// for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-	// 	ZObject *object = (*it);
-	// 	//if (i % 3 ==0) {
-	// 		//object->setBillboard(true);
-	// 	//}
+	int i = 0;
+	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+		ZObject *object = (*it);
+		//if (i % 3 ==0) {
+			//object->setBillboard(true);
+		//}
 
-	// 	//addObject(object);
-	// 	i++;
-	// }
+		addObject(object);
+		i++;
+	}
 }
