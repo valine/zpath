@@ -403,6 +403,10 @@ ZCamera* ZRenderer::getCamera() {
     return mCamera;
 }
 
+void ZRenderer::setCamera(ZCamera* camera) {
+    mCamera = camera;
+}
+
 void ZRenderer::renderQuad() {
     if (quadVAO == 0)
     {

@@ -38,6 +38,7 @@ public:
 	void renderCube();
 	int getObjectIndexAtLocation(int x, int y);
 	ZCamera* getCamera();
+	void setCamera(ZCamera*);
 
 	unsigned int getMainTexture();
 	void setRenderToTexture(bool);

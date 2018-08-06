@@ -43,9 +43,8 @@ private:
 	float mRotationY = 0;
 
 	vec3 mTranslation;
-	
-	void updateCameraPosition();
 
+	void updateCameraPosition();
 	vec3 mOrbitAnchorPoint = vec3(15,0,0);
 	ZObject* mTiltRig;
 	ZObject* mSpinRig;
