@@ -54,5 +54,5 @@ int main(int argc, char* argv[]) {
 
 
     ZPathViewController* viewController = new ZPathViewController(path);
-    ZApplication application(viewController, "ZPath", true);
+    ZApplication application(viewController, "Brain Editor", true);
 }

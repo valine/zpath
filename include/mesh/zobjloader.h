@@ -34,7 +34,7 @@ public:
 	
 private:
 	vector<string> split(string s, string delim);
-	vector<ZObject*> processNode(aiNode *node, const aiScene *scene);
+	vector<ZObject*> processNode(aiNode *node, const aiScene *scene, ZObject* parent);
 	ZMesh* convertAiMesh(aiMesh* mesh);
 };
 

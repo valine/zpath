@@ -78,6 +78,14 @@ vec3 ZObject::getScale() {
 	return mScale;
 }
 
+void ZObject::scaleBy(vec3 scale) {
+	vec3 tmpScale = mScale + scale;
+
+	if (tmpScale.x > 0) {
+		mScale = mScale + scale;
+	}
+}
+
 bool ZObject::isBillboard() {
 	return mIsBillboard;
 }
@@ -105,7 +113,9 @@ ZObject* ZObject::getParent() {
 
 void ZObject::setParent(ZObject* parent) {
 	mParent = parent;
-	parent->addChild(this);
+	// if (mParent != nullptr) {
+	// 	parent->addChild(this);
+	// }
 }
 
 void ZObject::addChild(ZObject* child) {

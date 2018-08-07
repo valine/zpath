@@ -36,6 +36,7 @@ public:
 
 	void setScale(vec3);
 	vec3 getScale();
+	void scaleBy(vec3);
 
 	bool isBillboard();
 	void setBillboard(bool billboard);

@@ -21,10 +21,10 @@ vector<ZObject*> ZObjLoader::loadObjects(const std::string& pFile) {
 	}
 
 	aiNode* node = scene->mRootNode;
-    return processNode(node, scene);
+    return processNode(node, scene, nullptr);
 }
 
-vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene) {
+vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZObject* parent) {
 	vector<ZObject*> objects;
 
     // process all the node's meshes (if any)
@@ -51,8 +51,26 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene) {
 
     // then do the same for each of its children
     for(unsigned int i = 0; i < node->mNumChildren; i++) {
-        vector<ZObject*> children = processNode(node->mChildren[i], scene);
-        objects.insert(objects.end(), children.begin(), children.end());
+    	//if (!objects.empty()) {
+    		//ZObject* object = objects.back();
+    	if (node->mNumMeshes > 0) {
+	    	vector<ZObject*> children = processNode(node->mChildren[i], scene, objects.at(0));
+	    	if (parent != nullptr) {
+	        
+	     
+				for (vector<ZObject*>::iterator it = children.begin() ; it != children.end(); ++it) {
+					ZObject *child = (*it);
+					if (child != nullptr) {
+						child->setParent(parent);
+					}
+				}
+			}
+			objects.insert(objects.end(), children.begin(), children.end());
+		} else {
+			vector<ZObject*> children = processNode(node->mChildren[i], scene, nullptr);
+			objects.insert(objects.end(), children.begin(), children.end());
+		}
+			
     }
 
     return objects;

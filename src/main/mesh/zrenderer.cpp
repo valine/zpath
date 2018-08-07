@@ -15,6 +15,21 @@ ZRenderer::ZRenderer(string resourcePath) {
     mCamera = new ZCamera();
 }
 
+// Experiments, like rotating objects to test features 
+void ZRenderer::onDrawFinshed() {
+//renderQuad();
+//renderCube();
+
+    // if ( mScene->getObjects().size() > 0) { 
+    //     ZObject* object = mScene->getObjects().at(0);
+
+    //     object->setRotation(vec3(0,0,1));
+    //     mScene->getObjects().at(0)->rotateBy(0.1f);
+    // }
+
+}
+
+
 void ZRenderer::init() {
     mShader->use();
     mShader->setInt("irradianceMap", 0);
@@ -88,20 +103,6 @@ void ZRenderer::init() {
 
 void ZRenderer::setRenderToTexture(bool toTexture) {
     mRenderToTexture = toTexture;
-}
-
-// Experimental features
-void ZRenderer::onDrawFinshed() {
-//renderQuad();
-//renderCube();
-
-    // if ( mScene->getObjects().size() > 0) { 
-    //     ZObject* object = mScene->getObjects().at(0);
-
-    //     object->setRotation(vec3(0,0,1));
-    //     mScene->getObjects().at(0)->rotateBy(0.1f);
-    // }
-
 }
 
 void ZRenderer::draw() {
