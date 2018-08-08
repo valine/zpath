@@ -64,6 +64,9 @@ void ZViewController::onScrollChange(double x, double y) {
     mRootView->onScrollChange(x, y);
 }
 
+void ZViewController::onTerminate() {
+}
+
 void ZViewController::draw() {
     if (mDrawingEnabled) {
         mUIShader->use();

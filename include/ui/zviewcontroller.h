@@ -50,6 +50,7 @@ public:
 	virtual void onClick(ZButton* sender);
 	virtual void onSliderValueChanged(ZSlider* sender, float value);
 	virtual void onFileDrop(int count, const char** paths);
+	virtual void onTerminate();
 	void setDrawingEnabled(bool);
 	string getResourcePath();
 private:

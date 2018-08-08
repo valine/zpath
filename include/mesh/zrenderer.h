@@ -10,10 +10,10 @@
 #include "zpointlight.h"
 #include <iostream>
 #include "zmeshutils.h"
+#include "zrenderutils.h"
 
 #include <GLFW/glfw3.h>
 
-#define GLM_SWIZZLE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -42,19 +42,18 @@ public:
 
 	unsigned int getMainTexture();
 	void setRenderToTexture(bool);
-
 	void recreateBuffers();
 
 private:
-	ZScene *mScene = nullptr;
-	ZShader *mShader;
-	ZShader *mColorTextureShader;
+	ZScene* mScene = nullptr;
+	ZShader* mShader;
+	ZShader* mColorTextureShader;
 
-	ZShader *mHDRShader;
-	ZShader *mBackgroundShader;
-	ZShader *mSelectionShader;
+	ZShader* mHDRShader;
+	ZShader* mBackgroundShader;
+	ZShader* mSelectionShader;
 
-	ZView *mParentView = nullptr;
+	ZView* mParentView = nullptr;
 	ZCamera* mCamera;
 	ZMeshUtils meshUtils = ZMeshUtils();
 
@@ -65,7 +64,6 @@ private:
 	unsigned int mFinalFBO;
 	unsigned int mFinalBuffer;
 	unsigned int mFinalRenderBuffer;
-
 
 	unsigned int mSelectionFBO;
 	unsigned int mSelectionBuffer;
@@ -83,9 +81,6 @@ private:
 	void renderSelection();
 	void renderToScreen();
 	void renderQuad();
-
-	mat4 getModelMatrix(ZObject* object);
-	mat4 getViewMatrix(ZObject*);
 
 	int mMaxLightCount = 4;
 

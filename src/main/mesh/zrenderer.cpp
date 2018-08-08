@@ -134,74 +134,6 @@ void ZRenderer::recreateBuffers() {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 }
 
-mat4 ZRenderer::getModelMatrix(ZObject* object) {
-
-    if (object->getModelMatrixSet()) {
-        return object->getModelMatrix();
-    } 
-    
-    mat4 modelMatrix = mat4(1);
-    
-    mat4 parentMat = mat4(1);
-    if (object->getParent() != nullptr) {
-        parentMat = getModelMatrix(object->getParent());
-    }
-
-    modelMatrix = scale(modelMatrix, object->getScale());
-    modelMatrix = translate(modelMatrix, object->getTranslation());
-    
-    mat4 billboard = mat4(1);
-
-    if (object->isBillboard()) {
-        mat4 cameraMat;
-        if (mCamera->isManualView()) {
-            cameraMat = inverse(mCamera->getViewMatrix());
-        } else {
-            cameraMat = getModelMatrix(mCamera);
-        }
-
-        vec4 cameraPos = cameraMat * vec4(0,0,0,1);
-        vec4 up = cameraMat * vec4(0,1,0,0);
-        vec3 up3 = vec3(up.x, up.y, up.z);
-        vec3 cameraPos3 = vec3(cameraPos.x, cameraPos.y, cameraPos.z);
-
-        vec4 objectCenterTmp = modelMatrix * vec4(object->getOrigin().x, object->getOrigin().y, object->getOrigin().z, 1.0);
-        vec3 objectCenter = vec3(objectCenterTmp.x, objectCenterTmp.y, objectCenterTmp.z);
-
-        mat4 snapToCenter = mat4(1);
-        snapToCenter = inverse(translate(snapToCenter, objectCenter));
-
-        mat4 lookAt = glm::lookAt(
-            vec3(0), // Camera is at (4,3,3), in World Space
-            cameraPos3 - objectCenter, // and looks at the origin
-            up3  // Head is up (set to 0,-1,0 to look upside-down)
-        );
-
-        mat4 retranslation = mat4(1);
-        retranslation = translate(retranslation, objectCenter);
-        billboard = retranslation * inverse(lookAt) * snapToCenter;
-
-        return billboard * modelMatrix;
-    } else {
-        modelMatrix = rotate(modelMatrix, radians(object->getRotationAngle()), object->getRotation());
-        modelMatrix = parentMat * modelMatrix;
-    }
-
-    return modelMatrix;
-}
-
-mat4 ZRenderer::getViewMatrix(ZObject *object) {
-    mat4 viewMatrix = getModelMatrix(object);
-    viewMatrix = inverse(viewMatrix);
-
-    if (mCamera->isManualView()) {
-        viewMatrix = mCamera->getViewMatrix();
-    } 
-
-    return viewMatrix;
-
-}
-
 unsigned int ZRenderer::getMainTexture() {
     return mFinalBuffer;
 }
@@ -222,7 +154,7 @@ void ZRenderer::renderMain() {
     // Draw background
     mBackgroundShader->use();
     mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
-    mBackgroundShader->setMat4("view", getViewMatrix(mCamera));
+    mBackgroundShader->setMat4("view", ZRenderUtils::getViewMatrix(mCamera));
     mBackgroundShader->setVec3("uColorFactor", mScene->getWorld()->getColor());
     glActiveTexture(GL_TEXTURE0);
     if (mScene->getWorld()->isBackgroundBlurred()) {
@@ -253,7 +185,7 @@ void ZRenderer::renderMain() {
     shader->setVec3("uLightColors", (uint) lights.size(), mScene->getLightColors());
 
     shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
-    shader->setMat4("uViewMatrix", getViewMatrix(mCamera));
+    shader->setMat4("uViewMatrix", ZRenderUtils::getViewMatrix(mCamera));
 
     int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
     int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
@@ -268,7 +200,7 @@ void ZRenderer::renderMain() {
         ZMesh *mesh = (*it)->getMesh();
         ZMaterial* material = object->getMaterial();
 
-        shader->setMat4("uModelMatrix", getModelMatrix(object));
+        shader->setMat4("uModelMatrix", ZRenderUtils::getModelMatrix(object, mCamera));
 
         if (material->getColorTexture() != nullptr) {
             shader = mColorTextureShader;
@@ -310,7 +242,7 @@ void ZRenderer::renderMain() {
         if (mCamera->isManualView()) {
             shader->setVec3("uCameraPosition", inverse(mCamera->getViewMatrix()) * vec4(0,0,0,1));
         } else {
-            shader->setVec3("uCameraPosition", getModelMatrix(mCamera) * vec4(0,0,0,1));
+            shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr) * vec4(0,0,0,1));
         }
 
         glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
@@ -327,7 +259,7 @@ void ZRenderer::renderSelection() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mSelectionShader->use();
         mSelectionShader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
-        mSelectionShader->setMat4("uViewMatrix", getViewMatrix(mCamera));
+        mSelectionShader->setMat4("uViewMatrix", ZRenderUtils::getViewMatrix(mCamera));
 
         vector<ZObject*> objects = mScene->getObjects();
 
@@ -335,9 +267,10 @@ void ZRenderer::renderSelection() {
 
         int objectIndex = 0;
         for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+
             ZMesh *mesh = (*it)->getMesh();
 
-            mSelectionShader->setMat4("uModelMatrix", getModelMatrix((*it)));
+            mSelectionShader->setMat4("uModelMatrix", ZRenderUtils::getModelMatrix((*it), mCamera));
 
             glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());

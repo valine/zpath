@@ -120,6 +120,7 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
         glfwSwapBuffers(window);
     }
 
+    viewController->onTerminate();
     glfwDestroyWindow(window);
     glfwTerminate();
     exit(EXIT_SUCCESS);
