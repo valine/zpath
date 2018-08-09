@@ -31,7 +31,6 @@ void handler(int sig) {
   exit(1);
 }
 
-
 int main(int argc, char* argv[]) {
     signal(SIGSEGV, handler);
       // Get the last position of '/'
@@ -52,7 +51,6 @@ int main(int argc, char* argv[]) {
     std::cout << "Path: " << path << std::endl;
     std::cout << "Name: " << name << std::endl;
 
-
     ZPathViewController* viewController = new ZPathViewController(path);
-    ZApplication application(viewController, "Brain Editor", true);
+    ZApplication application(viewController, "Brain Editor", false);
 }

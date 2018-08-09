@@ -5,11 +5,12 @@ ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tiles
 : ZView(maxWidth, maxHeight) {
    	mScene = scene;
    	mResourcePath = resourcePath;
-
 	setTileCount(tilesX, tilesY);
+	setBackgroundColor(vec4(0,0,0,1));
 }
 
 void ZTiledView::setTileCount(int tilesX, int tilesY) {
+
 	mTileCountX = tilesX;
 	mTileCountY = tilesY;
 
@@ -29,6 +30,8 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 			} else {
 				tile = new Z3DView(width, height, renderer);
 				mTiles.push_back(tile);
+				tile->setWindowWidth(getWindowWidth());
+				tile->setWindowHeight(getWindowHeight());
 				addSubView(tile);
 			}
 
@@ -36,6 +39,9 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 			tile->setMargin(mTileMargin, mTileMargin, mTileMargin, mTileMargin);
 			tile->setBackgroundColor(backgroundColor);
 			tile->setVisibility(true);
+			tile->getRenderer()->getCamera()->setWidth(width);
+			tile->getRenderer()->getCamera()->setHeight(height);
+			tile->getRenderer()->recreateBuffers();
 			i++;
 		}
 	}

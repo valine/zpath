@@ -83,8 +83,6 @@ void ZScrollView::onScrollChange(double x, double y) {
 	float scrollBarHeight = viewHeight * (viewHeight / innerHeight);
 
 	float scrollBarOffset = mInnerView->getOffsetY() / (viewHeight - scrollBarHeight);
-	
-	cout<<scrollBarOffset<<endl;
 
 	//if (mInnerView->getMaxHeight() > getHeight()) {
 		mScrollBar->setMaxHeight(scrollBarHeight);
