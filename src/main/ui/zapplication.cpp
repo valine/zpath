@@ -7,15 +7,15 @@ static void error_callback(int error, const char* description) {
 }
 
 ZApplication::ZApplication(ZViewController* controller) {
-    init(controller, "ZPath", true, 500, 500);
+    init(controller, "ZPath", true, 800, 500);
 }
 
 ZApplication::ZApplication(ZViewController* controller, string name) {
-    init(controller, name, false, 500, 500);
+    init(controller, name, false, 800, 500);
 }
 
 ZApplication::ZApplication(ZViewController* controller, string name, bool shouldPoll) {
-    init(controller, name, shouldPoll, 500, 500);
+    init(controller, name, shouldPoll, 800, 500);
 }
 
 void ZApplication::init(ZViewController* controller, string windowName, bool shouldPoll, int width, int height) {
@@ -33,7 +33,7 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     const char * c = windowName.c_str();
-    window = glfwCreateWindow(500, 500, c, NULL, NULL);
+    window = glfwCreateWindow(800, 500, c, NULL, NULL);
 
     if (!window) {
         glfwTerminate();
