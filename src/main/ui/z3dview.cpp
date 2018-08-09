@@ -58,7 +58,6 @@ void Z3DView::onCursorPosChange(double x, double y) {
 		mRotationY -= deltaY;
 	} else if (middleMouseIsDown() && shiftKeyPressed()) {
 		// Pan
-
 		double panSpeed = 0.05;
 		mat4 cameraMatrix = ZRenderUtils::getModelMatrix(mRenderer->getCamera(), nullptr);
 		vec4 rotationX = vec4(deltaX * panSpeed, deltaY * -panSpeed, 0.0, 0.0);
