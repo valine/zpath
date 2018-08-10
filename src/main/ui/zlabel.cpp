@@ -65,7 +65,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
         FT_Done_Face(face);
         FT_Done_FreeType(ft);
 
-            // Configure VAO/VBO for texture quads
+        // Configure VAO/VBO for texture quads
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
         glBindVertexArray(VAO);
