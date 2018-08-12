@@ -60,9 +60,9 @@ void Z3DView::onCursorPosChange(double x, double y) {
 		// Pan
 		double panSpeed = 0.05;
 		mat4 cameraMatrix = ZRenderUtils::getModelMatrix(mRenderer->getCamera(), nullptr);
-		vec4 rotationX = vec4(deltaX * panSpeed, deltaY * -panSpeed, 0.0, 0.0);
-		rotationX = cameraMatrix * rotationX;
-		mSpinRig->translateBy(dvec3(rotationX));
+		vec4 rotation = vec4(deltaX * panSpeed, deltaY * -panSpeed, 0.0, 0.0);
+		rotation = cameraMatrix * rotation;
+		mSpinRig->translateBy(dvec3(rotation));
 	}
 
 	updateCameraPosition();
@@ -77,22 +77,15 @@ void Z3DView::onWindowChange(int width, int height) {
 
 void Z3DView::onScrollChange(double x, double y) {
 	ZView::onScrollChange(x, y);
-	if (y > 0) {
-		mOrbitAnchorPoint.x -= mOrbitAnchorPoint.x / 5;
+	if (shiftKeyPressed()) {
+		mat4 cameraMatrix = ZRenderUtils::getModelMatrix(mRenderer->getCamera(), nullptr);
+		vec4 zoom = vec4(0.0, 0.0, -y, 0.0);
+		zoom = cameraMatrix * zoom;
+		mSpinRig->translateBy(dvec3(zoom));
 	} else {
-		if (mOrbitAnchorPoint.x < 1) {
-			mOrbitAnchorPoint.x += mOrbitAnchorPoint.x / 2;
-		} else {
-			mOrbitAnchorPoint.x += mOrbitAnchorPoint.x / 5;
-		}
+		mRenderer->getCamera()->translateBy(vec3(0,0,-y));
 	}
 
-	if (mOrbitAnchorPoint.x < 0) {
-		mOrbitAnchorPoint.x = 0.1;
-	}
-	
-	mRenderer->getCamera()->translateBy(vec3(0,0,-y));
-	updateCameraPosition();
 }
 
 ZRenderer* Z3DView::getRenderer() {
