@@ -52,5 +52,5 @@ int main(int argc, char* argv[]) {
     std::cout << "Name: " << name << std::endl;
 
     ZPathViewController* viewController = new ZPathViewController(path);
-    ZApplication application(viewController, "Brain Editor", false);
+    ZApplication application(viewController, "ZPATH", false);
 }
