@@ -13,7 +13,6 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 
 	mTileCountX = tilesX;
 	mTileCountY = tilesY;
-
 	int width = (getWidth() - (mTileMargin * tilesX)) / tilesX;
 	int height = (getHeight() - (mTileMargin * tilesY)) / tilesY;
    

@@ -1,14 +1,11 @@
 cmake_minimum_required(VERSION 3.0) # setting this is required
 project(zpath)            # this sets the project name
 
-
 option(BUILD_LIB "help string describing option" OFF)
-
 
 ###############################################################################
 ## file globbing ##############################################################
 ###############################################################################
-
 
 file(GLOB_RECURSE sources      src/main/*.cpp src/main/*.vs src/main/*.fs)
 file(GLOB_RECURSE sources_test src/test/*.cpp)
@@ -23,7 +20,6 @@ include_directories(include)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 
 if (BUILD_LIB) 
   add_library(zpath STATIC ${sources} ${headers})
@@ -44,7 +40,6 @@ endif()
 ## dependencies ###############################################################
 ###############################################################################
 
-
 #glfw
 include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 #
@@ -56,9 +51,10 @@ set(glfw_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glfw_install_dir}")
 externalproject_add(glfw
                     PREFIX         ${glfw_prefix}
                     GIT_REPOSITORY https://github.com/glfw/glfw.git
-                    UPDATE_COMMAND git pull
+                    UPDATE_COMMAND ""
                     INSTALL_DIR    ${glfw_install_dir}
                     CMAKE_ARGS     ${glfw_cmake_args}
+                    LOG_DOWNLOAD ON
                     )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/lib)
@@ -73,9 +69,10 @@ set(assimp_cmake_args  "-DCMAKE_INSTALL_PREFIX=${assimp_install_dir}")
 externalproject_add(assimp
                     PREFIX         ${assimp_prefix}
                     GIT_REPOSITORY https://github.com/assimp/assimp.git
-                    UPDATE_COMMAND git pull
+                    UPDATE_COMMAND ""
                     INSTALL_DIR    ${assimp_install_dir}
                     CMAKE_ARGS     ${assimp_cmake_args}
+                    LOG_DOWNLOAD ON
                     )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/lib)
@@ -91,15 +88,13 @@ externalproject_add(glm
         PREFIX  ${glm_prefix}
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG        0.9.9.0 
-        INSTALL_DIR    ${glm_install_dir}
-        CMAKE_ARGS     ${glm_cmake_args}
+        UPDATE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD ON
     )
 
-    ExternalProject_Get_Property(glm SOURCE_DIR)
-    set(GLM_INCLUDE_DIRS ${SOURCE_DIR})
-    set(GLM_INCLUDE_DIRS ${GLM_INCLUDE_DIRS} CACHE STRING "")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
-
 add_dependencies(zpath glm)
 
 #Opengl
@@ -111,22 +106,9 @@ find_package (Threads)
 find_package(Freetype REQUIRED)
 include_directories(${FREETYPE_INCLUDE_DIRS})
 
-
-
-# Check that the steamVR SDK is installed 
-# (needed to prevent a segfault in OpenVR).
-# if(CMAKE_HOST_UNIX)
-#   find_file(OPENVRPATHS openvrpaths.vrpath PATHS $ENV{HOME}/.config/openvr "$ENV{HOME}/Library/Application Support/OpenVR/.openvr")
-#   if(${OPENVRPATHS} MATCHES OPENVRPATHS-NOTFOUND)
-#     message(FATAL_ERROR "${OPENVRPATHS} Please install SteamVR SDK to continue..")
-#   endif()
-# endif()
-
-
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
-
 
 if (APPLE)
   find_package(glfw3 3.2 REQUIRED)
