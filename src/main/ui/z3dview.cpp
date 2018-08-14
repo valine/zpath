@@ -54,11 +54,11 @@ void Z3DView::onCursorPosChange(double x, double y) {
 		mSpinRig->rotateBy(deltaX);
 		mTiltRig->rotateBy(deltaY);
 
-		mRotationX += deltaX;
-		mRotationY -= deltaY;
+		mRotationX += deltaX / 2;
+		mRotationY -= deltaY / 2;
 	} else if (middleMouseIsDown() && shiftKeyPressed()) {
 		// Pan
-		double panSpeed = 0.05;
+		double panSpeed = 0.02;
 		mat4 cameraMatrix = ZRenderUtils::getModelMatrix(mRenderer->getCamera(), nullptr);
 		vec4 rotation = vec4(deltaX * panSpeed, deltaY * -panSpeed, 0.0, 0.0);
 		rotation = cameraMatrix * rotation;
@@ -83,7 +83,7 @@ void Z3DView::onScrollChange(double x, double y) {
 		zoom = cameraMatrix * zoom;
 		mSpinRig->translateBy(dvec3(zoom));
 	} else {
-		mRenderer->getCamera()->translateBy(vec3(0,0,-y));
+		mRenderer->getCamera()->translateBy(vec3(0,0,-y / 4));
 	}
 
 }
@@ -115,8 +115,10 @@ void Z3DView::draw() {
 
 	//int yv = getWindowHeight() - getBottom();
 	//glViewport(getLeft(),yv,getWidth(),getHeight());
+	if (getVisibility()) {
 
-    mRenderer->draw();
+    	mRenderer->draw();
+	}
     //glDepthMask(true);
 
     //glEnable(GL_DEPTH_TEST);

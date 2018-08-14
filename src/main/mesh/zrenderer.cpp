@@ -254,7 +254,7 @@ void ZRenderer::renderMain() {
 }
 
 void ZRenderer::renderSelection() {
-    if (!mRenderToTexture) {
+    //if (!mRenderToTexture) {
         glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mSelectionShader->use();
@@ -288,7 +288,7 @@ void ZRenderer::renderSelection() {
         }
 
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
+    //}
 }
 
 void ZRenderer::renderToScreen() {

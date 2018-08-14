@@ -387,10 +387,12 @@ void ZView::setGravity(Gravity gravity) {
 
 void ZView::setMaxWidth(int width) {
     mMaxWidth = width;
+    computeBounds(mMaxWidth, mMaxHeight);
 }
 
 void ZView::setMaxHeight(int height) {
     mMaxHeight = height;
+    computeBounds(mMaxWidth, mMaxHeight);
 }
 
 void ZView::onKeyPress(int key, int scancode, int action, int mods) {
