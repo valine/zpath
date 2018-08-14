@@ -126,3 +126,13 @@ vector<ZObject*> ZObject::getChildren() {
 	return mChildren;
 }
 
+void ZObject::setSelectable(bool select) {
+	mSelectable = select;
+}
+
+bool ZObject::getSelectable() {
+	return mSelectable;
+}
+
+
+

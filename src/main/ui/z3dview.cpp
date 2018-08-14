@@ -24,7 +24,6 @@ void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
  	
  	if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
- 		cout<<getLeft()<<endl;
  		int index = mRenderer->getObjectIndexAtLocation(x - getLeft(), getTop() + getHeight() - 1 - y);
  		mRenderer->getScene()->setActiveObjectIndex(index);
  	} 

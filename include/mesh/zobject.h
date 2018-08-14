@@ -49,6 +49,9 @@ public:
 	void setParent(ZObject* parent);
 	vector<ZObject*> getChildren();
 
+	void setSelectable(bool);
+	bool getSelectable();
+
 
 private: 
 	ZMesh* mMesh;
@@ -68,6 +71,8 @@ private:
 
 	ZObject* mParent = nullptr;
 	vector<ZObject*> mChildren;
+
+	bool mSelectable = true;
 
 	void addChild(ZObject *child);
 

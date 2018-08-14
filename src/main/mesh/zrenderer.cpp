@@ -270,6 +270,7 @@ void ZRenderer::renderSelection() {
 
             ZMesh *mesh = (*it)->getMesh();
 
+
             mSelectionShader->setMat4("uModelMatrix", ZRenderUtils::getModelMatrix((*it), mCamera));
 
             glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
@@ -282,7 +283,9 @@ void ZRenderer::renderSelection() {
             vec4 color = vec4((float) objectIndex / 256,0,0,1.0);
             mSelectionShader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
-            glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+            if ((*it)->getSelectable()) {
+                glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+            }
 
             objectIndex++;
         }
