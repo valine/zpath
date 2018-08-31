@@ -264,6 +264,7 @@ void ZRenderer::renderSelection() {
         vector<ZObject*> objects = mScene->getObjects();
 
         int mPositionLocation = glGetAttribLocation(mSelectionShader->mID, "aPos");
+        int mNoramlLocation = glGetAttribLocation(mSelectionShader->mID, "aNormal");
 
         int objectIndex = 0;
         for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
@@ -278,6 +279,10 @@ void ZRenderer::renderSelection() {
 
             glEnableVertexAttribArray(mPositionLocation);
             glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
+              sizeof(float) * 3, (void*) 0);
+
+            glEnableVertexAttribArray(mNoramlLocation);
+            glVertexAttribPointer(mNoramlLocation, 3, GL_FLOAT, GL_FALSE,
               sizeof(float) * 3, (void*) 0);
 
             vec4 color = vec4((float) objectIndex / 256,0,0,1.0);

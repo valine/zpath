@@ -35,7 +35,7 @@ void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
  		ZScene* scene = mRenderer->getScene();
  		int activeObjectIndex = scene->getActiveObjectIndex();
- 		if (activeObjectIndex != -1) {
+ 		if (activeObjectIndex != -1 && activeObjectIndex < scene->getObjects().size()) {
  			mSpinRig->setTranslation(scene->getObjects().at(activeObjectIndex)->getOrigin());
  		} else {
  			mSpinRig->setTranslation(vec3(0));
