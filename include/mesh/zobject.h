@@ -1,12 +1,15 @@
 #ifndef ZOBJECT_H
 #define ZOBJECT_H
 #include <vector>
+#include <iostream>
 #include "mesh/zmesh.h"
 #include "mesh/zmaterial.h"
+#include "mesh/zanimator.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <algorithm>
 
 using namespace std;
 using namespace glm;
@@ -52,6 +55,9 @@ public:
 	void setSelectable(bool);
 	bool getSelectable();
 
+	void startAnimation(ZAnimator* animator);
+	vector<ZAnimator*> getAnimators();
+	void animationFinished(ZAnimator* animator);
 
 private: 
 	ZMesh* mMesh;
@@ -71,6 +77,7 @@ private:
 
 	ZObject* mParent = nullptr;
 	vector<ZObject*> mChildren;
+	vector<ZAnimator*> mAnimators;
 
 	bool mSelectable = true;
 

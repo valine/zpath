@@ -11,6 +11,7 @@
 #include <iostream>
 #include "zmeshutils.h"
 #include "zrenderutils.h"
+#include "zanimator.h"
 
 #include <GLFW/glfw3.h>
 
@@ -82,6 +83,7 @@ private:
 	void renderSelection();
 	void renderToScreen();
 	void renderQuad();
+	void updateAnimations();
 
 	int mMaxLightCount = 4;
 

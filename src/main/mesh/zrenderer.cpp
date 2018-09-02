@@ -108,11 +108,159 @@ void ZRenderer::setRenderToTexture(bool toTexture) {
 void ZRenderer::draw() {
     if (mScene != nullptr) {
         if (mParentView->getVisibility()) {
+            updateAnimations();
             renderMain();
             renderSelection();
             renderToScreen();
 
             glDisable(GL_DEPTH_TEST);
+        }
+    }
+}
+
+void ZRenderer::updateAnimations() {
+    vector<ZObject*> objects = mScene->getObjects();
+    for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+        ZObject *object = (*it);
+        vector<ZAnimator*> animators = object->getAnimators();
+        for (vector<ZAnimator*>::iterator it2 = animators.begin() ; it2 != animators.end(); ++it2) {
+            ZAnimator* animator = (*it2);
+
+            vec4 currentValue;
+            vec4 desiredValue = animator->getDesiredValue();
+            vec3 newTranslation;
+            vec3 newRotation;
+            float newRotationAngle;
+            vec3 newScale;
+
+            int finished = 0;
+            switch (animator->getType()) {
+                case ZAnimator::rotation:
+                    newRotation = object->getRotation();
+                    newRotationAngle = object->getRotationAngle();
+                    currentValue = vec4(object->getRotation(), object->getRotationAngle());
+                    if (currentValue.x != desiredValue.x) {
+                        float dif = currentValue.x - desiredValue.x;
+                        newRotation.x -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.x = desiredValue.x;
+                            finished++;
+                        }
+                    }
+
+                    if (currentValue.y != desiredValue.y) {
+                        float dif = currentValue.y - desiredValue.y;
+                        newRotation.y -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.y = desiredValue.y;
+                            finished++;
+                        }
+                    }
+
+                    if (currentValue.z != desiredValue.z) {
+                        float dif = currentValue.z - desiredValue.z;
+                        newRotation.z -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.z = desiredValue.z;
+                            finished++;
+                        }
+                    }
+
+                    if (currentValue.w != desiredValue.w) {
+                        float dif = currentValue.w - desiredValue.w;
+                        newRotationAngle -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.w = desiredValue.w;
+                            finished++;
+                        }
+                    }
+
+                    if (finished != 4) {
+                        object->setRotation(newRotation);
+                        object->setRotationAngle(newRotationAngle);
+                        mParentView->invalidate();
+                    } else {
+                        object->animationFinished(animator);
+                    }
+                    break;
+                case ZAnimator::translation:
+                    newTranslation = object->getTranslation();
+                    currentValue = vec4(object->getTranslation(), 0);
+                    if (currentValue.x != desiredValue.x) {
+                        float dif = currentValue.x - desiredValue.x;
+                        newTranslation.x -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.x = desiredValue.x;
+                            finished++;
+                        }
+                    }
+
+                    if (currentValue.y != desiredValue.y) {
+                        float dif = currentValue.y - desiredValue.y;
+                        newTranslation.y -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.y = desiredValue.y;
+                            finished++;
+                        }
+                    }
+
+                    if (currentValue.z != desiredValue.z) {
+                        float dif = currentValue.z - desiredValue.z;
+                        newTranslation.z -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.z = desiredValue.z;
+                            finished++;
+                        }
+                    }
+
+                    if (finished != 3) {
+                        object->setTranslation(newTranslation);
+                        mParentView->invalidate();
+                    } else {
+                        object->animationFinished(animator);
+                    }
+                    break;
+                case ZAnimator::scale:
+                    newScale = object->getScale();
+                    currentValue = vec4(object->getScale(), 0);
+                    if (currentValue.x != desiredValue.x) {
+                        float dif = currentValue.x - desiredValue.x;
+                        newScale.x -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.x = desiredValue.x;
+                            finished++;
+                        }
+                    }
+
+                    if (currentValue.y != desiredValue.y) {
+                        float dif = currentValue.y - desiredValue.y;
+                        newScale.y -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.y = desiredValue.y;
+                            finished++;
+                        }
+                    }
+
+                    if (currentValue.z != desiredValue.z) {
+                        float dif = currentValue.z - desiredValue.z;
+                        newScale.z -= dif / 40;
+                        if (abs(dif) < 0.01) {
+                            currentValue.z = desiredValue.z;
+                            finished++;
+                        }
+                    }
+
+                    if (finished != 3) {
+                        object->setScale(newScale);
+                        mParentView->invalidate();
+                    } else {
+                        object->animationFinished(animator);
+                    }
+                    break;
+                default:
+                    currentValue = vec4(object->getScale(), 0);
+                    break;
+            }
         }
     }
 }

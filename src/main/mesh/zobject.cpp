@@ -134,5 +134,19 @@ bool ZObject::getSelectable() {
 	return mSelectable;
 }
 
+void ZObject::startAnimation(ZAnimator* animator) {
+	cout<<mAnimators.size()<<endl;
+	mAnimators.push_back(animator);
+}
+
+vector<ZAnimator*> ZObject::getAnimators() {
+	return mAnimators;
+}
+
+void ZObject::animationFinished(ZAnimator* animator) {
+	mAnimators.erase(remove(mAnimators.begin(), mAnimators.end(), animator), mAnimators.end());
+}
+
+
 
 

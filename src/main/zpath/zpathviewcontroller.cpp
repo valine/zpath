@@ -33,7 +33,7 @@ void ZPathViewController::onCreate() {
     label->setTextColor(vec3(0.1,0.1,0.1));
     propertiesPanel->addSubView(label);
 
-    mGridViewButton = new ZButton(200, 40, getResourcePath());
+    mGridViewButton = new ZButton(140, 40, getResourcePath());
     mGridViewButton->setOffset(0,50);
     mGridViewButton->setMargin(10,10,10,10);
     mGridViewButton->setBackgroundColor(highlightColor);
@@ -195,6 +195,15 @@ void ZPathViewController::onCreate() {
     mTileView->setOffset(propertiesPanel->getWidth(), 24);
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
+
+    mAnimationButton = new ZButton(150, 40, getResourcePath());
+    mAnimationButton->setOffset(150,50);
+    mAnimationButton->setMargin(10,10,10,10);
+    mAnimationButton->setBackgroundColor(highlightColor);
+    mAnimationButton->setText("Test Animation");
+    mAnimationButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mAnimationButton);
+
 }
 
 void ZPathViewController::onFileDrop(int count, const char** paths) {
@@ -379,6 +388,12 @@ void ZPathViewController::onClick(ZButton* sender) {
         ZScene* scene = mTileView->getScene();
         ZWorld* world = scene->getWorld();
         world->blurBackground(!world->isBackgroundBlurred());
+    }
+
+    else if (sender == mAnimationButton && selectionIndex != -1) {
+        ZScene* scene = mTileView->getScene();
+        ZObject* object = scene->getObjects().at(selectionIndex);
+        object->startAnimation(new ZAnimator(vec4(1,0,0,180), ZAnimator::rotation));
     }
 
     else if (sender == mDeleteButton && selectionIndex != -1) {
