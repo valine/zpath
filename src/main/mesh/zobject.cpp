@@ -136,6 +136,7 @@ bool ZObject::getSelectable() {
 
 void ZObject::startAnimation(ZAnimator* animator) {
 	cout<<mAnimators.size()<<endl;
+	mAnimators.clear();
 	mAnimators.push_back(animator);
 }
 
