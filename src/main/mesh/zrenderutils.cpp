@@ -72,5 +72,7 @@ mat4 ZRenderUtils::getModelMatrix(ZObject* object, ZCamera* camera) {
         modelMatrix = parentMat * modelMatrix;
     }
 
+    modelMatrix *= object->getTransform();
+
     return modelMatrix;
 }

@@ -41,6 +41,10 @@ public:
 	vec3 getScale();
 	void scaleBy(vec3);
 
+	void setTransform(mat4);
+	mat4 getTransform();
+	void transformBy(mat4);
+
 	bool isBillboard();
 	void setBillboard(bool billboard);
 
@@ -68,6 +72,7 @@ private:
 	vec3 mTranslation = vec3(0);
 	vec3 mRotation = vec3(1,0,0);
 	vec3 mScale = vec3(1);
+	mat4 mTransform = mat4(1);
 
 	float mRotationAngle = 0;
 

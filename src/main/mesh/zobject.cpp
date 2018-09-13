@@ -86,6 +86,18 @@ void ZObject::scaleBy(vec3 scale) {
 	}
 }
 
+void ZObject::setTransform(mat4 transform) {
+	mTransform = transform;
+}
+
+mat4 ZObject::getTransform() {
+	return mTransform;
+}
+
+void ZObject::transformBy(mat4 transform) {
+	mTransform = mTransform * transform;
+}
+
 bool ZObject::isBillboard() {
 	return mIsBillboard;
 }
