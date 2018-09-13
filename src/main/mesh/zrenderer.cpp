@@ -132,7 +132,7 @@ void ZRenderer::updateAnimations() {
             vec3 newRotation;
             float newRotationAngle;
             vec3 newScale;
-
+            float speed = 120.0;
             int finished = 0;
             switch (animator->getType()) {
                 case ZAnimator::rotation:
@@ -141,7 +141,7 @@ void ZRenderer::updateAnimations() {
                     currentValue = vec4(object->getRotation(), object->getRotationAngle());
                     if (currentValue.x != desiredValue.x) {
                         float dif = currentValue.x - desiredValue.x;
-                        newRotation.x -= dif / 40;
+                        newRotation.x -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.x = desiredValue.x;
                             finished++;
@@ -150,7 +150,7 @@ void ZRenderer::updateAnimations() {
 
                     if (currentValue.y != desiredValue.y) {
                         float dif = currentValue.y - desiredValue.y;
-                        newRotation.y -= dif / 40;
+                        newRotation.y -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.y = desiredValue.y;
                             finished++;
@@ -159,7 +159,7 @@ void ZRenderer::updateAnimations() {
 
                     if (currentValue.z != desiredValue.z) {
                         float dif = currentValue.z - desiredValue.z;
-                        newRotation.z -= dif / 40;
+                        newRotation.z -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.z = desiredValue.z;
                             finished++;
@@ -168,7 +168,7 @@ void ZRenderer::updateAnimations() {
 
                     if (currentValue.w != desiredValue.w) {
                         float dif = currentValue.w - desiredValue.w;
-                        newRotationAngle -= dif / 40;
+                        newRotationAngle -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.w = desiredValue.w;
                             finished++;
@@ -188,7 +188,7 @@ void ZRenderer::updateAnimations() {
                     currentValue = vec4(object->getTranslation(), 0);
                     if (currentValue.x != desiredValue.x) {
                         float dif = currentValue.x - desiredValue.x;
-                        newTranslation.x -= dif / 40;
+                        newTranslation.x -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.x = desiredValue.x;
                             finished++;
@@ -197,7 +197,7 @@ void ZRenderer::updateAnimations() {
 
                     if (currentValue.y != desiredValue.y) {
                         float dif = currentValue.y - desiredValue.y;
-                        newTranslation.y -= dif / 40;
+                        newTranslation.y -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.y = desiredValue.y;
                             finished++;
@@ -206,7 +206,7 @@ void ZRenderer::updateAnimations() {
 
                     if (currentValue.z != desiredValue.z) {
                         float dif = currentValue.z - desiredValue.z;
-                        newTranslation.z -= dif / 40;
+                        newTranslation.z -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.z = desiredValue.z;
                             finished++;
@@ -225,7 +225,7 @@ void ZRenderer::updateAnimations() {
                     currentValue = vec4(object->getScale(), 0);
                     if (currentValue.x != desiredValue.x) {
                         float dif = currentValue.x - desiredValue.x;
-                        newScale.x -= dif / 40;
+                        newScale.x -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.x = desiredValue.x;
                             finished++;
@@ -234,7 +234,7 @@ void ZRenderer::updateAnimations() {
 
                     if (currentValue.y != desiredValue.y) {
                         float dif = currentValue.y - desiredValue.y;
-                        newScale.y -= dif / 40;
+                        newScale.y -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.y = desiredValue.y;
                             finished++;
@@ -243,7 +243,7 @@ void ZRenderer::updateAnimations() {
 
                     if (currentValue.z != desiredValue.z) {
                         float dif = currentValue.z - desiredValue.z;
-                        newScale.z -= dif / 40;
+                        newScale.z -= dif / speed;
                         if (abs(dif) < 0.01) {
                             currentValue.z = desiredValue.z;
                             finished++;
