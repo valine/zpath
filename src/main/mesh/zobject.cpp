@@ -95,7 +95,7 @@ mat4 ZObject::getTransform() {
 }
 
 void ZObject::transformBy(mat4 transform) {
-	mTransform = mTransform * transform;
+	mTransform = transform * mTransform;
 }
 
 bool ZObject::isBillboard() {
