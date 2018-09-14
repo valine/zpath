@@ -125,9 +125,9 @@ ZObject* ZObject::getParent() {
 
 void ZObject::setParent(ZObject* parent) {
 	mParent = parent;
-	// if (mParent != nullptr) {
-	// 	parent->addChild(this);
-	// }
+	if (mParent != nullptr) {
+		parent->addChild(this);
+	}
 }
 
 void ZObject::addChild(ZObject* child) {
