@@ -146,6 +146,14 @@ bool ZObject::getSelectable() {
 	return mSelectable;
 }
 
+void ZObject::setVisible(bool visible) {
+	mVisible = visible;
+}
+
+bool ZObject::getVisible() {
+	return mVisible;
+}
+
 void ZObject::startAnimation(ZAnimator* animator) {
 	cout<<mAnimators.size()<<endl;
 	mAnimators.clear();

@@ -59,6 +59,9 @@ public:
 	void setSelectable(bool);
 	bool getSelectable();
 
+	void setVisible(bool);
+	bool getVisible();
+
 	void startAnimation(ZAnimator* animator);
 	vector<ZAnimator*> getAnimators();
 	void animationFinished(ZAnimator* animator);
@@ -85,6 +88,7 @@ private:
 	vector<ZAnimator*> mAnimators;
 
 	bool mSelectable = true;
+	bool mVisible = true;
 
 	void addChild(ZObject *child);
 

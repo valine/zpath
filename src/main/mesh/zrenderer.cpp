@@ -393,7 +393,9 @@ void ZRenderer::renderMain() {
             shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr) * vec4(0,0,0,1));
         }
 
-        glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+        if (object->getVisible()) {
+            glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+        }   
         objectIndex++;
     }
 
