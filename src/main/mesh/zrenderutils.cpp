@@ -25,7 +25,7 @@ mat4 ZRenderUtils::getModelMatrix(ZObject* object, ZCamera* camera) {
         return object->getModelMatrix();
     } 
     
-    mat4 modelMatrix = mat4(1);
+    mat4 modelMatrix = object->getTransform();
     
     mat4 parentMat = mat4(1);
     if (object->getParent() != nullptr) {
@@ -71,8 +71,6 @@ mat4 ZRenderUtils::getModelMatrix(ZObject* object, ZCamera* camera) {
         modelMatrix = rotate(modelMatrix, radians(object->getRotationAngle()), object->getRotation());
         modelMatrix = parentMat * modelMatrix;
     }
-
-    modelMatrix *= object->getTransform();
-
+    
     return modelMatrix;
 }
