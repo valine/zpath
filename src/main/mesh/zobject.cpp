@@ -79,10 +79,10 @@ vec3 ZObject::getScale() {
 }
 
 void ZObject::scaleBy(vec3 scale) {
-	vec3 tmpScale = mScale + scale;
+	vec3 tmpScale = mScale * scale;
 
 	if (tmpScale.x > 0) {
-		mScale = mScale + scale;
+		mScale = mScale * scale;
 	}
 }
 
