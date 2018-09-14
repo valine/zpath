@@ -132,7 +132,7 @@ void ZRenderer::updateAnimations() {
             vec3 newRotation;
             float newRotationAngle;
             vec3 newScale;
-            float speed = 600.0;
+            float speed = 300.0;
             int finished = 0;
             switch (animator->getType()) {
                 case ZAnimator::rotation:
