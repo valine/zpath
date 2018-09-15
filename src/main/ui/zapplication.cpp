@@ -18,6 +18,10 @@ ZApplication::ZApplication(ZViewController* controller, string name, bool should
     init(controller, name, shouldPoll, 800, 500);
 }
 
+ZApplication::ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight) {
+    init(controller, name, shouldPoll, windowWidth, windowHeight);
+}
+
 void ZApplication::init(ZViewController* controller, string windowName, bool shouldPoll, int width, int height) {
 
     mShouldPoll = shouldPoll;

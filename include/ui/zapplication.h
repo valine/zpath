@@ -13,6 +13,7 @@ public:
 	ZApplication(ZViewController* viewcontroller);
 	ZApplication(ZViewController* viewcontroller, string windowName);
 	ZApplication(ZViewController* controller, string name, bool shouldPoll);
+	ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight);
 
 	void onWindowResize(int width, int height);
 	void onWindowMove(GLFWwindow *window);
