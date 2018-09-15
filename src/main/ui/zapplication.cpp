@@ -37,7 +37,7 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     const char * c = windowName.c_str();
-    window = glfwCreateWindow(800, 500, c, NULL, NULL);
+    window = glfwCreateWindow(width, height, c, NULL, NULL);
 
     if (!window) {
         glfwTerminate();
