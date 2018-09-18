@@ -14,6 +14,8 @@ public:
 	static void saveRender(int fbo, int width, int height);
 	static mat4 getModelMatrix(ZObject*, ZCamera*);
 	static mat4 getViewMatrix(ZCamera*);
+	static vec4 extractScale(mat4);
+	static vec4 extractTranslation(mat4);
 
 private:
 

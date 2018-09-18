@@ -2,6 +2,7 @@
 #define BASICSCENE_H
 
 #include "mesh/zscene.h"
+#include "mesh/zrenderutils.h"
 #include "mesh/zpointlight.h"
 #include "ui/ztexture.h"
 
