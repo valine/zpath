@@ -7,19 +7,17 @@ void ZRenderUtils::saveRender(int fbo, int width, int height) {
 
 }
 
-vec4 ZRenderUtils::extractScale(mat4 matrix) {
-    vec4 point1 = vec4(1,1,1,0);
-    vec4 point2 = vec4(-1,-1,-1,0);
+vec3 ZRenderUtils::extractScale(mat4 matrix) {
+    float col0 = glm::length(vec3(matrix[0]));
+    float col1 = glm::length(vec3(matrix[1]));
+    float col2 = glm::length(vec3(matrix[2]));
 
-    point1 = matrix * point1;
-    point2 = matrix * point2;
-
-    return (point1 - point2) / vec4(2);
+    return vec3(col0, col1, col2);
 }
 
 
-vec4 ZRenderUtils::extractTranslation(mat4 matrix) {
-    return matrix * vec4(0,0,0,1);
+vec3 ZRenderUtils::extractTranslation(mat4 matrix) {
+    return vec3(matrix[3]);
 }
 
 mat4 ZRenderUtils::getViewMatrix(ZCamera* camera) {

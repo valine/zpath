@@ -26,6 +26,12 @@ BasicScene::BasicScene(string resourcePath)
 			//object->setBillboard(true);
 		//}
 
+		object->translateBy(vec3(300,100,100));
+		object->setScale(vec3(2));
+		mat4 model = ZRenderUtils::getModelMatrix(object, nullptr);
+		cout << "model matrix::" << ZRenderUtils::extractScale(model).x <<endl;
+		cout << "translation::" << ZRenderUtils::extractTranslation(model).x << endl;
+
 		addObject(object);
 		i++;
 	}
