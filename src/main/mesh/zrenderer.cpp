@@ -2,8 +2,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
-
-
 ZRenderer::ZRenderer(string resourcePath) {
     mShader = new ZShader(base_vs, base_fs);
     mBackgroundShader = new ZShader(background_vs, background_fs);
@@ -26,9 +24,7 @@ void ZRenderer::onDrawFinshed() {
     //     object->setRotation(vec3(0,0,1));
     //     mScene->getObjects().at(0)->rotateBy(0.1f);
     // }
-
 }
-
 
 void ZRenderer::init() {
     mShader->use();

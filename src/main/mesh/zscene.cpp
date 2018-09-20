@@ -8,7 +8,12 @@ ZScene::ZScene(string resourcePath) {
 
 void ZScene::addObject(ZObject* object) {
 	if (object != nullptr) {
-		mObjects.push_back(object);
+		if (object->getMaterial()->getColor().a < 0.5) {
+			mObjects.insert(mObjects.begin(), object);
+		} else {
+			mObjects.push_back(object);
+		}
+		
 	}
 }
 

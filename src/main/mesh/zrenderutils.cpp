@@ -15,7 +15,6 @@ vec3 ZRenderUtils::extractScale(mat4 matrix) {
     return vec3(col0, col1, col2);
 }
 
-
 vec3 ZRenderUtils::extractTranslation(mat4 matrix) {
     return vec3(matrix[3]);
 }
