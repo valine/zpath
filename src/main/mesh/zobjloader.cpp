@@ -52,7 +52,7 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 		"alpha:" << otherProperties.b << endl <<
 		"roughness:" << otherProperties.r << endl <<
 		"metallic:" << otherProperties.g << endl;
-
+		
         ZMesh* convertedMesh = convertAiMesh(mesh);
         object->setMesh(convertedMesh);
        
