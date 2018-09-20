@@ -79,11 +79,15 @@ private:
 
 	bool mRenderToTexture = false;
 
+	vector<ZObject*> mSortedObjects;
+	vector<int> mSortedIndicies;
+
 	void renderMain();
 	void renderSelection();
 	void renderToScreen();
 	void renderQuad();
 	void updateAnimations();
+	void sortObjects();
 
 	int mMaxLightCount = 4;
 

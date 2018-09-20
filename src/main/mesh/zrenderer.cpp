@@ -105,6 +105,7 @@ void ZRenderer::draw() {
     if (mScene != nullptr) {
         if (mParentView->getVisibility()) {
             updateAnimations();
+            sortObjects();
             renderMain();
             renderSelection();
             renderToScreen();
@@ -112,6 +113,31 @@ void ZRenderer::draw() {
             glDisable(GL_DEPTH_TEST);
         }
     }
+}
+
+void ZRenderer::sortObjects() {
+    vector<ZObject*> objects = mScene->getObjects();
+    vector<ZObject*> transparentObjects;
+    mSortedObjects.clear();
+    mSortedIndicies.clear();
+    vector<int> transparentIndicies;
+
+    int count = 0;
+    for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+        ZObject *object = (*it);
+        ZMaterial* material = object->getMaterial();
+        if (material->getColor().a < 0.5) {
+            transparentObjects.push_back(object);
+            transparentIndicies.push_back(count);
+        } else {
+            mSortedObjects.push_back(object);
+            mSortedIndicies.push_back(count);
+        }
+        count++;
+    }
+
+    mSortedObjects.insert(mSortedObjects.end(), transparentObjects.begin(), transparentObjects.end());
+    mSortedIndicies.insert(mSortedIndicies.end(), transparentIndicies.begin(), transparentIndicies.end());
 }
 
 void ZRenderer::updateAnimations() {
@@ -339,7 +365,7 @@ void ZRenderer::renderMain() {
     shader->setMat4("uModelMatrix", identityMatrix);
 
     int objectIndex = 0;
-    for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+    for (vector<ZObject*>::iterator it = mSortedObjects.begin() ; it != mSortedObjects.end(); ++it) {
         ZObject *object = (*it);
         ZMesh *mesh = (*it)->getMesh();
         ZMaterial* material = object->getMaterial();
@@ -375,12 +401,12 @@ void ZRenderer::renderMain() {
         shader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
         float selected = 0;
-        if (mScene->getActiveObjectIndex() == objectIndex) {
+        if (mScene->getActiveObjectIndex() == mSortedIndicies.at(objectIndex)) {
             selected = 1;
         }
+        shader->setFloat("uSelected", selected);
 
         shader->setFloat("uMetallic", material->getMetallic());
-        shader->setFloat("uSelected", selected);
         shader->setFloat("uRoughness", material->getRoughness());
 
         if (mCamera->isManualView()) {
@@ -415,6 +441,20 @@ void ZRenderer::renderSelection() {
 
         int mPositionLocation = glGetAttribLocation(mSelectionShader->mID, "aPos");
         int mNoramlLocation = glGetAttribLocation(mSelectionShader->mID, "aNormal");
+   
+        vector<ZObject*> transparentObjects;
+        vector<ZObject*> solidObjects;
+        int count = 0;
+        for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+            ZObject *object = (*it);
+            ZMaterial* material = object->getMaterial();
+            if (material->getColor().a < 0.5) {
+                transparentObjects.push_back(object);
+            } else {
+                solidObjects.push_back(object);
+            }
+            count++;
+        }
 
         int objectIndex = 0;
         for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
