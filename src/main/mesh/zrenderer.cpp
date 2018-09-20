@@ -394,7 +394,11 @@ void ZRenderer::renderMain() {
         }
 
         if (object->getVisible()) {
+            if (material->getColor().a < 0.5) {
+                glDepthMask(false);
+            }
             glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+            glDepthMask(true);
         }   
         objectIndex++;
     }
