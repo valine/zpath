@@ -17,7 +17,7 @@ BasicScene::BasicScene(string resourcePath)
 	addLight(light);
 
 	ZObjLoader loader = ZObjLoader();
-	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/monkey.3ds");
+	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/monkey.dae");
 
 	int i = 0;
 	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
@@ -25,9 +25,6 @@ BasicScene::BasicScene(string resourcePath)
 		//if (i % 3 ==0) {
 			//object->setBillboard(true);
 		//}
-
-		object->translateBy(vec3(300,100,100));
-		object->setScale(vec3(2));
 		mat4 model = ZRenderUtils::getModelMatrix(object, nullptr);
 		cout << "model matrix::" << ZRenderUtils::extractScale(model).x <<endl;
 		cout << "translation::" << ZRenderUtils::extractTranslation(model).x << endl;

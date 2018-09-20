@@ -12,7 +12,6 @@ vector<ZObject*> ZObjLoader::loadObjects(const std::string& pFile) {
 	aiProcess_Triangulate            |
 	aiProcess_JoinIdenticalVertices  |
 	aiProcess_SortByPType);
-
 	vector<ZObject*> objects;
 
 	if(!scene) {
@@ -23,6 +22,7 @@ vector<ZObject*> ZObjLoader::loadObjects(const std::string& pFile) {
 	aiNode* node = scene->mRootNode;
     return processNode(node, scene, nullptr);
 }
+
 
 vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZObject* parent) {
 	vector<ZObject*> objects;
@@ -36,8 +36,22 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
         aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 		aiColor3D color;
 		mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-		ZMaterial* zmaterial = new ZMaterial(vec3(color.r,color.g,color.b));
-		cout<<"color r "<<color.r<<" color g "<<color.g<<" color b "<<color.b<<endl;
+
+		float alpha;
+		mat->Get(AI_MATKEY_OPACITY, alpha);
+		aiColor3D otherProperties;
+		mat->Get(AI_MATKEY_COLOR_SPECULAR, otherProperties);
+
+		ZMaterial* zmaterial = new ZMaterial(vec4(color.r,color.g,color.b, alpha));
+		zmaterial->setRoughness(otherProperties.r);
+		zmaterial->setMetallic(otherProperties.g);
+		cout << endl << "Loading material" << endl <<
+		"red:" << color.r << endl <<
+		"green:" << color.g << endl << 
+		"blue:" << color.b << endl <<
+		"alpha:" << alpha << endl <<
+		"roughness:" << otherProperties.r << endl <<
+		"metallic:" << otherProperties.g << endl;
 
         ZMesh* convertedMesh = convertAiMesh(mesh);
         object->setMesh(convertedMesh);
@@ -46,7 +60,7 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 		object->setOrigin(meshutils.calculateBoundingBoxCenter(convertedMesh));
 
 		object->setMaterial(zmaterial);
-        objects.push_back(object);		
+        objects.push_back(object);
     }
 
     // then do the same for each of its children
@@ -69,8 +83,7 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 		} else {
 			vector<ZObject*> children = processNode(node->mChildren[i], scene, nullptr);
 			objects.insert(objects.end(), children.begin(), children.end());
-		}
-			
+		}	
     }
 
     return objects;
