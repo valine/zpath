@@ -85,3 +85,8 @@ void ZScene::updateLightFlatArrays() {
 	mLightFlatColor = static_cast<float*>(glm::value_ptr(mLightColors.front()));
 	mLightFlatPosition = static_cast<float*>(glm::value_ptr(mLightPositions.front()));
 }
+
+void ZScene::moveObjectToBack(int itemIndex) {
+	auto it = mObjects.begin() + itemIndex;
+    std::rotate(it, it + 1, mObjects.end());
+}
