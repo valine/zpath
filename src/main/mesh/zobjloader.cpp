@@ -42,14 +42,14 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 		aiColor3D otherProperties;
 		mat->Get(AI_MATKEY_COLOR_SPECULAR, otherProperties);
 
-		ZMaterial* zmaterial = new ZMaterial(vec4(color.r,color.g,color.b, alpha));
+		ZMaterial* zmaterial = new ZMaterial(vec4(color.r,color.g,color.b, otherProperties.b));
 		zmaterial->setRoughness(otherProperties.r);
 		zmaterial->setMetallic(otherProperties.g);
 		cout << endl << "Loading material" << endl <<
 		"red:" << color.r << endl <<
 		"green:" << color.g << endl << 
 		"blue:" << color.b << endl <<
-		"alpha:" << alpha << endl <<
+		"alpha:" << otherProperties.b << endl <<
 		"roughness:" << otherProperties.r << endl <<
 		"metallic:" << otherProperties.g << endl;
 
