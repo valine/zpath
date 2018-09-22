@@ -1,7 +1,6 @@
 #ifndef ZTEXTURE_H
 #define ZTEXTURE_H
 
-#include "stb_image.h"
 #include "glad/glad.h"
 #include <string>
 #include <fstream>
