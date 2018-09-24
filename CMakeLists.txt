@@ -70,6 +70,7 @@ externalproject_add(assimp
                     PREFIX         ${assimp_prefix}
                     GIT_REPOSITORY https://github.com/assimp/assimp.git
                     UPDATE_COMMAND ""
+                    GIT_TAG        v4.1.0
                     INSTALL_DIR    ${assimp_install_dir}
                     CMAKE_ARGS     ${assimp_cmake_args}
                     LOG_DOWNLOAD ON
