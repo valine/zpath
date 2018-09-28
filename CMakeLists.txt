@@ -98,14 +98,32 @@ externalproject_add(glm
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
 add_dependencies(zpath glm)
 
+  # #
+  # #   freetype
+  # #
+  # set(freetype_prefix "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype")
+  # set(freetype_install_dir "${freetype_prefix}")
+  # set(freetype_cmake_args  "-DCMAKE_INSTALL_PREFIX=${freetype_install_dir}")
+  # externalproject_add(freetype
+  #       PREFIX  ${freetype_prefix}
+  #       GIT_REPOSITORY git@github.com:ubawurinna/freetype-windows-binaries.git
+  #       UPDATE_COMMAND ""
+  #       BUILD_COMMAND ""
+  #       INSTALL_DIR ""
+  #       CMAKE_ARGS ""
+  #       INSTALL_COMMAND cmake -E echo "Skipping install step."
+  #       BUILD_COMMAND cmake -E echo "Skipping build step."
+  #       LOG_DOWNLOAD ON
+  #   )
+
+  # # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
+  # add_dependencies(zpath freetype)
+
 #Opengl
 find_package (OpenGL REQUIRED)
 include_directories(zpath ${OPENGL_INCLUDE_DIR})
 link_libraries(zpath ${OPENGL_gl_LIBRARY})
 find_package (Threads)
-
-find_package(Freetype REQUIRED)
-include_directories(${FREETYPE_INCLUDE_DIRS})
 
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
@@ -133,6 +151,7 @@ if (APPLE)
 endif (APPLE)
 
 if (LINUX)
+
   find_package(X11 REQUIRED)
   message(STATUS "X11_FOUND = ${X11_FOUND}")
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
@@ -148,6 +167,31 @@ if (LINUX)
           "${assimp_install_dir}/lib/libassimp.so")
 
 endif (LINUX)
+
+if (WIN32)
+      #Opengl
+  find_package (OpenGL REQUIRED)
+  include_directories(zpath ${OPENGL_INCLUDE_DIR})
+  link_libraries(zpath ${OPENGL_gl_LIBRARY})
+  find_package (Threads)
+
+
+  find_package(X11 REQUIRED)
+  message(STATUS "X11_FOUND = ${X11_FOUND}")
+  message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
+  message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
+  include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
+  include_directories("C:/Users/Lukas/Desktop/freetype-windows-binaries/include")
+  target_link_libraries (zpath
+          ${OPENGL_LIBRARIES}
+          "${glfw_install_dir}/lib/glfw3.lib"
+          ${X11_LIBRARIES}
+          ${CMAKE_THREAD_LIBS_INIT}
+          ${CMAKE_DL_LIBS}
+          "${assimp_install_dir}/lib/assimp-vc140-mt.lib"
+          "C:/Users/Lukas/Desktop/freetype-windows-binaries/win32/freetype.lib")
+
+endif(WIN32)
 
 ###############################################################################
 ## packaging ##################################################################

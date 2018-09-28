@@ -1,5 +1,5 @@
 #include "ui/zapplication.h"
-#include <unistd.h>
+// #include <unistd.h>
 
 static void error_callback(int error, const char* description) {
     cout<<description;
