@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 attribute vec3 aPos;
 attribute vec2 aTexCoords;
 

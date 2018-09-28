@@ -1,5 +1,5 @@
 R"(
-
+#version 330 core
 varying vec2 TexCoords;
 
 uniform sampler2D hdrBuffer;

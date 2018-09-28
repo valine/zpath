@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 #define lightCount 1
 #define PI 3.14159265359
 

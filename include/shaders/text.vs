@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 attribute vec4 vertex; 
 varying vec2 TexCoords;
 

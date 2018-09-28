@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 varying vec2 TexCoords;
 uniform sampler2D text;
 uniform vec3 textColor;

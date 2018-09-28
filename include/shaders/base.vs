@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 uniform mat4 uVPMatrix;
 
 uniform mat4 uViewMatrix;

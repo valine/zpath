@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 varying vec3 WorldPos;
 
 uniform samplerCube environmentMap;

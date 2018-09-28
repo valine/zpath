@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 #define lightCount 1
 #define PI 3.14159265359
 
@@ -106,7 +107,7 @@ void main() {
         kD *= 1.0 - uMetallic;
         // add to outgoing radiance Lo
         float NdotL = max(dot(N, L), 0.0);                
-        Lo += (kD * uColor / PI + specular) * radiance * NdotL; 
+        Lo += vec3((kD * uColor.rgb / PI + specular) * radiance * NdotL); 
 
     }
 
@@ -117,15 +118,15 @@ void main() {
     kD *= 1.0 - uMetallic;     
 
     vec3 irradiance = texture(irradianceMap, N).rgb * uWorldColor;
-    irradiance = pow(irradiance, vec4(2.2));
-    vec3 diffuse      = irradiance * uColor;
+    irradiance = vec3(pow(irradiance, vec3(2.2)));
+    vec3 diffuse      = vec3(irradiance * uColor.rgb);
 
     R.y = -R.y;
     R.x = -R.x;
 
     float MAX_REFLECTION_LOD = 4.0;
     vec3 prefilteredColor = textureLod(prefilterMap, R,  uRoughness * MAX_REFLECTION_LOD).rgb * uWorldColor;    
-    prefilteredColor = pow(prefilteredColor, vec4(2.2));
+    prefilteredColor = vec3(pow(prefilteredColor, vec3(2.2)));
     
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), uRoughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
@@ -135,7 +136,7 @@ void main() {
     
     vec3 color = ambient + Lo;
 
-    float alpha = uColor.a + luma(specular) + F * 3;
+    float alpha = (uColor.a + luma(specular) + F * 3).r;
 
     if (alpha > 1.0) {
         alpha = 1.0;

@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 #define PI 3.14159265359
 varying vec2 TexCoords;
 

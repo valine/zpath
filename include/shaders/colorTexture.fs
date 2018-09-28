@@ -1,4 +1,5 @@
 R"(
+#version 330 core
 #define lightCount 4
 #define PI 3.14159265359
 
@@ -63,8 +64,8 @@ void main() {
     vec3 V = normalize(uCameraPosition - vPosition);
 
     vec3 Lo = vec3(0.0);
-    vec3 texColor = texture2D(sColorTexture, vTextureCoords);
-    texColor = pow(texColor, vec4(2.2));
+    vec3 texColor = texture2D(sColorTexture, vTextureCoords).rgb;
+    texColor = pow(texColor, vec3(2.2));
 
     for(int i = 0; i < lightCount; i++) {
 
