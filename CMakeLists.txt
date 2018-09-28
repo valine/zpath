@@ -151,7 +151,8 @@ if (APPLE)
 endif (APPLE)
 
 if (LINUX)
-
+  find_package(Freetype REQUIRED)
+  include_directories(${FREETYPE_INCLUDE_DIRS})
   find_package(X11 REQUIRED)
   message(STATUS "X11_FOUND = ${X11_FOUND}")
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
