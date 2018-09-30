@@ -113,6 +113,9 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 
 			textureCoordinates.push_back(mesh->mTextureCoords[0][i].x); 
 			textureCoordinates.push_back(mesh->mTextureCoords[0][i].y); 
+    	} else {
+    		textureCoordinates.push_back(0.0); 
+			textureCoordinates.push_back(0.0); 
     	}
     }
 
@@ -128,7 +131,7 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 	outputMesh->setVertices(vertices);
 	outputMesh->setFaceIndices(faceIndices);
 	outputMesh->setVertexNormals(vertexNormals);
-	//outputMesh->setTextureCoordinates(textureCoordinates);
+	outputMesh->setTextureCoordinates(textureCoordinates);
 	cout << "after create output mesh" << endl;
 	return outputMesh;
 }

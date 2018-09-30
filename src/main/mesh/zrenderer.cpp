@@ -506,6 +506,7 @@ void ZRenderer::renderToScreen() {
     } else {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_DEPTH_BUFFER_BIT);
         mHDRShader->use();
         int yv = mParentView->getWindowHeight() - mParentView->getBottom();
         glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
