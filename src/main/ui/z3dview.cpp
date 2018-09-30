@@ -47,7 +47,7 @@ void Z3DView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
 	int deltaX = getLastX() - x;
 	int deltaY = getLastY() - y;
-	if (middleMouseIsDown() && !shiftKeyPressed()) {
+	if (mouseIsDown() && !shiftKeyPressed()) {
 		//Orbit 
 
 		mSpinRig->rotateBy(deltaX);
@@ -55,7 +55,7 @@ void Z3DView::onCursorPosChange(double x, double y) {
 
 		mRotationX += deltaX / 2;
 		mRotationY -= deltaY / 2;
-	} else if (middleMouseIsDown() && shiftKeyPressed()) {
+	} else if (mouseIsDown() && shiftKeyPressed()) {
 		// Pan
 		double panSpeed = 0.02;
 		mat4 cameraMatrix = ZRenderUtils::getModelMatrix(mRenderer->getCamera(), nullptr);
@@ -85,6 +85,11 @@ void Z3DView::onScrollChange(double x, double y) {
 		mRenderer->getCamera()->translateBy(vec3(0,0,-y / 4));
 	}
 
+}
+
+void Z3DView::onExit() {
+	ZView::onExit();
+	mRenderer->onExit();
 }
 
 ZRenderer* Z3DView::getRenderer() {

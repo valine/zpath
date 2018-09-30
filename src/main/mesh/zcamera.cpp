@@ -1,9 +1,6 @@
 #include "mesh/zcamera.h"
 #include <iostream>
 using namespace std;
-#define GLM_ENABLE_EXPERIMENTAL
-
-#include <glm/gtx/string_cast.hpp>
 
 ZCamera::ZCamera() {
 	  mPosition = glm::vec3(15,0,0); // Camera is at (4,3,3), in World Space

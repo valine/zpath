@@ -45,6 +45,7 @@ public:
 	unsigned int getMainTexture();
 	void setRenderToTexture(bool);
 	void recreateBuffers();
+	void onExit();
 
 private:
 	ZScene* mScene = nullptr;
@@ -71,8 +72,8 @@ private:
 	unsigned int mSelectionBuffer;
 	unsigned int mSelectionRenderBuffer;
 
-	unsigned int quadVAO = 0;
-	unsigned int quadVBO;
+	GLuint quadVAO = 0;
+	GLuint quadVBO = 0;
 
 	unsigned int cubeVAO = 0;
 	unsigned int cubeVBO = 0;
@@ -88,6 +89,7 @@ private:
 	void renderQuad();
 	void updateAnimations();
 	void sortObjects();
+
 
 	int mMaxLightCount = 4;
 

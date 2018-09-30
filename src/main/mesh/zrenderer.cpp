@@ -34,7 +34,7 @@ void ZRenderer::init() {
 
     glGenFramebuffers(1, &mMainFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
-    //glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
     glGenTextures(1, &mMainBuffer);
     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mCamera->getWidth(), mCamera->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
@@ -94,6 +94,7 @@ void ZRenderer::init() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBlendEquation (GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 }
 
@@ -104,6 +105,7 @@ void ZRenderer::setRenderToTexture(bool toTexture) {
 void ZRenderer::draw() {
     if (mScene != nullptr) {
         if (mParentView->getVisibility()) {
+
             updateAnimations();
             sortObjects();
             renderMain();
@@ -489,33 +491,35 @@ void ZRenderer::renderSelection() {
 }
 
 void ZRenderer::renderToScreen() {
+    // if (mRenderToTexture) {
+    //     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (mRenderToTexture) {
-        glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //     mHDRShader->use();
+    //     glViewport(0,0,mCamera->getWidth(),mCamera->getHeight());
+    //     glActiveTexture(GL_TEXTURE0);
+    //     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
 
-        mHDRShader->use();
-        glViewport(0,0,mCamera->getWidth(),mCamera->getHeight());
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+    //     mHDRShader->setBool("hdr", true);
+    //     mHDRShader->setFloat("exposure", mScene->getExposure());
 
-        mHDRShader->setBool("hdr", true);
-        mHDRShader->setFloat("exposure", mScene->getExposure());
-
-        renderQuad();
-    } else {
+    //     renderQuad();
+    //     glBindTexture(GL_TEXTURE_2D, 0);
+    // } else {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_DEPTH_BUFFER_BIT);
-        mHDRShader->use();
-        int yv = mParentView->getWindowHeight() - mParentView->getBottom();
+         int yv = mParentView->getWindowHeight() - mParentView->getBottom();
         glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+        mHDRShader->use();
+       
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, mMainBuffer);
         mHDRShader->setBool("hdr", true);
         mHDRShader->setFloat("exposure", mScene->getExposure());
         renderQuad();
-    }
+        glBindTexture(GL_TEXTURE_2D, 0);
+    //}
 }
 
 int ZRenderer::getObjectIndexAtLocation(int x, int y) {
@@ -657,4 +661,21 @@ void ZRenderer::renderCube() {
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
+}
+
+void ZRenderer::onExit() {
+
+    glDeleteRenderbuffers( 1, &mRenderBuffer);
+    glDeleteTextures( 1, &mMainBuffer);
+    glDeleteFramebuffers( 1, &mMainFBO);
+
+    glDeleteRenderbuffers( 1, &mSelectionRenderBuffer);
+    glDeleteTextures( 1, &mSelectionBuffer);
+    glDeleteFramebuffers( 1, &mSelectionFBO);
+
+    mHDRShader->deleteProgram();
+    mSelectionShader->deleteProgram();
+    mShader->deleteProgram();
+
+cout << "exit renderer" << endl;
 }

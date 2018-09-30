@@ -33,6 +33,10 @@ void ZShader::use() {
 	glUseProgram(mID);
 }
 
+void ZShader::deleteProgram() {
+    glDeleteProgram(mID);
+}
+
 void ZShader::setBool(const std::string &name, bool value) const {         
     glUniform1i(glGetUniformLocation(mID, name.c_str()), (int)value); 
 }
