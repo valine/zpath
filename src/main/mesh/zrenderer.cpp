@@ -491,21 +491,21 @@ void ZRenderer::renderSelection() {
 }
 
 void ZRenderer::renderToScreen() {
-    // if (mRenderToTexture) {
-    //     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
-    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (mRenderToTexture) {
+        glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //     mHDRShader->use();
-    //     glViewport(0,0,mCamera->getWidth(),mCamera->getHeight());
-    //     glActiveTexture(GL_TEXTURE0);
-    //     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+        mHDRShader->use();
+        glViewport(0,0,mCamera->getWidth(),mCamera->getHeight());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mMainBuffer);
 
-    //     mHDRShader->setBool("hdr", true);
-    //     mHDRShader->setFloat("exposure", mScene->getExposure());
+        mHDRShader->setBool("hdr", true);
+        mHDRShader->setFloat("exposure", mScene->getExposure());
 
-    //     renderQuad();
-    //     glBindTexture(GL_TEXTURE_2D, 0);
-    // } else {
+        renderQuad();
+        glBindTexture(GL_TEXTURE_2D, 0);
+    } else {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -519,7 +519,7 @@ void ZRenderer::renderToScreen() {
         mHDRShader->setFloat("exposure", mScene->getExposure());
         renderQuad();
         glBindTexture(GL_TEXTURE_2D, 0);
-    //}
+    }
 }
 
 int ZRenderer::getObjectIndexAtLocation(int x, int y) {
