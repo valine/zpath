@@ -47,7 +47,7 @@ void Z3DView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
 	int deltaX = getLastX() - x;
 	int deltaY = getLastY() - y;
-	if (mouseIsDown() && !shiftKeyPressed()) {
+	if (middleMouseIsDown() && !shiftKeyPressed()) {
 		//Orbit 
 
 		mSpinRig->rotateBy(deltaX);
