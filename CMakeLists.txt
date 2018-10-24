@@ -182,7 +182,7 @@ if (WIN32)
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
   include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
-  include_directories("C:/Users/Lukas/Desktop/freetype-windows-binaries/include")
+  include_directories("C:/FreeTypeBinaries/include")
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
           "${glfw_install_dir}/lib/glfw3.lib"
@@ -190,7 +190,7 @@ if (WIN32)
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
           "${assimp_install_dir}/lib/assimp-vc140-mt.lib"
-          "C:/Users/Lukas/Desktop/freetype-windows-binaries/win32/freetype.lib")
+          "C:/FreeTypeBinaries/win32/freetype.lib")
 
 endif(WIN32)
 
