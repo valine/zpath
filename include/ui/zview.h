@@ -115,6 +115,8 @@ class ZView {
 		void setVisibility(bool visible);
 		bool getVisibility();
 
+		virtual void onExit();
+
 		vector<ZView*> getSubViews();
 	private:
 

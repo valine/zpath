@@ -31,6 +31,7 @@ public:
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void onScrollChange(double x, double y);
+	void onExit();
 	void onWindowChange(int, int);
 	void draw();
 	void setRenderer(ZRenderer *renderer);

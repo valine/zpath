@@ -11,16 +11,29 @@ Dependencies
 * Freetype https://www.freetype.org/ 
 * Assimp git@github.com:assimp/assimp.git
 
+### To build on Linux
+
 Packages to install on ubuntu
 
 * libfreetype6-dev
 * libglu1-mesa-dev
-
-### To build
 
 ```bash
 cd zpath 
 mkdir build && cd build
 cmake ..
 make
+```
+
+
+### To build on Windows
+
+Install Visual Studio build tools
+
+From the Developer command prompt run 
+```bash
+cd zpath 
+mkdir build && cd build
+cmake ..
+msbuild ALL_BUILD.vsfx
 ```

@@ -65,6 +65,7 @@ void ZViewController::onScrollChange(double x, double y) {
 }
 
 void ZViewController::onTerminate() {
+    mRootView->onExit();
 }
 
 void ZViewController::draw() {

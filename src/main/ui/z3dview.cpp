@@ -87,6 +87,11 @@ void Z3DView::onScrollChange(double x, double y) {
 
 }
 
+void Z3DView::onExit() {
+	ZView::onExit();
+	mRenderer->onExit();
+}
+
 ZRenderer* Z3DView::getRenderer() {
 	return mRenderer;
 }

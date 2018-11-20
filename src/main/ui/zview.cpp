@@ -439,6 +439,12 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     }
 }
 
+void ZView::onExit() {
+        for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->onExit();
+    }
+}
+
 void ZView::setVisibility(bool visible) {
     mVisible = visible;
 }
