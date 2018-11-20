@@ -43,12 +43,12 @@ void main() {
         // Jim Hejl
 
 
-        vec3 x = max(vec3(0.0),hdrColor.rgb-0.004);
-        vec3 retColor = (x*(6.2*x+.5))/(x*(6.2*x+1.7)+0.06);
+        // vec3 x = max(vec3(0.0),hdrColor.rgb-0.004);
+        // vec3 retColor = (x*(6.2*x+.5))/(x*(6.2*x+1.7)+0.06);
 
 
 
-        gl_FragColor = vec4(retColor.rgb, 1.0);
+        gl_FragColor = vec4(result.rgb, 1.0);
     }
     else
     {

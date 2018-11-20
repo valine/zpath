@@ -52,7 +52,7 @@ void ZPathViewController::onCreate() {
     mExposureSlider->setMargin(10, 10, 10, 10);
     mExposureSlider->setListener(this);
     propertiesPanel->addSubView(mExposureSlider);
-    mExposureSlider->setMaxValue(5);
+    mExposureSlider->setMaxValue(20);
     mExposureSlider->setMinValue(0);
     mExposureSlider->setValue(mScene->getExposure());
 
