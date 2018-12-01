@@ -41,6 +41,9 @@ public:
 
 	void deleteSelectedObject();
 	void moveObjectToBack(int);
+	
+	void updateLightFlatArrays();
+
 private:
 	vector<ZObject*> mObjects;
 	vector<ZPointLight*> mPointLights;
@@ -56,8 +59,6 @@ private:
 	ZWorld* mWorld;
 
 	float mExposure = 1.0;
-
-	void updateLightFlatArrays();
 
 	int mActiveObjectIndex = -1;
 };
