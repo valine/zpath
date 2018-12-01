@@ -79,7 +79,7 @@ void ZScene::updateLightFlatArrays() {
 	for (vector<ZPointLight*>::iterator it = mPointLights.begin() ; it != mPointLights.end(); ++it) {
 		ZPointLight *light = (*it);
 		mat4 modelMat = ZRenderUtils::getModelMatrix(light, nullptr);
-		mLightPositions.push_back(vec4(light->getPosition(), 1.0) * modelMat);
+		mLightPositions.push_back(modelMat * vec4(light->getPosition(), 1.0));
 		mLightColors.push_back(light->getColor() * ZRenderUtils::extractScale(modelMat));
 	}
 
