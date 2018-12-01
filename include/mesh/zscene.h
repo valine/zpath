@@ -10,6 +10,8 @@
 #include "zobjloader.h"
 #include "zcamera.h"
 #include "zpath_constants.h"
+#include "mesh/zrenderutils.h"
+
 using namespace std;
 
 class ZScene {
