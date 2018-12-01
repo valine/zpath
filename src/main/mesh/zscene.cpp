@@ -78,8 +78,9 @@ void ZScene::updateLightFlatArrays() {
 	vector<ZPointLight*> lights = getLights();
 	for (vector<ZPointLight*>::iterator it = mPointLights.begin() ; it != mPointLights.end(); ++it) {
 		ZPointLight *light = (*it);
-		mLightPositions.push_back(vec4(light->getPosition(), 0.0) * ZRenderUtils::getModelMatrix(light, nullptr));
-		mLightColors.push_back(light->getColor());
+		mat4 modelMat = ZRenderUtils::getModelMatrix(light, nullptr);
+		mLightPositions.push_back(vec4(light->getPosition(), 0.0) * modelMat);
+		mLightColors.push_back(light->getColor() * ZRenderUtils::extractScale(modelMat));
 	}
 
 	mLightFlatColor = static_cast<float*>(glm::value_ptr(mLightColors.front()));
