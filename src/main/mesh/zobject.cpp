@@ -168,6 +168,12 @@ void ZObject::animationFinished(ZAnimator* animator) {
 	mAnimators.erase(remove(mAnimators.begin(), mAnimators.end(), animator), mAnimators.end());
 }
 
+float ZObject::getType() {
+	return mType;
+}
+void ZObject::setType(float type) {
+	mType = type;
+}
 
 
 

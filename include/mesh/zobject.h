@@ -62,6 +62,8 @@ public:
 	void setVisible(bool);
 	bool getVisible();
 
+	float getType();
+	void setType(float);
 	void startAnimation(ZAnimator* animator);
 	vector<ZAnimator*> getAnimators();
 	void animationFinished(ZAnimator* animator);
@@ -86,6 +88,8 @@ private:
 	ZObject* mParent = nullptr;
 	vector<ZObject*> mChildren;
 	vector<ZAnimator*> mAnimators;
+
+	float mType = 0.0;
 
 	bool mSelectable = true;
 	bool mVisible = true;
