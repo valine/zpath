@@ -29,7 +29,7 @@ ZSlider(maxWidth, maxHeight, title) {
     mLabel->setTextColor(vec4(1.0));
     mLabel->setGravity(ZView::topLeft);
     addSubView(mLabel);
-    setValue(15);
+    setValue(0.0);
 }
 
 
@@ -92,7 +92,7 @@ void ZSlider::setListener(ZSliderListener* listener) {
 	mListener = listener;
 }
 
-void ZSlider::valueChanged(int offset) {
+void ZSlider::valueChanged(float offset) {
 	float maxOffset = (float) (getWidth() - SLIDER_THUMB_SIZE);
 	float factor = (float) offset / maxOffset;
 	float value = ((mMaxValue - mMinValue) * factor) + mMinValue;
