@@ -36,6 +36,7 @@ public:
 private:
 	ZView* mThumb;
 	ZView* mLine;
+	ZView* mHighlight;
 	string mTitle;
 
 	float mMaxValue = 1.0;

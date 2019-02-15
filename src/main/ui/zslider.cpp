@@ -6,12 +6,18 @@ ZView(maxWidth, maxHeight) {
 	float lineColor[4] = {0.0, 0.0, 0.0, 1.0};
 	float thumbColor[4] = {0.1, 0.2, 0.9, 1.0};
 
-	float lineHeight = SLIDER_THUMB_SIZE + 2;
+	float lineHeight = SLIDER_THUMB_SIZE;
 	mLine = new ZView(getWidth(), lineHeight);
 	mLine->setOffset(0,getHeight() / 2 - (lineHeight / 2));
 	mLine->setBackgroundColor(lineColor);
 	mLine->setGravity(ZView::bottomLeft);
 	addSubView(mLine);
+
+	mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
+	mHighlight->setBackgroundColor(vec4(0.046663, 0.213823, 0.384374, 1.000000));
+	mHighlight->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
+	mHighlight->setGravity(ZView::bottomLeft);
+	addSubView(mHighlight);
 
 	mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
 	mThumb->setBackgroundColor(thumbColor);
@@ -69,6 +75,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 
 		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
+		mHighlight->setMaxWidth(newOffset);
 		valueChanged(newOffset);
 	}
 }
@@ -87,6 +94,7 @@ void ZSlider::onScrollChange(double x, double y) {
 
 	int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
 	mThumb->setOffset(newOffset, yPosition);
+	mHighlight->setMaxWidth(newOffset);
 	valueChanged(newOffset);
 }
 
@@ -134,6 +142,7 @@ void ZSlider::setValue(float value) {
 	}
 
 	mThumb->setOffset(newOffset, yPosition);
+	mHighlight->setMaxWidth(newOffset);
 	valueChanged(newOffset);
 }
 
