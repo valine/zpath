@@ -94,6 +94,8 @@ class ZView {
 		int getLastX();
 		int getLastY();
 
+		void setYOffset(int y);
+
 		ZView* getParentView();
 
 		virtual void draw();
@@ -132,8 +134,8 @@ class ZView {
 
 		vec4 mBackgroundColor = vec4(0);
 
-		GLuint mVertexBuffer;
-		GLuint mFaceIndicesBuffer;
+		GLuint mVertexBuffer = 0;
+		GLuint mFaceIndicesBuffer = 0;
 
 		float mVertices[3 * 4] = {0};
 		int mFaceIndices[6] = {2,1,0,1,2,3};

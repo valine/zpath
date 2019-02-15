@@ -16,7 +16,8 @@ class ZLinearLayout : public ZView {
 
 public:
 	ZLinearLayout(float maxWidth, float maxHeight);
-	void addSubView(ZView *view);
+	void addSubView(ZView* view);
+	
 
 private:
 
@@ -24,4 +25,4 @@ private:
 
 };
 
-#endif ZLINEARLAYOUT_H
+#endif

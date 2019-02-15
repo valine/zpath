@@ -10,11 +10,13 @@ ZView(maxWidth, maxHeight) {
 	mLine = new ZView(getWidth(), lineHeight);
 	mLine->setOffset(0,getHeight() / 2 - (lineHeight / 2));
 	mLine->setBackgroundColor(lineColor);
+	mLine->setGravity(ZView::bottomLeft);
 	addSubView(mLine);
 
 	mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
 	mThumb->setBackgroundColor(thumbColor);
 	mThumb->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
+	mThumb->setGravity(ZView::bottomLeft);
 	addSubView(mThumb);
 
 	mTitle = label;

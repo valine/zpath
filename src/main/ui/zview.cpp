@@ -128,6 +128,10 @@ void ZView::setOffset(int x, int y) {
     computeBounds(mParentWidth, mParentWidth);
 }
 
+void ZView::setYOffset(int y) {
+    mOffsetY = y;
+}
+
 void ZView::offsetBy(int x, int y) {
     mOffsetX += x;
     mOffsetY += y;
