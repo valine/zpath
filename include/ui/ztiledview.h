@@ -22,6 +22,7 @@ public:
 	void onCursorPosChange(double x, double y);
 	void setScene(ZScene* scene);
 
+	void zoomBy(float zoom);
 	void setFocalLength(float focalLength);
 	ZScene* getScene();
 private:

@@ -59,6 +59,13 @@ void ZTiledView::setTileMargin(int margin) {
 	setTileCount(mTileCountX, mTileCountY);
 }
 
+void ZTiledView::zoomBy(float zoom) {
+for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+    	(*it)->getRenderer()->getCamera()->translateBy(vec3(0,0,zoom));
+    }
+
+}
+
 void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 	int i = 0;
 	for (int x = 0; x < mTileCountX; x++) {
