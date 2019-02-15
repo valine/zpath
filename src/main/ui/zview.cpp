@@ -46,6 +46,7 @@ void ZView::init(int maxWidth, int maxHeight) {
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
 
+
     mVertices[3] = mMaxWidth;
     mVertices[7] = mMaxHeight;
 
