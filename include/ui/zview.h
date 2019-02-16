@@ -40,15 +40,15 @@ class ZView {
 		ZView(Bounds maxWidth, Bounds maxHeight);
 		
 		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
-		void setOffset(int x, int y);
+		void setOffset(double x, double y);
 
 		virtual void addSubView(ZView *view);
 		void clearSubViews();
 
 		void setParentView(ZView *parentView);
 
-		int getOffsetX();
-		int getOffsetY();
+		double getOffsetX();
+		double getOffsetY();
 
 		void offsetBy(int x, int y);
 
@@ -87,12 +87,13 @@ class ZView {
 		bool mouseIsDown();
 		bool middleMouseIsDown();
 		bool shiftKeyPressed();
+		bool altKeyPressed();
 
 		int getMouseDownX();
 		int getMouseDownY();
 
-		int getLastX();
-		int getLastY();
+		double getLastX();
+		double getLastY();
 
 		void setYOffset(int y);
 
@@ -153,8 +154,8 @@ class ZView {
 		int top = 0;
 		int bottom = 0; 
 
-		int mOffsetX = 0;
-		int mOffsetY = 0;
+		double mOffsetX = 0;
+		double mOffsetY = 0;
 
 		int mParentWidth = 100;
 		int mParentHeight = 100;
@@ -162,8 +163,8 @@ class ZView {
 		int mMouseX = 0;
 		int mMouseY = 0;
 
-		int mLastX;
-		int mLastY;
+		double mLastX;
+		double mLastY;
 
 		int mMouseDownX;
 		int mMouseDownY;
@@ -175,6 +176,7 @@ class ZView {
 		bool mMiddleMouseDown = false;
 
 		bool mShiftKeyPressed = false;
+		bool mAltKeyPressed = false;
 
 		bool mVisible = true;
 

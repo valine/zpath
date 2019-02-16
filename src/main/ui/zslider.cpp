@@ -61,11 +61,26 @@ void ZSlider::onKeyPress(int key, int scancode, int action, int mods) {
 void ZSlider::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
 
-	if (mouseIsDown()) {
+	if (mouseIsDown() && !shiftKeyPressed()) {
 
 		int deltaX =  getLastX() - x;
 		int currentOffset = mThumb->getOffsetX();
 		int newOffset = currentOffset - deltaX;
+
+		if (newOffset < 0) {
+			newOffset = 0;
+		} else if (newOffset > getWidth() - SLIDER_THUMB_SIZE) {
+			newOffset = getWidth() - SLIDER_THUMB_SIZE;
+		}
+
+		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
+		mThumb->setOffset(newOffset, yPosition);
+		mHighlight->setMaxWidth(newOffset);
+		valueChanged(newOffset);
+	} else if (mouseIsDown() && shiftKeyPressed()) {
+		double deltaX =  (x - getLastX());
+		double currentOffset = mThumb->getOffsetX();
+		double newOffset = currentOffset + (deltaX * 0.1);
 
 		if (newOffset < 0) {
 			newOffset = 0;

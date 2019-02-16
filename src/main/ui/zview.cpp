@@ -122,7 +122,7 @@ void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int margin
     computeBounds(mParentWidth, mParentWidth);
 }
 
-void ZView::setOffset(int x, int y) {
+void ZView::setOffset(double x, double y) {
     mOffsetX = x;
     mOffsetY = y;
     computeBounds(mParentWidth, mParentWidth);
@@ -138,11 +138,11 @@ void ZView::offsetBy(int x, int y) {
     computeBounds(mParentWidth, mParentWidth);
 }
 
-int ZView::getOffsetX() {
+double ZView::getOffsetX() {
     return mOffsetX;
 }
 
-int ZView::getOffsetY() {
+double ZView::getOffsetY() {
    
     return mOffsetY; 
 }
@@ -353,6 +353,11 @@ bool ZView::shiftKeyPressed() {
     return mShiftKeyPressed;
 }
 
+
+bool ZView::altKeyPressed() {
+    return mAltKeyPressed;
+}
+
 int ZView::getMouseDownX() {
     return mMouseDownX;
 }
@@ -362,11 +367,11 @@ int ZView::getMouseDownY() {
 }
 
 
-int ZView::getLastX() {
+double ZView::getLastX() {
     return mLastX;
 }
 
-int ZView::getLastY() {
+double ZView::getLastY() {
     return mLastY;
 }
 
@@ -405,6 +410,13 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
         mShiftKeyPressed = true;
     } else if ((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) && action == GLFW_RELEASE) {
         mShiftKeyPressed = false;
+    }
+
+
+    if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_PRESS) {
+        mAltKeyPressed = true;
+    } else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_RELEASE) {
+        mAltKeyPressed = false;
     }
 
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
