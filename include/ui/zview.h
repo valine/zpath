@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "ui/ztexture.h"
 
 #include <vector>
 
@@ -102,8 +103,10 @@ class ZView {
 		virtual void draw();
 		virtual void setShader(ZShader *shader);
 		virtual void setTextShader(ZShader *shader);
+		virtual void setImageShader(ZShader *shader);
 
 		ZShader* getTextShader();
+		ZShader* getImageShader();
 
 		virtual void computeBounds(int windowHeight, int maxWidth);
 
@@ -113,6 +116,7 @@ class ZView {
 		virtual void onCursorPosChange(double x, double y);
 		virtual void onScrollChange(double x, double y);
 
+		void setBackgroundImage(ZTexture* background);
 		void invalidate();
 
 		void setVisibility(bool visible);
@@ -130,19 +134,24 @@ class ZView {
 
 		ZShader *mShader = nullptr;
 		ZShader *mTextShader;
+		ZShader *mImageShader;
 		float mMaxWidth = 0; 
 		float mMaxHeight = 0;
 
 		vec4 mBackgroundColor = vec4(0);
 
 		GLuint mVertexBuffer = 0;
+		GLuint mTexBuffer = 0;
 		GLuint mFaceIndicesBuffer = 0;
 
-		float mVertices[3 * 4] = {0};
+		float mVertices[4*4] = {0,0,0,0,  0,0,1,0,  0,0,0,1, 0,0,1,1};
+		float mTexCoords[2*4] = {-1,-1, -1,1, 1,-1, 1,1};
+
 		int mFaceIndices[6] = {2,1,0,1,2,3};
 
 		int mColorLocation;
 		int mPositionLocation;
+		int mTexCoordLocation;
 
 		int mMarginLeft = 0;
 		int mMarginTop = 0;
@@ -179,6 +188,8 @@ class ZView {
 		bool mAltKeyPressed = false;
 
 		bool mVisible = true;
+
+		ZTexture* mBackgroundImage = nullptr;
 
 		vector<ZView*> mViews;
 };

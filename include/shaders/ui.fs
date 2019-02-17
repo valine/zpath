@@ -1,7 +1,7 @@
 R"(
 #version 330 core
 uniform vec4 uColor;
-
+//varying vec2 TexCoords;
 void main() {
 
     gl_FragColor = uColor;

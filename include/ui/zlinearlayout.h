@@ -20,8 +20,7 @@ public:
 	
 
 private:
-
-
+	float mPos = 0;
 
 };
 

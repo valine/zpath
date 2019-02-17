@@ -60,6 +60,7 @@ private:
 
 	ZShader *mUIShader = nullptr;
 	ZShader *mTextShader = nullptr;
+	ZShader *mImageViewShader;
 
 	bool mDrawingEnabled = true;
 
@@ -80,6 +81,10 @@ private:
 
 	const string text_fs =
 	#include "shaders/text.fs"
+	;
+
+	const string image_fs =
+	#include "shaders/imageview.fs"
 	;
 };
 

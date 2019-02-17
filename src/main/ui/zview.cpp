@@ -18,27 +18,51 @@ ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
 }
 
 void ZView::draw() {
+    ZShader* shader;
     if (mVisible) {
-        mShader->use();
-        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+        if (mBackgroundImage != nullptr) {
+             mImageShader->use();
+             shader = mImageShader;
 
-        glEnableVertexAttribArray(mPositionLocation);
-        glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-                              sizeof(float) * 3, (void*) 0);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
+        } else {
+              mShader->use();
+              shader = mShader;
+        }
 
-        glUniform4f(mColorLocation, 
+
+        glUniform4f(glGetUniformLocation(shader->mID, "uColor"), 
             mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
 
         glViewport(0, 0, mWindowWidth, mWindowHeight);
+ 
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "vPos"));
+        glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPos"), 4, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * 4, (void*) 0);
+
+        cout << mTexBuffer << endl;
+        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+        glEnableVertexAttribArray(glGetUniformLocation(shader->mID, "aTexCoords"));
+        glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE, 
+            sizeof(float) * 2, (void*) 0);
+       
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
 
         if (mParentView != this) {
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }
 
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
             (*it)->draw();
         }
+
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
     }
 }
 
@@ -46,20 +70,24 @@ void ZView::init(int maxWidth, int maxHeight) {
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
 
+    mVertices[4] = (GLfloat) mMaxWidth;
 
-    mVertices[3] = mMaxWidth;
-    mVertices[7] = mMaxHeight;
+    mVertices[8] = (GLfloat) mMaxHeight;
 
-    mVertices[9] = mMaxWidth;
-    mVertices[10] = mMaxHeight;
+    mVertices[12] = (GLfloat) mMaxWidth;
+    mVertices[13] = (GLfloat) mMaxHeight;
 
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float),  &mVertices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &mFaceIndicesBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mFaceIndices) * sizeof(int), mFaceIndices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(int), &mFaceIndices, GL_STATIC_DRAW);
+
+     glGenBuffers(1, &mTexBuffer);
+     glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+     glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), mTexCoords, GL_STATIC_DRAW);
 
     mParentView = this;
 }
@@ -69,7 +97,7 @@ void ZView::setShader(ZShader *shader) {
 
     mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
     mColorLocation = glGetUniformLocation(shader->mID, "uColor");
-
+    mTexCoordLocation = glGetUniformLocation(shader->mID, "aTexCoords");
      for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->setShader(shader);
     }
@@ -84,6 +112,18 @@ void ZView::setTextShader(ZShader *shader) {
 
 ZShader* ZView::getTextShader() {
     return mTextShader;
+}
+
+
+void ZView::setImageShader(ZShader *shader) {
+    mImageShader = shader;
+    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
+        (*it)->setImageShader(shader);
+    }
+}
+
+ZShader* ZView::getImageShader() {
+    return mImageShader;
 }
 
 void ZView::setWindowWidth(int width) {
@@ -181,6 +221,10 @@ int ZView::getMarginBottom() {
 
 void ZView::invalidate() {
     glfwPostEmptyEvent();
+}
+
+void ZView::setBackgroundImage(ZTexture* background) {
+    mBackgroundImage = background;
 }
 
 int ZView::getLeft() {
@@ -301,17 +345,20 @@ void ZView::computeBounds(int windowWidth, int windowHeight) {
         mVertices[0] = getLeft();
         mVertices[1] = getTop();
 
-        mVertices[3] = getRight();
-        mVertices[4] = getTop();
+        mVertices[4] = getRight();
+        mVertices[5] = getTop();
 
-        mVertices[6] = getLeft();
-        mVertices[7] = getBottom();
+        mVertices[8] = getLeft();
+        mVertices[9] = getBottom();
 
-        mVertices[9] = getRight();
-        mVertices[10] = getBottom();
+        mVertices[12] = getRight();
+        mVertices[13] = getBottom();
 
         glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(mVertices), mVertices, GL_STATIC_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
+
+        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
 }
 
 void ZView::addSubView(ZView *view) {
@@ -321,6 +368,7 @@ void ZView::addSubView(ZView *view) {
     if (mShader != nullptr) {
         view->setShader(mShader);
         view->setTextShader(mTextShader);
+        view->setImageShader(mImageShader);
     }
 }
 

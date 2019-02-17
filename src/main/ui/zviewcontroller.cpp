@@ -11,6 +11,7 @@ ZViewController::ZViewController(string resourcePath) {
 void ZViewController::onCreate() {
     mUIShader = new ZShader(ui_vs, ui_fs);
     mTextShader = new ZShader(text_vs, text_fs);
+    mImageViewShader = new ZShader(ui_vs, image_fs);
 
     float backgroundColor[4] = {0.4f, 0.4, 0.4, 1.000};
 
@@ -20,6 +21,7 @@ void ZViewController::onCreate() {
     mRootView->setBackgroundColor(backgroundColor);
     mRootView->setShader(mUIShader);
     mRootView->setTextShader(mTextShader);
+    mRootView->setImageShader(mImageViewShader);
 }
 
 ZView* ZViewController::getRootView() {
@@ -76,6 +78,10 @@ void ZViewController::draw() {
         matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -10.0f, 100.0f);
         glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+        mImageViewShader->use();
+        GLint vp_locationi = glGetUniformLocation(mImageViewShader->mID, "uVPMatrix");
+        glUniformMatrix4fv(vp_locationi, 1, GL_FALSE, glm::value_ptr(projection));
 
         if (mRootView != nullptr) {
             glViewport(0, 0, mParentWidth, mParentHeight);

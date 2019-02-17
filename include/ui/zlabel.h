@@ -45,6 +45,7 @@ class ZLabel : public ZView {
 		vec3 mTextColor = vec3(1,1,1);
 		string mText = "";
 		string mFontPath = "";
+		bool mInvalid = true;
 };
 
 #endif
