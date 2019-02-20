@@ -66,6 +66,12 @@ for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) 
 
 }
 
+void ZTiledView::setWireMode(bool wireMode) {
+	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+    	(*it)->getRenderer()->setWireMode(wireMode);
+    }
+}
+
 void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 	int i = 0;
 	for (int x = 0; x < mTileCountX; x++) {

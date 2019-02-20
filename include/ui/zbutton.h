@@ -25,6 +25,8 @@ public:
 	void onCursorPosChange(double x, double y);
 
 	void setText(string text);
+	void setTag(string);
+	string getTag();
 
 	void setOnClickListener(ZOnClickListener* listener);
 private:
@@ -32,6 +34,7 @@ int debug;
 
 	ZLabel* mLabel;
 	ZOnClickListener* mListener = nullptr;
+	string mTag;
 
 
 };

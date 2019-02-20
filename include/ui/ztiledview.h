@@ -24,6 +24,7 @@ public:
 
 	void zoomBy(float zoom);
 	void setFocalLength(float focalLength);
+	void setWireMode(bool);
 	ZScene* getScene();
 private:
 	int mTileCountX;
@@ -33,6 +34,7 @@ private:
 	
 	int mInitialTileWeightX = 0;
 	int mTileWeightX = 0;
+
 
 	ZScene* mScene;
 	string mResourcePath;

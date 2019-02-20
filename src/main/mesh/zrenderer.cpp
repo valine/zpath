@@ -102,16 +102,22 @@ void ZRenderer::setRenderToTexture(bool toTexture) {
     mRenderToTexture = toTexture;
 }
 
+void ZRenderer::setWireMode(bool wiremode) {
+    mWireMode = wiremode;
+}
+
 void ZRenderer::draw() {
     if (mScene != nullptr) {
         if (mParentView->getVisibility()) {
+
 
             updateAnimations();
             sortObjects();
             renderMain();
             renderSelection();
             renderToScreen();
-
+            
+          
             glDisable(GL_DEPTH_TEST);
         }
     }
@@ -335,7 +341,11 @@ void ZRenderer::renderMain() {
         glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getBackgroundID());
     }
 
-    renderCube();
+    if (!mWireMode) {
+        renderCube();
+    } else {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
 
     vector<ZPointLight*> lights = mScene->getLights();
     vector<ZObject*> objects = mScene->getObjects();
@@ -400,6 +410,11 @@ void ZRenderer::renderMain() {
           sizeof(float) * 2, (void*) 0);
 
         vec4 color = material->getColor();
+
+        if (mWireMode) {
+            color = vec4(1);
+        }
+
         shader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
         float selected = 0;
@@ -408,8 +423,13 @@ void ZRenderer::renderMain() {
         }
         shader->setFloat("uSelected", selected);
 
-        shader->setFloat("uMetallic", material->getMetallic());
-        shader->setFloat("uRoughness", material->getRoughness());
+        if (mWireMode) {
+            shader->setFloat("uMetallic", 0); 
+            shader->setFloat("uRoughness", 1);
+        } else {
+            shader->setFloat("uMetallic", material->getMetallic());
+            shader->setFloat("uRoughness", material->getRoughness());
+        }
 
         if (mCamera->isManualView()) {
             shader->setVec3("uCameraPosition", inverse(mCamera->getViewMatrix()) * vec4(0,0,0,1));
@@ -427,6 +447,7 @@ void ZRenderer::renderMain() {
         objectIndex++;
     }
 
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glBindTexture(GL_TEXTURE_2D, 0);
     onDrawFinshed();
 }

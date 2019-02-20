@@ -63,7 +63,7 @@ void ZWorld::initEnvironment() {
 	  	glGenTextures(1, &envCubemap);
 	    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 	    for (unsigned int i = 0; i < 6; ++i) {
-	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 2048, 2048, 0, GL_RGB, GL_FLOAT, nullptr);
+	        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, GL_RGB, GL_FLOAT, nullptr);
 	    }
 
 	    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -79,7 +79,7 @@ void ZWorld::initEnvironment() {
 	    glActiveTexture(GL_TEXTURE0);
 	    glBindTexture(GL_TEXTURE_2D, getEnvironmentTexture()->getID());
 
-	    glViewport(0, 0, 2048, 2048); // don't forget to configure the viewport to the capture dimensions.
+	    glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
 	    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
 	    for (unsigned int i = 0; i < 6; ++i) {
 	        mCubemapShader->setMat4("view", captureViews[i]);
@@ -134,7 +134,7 @@ void ZWorld::initEnvironment() {
 	    glGenTextures(1, &prefilterMap);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
 		for (unsigned int i = 0; i < 6; ++i) {
-		    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 256, 256, 0, GL_RGB, GL_FLOAT, nullptr);
+		    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 64, 64, 0, GL_RGB, GL_FLOAT, nullptr);
 		}
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -154,8 +154,8 @@ void ZWorld::initEnvironment() {
 	    unsigned int maxMipLevels = 8;
 	    for (unsigned int mip = 0; mip < maxMipLevels; ++mip) {
 	        // reisze framebuffer according to mip-level size.
-	        unsigned int mipWidth  = 256 * std::pow(0.5, mip);
-	        unsigned int mipHeight = 256 * std::pow(0.5, mip);
+	        unsigned int mipWidth  = 64 * std::pow(0.5, mip);
+	        unsigned int mipHeight = 64 * std::pow(0.5, mip);
 	        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 	        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 	        glViewport(0, 0, mipWidth, mipHeight);

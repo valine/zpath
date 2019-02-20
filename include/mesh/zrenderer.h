@@ -47,6 +47,8 @@ public:
 	void recreateBuffers();
 	void onExit();
 
+	void setWireMode(bool);
+
 private:
 	ZScene* mScene = nullptr;
 	ZShader* mShader;
@@ -71,6 +73,8 @@ private:
 	unsigned int mSelectionFBO;
 	unsigned int mSelectionBuffer;
 	unsigned int mSelectionRenderBuffer;
+
+	bool mWireMode = false;
 
 	GLuint quadVAO = 0;
 	GLuint quadVBO = 0;

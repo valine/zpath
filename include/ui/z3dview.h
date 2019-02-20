@@ -50,6 +50,8 @@ private:
 	ZObject* mTiltRig;
 	ZObject* mSpinRig;
 
+	void setWireMode(bool);
+
 };
 
 #endif

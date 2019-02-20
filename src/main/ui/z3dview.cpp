@@ -42,6 +42,10 @@ void Z3DView::onKeyPress(int key, int scancode, int action, int mods) {
  		}
  	}
 }
+
+void Z3DView::setWireMode(bool wiremode) {
+	mRenderer->setWireMode(wiremode);
+}
 	
 void Z3DView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);

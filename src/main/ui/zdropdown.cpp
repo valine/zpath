@@ -31,13 +31,15 @@ void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 
 	if (action == GLFW_PRESS) {
-	
-	}
-
-	if (action == GLFW_RELEASE) {
 		if (y < mTitle->getBottom()) {
 			mDrawer->setVisibility(!mDrawer->getVisibility());
 		}
+	}
+
+	if (action == GLFW_RELEASE) {
+		// if (y < mTitle->getBottom()) {
+		// 	mDrawer->setVisibility(!mDrawer->getVisibility());
+		// }
 	}
 }
 
