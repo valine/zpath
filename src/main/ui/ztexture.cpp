@@ -26,7 +26,7 @@ unsigned int ZTexture::loadTexture(char const * path){
         else if (nrComponents == 4)
             format = GL_RGBA;
 
-        cout << "width: " << width << " height: " << height << endl;
+        //cout << "width: " << width << " height: " << height << endl;
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, format, GL_FLOAT, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -38,7 +38,7 @@ unsigned int ZTexture::loadTexture(char const * path){
 
         stbi_image_free(data);
     } else {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
+        //std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }
 

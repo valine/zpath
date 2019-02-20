@@ -32,6 +32,10 @@ public:
 	void setLineColor(vec4 color);
 	void setThumbColor(vec4 color);
 	void setIncrement(float);
+
+	void setHighlightBackground(ZTexture* tex);
+	
+	void setThumbBackground(ZTexture* tex);
 	
 private:
 	ZView* mThumb;

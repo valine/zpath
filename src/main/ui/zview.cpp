@@ -42,7 +42,6 @@ void ZView::draw() {
         glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPos"), 4, GL_FLOAT, GL_FALSE,
                               sizeof(float) * 4, (void*) 0);
 
-        cout << mTexBuffer << endl;
         glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
         glEnableVertexAttribArray(glGetUniformLocation(shader->mID, "aTexCoords"));
         glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE, 

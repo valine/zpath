@@ -28,6 +28,13 @@ ZView(maxWidth, maxHeight) {
 	mTitle = label;
 }
 
+void ZSlider::setHighlightBackground(ZTexture* tex) {
+	mHighlight->setBackgroundImage(tex);
+}
+
+void ZSlider::setThumbBackground(ZTexture* tex) {
+	mThumb->setBackgroundImage(tex);
+}
 
 ZSlider::ZSlider(float maxWidth, float maxHeight, string title, string resourcePath) : 
 ZSlider(maxWidth, maxHeight, title) {
@@ -52,7 +59,7 @@ void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
 		float value = ((mMaxValue - mMinValue) * factor) + mMinValue;
 		float incValue = roundf(value / mIncrement) * mIncrement;
  
- 		mHighlight->setMaxWidth(mThumb->getOffsetX());
+ 		mHighlight->setMaxWidth(mThumb->getOffsetX() + 1);
 
  		if (mListener != nullptr) {
 			mListener->onSliderValueChanged(this, incValue);
@@ -86,7 +93,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 
 		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
-		mHighlight->setMaxWidth(newOffset);
+		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && shiftKeyPressed() && !altKeyPressed()) {
 		double deltaX =  (x - getLastX());
@@ -101,7 +108,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 
 		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
-		mHighlight->setMaxWidth(newOffset);
+		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && !shiftKeyPressed() && altKeyPressed()) {
 		int deltaX =  getLastX() - x;
@@ -155,7 +162,7 @@ void ZSlider::onScrollChange(double x, double y) {
 
 	int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
 	mThumb->setOffset(newOffset, yPosition);
-	mHighlight->setMaxWidth(newOffset);
+	mHighlight->setMaxWidth(newOffset + 1);
 	valueChanged(newOffset);
 }
 
@@ -177,7 +184,7 @@ void ZSlider::valueChanged(float offset) {
 
 	mLabel->setText(mTitle + " " + output);
 	if (mListener != nullptr && !altKeyPressed()) {
-		mHighlight->setMaxWidth(offset);
+		mHighlight->setMaxWidth(offset + 1);
 		mListener->onSliderValueChanged(this, incValue);
 	}
 }

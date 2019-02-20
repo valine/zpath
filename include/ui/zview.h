@@ -63,8 +63,8 @@ class ZView {
 		int getRight();
 		int getBottom();
 
-		int getMaxWidth();
-		int getMaxHeight();
+		virtual int getMaxWidth();
+		virtual int getMaxHeight();
 
 		int getWidth();
 		int getHeight();

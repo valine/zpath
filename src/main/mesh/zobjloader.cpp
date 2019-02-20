@@ -45,22 +45,20 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 		ZMaterial* zmaterial = new ZMaterial(vec4(color.r,color.g,color.b, otherProperties.b));
 		zmaterial->setRoughness(otherProperties.r);
 		zmaterial->setMetallic(otherProperties.g);
-		cout << endl << "Loading material" << endl <<
-		"red:" << color.r << endl <<
-		"green:" << color.g << endl << 
-		"blue:" << color.b << endl <<
-		"alpha:" << otherProperties.b << endl <<
-		"roughness:" << otherProperties.r << endl <<
-		"metallic:" << otherProperties.g << endl;
+		// cout << endl << "Loading material" << endl <<
+		// "red:" << color.r << endl <<
+		// "green:" << color.g << endl << 
+		// "blue:" << color.b << endl <<
+		// "alpha:" << otherProperties.b << endl <<
+		// "roughness:" << otherProperties.r << endl <<
+		// "metallic:" << otherProperties.g << endl;
 		
         ZMesh* convertedMesh = convertAiMesh(mesh);
         object->setMesh(convertedMesh);
        
-       	cout << "before bounding box" << endl;
         ZMeshUtils meshutils = ZMeshUtils();
 		object->setOrigin(meshutils.calculateBoundingBoxCenter(convertedMesh));
 
-		cout << "after bounding box" << endl;
 		object->setMaterial(zmaterial);
 		object->setType(otherProperties.g);
         objects.push_back(object);
@@ -100,7 +98,6 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 
 	ZMesh* outputMesh = new ZMesh();
 
-	cout << "vertices" << endl;
     for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
     	vertices.push_back(mesh->mVertices[i].x);
     	vertices.push_back(mesh->mVertices[i].y);
@@ -120,7 +117,6 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
     	}
     }
 
-    cout << "faces" << endl;
     for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
 		aiFace face = mesh->mFaces[i];
 		// retrieve all indices of the face and store them in the indices vector
@@ -128,12 +124,11 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
 			faceIndices.push_back(face.mIndices[j]);
 		}
     }
-	cout << "after faces" << endl;
 	outputMesh->setVertices(vertices);
 	outputMesh->setFaceIndices(faceIndices);
 	outputMesh->setVertexNormals(vertexNormals);
 	outputMesh->setTextureCoordinates(textureCoordinates);
-	cout << "after create output mesh" << endl;
+
 	return outputMesh;
 }
 
@@ -146,8 +141,6 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 
 	string line;
 
-	cout<<fileName<<endl;
-	
 	vector<float> vertices;
 	vector<int> faceIndices;
 	vector<float> vertexNormals;
