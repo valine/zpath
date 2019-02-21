@@ -4,6 +4,10 @@ void ZViewController::onClick(ZButton* sender) {
 
 }
 
+void ZViewController::onCheckChange(ZCheckbox* sender, bool isChecked) {
+
+}
+
 ZViewController::ZViewController(string resourcePath) {
     mResourcePath = resourcePath;
 }

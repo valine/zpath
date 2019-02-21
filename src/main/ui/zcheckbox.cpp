@@ -1,9 +1,7 @@
-#include "ui/zbutton.h"
+#include "ui/zcheckbox.h"
 
-ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
+ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	ZView(maxWidth, maxHeight) {
-
-
 	mLabel = new ZLabel(maxWidth, 21, "roboto/Roboto-Bold.ttf", resourcePath);
 	mLabel->setOffset(10, 8);
 	mLabel->setText("Button");
@@ -15,16 +13,16 @@ ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 	//addSubView(label);
 }
 
-void ZButton::draw() {
+void ZCheckbox::draw() {
 	ZView::draw();
 
 }
 
-void ZButton::setText(string text) {
+void ZCheckbox::setText(string text) {
 	mLabel->setText(text);
 }
 
-void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 	vec4 highlight = vec4(0.2, 0.2, 0.2, 0);
 
@@ -36,17 +34,18 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 		setBackgroundColor(getBackgroundColor() - highlight);
 
 		if (mListener != nullptr) {
-			mListener->onClick(this);
+			mIsChecked = !mIsChecked;
+			mListener->onCheckChange(this, mIsChecked);
 		}
 	}
 }
 
-void ZButton::onKeyPress(int key, int scancode, int action, int mods) {
+void ZCheckbox::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);
 
 }
 
-void ZButton::onCursorPosChange(double x, double y)  {
+void ZCheckbox::onCursorPosChange(double x, double y)  {
 	// ZView::onCursorPosChange(x, y);
 
 	// if (mouseIsDown()) {
@@ -55,6 +54,6 @@ void ZButton::onCursorPosChange(double x, double y)  {
 	// }
 }
 
-void ZButton::setOnClickListener(ZOnClickListener* l) {
+void ZCheckbox::setListener(ZCheckboxListener* l) {
 	mListener = l;
 }

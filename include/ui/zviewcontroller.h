@@ -27,13 +27,16 @@
 #include "zslider.h"
 #include "zsliderlistener.h"
 
+#include "zcheckbox.h"
+#include "zcheckboxlistener.h"
+
 
 using glm::mat4;
 using glm::ortho;
 using std::vector;
 using std::string;
 
-class ZViewController : public ZOnClickListener, public ZSliderListener {
+class ZViewController : public ZOnClickListener, public ZSliderListener, public ZCheckboxListener {
 
 public:
 	ZViewController(string resourcePath);
@@ -49,6 +52,7 @@ public:
 	virtual void draw();
 	virtual void onClick(ZButton* sender);
 	virtual void onSliderValueChanged(ZSlider* sender, float value);
+	virtual void onCheckChange(ZCheckbox* sender, bool isChecked);
 	virtual void onFileDrop(int count, const char** paths);
 	virtual void onTerminate();
 	void setDrawingEnabled(bool);

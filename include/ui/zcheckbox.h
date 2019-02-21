@@ -1,5 +1,5 @@
-#ifndef ZBUTTON_H
-#define ZBUTTON_H
+#ifndef ZCHECKBOX_H
+#define ZCHECKBOX_H
 
 #include "zview.h"
 #include <iostream>
@@ -7,31 +7,29 @@
 #include <string>
 
 #include "zlabel.h"
-#include "zonclicklistener.h"
+#include "zcheckboxlistener.h"
 
 using namespace std;
 
-class ZOnClickListener;
+class ZCheckboxListener;
 
-class ZButton : public ZView {
+class ZCheckbox : public ZView {
 	
 public:
 
-	ZButton(float maxWidth, float maxHeight, string title);
+	ZCheckbox(float maxWidth, float maxHeight, string resources);
 	void draw();
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
-
 	void setText(string text);
-
-	void setOnClickListener(ZOnClickListener* listener);
+	void setListener(ZCheckboxListener* listener);
 private:
-int debug;
-
+	int debug;
 	ZLabel* mLabel;
-	ZOnClickListener* mListener = nullptr;
+	ZCheckboxListener* mListener = nullptr;
 
+	bool mIsChecked = false;
 };
 
 #endif
