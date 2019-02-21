@@ -411,10 +411,6 @@ void ZRenderer::renderMain() {
 
         vec4 color = material->getColor();
 
-        if (mWireMode) {
-            color = vec4(1);
-        }
-
         shader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
         float selected = 0;

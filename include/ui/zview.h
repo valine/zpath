@@ -63,6 +63,9 @@ class ZView {
 		int getRight();
 		int getBottom();
 
+		void setTag(string);
+		string getTag();
+
 		virtual int getMaxWidth();
 		virtual int getMaxHeight();
 
@@ -192,6 +195,9 @@ class ZView {
 		ZTexture* mBackgroundImage = nullptr;
 
 		vector<ZView*> mViews;
+
+		string mTag;
+
 };
 
 #endif

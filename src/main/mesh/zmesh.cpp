@@ -3,7 +3,9 @@
 void ZMesh::setVertices(vector<float> vertices) {
 	mVertices = vertices;
 
-    glGenBuffers(1, &mVertexBuffer);
+	if (mFaceIndicesBuffer == 0) {
+    	glGenBuffers(1, &mVertexBuffer);
+	}
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), &mVertices[0], GL_STATIC_DRAW);
 }
@@ -11,7 +13,9 @@ void ZMesh::setVertices(vector<float> vertices) {
 void ZMesh::setVertexNormals(vector<float> normals) {
 	mVertexNormals = normals;
 
-    glGenBuffers(1, &mVertexNormalBuffer);
+	if (mVertexNormalBuffer == 0) {
+    	glGenBuffers(1, &mVertexNormalBuffer);
+	}
     glBindBuffer(GL_ARRAY_BUFFER, mVertexNormalBuffer);
     glBufferData(GL_ARRAY_BUFFER, mVertexNormals.size() * sizeof(float), &mVertexNormals[0], GL_STATIC_DRAW);
 }
@@ -19,7 +23,9 @@ void ZMesh::setVertexNormals(vector<float> normals) {
 void ZMesh::setTextureCoordinates(vector<float> coords) {
 	mTextureCoordinates = coords;
 
-    glGenBuffers(1, &mTextureCoordinatesBuffer);
+	if (mTextureCoordinatesBuffer == 0) {
+    	glGenBuffers(1, &mTextureCoordinatesBuffer);
+	}
     glBindBuffer(GL_ARRAY_BUFFER, mTextureCoordinatesBuffer);
     glBufferData(GL_ARRAY_BUFFER, mTextureCoordinates.size() * sizeof(float), &mTextureCoordinates[0], GL_STATIC_DRAW);
 	
@@ -28,7 +34,9 @@ void ZMesh::setTextureCoordinates(vector<float> coords) {
 void ZMesh::setFaceIndices(vector<int> indices) {
 	mFaceIndices = indices;
 
-    glGenBuffers(1, &mFaceIndicesBuffer);
+	if (mFaceIndicesBuffer == 0) {
+    	glGenBuffers(1, &mFaceIndicesBuffer);
+	}
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mFaceIndices.size() * sizeof(int), &mFaceIndices[0], GL_STATIC_DRAW);
 }

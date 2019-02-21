@@ -17,6 +17,14 @@ ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
     init(100000, 100000);
 }
 
+string ZView::getTag() {
+    return mTag;
+}
+
+void ZView::setTag(string tag) {
+    mTag = tag;
+}
+
 void ZView::draw() {
     ZShader* shader;
     if (mVisible) {

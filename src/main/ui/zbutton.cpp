@@ -24,14 +24,6 @@ void ZButton::setText(string text) {
 	mLabel->setText(text);
 }
 
-string ZButton::getTag() {
-	return mTag;
-}
-
-void ZButton::setTag(string tag) {
-	mTag = tag;
-}
-
 void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 	vec4 highlight = vec4(0.2,0.2,0.2,0);

@@ -37,6 +37,7 @@ public:
 	void setRenderer(ZRenderer *renderer);
 	ZScene* getScene();
 	ZRenderer* getRenderer();
+	void setTilt(float angle);
 private:
 	ZRenderer *mRenderer;
 

@@ -42,6 +42,10 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 			tile->getRenderer()->getCamera()->setHeight(height);
 			tile->getRenderer()->recreateBuffers();
 			i++;
+
+			if (x == 1) {
+				tile->setTilt(-90);
+			}
 		}
 	}
 
