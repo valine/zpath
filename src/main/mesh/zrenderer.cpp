@@ -341,9 +341,9 @@ void ZRenderer::renderMain() {
         glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getBackgroundID());
     }
 
-    if (!mWireMode) {
+    if (!mWireMode && mCamera->isPerspective()) {
         renderCube();
-    } else {
+    } else if (mWireMode) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 

@@ -58,13 +58,19 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 	invalidate();
 }
 
+void ZTiledView::setPerspective(bool perspective) {
+	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+    	(*it)->getRenderer()->getCamera()->setUsePerspective(perspective);
+    }
+}
+
 void ZTiledView::setTileMargin(int margin) {
 	mTileMargin = margin;
 	setTileCount(mTileCountX, mTileCountY);
 }
 
 void ZTiledView::zoomBy(float zoom) {
-for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
     	(*it)->getRenderer()->getCamera()->translateBy(vec3(0,0,zoom));
     }
 

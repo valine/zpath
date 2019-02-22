@@ -25,6 +25,7 @@ public:
 	void zoomBy(float zoom);
 	void setFocalLength(float focalLength);
 	void setWireMode(bool);
+	void setPerspective(bool);
 	ZScene* getScene();
 private:
 	int mTileCountX;

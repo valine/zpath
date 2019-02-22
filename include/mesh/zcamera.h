@@ -29,7 +29,7 @@ public:
 	void setHeight(int height);
 
 	void setTranslation(vec3 translation);
-	vec3 getTranslation();
+	//vec3 getTranslation();
 
 	void setFocalLength(float focalLength);
 	float getFocalLength();
@@ -39,11 +39,14 @@ public:
 	void setBillboardTarget(vec3);
 	vec3 getBillboardTarget();
 	bool isManualView();
+	void setUsePerspective(bool);
+	bool isPerspective();
 
 private:
 	bool mManualViewMode = false;
 	bool mManualProjectionMode = false;
 	bool mBillboardTargetSet = false;
+	bool mPerspective = true;
 	
 	vec3 mPosition = vec3(0);
 	vec3 mFront = vec3(1);

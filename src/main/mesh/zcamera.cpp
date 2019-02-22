@@ -48,7 +48,10 @@ vec3 ZCamera::getPosition() {
 		vec3 tmpViewTranslation = vec3(viewTranslation.x, viewTranslation.y, viewTranslation.z);
 		return mPosition - tmpViewTranslation;
 	}
+}
 
+void ZCamera::setUsePerspective(bool use) {
+	mPerspective = use;
 }
 
 vec3 ZCamera::getUp() {
@@ -81,16 +84,24 @@ void ZCamera::setTranslation(vec3 translation) {
 	mTranslation = translation;
 }
 
-vec3 ZCamera::getTranslation() {
-	return mTranslation;
+bool ZCamera::isPerspective() {
+	return mPerspective;
 }
 
 mat4 ZCamera::getProjectionMatrix() {
 	if (mManualProjectionMode) {
 		return mProjectionMatrix;
 	} else {
-		mat4 projectionMatrix = perspective(glm::radians(mFocalLength), (float) mWidth / (float) mHeight, 0.1f, 1000.0f);
- 		return projectionMatrix;
+		if (!mPerspective) {
+			float scale = getTranslation().z / 2.0;
+			cout<<scale<<endl;
+			float aspect = (float) mHeight / (float) mWidth;
+			mat4 projectionMatrix = ortho(-1.0f * scale, 1.0f * scale, -aspect * scale, aspect * scale, 0.1f, 1000.0f);
+	 		return projectionMatrix;
+		} else {
+			mat4 projectionMatrix = perspective(glm::radians(mFocalLength), (float) mWidth / (float) mHeight, 0.1f, 1000.0f);
+	 		return projectionMatrix;
+ 		}
 	}
 }
 
