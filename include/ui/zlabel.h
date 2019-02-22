@@ -37,6 +37,7 @@ class ZLabel : public ZView {
 		void setTextColor(vec3 color);
 		void setText(string text);
 		void setFont(string fontPath);
+		string getText();
 	private: 
 		GLuint VAO, VBO;
 		map<GLchar, Character> Characters;

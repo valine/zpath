@@ -1,5 +1,5 @@
-#ifndef ZBUTTON_H
-#define ZBUTTON_H
+#ifndef ZRADIOBUTTON_H
+#define ZRADIOBUTTON_H
 
 #include "zview.h"
 #include <iostream>
@@ -13,22 +13,27 @@ using namespace std;
 
 class ZOnClickListener;
 
-class ZButton : public ZView {
+class ZRadioButton : public ZView, public ZOnClickListener {
 	
 public:
 
-	ZButton(float maxWidth, float maxHeight, string title);
+	ZRadioButton(float maxWidth, float maxHeight, string resource, vector<string> titles);
 	void draw();
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
+
 	void setText(string text);
-	string getText();
+
 	void setOnClickListener(ZOnClickListener* listener);
+	void computeBounds(int windowHeight, int maxWidth); 
+	void onClick(ZButton* sender);
 private:
 int debug;
+
 	ZLabel* mLabel;
 	ZOnClickListener* mListener = nullptr;
+	vector<string> mTitles;
 
 };
 

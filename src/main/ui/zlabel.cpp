@@ -78,6 +78,10 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
     }
 }
 
+string ZLabel::getText() {
+    return mText;
+}
+
 void ZLabel::draw() {
 	ZView::draw();
 

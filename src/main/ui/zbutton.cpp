@@ -4,9 +4,10 @@ ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 	ZView(maxWidth, maxHeight) {
 
 
-	mLabel = new ZLabel(maxWidth, 21, "roboto/Roboto-Bold.ttf", resourcePath);
-	mLabel->setOffset(10, 8);
+	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel->setOffset(10, (maxHeight - 16) / 2);
 	mLabel->setText("Button");
+	mLabel->setGravity(ZView::topLeft);
 	mLabel->setTextColor(vec3(1, 1, 1));
 	addSubView(mLabel);
 
@@ -18,6 +19,10 @@ ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 void ZButton::draw() {
 	ZView::draw();
 
+}
+
+string ZButton::getText() {
+	return mLabel->getText();
 }
 
 void ZButton::setText(string text) {

@@ -36,6 +36,7 @@ public:
 	void setHighlightBackground(ZTexture* tex);
 	
 	void setThumbBackground(ZTexture* tex);
+	float getValue();
 	
 private:
 	ZView* mThumb;
@@ -49,6 +50,7 @@ private:
 	ZSliderListener* mListener = nullptr;
 	ZLabel* mLabel;
 	float mIncrement = 0.01;
+	float mValue = 0.0;
 
 	void valueChanged(float offset);
 };

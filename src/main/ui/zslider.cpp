@@ -28,6 +28,10 @@ ZView(maxWidth, maxHeight) {
 	mTitle = label;
 }
 
+float ZSlider::getValue() {
+	return mValue;
+}
+
 void ZSlider::setHighlightBackground(ZTexture* tex) {
 	mHighlight->setBackgroundImage(tex);
 }
@@ -61,6 +65,7 @@ void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
  
  		mHighlight->setMaxWidth(mThumb->getOffsetX() + 1);
 
+ 		mValue = incValue;
  		if (mListener != nullptr) {
 			mListener->onSliderValueChanged(this, incValue);
 		}
@@ -182,6 +187,7 @@ void ZSlider::valueChanged(float offset) {
 	std::string output(size + 1, '\0');
 	std::sprintf(&output[0], format, incValue);
 
+	mValue = incValue;
 	mLabel->setText(mTitle + " " + output);
 	if (mListener != nullptr && !altKeyPressed()) {
 		mHighlight->setMaxWidth(offset + 1);
