@@ -2,15 +2,43 @@
 
 ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	ZView(maxWidth, maxHeight) {
-	mLabel = new ZLabel(maxWidth, 21, "roboto/Roboto-Bold.ttf", resourcePath);
-	mLabel->setOffset(10, 8);
-	mLabel->setText("Button");
+
+	mBox = new ZView(maxHeight, maxHeight);
+	mBox->setBackgroundColor(vec4(1));
+	addSubView(mBox);
+
+	mCheck = new ZView(maxHeight, maxHeight);
+	mCheck->setBackgroundColor(vec4(0.5));
+	mCheck->setVisibility(mIsChecked);
+	addSubView(mCheck);
+
+	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel->setOffset(maxHeight + 10, 1);
+	mLabel->setText("Checkbox");
+	mLabel->setGravity(ZView::topLeft);
 	mLabel->setTextColor(vec3(1, 1, 1));
 	addSubView(mLabel);
 
 	//ZLabel* label = new ZLabel(maxWidth, maxHeight, "roboto/Roboto-Regular.ttf", resourcePath);
 	//label->setMargin(0,0,0,0);
 	//addSubView(label);
+}
+
+void ZCheckbox::setChecked(bool checked) {
+	mIsChecked = checked;
+
+	mCheck->setVisibility(mIsChecked);
+	if (mListener != nullptr) {
+		mListener->onCheckChange(this, mIsChecked);
+	}
+}
+
+void ZCheckbox::setBoxBackground(ZTexture* t) {
+	mBox->setBackgroundImage(t);
+}
+
+void ZCheckbox::setCheckBackground(ZTexture* t) {
+	mCheck->setBackgroundImage(t);
 }
 
 void ZCheckbox::draw() {
@@ -24,7 +52,7 @@ void ZCheckbox::setText(string text) {
 
 void ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
-	vec4 highlight = vec4(0.2, 0.2, 0.2, 0);
+	vec4 highlight = vec4(0.2, 0.2, 0.2, 0.2);
 
 	if (action == GLFW_PRESS) {
 		setBackgroundColor(getBackgroundColor() + highlight);
@@ -32,9 +60,11 @@ void ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 
 	if (action == GLFW_RELEASE) {
 		setBackgroundColor(getBackgroundColor() - highlight);
+		mIsChecked = !mIsChecked;
 
+		mCheck->setVisibility(mIsChecked);
 		if (mListener != nullptr) {
-			mIsChecked = !mIsChecked;
+			
 			mListener->onCheckChange(this, mIsChecked);
 		}
 	}

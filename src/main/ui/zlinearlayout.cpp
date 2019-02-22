@@ -8,5 +8,5 @@ ZView(maxWidth, maxHeight) {
 void ZLinearLayout::addSubView(ZView* view) {
 	ZView::addSubView(view);
     view->setYOffset(mPos);
-    mPos+=view->getMaxHeight();
+    mPos+=view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
 }

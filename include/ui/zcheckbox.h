@@ -24,12 +24,19 @@ public:
 	void onCursorPosChange(double x, double y);
 	void setText(string text);
 	void setListener(ZCheckboxListener* listener);
+	void setBoxBackground(ZTexture*);
+	void setCheckBackground(ZTexture*);
+	void setChecked(bool);
 private:
 	int debug;
 	ZLabel* mLabel;
+	ZView* mBox;
+	ZView* mCheck;
+
+
 	ZCheckboxListener* mListener = nullptr;
 
-	bool mIsChecked = false;
+	bool mIsChecked = true;
 };
 
 #endif
