@@ -69,6 +69,12 @@ void ZTiledView::setTileMargin(int margin) {
 	setTileCount(mTileCountX, mTileCountY);
 }
 
+void ZTiledView::setNearClipping(float nearClipping) {
+	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+    	(*it)->getRenderer()->getCamera()->setNearClipping(nearClipping);
+    }
+}
+
 void ZTiledView::zoomBy(float zoom) {
 	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
     	(*it)->getRenderer()->getCamera()->translateBy(vec3(0,0,zoom));

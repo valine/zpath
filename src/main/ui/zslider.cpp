@@ -32,6 +32,11 @@ float ZSlider::getValue() {
 	return mValue;
 }
 
+void ZSlider::setTextColor(vec3 color) {
+	mLabel->setTextColor(color);
+}
+
+
 void ZSlider::setHighlightBackground(ZTexture* tex) {
 	mHighlight->setBackgroundImage(tex);
 }
@@ -54,7 +59,6 @@ ZSlider(maxWidth, maxHeight, title) {
 
 void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
- 
  	if (action == GLFW_RELEASE) {
 
 		float offset = mThumb->getOffsetX();

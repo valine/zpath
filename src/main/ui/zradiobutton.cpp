@@ -18,6 +18,7 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 	
 		if (i == 0) {
 		    button->setBackgroundColor(vec4(0.006512, 0.242281, 0.651406, 1));
+		    mHighlighted = button;
 		} else {
 			button->setBackgroundColor(vec4(0.5));
 		}
@@ -27,11 +28,73 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 		button->setTag(titles.at(i));
 		addSubView(button);
 	}
+}
 
+ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath, vector<ZTexture*> backgrounds, vector<string> tags) :
+	ZView(maxWidth, maxHeight) {
 
-	//ZLabel* label = new ZLabel(maxWidth, maxHeight, "roboto/Roboto-Regular.ttf", resourcePath);
-	//label->setMargin(0,0,0,0);
-	//addSubView(label);
+	mTitles = tags;
+	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel->setOffset(0, 0);
+	mLabel->setText("");
+	mLabel->setGravity(ZView::topLeft);
+	mLabel->setTextColor(vec3(1, 1, 1));
+	addSubView(mLabel);
+
+	for (uint i = 0; i < tags.size(); i++) {
+		ZButton* button = new ZButton((getRight() - getLeft()) / tags.size(), maxHeight - 20, resourcePath);
+	
+		button->setBackgroundImage(backgrounds.at(i));
+		if (i == 0) {
+		    button->setBackgroundColor(mHighlightColor);
+		      mHighlighted = button;
+		} else {
+			button->setBackgroundColor(mBaseColor);
+		}
+		
+		button->setText("");
+		button->setTag(tags.at(i));
+		button->setOnClickListener(this);
+		addSubView(button);
+	}
+}
+
+void ZRadioButton::showLabel(bool shouldShow) {
+	mLabel->setVisibility(shouldShow);
+}
+
+void ZRadioButton::setHighlightColor(vec4 color) {
+	mHighlightColor = color;
+	int i = 0;
+	for (vector<ZView*>::iterator it = getSubViews().begin() ; it != getSubViews().end(); ++it) {
+        ZView* view = (*it);
+        if (i > 0) {
+	       view->setBackgroundColor(mBaseColor);
+    	} 
+
+        i++;
+    }
+
+    if (mHighlighted != nullptr) {
+    	mHighlighted->setBackgroundColor(mHighlightColor);
+	}
+}
+
+void ZRadioButton::setBaseColor(vec4 color) {
+	mBaseColor = color;
+	int i = 0;
+	for (vector<ZView*>::iterator it = getSubViews().begin() ; it != getSubViews().end(); ++it) {
+        ZView* view = (*it);
+        if (i > 0) {
+	       view->setBackgroundColor(mBaseColor);
+    	} 
+
+        i++;
+    }
+
+    if (mHighlighted != nullptr) {
+    	mHighlighted->setBackgroundColor(mHighlightColor);
+	}
 }
 
 void ZRadioButton::onClick(ZButton* sender) {
@@ -39,35 +102,59 @@ void ZRadioButton::onClick(ZButton* sender) {
 	for (vector<ZView*>::iterator it = getSubViews().begin() ; it != getSubViews().end(); ++it) {
         ZView* view = (*it);
         if (i > 0) {
-	       view->setBackgroundColor(vec4(0.5));
+	       view->setBackgroundColor(mBaseColor);
     	} 
 
         i++;
     }
-
-    sender->setBackgroundColor(vec4(0.006512, 0.242281, 0.651406, 1));
-
-    setTag(sender->getText());
+    
+    mHighlighted = sender;
+    sender->setBackgroundColor(mHighlightColor);
 
    	if (mListener != nullptr) {
    		mListener->onClick(sender);
    	}
 }
 
+void ZRadioButton::setVertical(bool isVertical) {
+	mIsVertical = isVertical;
+}
+
+void ZRadioButton::setSpacing(int spacing) {
+	mSpacing = spacing;
+}
+
 void ZRadioButton::computeBounds(int windowHeight, int maxWidth) {
 
-	for (uint i = 0; i < mTitles.size(); i++) {
-		
+	int labelMargin = 20;
 
-		int width = getWidth() / mTitles.size();
-		int height = getHeight() / mTitles.size();
-		ZView *tile = getSubViews().at(i + 1);
+	if (!mLabel->getVisibility()) {
+		labelMargin = 0;
+	}
 
-		tile->setMaxWidth(width);
-		tile->setMaxHeight(getHeight() - 18);
 
-		tile->setOffset(i * width, 20);
+	if (mIsVertical) {
+		for (uint i = 0; i < mTitles.size(); i++) {
+			int width = getWidth() / mTitles.size();
+			int height = ((getHeight() - labelMargin) / mTitles.size()) - mSpacing;
+			ZView *tile = getSubViews().at(i + 1);
 
+			tile->setMaxWidth(getWidth());
+			tile->setMaxHeight(height);
+			tile->setOffset(0, i * (height + mSpacing) + labelMargin);
+		}
+	} else {
+		for (uint i = 0; i < mTitles.size(); i++) {
+			int width = (getWidth() / mTitles.size()) - mSpacing;
+			int height = getHeight() / mTitles.size();
+			ZView *tile = getSubViews().at(i + 1);
+
+			tile->setMaxWidth(width);
+			tile->setMaxHeight(getHeight() - labelMargin);
+
+			tile->setOffset(i * (width + mSpacing), labelMargin);
+
+		}
 	}
 
 	ZView::computeBounds(windowHeight, maxWidth);

@@ -25,10 +25,12 @@ public:
 	void setText(string text);
 	string getText();
 	void setOnClickListener(ZOnClickListener* listener);
+	void computeBounds(int windowHeight, int maxWidth); 
 private:
 int debug;
 	ZLabel* mLabel;
 	ZOnClickListener* mListener = nullptr;
+	bool mWasPressed = false;
 
 };
 

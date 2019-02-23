@@ -14,6 +14,7 @@ class ZRenderUtils {
 public:
 	static void saveRender(int fbo, int width, int height);
 	static mat4 getModelMatrix(ZObject*, ZCamera*);
+	static mat4 getModelMatrix(ZObject*, ZCamera*, vec3 translation);
 	static mat4 getViewMatrix(ZCamera*);
 	static vec3 extractScale(mat4);
 	static vec3 extractTranslation(mat4);

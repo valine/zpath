@@ -41,6 +41,8 @@ public:
 	bool isManualView();
 	void setUsePerspective(bool);
 	bool isPerspective();
+	void setNearClipping(float);
+	float getNearClipping();
 
 private:
 	bool mManualViewMode = false;
@@ -61,6 +63,7 @@ private:
 
 	mat4 mProjectionMatrix;
 	mat4 mViewMatrix = mat4(1);
+	float mNearClipping = 0.1;
 
 	float mFocalLength = 80.0;
 };

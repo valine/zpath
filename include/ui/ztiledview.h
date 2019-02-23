@@ -27,6 +27,7 @@ public:
 	void setWireMode(bool);
 	void setPerspective(bool);
 	ZScene* getScene();
+	void setNearClipping(float nearClipping);
 private:
 	int mTileCountX;
 	int mTileCountY;

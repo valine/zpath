@@ -430,7 +430,12 @@ void ZRenderer::renderMain() {
         if (mCamera->isManualView()) {
             shader->setVec3("uCameraPosition", inverse(mCamera->getViewMatrix()) * vec4(0,0,0,1));
         } else {
-            shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr) * vec4(0,0,0,1));
+            if (mCamera->isPerspective()) {
+                shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr) * vec4(0,0,0,1));
+            } else {
+             shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr, vec3(0,0,50)) * vec4(0,0,0,1));
+            }
+       
         }
 
         if (object->getVisible()) {

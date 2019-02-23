@@ -33,6 +33,14 @@ void ZCamera::setFront(vec3 front) {
 	mManualViewMode = false;
 }
 
+void ZCamera::setNearClipping(float clipping) {
+	mNearClipping = clipping;
+}
+
+float ZCamera::getNearClipping() {
+	return mNearClipping;
+}
+
 vec3 ZCamera::getFront() {
 	return mFront;
 }
@@ -94,12 +102,11 @@ mat4 ZCamera::getProjectionMatrix() {
 	} else {
 		if (!mPerspective) {
 			float scale = getTranslation().z / 2.0;
-			cout<<scale<<endl;
 			float aspect = (float) mHeight / (float) mWidth;
-			mat4 projectionMatrix = ortho(-1.0f * scale, 1.0f * scale, -aspect * scale, aspect * scale, 0.1f, 1000.0f);
+			mat4 projectionMatrix = ortho(-1.0f * scale, 1.0f * scale, -aspect * scale, aspect * scale, mNearClipping, 1000.0f);
 	 		return projectionMatrix;
 		} else {
-			mat4 projectionMatrix = perspective(glm::radians(mFocalLength), (float) mWidth / (float) mHeight, 0.1f, 1000.0f);
+			mat4 projectionMatrix = perspective(glm::radians(mFocalLength), (float) mWidth / (float) mHeight, mNearClipping, 1000.0f);
 	 		return projectionMatrix;
  		}
 	}

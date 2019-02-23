@@ -32,6 +32,7 @@ public:
 	void setLineColor(vec4 color);
 	void setThumbColor(vec4 color);
 	void setIncrement(float);
+	void setTextColor(vec3 color);
 
 	void setHighlightBackground(ZTexture* tex);
 	
