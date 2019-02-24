@@ -8,6 +8,13 @@ ZScene::ZScene(string resourcePath) {
 
 void ZScene::addObject(ZObject* object) {
 	if (object != nullptr) {
+
+		if (object->getChildren().size() > 0) {
+			for (uint i = 0; i < object->getChildren().size(); ++i) {
+				addObject( object->getChildren().at(i));
+			}
+		}
+
 		// todo: there should be a better way
 		if (object->getMaterial()->getColor().a < 0.5) {
 			mObjects.push_back(object);
@@ -60,6 +67,7 @@ float ZScene::getExposure() {
 
 void ZScene::setActiveObjectIndex(int index) {
 	mActiveObjectIndex = index;
+	mObjects.at(index)->onSelection();
 }
 
 int ZScene::getActiveObjectIndex() {

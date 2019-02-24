@@ -22,6 +22,17 @@ bool ZObject::isSelected() {
 	return mSelected;
 }
 
+void ZObject::onSelection() {
+	if (mListener == nullptr){
+		mListener->onClick(this);
+	}
+}
+
+void ZObject::setListener(ZOnObjectClickedListener* l) {
+	mListener = l;
+}
+
+
 void ZObject::setSelected(bool selected) {
 	mSelected = selected;
 }

@@ -32,6 +32,7 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
         ZObject* object = new ZObject();
+        object->setParent(parent);
 
         aiMaterial* mat = scene->mMaterials[mesh->mMaterialIndex];
 		aiColor3D color;
@@ -71,8 +72,7 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
     	if (node->mNumMeshes > 0) {
 	    	vector<ZObject*> children = processNode(node->mChildren[i], scene, objects.at(0));
 	    	if (parent != nullptr) {
-	        
-	     
+	       
 				for (vector<ZObject*>::iterator it = children.begin() ; it != children.end(); ++it) {
 					ZObject *child = (*it);
 					if (child != nullptr) {
@@ -82,11 +82,15 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 			}
 			objects.insert(objects.end(), children.begin(), children.end());
 		} else {
-			vector<ZObject*> children = processNode(node->mChildren[i], scene, nullptr);
-			objects.insert(objects.end(), children.begin(), children.end());
+			if (objects.size() > 0) {
+				vector<ZObject*> children = processNode(node->mChildren[i], scene, objects.at(0));
+				objects.insert(objects.end(), children.begin(), children.end());
+			} else {
+				vector<ZObject*> children = processNode(node->mChildren[i], scene, nullptr);
+				objects.insert(objects.end(), children.begin(), children.end());
+			}
 		}	
     }
-
     return objects;
 }  
 
@@ -226,7 +230,6 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 
 	// 			cout<<sharedVertexCount.at(faceIndices.at(i)).at(j)<<endl;
 	// 		}
-
 	// 		cout<<endl;
 			
 	// 	}
@@ -273,6 +276,5 @@ ZObject* ZObjLoader::loadObject(string fileName) {
 	ZObject* object = new ZObject();
 	object->setMesh(mesh);
 	object->setOrigin(meshutils.calculateBoundingBoxCenter(mesh));
-
 	return object;
 }

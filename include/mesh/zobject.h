@@ -5,14 +5,17 @@
 #include "mesh/zmesh.h"
 #include "mesh/zmaterial.h"
 #include "mesh/zanimator.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
+#include "mesh/zonobjectclickedlistener.h"
 
 using namespace std;
 using namespace glm;
+class ZOnObjectClickedListener;
+
+
 class ZObject {
 public:
 	ZObject();
@@ -62,11 +65,14 @@ public:
 	void setVisible(bool);
 	bool getVisible();
 
+	void setListener(ZOnObjectClickedListener* listener);
+
 	float getType();
 	void setType(float);
 	void startAnimation(ZAnimator* animator);
 	vector<ZAnimator*> getAnimators();
 	void animationFinished(ZAnimator* animator);
+	virtual void onSelection();
 
 private: 
 	ZMesh* mMesh;
@@ -89,6 +95,8 @@ private:
 	vector<ZObject*> mChildren;
 	vector<ZAnimator*> mAnimators;
 
+
+	ZOnObjectClickedListener* mListener = nullptr;
 	float mType = 0.0;
 
 	bool mSelectable = true;
