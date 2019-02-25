@@ -67,7 +67,12 @@ float ZScene::getExposure() {
 
 void ZScene::setActiveObjectIndex(int index) {
 	mActiveObjectIndex = index;
-	mObjects.at(index)->onSelection();
+
+	if (index != -1 && index < mObjects.size()) {
+		if (mObjects.at(index) != nullptr && mObjects.at(index)->getVisible()) {
+			mObjects.at(index)->onSelection();
+		}
+	}
 }
 
 int ZScene::getActiveObjectIndex() {

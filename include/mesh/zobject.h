@@ -62,7 +62,7 @@ public:
 	void setSelectable(bool);
 	bool getSelectable();
 
-	void setVisible(bool);
+ 	void setVisible(bool);
 	bool getVisible();
 
 	void setListener(ZOnObjectClickedListener* listener);

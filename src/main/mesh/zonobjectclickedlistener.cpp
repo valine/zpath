@@ -3,6 +3,6 @@
 ZOnObjectClickedListener::ZOnObjectClickedListener() {
 }
 
-void ZOnObjectClickedListener::onClick(ZObject* sender) {
+void ZOnObjectClickedListener::onObjectClick(ZObject* sender) {
 
 }

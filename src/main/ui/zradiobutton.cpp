@@ -65,14 +65,12 @@ void ZRadioButton::showLabel(bool shouldShow) {
 
 void ZRadioButton::setHighlightColor(vec4 color) {
 	mHighlightColor = color;
-	int i = 0;
-	for (vector<ZView*>::iterator it = getSubViews().begin() ; it != getSubViews().end(); ++it) {
-        ZView* view = (*it);
+
+	for (uint i = 0; i < getSubViews().size(); i++) {
+        ZView* view = getSubViews().at(i);
         if (i > 0) {
 	       view->setBackgroundColor(mBaseColor);
     	} 
-
-        i++;
     }
 
     if (mHighlighted != nullptr) {
@@ -82,14 +80,11 @@ void ZRadioButton::setHighlightColor(vec4 color) {
 
 void ZRadioButton::setBaseColor(vec4 color) {
 	mBaseColor = color;
-	int i = 0;
-	for (vector<ZView*>::iterator it = getSubViews().begin() ; it != getSubViews().end(); ++it) {
-        ZView* view = (*it);
+	for (uint i = 0; i < getSubViews().size(); i++) {
+        ZView* view = getSubViews().at(i);
         if (i > 0) {
 	       view->setBackgroundColor(mBaseColor);
     	} 
-
-        i++;
     }
 
     if (mHighlighted != nullptr) {
@@ -98,22 +93,22 @@ void ZRadioButton::setBaseColor(vec4 color) {
 }
 
 void ZRadioButton::onClick(ZButton* sender) {
-	int i = 0;
-	for (vector<ZView*>::iterator it = getSubViews().begin() ; it != getSubViews().end(); ++it) {
-        ZView* view = (*it);
+//	ZOnClickListener::onClick(sender);
+
+	for (uint i = 0; i < getSubViews().size(); i++) {
+        ZView* view = getSubViews().at(i);
         if (i > 0) {
 	       view->setBackgroundColor(mBaseColor);
     	} 
-
-        i++;
     }
     
     mHighlighted = sender;
     sender->setBackgroundColor(mHighlightColor);
 
+    // cout << "radio" << endl;
    	if (mListener != nullptr) {
-   		mListener->onClick(sender);
-   	}
+   	 	mListener->onClick(sender);
+   	 }
 }
 
 void ZRadioButton::setVertical(bool isVertical) {
@@ -125,7 +120,7 @@ void ZRadioButton::setSpacing(int spacing) {
 }
 
 void ZRadioButton::computeBounds(int windowHeight, int maxWidth) {
-
+//	ZView::computeBounds(windowHeight, maxWidth);
 	int labelMargin = 20;
 
 	if (!mLabel->getVisibility()) {
@@ -157,12 +152,11 @@ void ZRadioButton::computeBounds(int windowHeight, int maxWidth) {
 		}
 	}
 
-	ZView::computeBounds(windowHeight, maxWidth);
+
 }
 
 void ZRadioButton::draw() {
 	ZView::draw();
-
 }
 
 void ZRadioButton::setText(string text) {
@@ -171,9 +165,8 @@ void ZRadioButton::setText(string text) {
 
 void ZRadioButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
-	int i = 0;
-	for (vector<ZView*>::iterator it = getSubViews().begin() ; it != getSubViews().end(); ++it) {
-        ZView* view = (*it);
+	for (int i = 0; i < getSubViews().size(); i++) {
+        ZView* view = getSubViews().at(i);
         if (i > 0) {
 	        bool isInViewX = view->getLeft() < x && view->getRight() > x;
 	        bool isInViewY = view->getTop() < y && view->getBottom() > y;
@@ -182,13 +175,10 @@ void ZRadioButton::onMouseEvent(int button, int action, int mods, int x, int y) 
 	            view->onMouseEvent(button, action, mods, x, y);
 	        }
     	}
-
-        i++;
     }
 }
 
 void ZRadioButton::onKeyPress(int key, int scancode, int action, int mods) {
-	ZView::onKeyPress(key, scancode, action, mods);
 
 }
 

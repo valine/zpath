@@ -23,8 +23,8 @@ bool ZObject::isSelected() {
 }
 
 void ZObject::onSelection() {
-	if (mListener == nullptr){
-		mListener->onClick(this);
+	if (mListener != nullptr){
+		mListener->onObjectClick(this);
 	}
 }
 
@@ -159,6 +159,11 @@ bool ZObject::getSelectable() {
 
 void ZObject::setVisible(bool visible) {
 	mVisible = visible;
+	for (uint i = 0; i < getChildren().size(); i++) {
+		if (getChildren().at(i) != nullptr) {
+			getChildren().at(i)->setVisible(visible);
+		}
+	}
 }
 
 bool ZObject::getVisible() {

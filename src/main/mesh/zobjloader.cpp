@@ -63,6 +63,10 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 		object->setMaterial(zmaterial);
 		object->setType(otherProperties.g);
         objects.push_back(object);
+
+        if (i > 1) {
+        	break;
+        }
     }
 
     // then do the same for each of its children
@@ -75,9 +79,6 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 	       
 				for (vector<ZObject*>::iterator it = children.begin() ; it != children.end(); ++it) {
 					ZObject *child = (*it);
-					if (child != nullptr) {
-						child->setParent(parent);
-					}
 				}
 			}
 			objects.insert(objects.end(), children.begin(), children.end());

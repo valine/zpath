@@ -501,7 +501,7 @@ void ZRenderer::renderSelection() {
             vec4 color = vec4((float) objectIndex / 256,0,0,1.0);
             mSelectionShader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
-            if ((*it)->getSelectable()) {
+            if ((*it)->getSelectable() && (*it)->getVisible()) {
                 glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
             }
 

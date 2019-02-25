@@ -9,7 +9,7 @@ class ZObject;
 class ZOnObjectClickedListener {
 public:
     ZOnObjectClickedListener();
-    virtual void onClick(ZObject*);    
+    virtual void onObjectClick(ZObject*);    
 };
 
 #endif
