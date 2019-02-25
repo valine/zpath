@@ -46,6 +46,7 @@ public:
 	void setRenderToTexture(bool);
 	void recreateBuffers();
 	void onExit();
+	int getMainBuffer();
 
 	void setWireMode(bool);
 

@@ -108,7 +108,9 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
     viewController->onCreate();
 
     int windowWidth, windowHeight;
-    glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+  //  glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
     viewController->onWindowChange(windowWidth, windowHeight);
     viewController->draw();
     glfwSwapBuffers(window);

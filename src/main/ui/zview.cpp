@@ -46,8 +46,8 @@ void ZView::draw() {
         glViewport(0, 0, mWindowWidth, mWindowHeight);
 
         glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-        glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "vPos"));
-        glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPos"), 4, GL_FLOAT, GL_FALSE,
+        glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "vPosUi"));
+        glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
                               sizeof(float) * 4, (void*) 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);

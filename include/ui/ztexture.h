@@ -18,11 +18,13 @@ class ZTexture {
 
 public:
 	ZTexture(string path);
+	ZTexture(int id);
 	ZTexture(float* pixels, int width, int height);
 	unsigned int loadTexture(char const * path);
 	unsigned int loadTexture(float* pixels, int width, int height);
 	uint getID();
 	void updateTexture(float* pixels, int width, int height);
+	void setID(int);
 
 private:
 	uint mTextureID; 

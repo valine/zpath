@@ -53,6 +53,8 @@ private:
 
 	void setWireMode(bool);
 
+	ZTexture* mBackground;
+
 };
 
 #endif

@@ -53,7 +53,7 @@ void main() {
     else
     {
         vec4 result = pow(hdrColor, vec4(1.0 / gamma));
-        gl_FragColor = result;
+        gl_FragColor = vec4(1,0,0,1);
     }
 }
 

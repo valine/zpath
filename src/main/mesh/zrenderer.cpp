@@ -322,11 +322,11 @@ void ZRenderer::renderMain() {
     float height =  mCamera->getHeight();
 
     // Render to 16 bit frame buffer
+    glViewport(0,0, width, height);
+
     glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glViewport(0,0, width, height);
     glEnable(GL_DEPTH_TEST);
 
     // Draw background
@@ -512,36 +512,43 @@ void ZRenderer::renderSelection() {
     //}
 }
 
+int ZRenderer::getMainBuffer() {
+    return mMainBuffer;
+}
+
 void ZRenderer::renderToScreen() {
-    if (mRenderToTexture) {
-        glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // if (mRenderToTexture) {
+    //     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        mHDRShader->use();
-        glViewport(0,0,mCamera->getWidth(),mCamera->getHeight());
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mMainBuffer);
+    //     mHDRShader->use();
+    //     glViewport(0,0,mCamera->getWidth(),mCamera->getHeight());
+    //     glActiveTexture(GL_TEXTURE0);
+    //     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
 
-        mHDRShader->setBool("hdr", true);
-        mHDRShader->setFloat("exposure", mScene->getExposure());
+    //     mHDRShader->setBool("hdr", true);
+    //     mHDRShader->setFloat("exposure", mScene->getExposure());
 
-        renderQuad();
-        glBindTexture(GL_TEXTURE_2D, 0);
-    } else {
+    //     renderQuad();
+    //     glBindTexture(GL_TEXTURE_2D, 0);
+    // } else {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_DEPTH_BUFFER_BIT);
-         int yv = mParentView->getWindowHeight() - mParentView->getBottom();
-        glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+      
         mHDRShader->use();
        
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, mMainBuffer);
         mHDRShader->setBool("hdr", true);
         mHDRShader->setFloat("exposure", mScene->getExposure());
+
+        int yv = mParentView->getWindowHeight() - mParentView->getBottom();
+        glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+    
         renderQuad();
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
+   // }
 }
 
 int ZRenderer::getObjectIndexAtLocation(int x, int y) {
@@ -579,10 +586,10 @@ void ZRenderer::renderQuad() {
     {
         float quadVertices[] = {
             // positions        // texture Coords
-            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+            -0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -0.0f, -0.0f, 0.0f, 0.0f, 0.0f,
             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-            1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+            1.0f, -0.0f, 0.0f, 1.0f, 0.0f,
         };
         // setup plane VAO
         glGenVertexArrays(1, &quadVAO);

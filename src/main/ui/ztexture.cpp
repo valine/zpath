@@ -7,12 +7,20 @@ ZTexture::ZTexture(string path) {
     mTextureID = loadTexture(path.c_str());
 }
 
+ZTexture::ZTexture(int id) {
+    mTextureID = id;
+}
+
 ZTexture::ZTexture(float* pixels, int width, int height) {
     mTextureID = loadTexture(pixels, width, height);
 }
 
 uint ZTexture::getID() {
     return mTextureID;
+}
+
+void ZTexture::setID(int id) {
+    mTextureID = id;
 }
 
 unsigned int ZTexture::loadTexture(char const * path){
