@@ -56,7 +56,7 @@ externalproject_add(freetype
                     LOG_DOWNLOAD ON
                     )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype/src/freetype/include)
-add_dependencies(vnastudio freetype)
+add_dependencies(zpath freetype)
 
 endif(WIN32)
 
