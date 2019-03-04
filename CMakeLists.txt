@@ -40,6 +40,27 @@ endif()
 ## dependencies ###############################################################
 ###############################################################################
 
+
+if (WIN32)
+set(freetype_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype")
+set(freetype_install_dir "${freetype_prefix}")
+set(freetype_cmake_args  "")
+externalproject_add(freetype
+                    PREFIX         ${freetype_prefix}
+                    GIT_REPOSITORY https://github.com/ubawurinna/freetype-windows-binaries.git
+                    CMAKE_ARGS     ${freetype_cmake_args}
+                    UPDATE_COMMAND ""
+                    CONFIGURE_COMMAND ""
+                    BUILD_COMMAND ""
+                    INSTALL_COMMAND ""
+                    LOG_DOWNLOAD ON
+                    )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype/src/freetype/include)
+add_dependencies(vnastudio freetype)
+
+endif(WIN32)
+
+
 #glfw
 include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 #
@@ -97,6 +118,7 @@ externalproject_add(glm
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
 add_dependencies(zpath glm)
+
 
   # #
   # #   freetype
@@ -182,7 +204,7 @@ if (WIN32)
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
   include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
-  include_directories("C:/FreeTypeBinaries/include")
+ 
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
           "${glfw_install_dir}/lib/glfw3.lib"
@@ -190,7 +212,7 @@ if (WIN32)
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
           "${assimp_install_dir}/lib/assimp-vc140-mt.lib"
-          "C:/FreeTypeBinaries/win32/freetype.lib")
+          ${freetype_install_dir}/src/freetype/win32/freetype.lib)
 
 endif(WIN32)
 
