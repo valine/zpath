@@ -40,6 +40,7 @@ endif()
 ## dependencies ###############################################################
 ###############################################################################
 
+include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 
 if (WIN32)
 set(freetype_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype")
@@ -62,7 +63,6 @@ endif(WIN32)
 
 
 #glfw
-include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 #
 #   GLFW
 #
