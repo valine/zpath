@@ -1,5 +1,7 @@
-#ifndef ZOFFLINERENDERER_H
-#define ZOFFLINERENDERER_H
+#ifndef ZRAYTRACER_H
+#define ZRAYTRACER_H
+
+using namespace std;
 
 #include <cstdio> 
 #include <cstdlib> 
@@ -12,12 +14,17 @@
 #include <cmath> 
 #include <limits> 
 #include <random> 
+#include "mesh/zscene.h"
 
-class ZOfflineRenderer {
+class ZRayTracer {
 
 public: 
 
+	ZRayTracer();
+	void setScene(ZScene*);
 	private:
+
+	ZScene* mScene
 
 };
 
