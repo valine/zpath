@@ -24,8 +24,7 @@ public:
 	void setScene(ZScene*);
 	private:
 
-	ZScene* mScene
-
+	ZScene* mScene;
 };
 
 #endif

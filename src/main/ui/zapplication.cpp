@@ -119,7 +119,7 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
         if (mShouldPoll) {
             glfwPollEvents();
         } else {
-            glfwWaitEvents();
+            glfwPollEvents();
         }
 
         viewController->draw();

@@ -1,3 +1,4 @@
+#include <ui/zchart.h>
 #include "zpath/zpathviewcontroller.h"
 
 int ZPathViewController::mGridSizeX = 3;
@@ -158,6 +159,16 @@ void ZPathViewController::onCreate() {
     mAnimationButton->setOnClickListener(this);
     propertiesPanel->addSubView(mAnimationButton);
 
+//    ZView* mSplash = new ZView(538, 336);
+//    mSplash->setBackgroundColor(vec4(0, 0.56, 0.56, 1));
+//    mSplash->setBackgroundImage(new ZTexture(getResourcePath() +
+//                                 "resources/textures/splash.png"));
+//    mSplash->setOffset((getRootView()->getWindowWidth()) / 2.0, 0);
+//    getRootView()->addSubView(mSplash);
+
+    ZChart* chart = new ZChart(100, 100, getResourcePath());
+    getRootView()->addSubView(chart);
+
 }
 
 void ZPathViewController::onFileDrop(int count, const char** paths) {
@@ -172,9 +183,7 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
 	
     		ZObjLoader loader = ZObjLoader();
             vector<ZObject*> objects = loader.loadObjects(path);
-            for (unsigned i = 0; i < objects.size(); ++i) {
-                ZObject* object = objects.at(i);
-
+            for (auto object : objects) {
                 mScene->addObject(object);
                 //ZMaterial* brainMaterial = new ZMaterial(vec3(0.1,0.5,1));
                 //brainMaterial->setRoughness(0.1);

@@ -12,3 +12,7 @@ install_manifest.txt
 compile_commands.json
 TestTestfile.cmake
 .DS_Store
+
+.idea/*
+cmake-build-debug/*
+
