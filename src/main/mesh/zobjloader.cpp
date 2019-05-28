@@ -157,7 +157,6 @@ ZMesh* ZObjLoader::loadMesh(string fileName) {
 	vector<float> vertexNormalIndices;
 
 	while (getline(infile, line)) {
-
 		string space = " ";
 	    vector<string> tokens = split(line, space);
 

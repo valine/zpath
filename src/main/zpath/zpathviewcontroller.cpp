@@ -166,29 +166,33 @@ void ZPathViewController::onCreate() {
 //    mSplash->setOffset((getRootView()->getWindowWidth()) / 2.0, 0);
 //    getRootView()->addSubView(mSplash);
 
-    ZChart* chart = new ZChart(100, 100, getResourcePath());
+    ZChart* chart = new ZChart(600, 400, getResourcePath());
+    float testPoints[10] = {1, 0, 0, 20, 1, 0.5, 0.5, 0.5, 0, 1};
+    float testPoints2[20] = {1, 0, 0, 20, 1, 0.5, 0.5, 0.5, 0, 1, 1, 0, 0, 20, 1, 0.5, 0.5, 0.5, 0, 1};
+    chart->addLine(testPoints, 10);
+    chart->addLine(testPoints2, 20);
     getRootView()->addSubView(chart);
 
 }
 
 void ZPathViewController::onFileDrop(int count, const char** paths) {
 
- 	for (int i = 0;  i < count;  i++) {
- 		string path(paths[i]);   
+    for (int i = 0; i < count; i++) {
+        string path(paths[i]);
 
         if (getFileExtension(path) == "hdr") {
-            ZTexture* texture = new ZTexture(path);
+            ZTexture *texture = new ZTexture(path);
             mScene->getWorld()->setEnvironmentTexture(texture);
         } else {
-	
-    		ZObjLoader loader = ZObjLoader();
-            vector<ZObject*> objects = loader.loadObjects(path);
+
+            ZObjLoader loader = ZObjLoader();
+            vector<ZObject *> objects = loader.loadObjects(path);
             for (auto object : objects) {
                 mScene->addObject(object);
                 //ZMaterial* brainMaterial = new ZMaterial(vec3(0.1,0.5,1));
                 //brainMaterial->setRoughness(0.1);
                 //brainMaterial->setMetallic(0);
-               // object->setMaterial(brainMaterial);
+                // object->setMaterial(brainMaterial);
             }
         }
     }

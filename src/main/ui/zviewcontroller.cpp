@@ -78,8 +78,6 @@ void ZViewController::draw() {
     if (mDrawingEnabled) {
         mUIShader->use();
         GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
-        mat4 matrix;
-        matrix = glm::rotate(matrix, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -10.0f, 100.0f);
         glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(projection));
 
