@@ -3,10 +3,15 @@
 #include <ui/zshader.h>
 #include "ui/zchartrenderer.h"
 
-ZChartRenderer::ZChartRenderer(string resources) {
+ZChartRenderer::ZChartRenderer(int width, int height) {
 
     mShader = new ZShader(ui_vs, ui_fs);
+    mWidth = width;
+    mHeight = height;
+    updateBuffers();
+}
 
+void ZChartRenderer::updateBuffers() {
     glGenFramebuffers(1, &mFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
@@ -25,7 +30,6 @@ ZChartRenderer::ZChartRenderer(string resources) {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mTexBuffer);
 
 
-
     glGenFramebuffers(1, &mFinalFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
 
@@ -42,16 +46,13 @@ ZChartRenderer::ZChartRenderer(string resources) {
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFinalTexBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mFinalTexBuffer);
-
-
-
 }
 
 void ZChartRenderer::onDraw() {
 
     mShader->use();
 
-    mat4 projection = ortho(0.0f, (float) mWidth, (float) mHeight, 0.0f, -10.0f, 100.0f);
+    mat4 projection = ortho(0.0f, (float) mWidth, (float) mMax, mMin, -10.0f, 100.0f);
     mShader->setMat4("uVPMatrix", projection);
 
     glViewport(0, 0, mWidth, mHeight);
@@ -63,6 +64,7 @@ void ZChartRenderer::onDraw() {
     glLineWidth(mLineWidth);
     glDepthMask(false);
     for (uint i = 0; i < mPoints.size(); i++) {
+        mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) * vec4(vec3((float) i / mPoints.size()), 1.0));
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(i));
         glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
         glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
@@ -75,11 +77,9 @@ void ZChartRenderer::onDraw() {
 
     glDepthMask(true);
 
-
     glBindFramebuffer(GL_READ_FRAMEBUFFER, mFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFinalFBO);
     glBlitFramebuffer(0, 0, mWidth, mHeight, 0, 0, mWidth, mHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -93,21 +93,19 @@ void ZChartRenderer::addLine(float *points, int size) {
     vector<float> verts;
     vector<int> edges;
 
-    float max = points[0];
-    float min = points[0];
     for (uint i = 0; i < size; i++) {
-        if (points[i] > max) {
-            max = points[i];
+        if (points[i] > mMax) {
+            mMax = points[i];
         }
 
-        if (points[i] < min) {
-            min = points[i];
+        if (points[i] < mMin) {
+            mMin = points[i];
         }
     }
 
     for (uint i = 0; i < size; i++) {
         verts.push_back(((float) i / (float) (size - 1)) * mWidth);
-        verts.push_back((((points[i] / (max - min)) + min) * (mHeight - mLineWidth)) + mLineWidth/2);
+        verts.push_back(points[i]);
         verts.push_back(0);
         verts.push_back(0);
 
@@ -134,4 +132,10 @@ void ZChartRenderer::addLine(float *points, int size) {
 
 void ZChartRenderer::updateLine(int index, float *points) {
     // do nothing for now
+}
+
+void ZChartRenderer::setSize(int width, int height) {
+    mWidth = width;
+    mHeight = height;
+    updateBuffers();
 }

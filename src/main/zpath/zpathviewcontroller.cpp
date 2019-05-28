@@ -166,9 +166,9 @@ void ZPathViewController::onCreate() {
 //    mSplash->setOffset((getRootView()->getWindowWidth()) / 2.0, 0);
 //    getRootView()->addSubView(mSplash);
 
-    ZChart* chart = new ZChart(600, 400, getResourcePath());
-    float testPoints[10] = {1, 0, 0, 20, 1, 0.5, 0.5, 0.5, 0, 1};
-    float testPoints2[20] = {1, 0, 0, 20, 1, 0.5, 0.5, 0.5, 0, 1, 1, 0, 0, 20, 1, 0.5, 0.5, 0.5, 0, 1};
+    ZChart* chart = new ZChart(299, 400, getResourcePath());
+    float testPoints[10] = {1, 6, 6, 45, 1, 0.5, 0.5, 0.5, 6, 1};
+    float testPoints2[20] = {1, 6, 6, 30, 1, 0.5, 0.5, 0.5, 6, 1, 1, 6, 6, 20, 1, 0.5, 0.5, 0.5, 6, 1};
     chart->addLine(testPoints, 10);
     chart->addLine(testPoints2, 20);
     getRootView()->addSubView(chart);

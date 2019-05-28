@@ -6,7 +6,7 @@
 #include "ui/zchart.h"
 
 ZChart::ZChart(float maxWidth, float maxHeight, string resources) : ZView(maxWidth, maxHeight) {
-    mRenderer = new ZChartRenderer(resources);
+    mRenderer = new ZChartRenderer(maxWidth, maxHeight);
     mRenderer->onDraw();
 
     mBackground = new ZTexture(mRenderer->getTexID());
@@ -15,6 +15,7 @@ ZChart::ZChart(float maxWidth, float maxHeight, string resources) : ZView(maxWid
 
 void ZChart::draw() {
     ZView::draw();
+    mRenderer->onDraw();
 }
 
 void ZChart::addLine(float *points, int size) {
@@ -24,4 +25,9 @@ void ZChart::addLine(float *points, int size) {
 
 void ZChart::updateLine(int index, float *points) {
     mRenderer->updateLine(index, points);
+}
+
+void ZChart::onWindowChange(int width, int height) {
+    ZView::onWindowChange(width, height);
+    mRenderer->setSize(width, height);
 }

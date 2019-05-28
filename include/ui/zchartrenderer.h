@@ -12,12 +12,13 @@ using namespace std;
 class ZChartRenderer {
 
 public:
-    ZChartRenderer(string resources);
+    ZChartRenderer(int width, int height);
     void onDraw();
     unsigned int getTexID();
 
     void addLine(float points[], int size);
     void updateLine(int index, float points[]);
+    void setSize(int width, int height);
 
 private:
     unsigned int mFBO;
@@ -26,7 +27,7 @@ private:
     unsigned int mFinalTexBuffer;
     unsigned int mRBO;
     unsigned int mFinalRBO;
-    float mLineWidth = 6.0f;
+    float mLineWidth = 2.0f;
 
     vector<unsigned int> mPoints;
     vector<unsigned int> mEdges;
@@ -35,6 +36,9 @@ private:
 
     int mWidth = 600;
     int mHeight = 400;
+
+    float mMin = INT_MAX;
+    float mMax = INT_MIN;
 
     // Shader code
     const string ui_vs =
@@ -46,6 +50,7 @@ private:
     ;
 
 
+    void updateBuffers();
 };
 
 

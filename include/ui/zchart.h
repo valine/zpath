@@ -14,6 +14,7 @@ public:
     void draw();
     void addLine(float points[], int size);
     void updateLine(int index, float points[]);
+    void onWindowChange(int width, int height) override;
 
 private:
 

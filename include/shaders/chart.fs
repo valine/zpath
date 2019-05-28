@@ -3,7 +3,7 @@ R"(
 uniform vec4 uColor;
 void main() {
 
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_FragColor = uColor;
 
     float gamma = 2.0;
    	gl_FragColor.r = pow(gl_FragColor.r, 1.0/gamma);
