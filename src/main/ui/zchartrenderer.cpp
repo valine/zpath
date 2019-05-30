@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ui/zshader.h>
 #include "ui/zchartrenderer.h"
+#include "png.h"
 
 ZChartRenderer::ZChartRenderer(int width, int height) {
 
@@ -49,6 +50,7 @@ void ZChartRenderer::updateBuffers() {
 }
 
 void ZChartRenderer::onDraw() {
+    
 
     mShader->use();
 
@@ -60,7 +62,6 @@ void ZChartRenderer::onDraw() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glEnable(GL_LINE_SMOOTH);
     glLineWidth(mLineWidth);
     glDepthMask(false);
     for (uint i = 0; i < mPoints.size(); i++) {

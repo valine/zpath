@@ -73,6 +73,7 @@ externalproject_add(glfw
                     PREFIX         ${glfw_prefix}
                     GIT_REPOSITORY https://github.com/glfw/glfw.git
                     UPDATE_COMMAND ""
+                    GIT_SHALLOW 1
                     INSTALL_DIR    ${glfw_install_dir}
                     CMAKE_ARGS     ${glfw_cmake_args}
                     LOG_DOWNLOAD ON
@@ -80,6 +81,27 @@ externalproject_add(glfw
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/lib)
 add_dependencies(zpath glfw)
+
+
+#libpng
+#
+#   png
+#
+set(png_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/png")
+set(png_install_dir "${glfw_prefix}")
+set(png_cmake_args  "-DCMAKE_INSTALL_PREFIX=${png_install_dir}")
+externalproject_add(png
+        PREFIX         ${png_prefix}
+        GIT_REPOSITORY git://git.code.sf.net/p/libpng/code
+        UPDATE_COMMAND ""
+        GIT_SHALLOW 1
+        INSTALL_DIR    ${png_install_dir}
+        CMAKE_ARGS     ${png_cmake_args}
+        LOG_DOWNLOAD ON
+        )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build)
+add_dependencies(zpath png)
 
 #
 #   assimp
@@ -91,6 +113,7 @@ externalproject_add(assimp
                     PREFIX         ${assimp_prefix}
                     GIT_REPOSITORY https://github.com/assimp/assimp.git
                     UPDATE_COMMAND ""
+                    GIT_SHALLOW 1
                     GIT_TAG        v4.1.0
                     INSTALL_DIR    ${assimp_install_dir}
                     CMAKE_ARGS     ${assimp_cmake_args}
@@ -111,6 +134,7 @@ externalproject_add(glm
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG        0.9.9.0 
         UPDATE_COMMAND ""
+        GIT_SHALLOW 1
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
         LOG_DOWNLOAD ON
@@ -187,6 +211,7 @@ if (LINUX)
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
           ${FREETYPE_LIBRARIES}
+          ${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build/libpng.a
           "${assimp_install_dir}/lib/libassimp.so")
 
 endif (LINUX)
@@ -211,6 +236,7 @@ if (WIN32)
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
+          ${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build/png.lib
           "${assimp_install_dir}/lib/assimp-vc140-mt.lib"
           ${freetype_install_dir}/src/freetype/win32/freetype.lib)
 
