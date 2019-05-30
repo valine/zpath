@@ -88,8 +88,22 @@ add_dependencies(zpath glfw)
 #   png
 #
 
+set(zlib_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib")
+set(zlib_install_dir "${zlib_prefix}")
+set(zlib_cmake_args  "-DCMAKE_INSTALL_PREFIX=${zlib_install_dir}")
+externalproject_add(zlib
+        PREFIX         ${zlib_prefix}
+        GIT_REPOSITORY https://github.com/madler/zlib.git
+        UPDATE_COMMAND ""
+        GIT_SHALLOW 1
+        INSTALL_DIR    ${zlib_install_dir}
+        CMAKE_ARGS     ${zlib_cmake_args}
+        LOG_DOWNLOAD ON
+        )
+add_dependencies(zpath zlib)
+
 set(png_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/png")
-set(png_install_dir "${glfw_prefix}")
+set(png_install_dir "${png_prefix}")
 set(png_cmake_args  "-DCMAKE_INSTALL_PREFIX=${png_install_dir}")
 externalproject_add(png
         PREFIX         ${png_prefix}
@@ -198,8 +212,10 @@ if (APPLE)
 endif (APPLE)
 
 if (LINUX)
-  find_package(ZLIB REQUIRED)
+  #find_package(ZLIB REQUIRED)
 
+  #include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/include)
+  link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib)
 
   find_package(Freetype REQUIRED)
 
@@ -214,12 +230,11 @@ if (LINUX)
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
           "${glfw_install_dir}/lib/libglfw3.a"
-
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
-          "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build/libpng.a"
-          ${ZLIB_LIBRARIES}
+          "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/lib/libpng16.a"
+          "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib/libz.a"
           "${assimp_install_dir}/lib/libassimp.so"
           ${FREETYPE_LIBRARIES})
 
