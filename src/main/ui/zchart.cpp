@@ -3,6 +3,7 @@
 //
 
 #include <mesh/zobject.h>
+#include <utils/zimageutil.h>
 #include "ui/zchart.h"
 
 ZChart::ZChart(float maxWidth, float maxHeight, string resources) : ZView(maxWidth, maxHeight) {
@@ -10,6 +11,11 @@ ZChart::ZChart(float maxWidth, float maxHeight, string resources) : ZView(maxWid
     mRenderer->onDraw();
 
     mBackground = new ZTexture(mRenderer->getTexID());
+
+
+    ZImageUtil::saveGlImage("/home/lukas/Desktop/test.png", mRenderer->getTexID(), maxWidth, maxHeight);
+
+
     setBackgroundImage(mBackground);
 }
 

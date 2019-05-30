@@ -87,6 +87,7 @@ add_dependencies(zpath glfw)
 #
 #   png
 #
+
 set(png_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/png")
 set(png_install_dir "${glfw_prefix}")
 set(png_cmake_args  "-DCMAKE_INSTALL_PREFIX=${png_install_dir}")
@@ -99,7 +100,7 @@ externalproject_add(png
         CMAKE_ARGS     ${png_cmake_args}
         LOG_DOWNLOAD ON
         )
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png)
+
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build)
 add_dependencies(zpath png)
 
@@ -197,8 +198,14 @@ if (APPLE)
 endif (APPLE)
 
 if (LINUX)
+  find_package(ZLIB REQUIRED)
+
+
   find_package(Freetype REQUIRED)
+
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png)
   include_directories(${FREETYPE_INCLUDE_DIRS})
+
   find_package(X11 REQUIRED)
   message(STATUS "X11_FOUND = ${X11_FOUND}")
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
@@ -207,12 +214,14 @@ if (LINUX)
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
           "${glfw_install_dir}/lib/libglfw3.a"
+
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
-          ${FREETYPE_LIBRARIES}
-          ${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build/libpng.a
-          "${assimp_install_dir}/lib/libassimp.so")
+          "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build/libpng.a"
+          ${ZLIB_LIBRARIES}
+          "${assimp_install_dir}/lib/libassimp.so"
+          ${FREETYPE_LIBRARIES})
 
 endif (LINUX)
 

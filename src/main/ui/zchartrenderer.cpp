@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <ui/zshader.h>
+#include <utils/zimageutil.h>
 #include "ui/zchartrenderer.h"
 #include "png.h"
 
@@ -50,7 +51,7 @@ void ZChartRenderer::updateBuffers() {
 }
 
 void ZChartRenderer::onDraw() {
-    
+
 
     mShader->use();
 
