@@ -162,19 +162,6 @@ add_dependencies(zpath glm)
 # #
 # #   freetype
 # #
-set(freetype2a_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2a")
-set(freetype2a_install_dir "${freetype2a_prefix}")
-ExternalProject_Add(
-        freetype2a
-        PREFIX  ${freetype2a_prefix}
-        GIT_REPOSITORY git://git.savannah.gnu.org/freetype/freetype2.git
-        GIT_SHALLOW 1
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${freetype2a_install_dir} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX}} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DWITH_PNG=Off
-        UPDATE_COMMAND "")
-
-ExternalProject_Get_Property(freetype2a install_dir)
-
-
 set(freetype2b_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b")
 set(freetype2b_install_dir "${freetype2b_prefix}")
 ExternalProject_Add(
@@ -182,7 +169,7 @@ ExternalProject_Add(
         PREFIX  ${freetype2b_prefix}
         GIT_REPOSITORY git://git.savannah.gnu.org/freetype/freetype2.git
         GIT_SHALLOW 1
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${freetype2b_prefix} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DWITH_PNG=Off
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${freetype2b_prefix} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DWITH_PNG=Off
         UPDATE_COMMAND ""
         INSTALL_COMMAND "")
 
