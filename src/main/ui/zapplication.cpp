@@ -104,6 +104,10 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glfwSwapBuffers(window);
+
     viewController = controller;
     viewController->onCreate();
 
