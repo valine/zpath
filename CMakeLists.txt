@@ -159,26 +159,34 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
 add_dependencies(zpath glm)
 
 
-  # #
-  # #   freetype
-  # #
-  # set(freetype_prefix "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype")
-  # set(freetype_install_dir "${freetype_prefix}")
-  # set(freetype_cmake_args  "-DCMAKE_INSTALL_PREFIX=${freetype_install_dir}")
-  # externalproject_add(freetype
-  #       PREFIX  ${freetype_prefix}
-  #       GIT_REPOSITORY git@github.com:ubawurinna/freetype-windows-binaries.git
-  #       UPDATE_COMMAND ""
-  #       BUILD_COMMAND ""
-  #       INSTALL_DIR ""
-  #       CMAKE_ARGS ""
-  #       INSTALL_COMMAND cmake -E echo "Skipping install step."
-  #       BUILD_COMMAND cmake -E echo "Skipping build step."
-  #       LOG_DOWNLOAD ON
-  #   )
+# #
+# #   freetype
+# #
+set(freetype2a_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2a")
+set(freetype2a_install_dir "${freetype2a_prefix}")
+ExternalProject_Add(
+        freetype2a
+        PREFIX  ${freetype2a_prefix}
+        GIT_REPOSITORY git://git.savannah.gnu.org/freetype/freetype2.git
+        GIT_SHALLOW 1
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${freetype2a_install_dir} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX}} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DWITH_PNG=Off
+        UPDATE_COMMAND "")
 
-  # # include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
-  # add_dependencies(zpath freetype)
+ExternalProject_Get_Property(freetype2a install_dir)
+
+
+set(freetype2b_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b")
+set(freetype2b_install_dir "${freetype2b_prefix}")
+ExternalProject_Add(
+        freetype2b
+        PREFIX  ${freetype2b_prefix}
+        GIT_REPOSITORY git://git.savannah.gnu.org/freetype/freetype2.git
+        GIT_SHALLOW 1
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${freetype2b_prefix} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -DWITH_PNG=Off
+        UPDATE_COMMAND ""
+        INSTALL_COMMAND "")
+
+add_dependencies(zpath freetype2b)
 
 #Opengl
 find_package (OpenGL REQUIRED)
@@ -212,15 +220,11 @@ if (APPLE)
 endif (APPLE)
 
 if (LINUX)
-  #find_package(ZLIB REQUIRED)
 
-  #include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/include)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b/include)
+
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/include)
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib)
-
-  find_package(Freetype REQUIRED)
-
-
-  include_directories(${FREETYPE_INCLUDE_DIRS})
 
   find_package(X11 REQUIRED)
   message(STATUS "X11_FOUND = ${X11_FOUND}")
@@ -233,10 +237,10 @@ if (LINUX)
           ${X11_LIBRARIES}
           ${CMAKE_THREAD_LIBS_INIT}
           ${CMAKE_DL_LIBS}
-          "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/lib/libpng16.a"
-          "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib/libz.a"
           "${assimp_install_dir}/lib/libassimp.so"
-          ${FREETYPE_LIBRARIES})
+          "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/lib/libpng.a"
+          "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib/libz.a"
+          "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b-build/libfreetyped.a")
 
 endif (LINUX)
 
