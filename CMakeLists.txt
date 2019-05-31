@@ -219,7 +219,7 @@ if (LINUX)
 
   find_package(Freetype REQUIRED)
 
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png)
+
   include_directories(${FREETYPE_INCLUDE_DIRS})
 
   find_package(X11 REQUIRED)
