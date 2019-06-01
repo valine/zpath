@@ -115,6 +115,11 @@ void ZUtil::chart(const char *file, double *p, int s) {
 }
 
 void ZUtil::chart(double *points, int size) {
-    chart("/home/lukas/Desktop/chart.png", points, size);
+    time_t thetime;
+    time(&thetime);
+
+    std::string s = "/home/lukas/Desktop/chart/chart" + std::to_string(thetime) + ".png";
+    char const *pchar = s.c_str();
+    chart(pchar, points, size);
 }
 

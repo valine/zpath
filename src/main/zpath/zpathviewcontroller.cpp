@@ -332,6 +332,10 @@ void ZPathViewController::onClick(ZButton* sender) {
         object->setBillboard(!object->isBillboard());
     } else if (sender == mSaveImageButton) {
         ZUtil::saveView(mTileView->getTiles().at(0));
+
+
+        double data[5]{1,2,3,4,5};
+        ZUtil::chart(data, 5);
     }
 }
 
