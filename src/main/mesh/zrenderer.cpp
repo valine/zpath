@@ -710,3 +710,7 @@ void ZRenderer::onExit() {
 
 cout << "exit renderer" << endl;
 }
+
+unsigned int ZRenderer::getMainFBO() {
+    return mMainFBO;
+}

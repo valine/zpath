@@ -47,6 +47,7 @@ public:
 	void recreateBuffers();
 	void onExit();
 	int getMainBuffer();
+	unsigned int getMainFBO();
 
 	void setWireMode(bool);
 

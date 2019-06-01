@@ -10,10 +10,11 @@
 #include "glad/glad.h"
 
 #include <zlib.h>
+#include <ui/zchartrenderer.h>
 #include "png.h"
 
 
-void ZImageUtil::saveImage(const char *file, float *pixels, int w, int h) {
+void ZUtil::saveImage(const char *file, float *pixels, int w, int h) {
     /* create file */
     FILE *fp = fopen(file, "wb");
     if (!fp) {
@@ -58,7 +59,8 @@ void ZImageUtil::saveImage(const char *file, float *pixels, int w, int h) {
 
 }
 
-void ZImageUtil::saveGlTex(const char *file, unsigned int tex, int w, int h) {
+
+void ZUtil::saveGlTex(const char *file, unsigned int tex, int w, int h) {
     int size = w * h;
     float bytes[4 * size];
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -66,11 +68,25 @@ void ZImageUtil::saveGlTex(const char *file, unsigned int tex, int w, int h) {
     saveImage(file, bytes, w, h);
 }
 
-void ZImageUtil::saveGlFBO(const char *file, unsigned int fbo, int w, int h) {
+void ZUtil::saveGlFBO(const char *file, unsigned int fbo, int w, int h) {
     int size = w * h;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     float bytes[4 * size];
     glReadPixels(0,0,w,h,GL_RGBA, GL_FLOAT, bytes);
     saveImage(file, bytes, w, h);
+}
+
+void ZUtil::saveView(Z3DView *v) {
+    saveGlFBO("/home/lukas/Desktop/view.png", v->getRenderer()->getMainFBO(), v->getWidth(), v->getHeight());
+}
+
+void ZUtil::chart(float *points, int size) {
+    int w = 400;
+    int h = 600;
+
+    ZChartRenderer renderer = ZChartRenderer(w, h);
+    renderer.addLine(points, size);
+    renderer.onDraw();
+    saveGlTex("/home/lukas/Desktop/view.png", renderer.getTexID(), w, h);
 }
 

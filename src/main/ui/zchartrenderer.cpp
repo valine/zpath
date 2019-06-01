@@ -92,6 +92,7 @@ unsigned int ZChartRenderer::getFrameID() {
     return mFinalFBO;
 }
 
+
 void ZChartRenderer::addLine(float *points, int size) {
 
     vector<float> verts;

@@ -25,7 +25,7 @@ void ZChart::addLine(float *points, int size) {
     mRenderer->addLine(points, size);
     mRenderer->onDraw();
 
-    ZImageUtil::saveGlFBO("/home/lukas/Desktop/test.png", mRenderer->getFrameID(), getWidth(),
+    ZUtil::saveGlFBO("/home/lukas/Desktop/test.png", mRenderer->getFrameID(), getWidth(),
                           getHeight());
 }
 
