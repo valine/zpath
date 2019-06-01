@@ -7,16 +7,13 @@
 #include <string.h>
 #include <stdarg.h>
 #include <iostream>
+#include "glad/glad.h"
 
 #include <zlib.h>
 #include "png.h"
 
 
-void ZImageUtil::saveImage(string file, float *pixels, int w, int h) {
-
-}
-
-void ZImageUtil::saveGlImage(const char *file, unsigned int texPointer, int w, int h) {
+void ZImageUtil::saveImage(const char *file, float *pixels, int w, int h) {
     /* create file */
     FILE *fp = fopen(file, "wb");
     if (!fp) {
@@ -32,13 +29,16 @@ void ZImageUtil::saveGlImage(const char *file, unsigned int texPointer, int w, i
         row_pointers[y] = (png_byte*)malloc((sizeof(png_bytep) * w));
     }
 
+    int i = 0;
     for(int y = 0; y < h; y++) {
         png_bytep row = row_pointers[y];
         for(int x = 0; x < w; x++) {
-            row[x * 4] = 0;
-            row[x * 4 + 1] = 0;
-            row[x * 4 + 2] = 255;
-            row[x * 4 + 3] = 255;
+            row[x * 4] = (int) (pixels[i] * 255);
+            row[x * 4 + 1] = (int) (pixels[i + 1] * 255);
+            row[x * 4 + 2] = (int) (pixels[i + 2] * 255);
+            row[x * 4 + 3] = (int) (pixels[i + 3] * 255);
+
+            i+=4;
         }
     }
 
@@ -57,3 +57,20 @@ void ZImageUtil::saveGlImage(const char *file, unsigned int texPointer, int w, i
     fclose(fp);
 
 }
+
+void ZImageUtil::saveGlTex(const char *file, unsigned int tex, int w, int h) {
+    int size = w * h;
+    float bytes[4 * size];
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, bytes);
+    saveImage(file, bytes, w, h);
+}
+
+void ZImageUtil::saveGlFBO(const char *file, unsigned int fbo, int w, int h) {
+    int size = w * h;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    float bytes[4 * size];
+    glReadPixels(0,0,w,h,GL_RGBA, GL_FLOAT, bytes);
+    saveImage(file, bytes, w, h);
+}
+

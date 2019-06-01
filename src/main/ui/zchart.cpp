@@ -10,11 +10,8 @@ ZChart::ZChart(float maxWidth, float maxHeight, string resources) : ZView(maxWid
     mRenderer = new ZChartRenderer(maxWidth, maxHeight);
     mRenderer->onDraw();
 
+    invalidate();
     mBackground = new ZTexture(mRenderer->getTexID());
-
-
-    ZImageUtil::saveGlImage("/home/lukas/Desktop/test.png", mRenderer->getTexID(), maxWidth, maxHeight);
-
 
     setBackgroundImage(mBackground);
 }
@@ -27,6 +24,9 @@ void ZChart::draw() {
 void ZChart::addLine(float *points, int size) {
     mRenderer->addLine(points, size);
     mRenderer->onDraw();
+
+    ZImageUtil::saveGlFBO("/home/lukas/Desktop/test.png", mRenderer->getFrameID(), getWidth(),
+                          getHeight());
 }
 
 void ZChart::updateLine(int index, float *points) {

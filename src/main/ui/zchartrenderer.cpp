@@ -51,8 +51,6 @@ void ZChartRenderer::updateBuffers() {
 }
 
 void ZChartRenderer::onDraw() {
-
-
     mShader->use();
 
     mat4 projection = ortho(0.0f, (float) mWidth, (float) mMax, mMin, -10.0f, 100.0f);
@@ -88,6 +86,10 @@ void ZChartRenderer::onDraw() {
 
 unsigned int ZChartRenderer::getTexID() {
     return mFinalTexBuffer;
+}
+
+unsigned int ZChartRenderer::getFrameID() {
+    return mFinalFBO;
 }
 
 void ZChartRenderer::addLine(float *points, int size) {

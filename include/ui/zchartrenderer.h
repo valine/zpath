@@ -15,6 +15,7 @@ public:
     ZChartRenderer(int width, int height);
     void onDraw();
     unsigned int getTexID();
+    unsigned int getFrameID();
 
     void addLine(float points[], int size);
     void updateLine(int index, float points[]);
