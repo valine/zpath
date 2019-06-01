@@ -93,12 +93,28 @@ void ZUtil::saveView(ZView *v) {
 }
 
 void ZUtil::chart(float *points, int size) {
+    chart("/home/lukas/Desktop/chart.png", points, size);
+}
+
+void ZUtil::chart(const char *file, float *p, int s) {
     int w = 400;
     int h = 600;
 
     ZChartRenderer renderer = ZChartRenderer(w, h);
-    renderer.addLine(points, size);
+    renderer.addLine(p, s);
     renderer.onDraw();
-    saveGlTex("/home/lukas/Desktop/chart.png", renderer.getTexID(), w, h);
+    saveGlTex(file, renderer.getTexID(), w, h);
+}
+
+void ZUtil::chart(const char *file, double *p, int s) {
+    float pointsF[s];
+    for (int i =0; i < s; i++) {
+        pointsF[i] = p[i];
+    }
+    chart(file, pointsF, s);
+}
+
+void ZUtil::chart(double *points, int size) {
+    chart("/home/lukas/Desktop/chart.png", points, size);
 }
 

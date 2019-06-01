@@ -16,7 +16,10 @@ public:
     static void saveGlFBOMain(const char *file, int x, int y, int w, int h);
     static void saveView(ZView* v);
 
+    static void chart(const char *file, float *p, int s);
     static void chart(float *p, int s);
+    static void chart(const char *file, double *p, int s);
+    static void chart(double *p, int s);
 };
 
 
