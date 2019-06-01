@@ -89,21 +89,25 @@ void ZUtil::saveGlFBOMain(const char *file, int x, int y, int w, int h) {
 }
 
 void ZUtil::saveView(ZView *v) {
-    saveGlFBOMain("/home/lukas/Desktop/view.png", v->getLeft(), v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
+    saveGlFBOMain("/home/lukas/Desktop/view", v->getLeft(), v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
 }
 
 void ZUtil::chart(float *points, int size) {
-    chart("/home/lukas/Desktop/chart.png", points, size);
+    chart("/home/lukas/Desktop/chart", points, size);
 }
 
 void ZUtil::chart(const char *file, float *p, int s) {
     int w = 400;
     int h = 600;
 
+    string filename = file;
+
     ZChartRenderer renderer = ZChartRenderer(w, h);
     renderer.addLine(p, s);
     renderer.onDraw();
-    saveGlTex(file, renderer.getTexID(), w, h);
+
+    filename+="MIN=" + to_string(renderer.getMin()) + " MAX=" + to_string(renderer.getMax()) + ".png";
+    saveGlTex(filename.c_str(), renderer.getTexID(), w, h);
 }
 
 void ZUtil::chart(const char *file, double *p, int s) {
@@ -118,7 +122,7 @@ void ZUtil::chart(double *points, int size) {
     time_t thetime;
     time(&thetime);
 
-    std::string s = "/home/lukas/Desktop/chart/chart" + std::to_string(thetime) + ".png";
+    std::string s = "/home/lukas/Desktop/chart/chart" + std::to_string(thetime) + "---";
     char const *pchar = s.c_str();
     chart(pchar, points, size);
 }

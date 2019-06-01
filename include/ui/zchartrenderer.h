@@ -20,6 +20,8 @@ public:
     void addLine(float points[], int size);
     void updateLine(int index, float points[]);
     void setSize(int width, int height);
+    float getMin();
+    float getMax();
 
 private:
     unsigned int mFBO;

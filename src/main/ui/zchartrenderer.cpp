@@ -144,3 +144,11 @@ void ZChartRenderer::setSize(int width, int height) {
     mHeight = height;
     updateBuffers();
 }
+
+float ZChartRenderer::getMin() {
+    return mMin;
+}
+
+float ZChartRenderer::getMax() {
+    return mMax;
+}
