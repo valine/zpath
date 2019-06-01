@@ -64,9 +64,13 @@ private:
 	ZCamera* mCamera;
 	ZMeshUtils meshUtils = ZMeshUtils();
 
-	unsigned int mMainFBO;
-	unsigned int mMainBuffer;
-	unsigned int mRenderBuffer;
+	unsigned int mMainFBOMS;
+	unsigned int mMainBufferMS;
+    unsigned int mRenderBufferMS;
+
+    unsigned int mRenderBuffer;
+    unsigned int mMainFBO;
+    unsigned int mMainBuffer;
 	
 	unsigned int mFinalFBO;
 	unsigned int mFinalBuffer;
@@ -85,6 +89,7 @@ private:
 	unsigned int cubeVBO = 0;
 
 	bool mRenderToTexture = false;
+	int mSamples = 16;
 
 	vector<ZObject*> mSortedObjects;
 	vector<int> mSortedIndicies;
