@@ -48,6 +48,7 @@ public:
 	void onExit();
 	int getMainBuffer();
 	unsigned int getMainFBO();
+	void setAASamples(int);
 
 	void setWireMode(bool);
 

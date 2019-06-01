@@ -29,6 +29,7 @@ public:
 	ZScene* getScene();
 	void setNearClipping(float nearClipping);
     vector<Z3DView*> getTiles();
+    void setAASamples(int samples);
 private:
 	int mTileCountX;
 	int mTileCountY;

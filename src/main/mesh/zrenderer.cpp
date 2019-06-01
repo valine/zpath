@@ -748,3 +748,7 @@ cout << "exit renderer" << endl;
 unsigned int ZRenderer::getMainFBO() {
     return mMainFBOMS;
 }
+
+void ZRenderer::setAASamples(int samples) {
+    mSamples = samples;
+}

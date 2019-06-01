@@ -143,3 +143,9 @@ void ZTiledView::onCursorPosChange(double x, double y)  {
 vector<Z3DView *> ZTiledView::getTiles() {
     return mTiles;
 }
+
+void ZTiledView::setAASamples(int samples) {
+    for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
+        (*it)->getRenderer()->setAASamples(samples);
+    }
+}
