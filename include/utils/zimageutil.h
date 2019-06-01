@@ -13,7 +13,8 @@ public:
     static void saveImage(const char *file, float* pixels, int w, int h);
     static void saveGlTex(const char *file, unsigned int tex, int w, int h);
     static void saveGlFBO(const char *file, unsigned int fbo, int w, int h);
-    static void saveView(Z3DView* v);
+    static void saveGlFBOMain(const char *file, int x, int y, int w, int h);
+    static void saveView(ZView* v);
 
     static void chart(float *p, int s);
 };

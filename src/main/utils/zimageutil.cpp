@@ -32,7 +32,7 @@ void ZUtil::saveImage(const char *file, float *pixels, int w, int h) {
 
     int i = 0;
     for(int y = 0; y < h; y++) {
-        png_bytep row = row_pointers[y];
+        png_bytep row = row_pointers[h - y - 1];
         for(int x = 0; x < w; x++) {
             row[x * 4] = (int) (pixels[i] * 255);
             row[x * 4 + 1] = (int) (pixels[i + 1] * 255);
@@ -61,23 +61,35 @@ void ZUtil::saveImage(const char *file, float *pixels, int w, int h) {
 
 
 void ZUtil::saveGlTex(const char *file, unsigned int tex, int w, int h) {
-    int size = w * h;
-    float bytes[4 * size];
+    int size = w * h * 4;
+    auto* bytes = (float*) malloc(size * sizeof(float));
     glBindTexture(GL_TEXTURE_2D, tex);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, bytes);
     saveImage(file, bytes, w, h);
+    free(bytes);
 }
 
 void ZUtil::saveGlFBO(const char *file, unsigned int fbo, int w, int h) {
-    int size = w * h;
+    int size = w * h * 4;
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    float bytes[4 * size];
+    auto* bytes = (float*) malloc(size * sizeof(float));
     glReadPixels(0,0,w,h,GL_RGBA, GL_FLOAT, bytes);
     saveImage(file, bytes, w, h);
+    free(bytes);
 }
 
-void ZUtil::saveView(Z3DView *v) {
-    saveGlFBO("/home/lukas/Desktop/view.png", v->getRenderer()->getMainFBO(), v->getWidth(), v->getHeight());
+void ZUtil::saveGlFBOMain(const char *file, int x, int y, int w, int h) {
+    int size = w * h * 4;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D,0);
+    auto* bytes = (float*) malloc(size * sizeof(float));
+    glReadPixels(x,y,w,h,GL_RGBA, GL_FLOAT, bytes);
+    saveImage(file, bytes, w, h);
+    free(bytes);
+}
+
+void ZUtil::saveView(ZView *v) {
+    saveGlFBOMain("/home/lukas/Desktop/view.png", v->getLeft(), v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
 }
 
 void ZUtil::chart(float *points, int size) {
@@ -87,6 +99,6 @@ void ZUtil::chart(float *points, int size) {
     ZChartRenderer renderer = ZChartRenderer(w, h);
     renderer.addLine(points, size);
     renderer.onDraw();
-    saveGlTex("/home/lukas/Desktop/view.png", renderer.getTexID(), w, h);
+    saveGlTex("/home/lukas/Desktop/chart.png", renderer.getTexID(), w, h);
 }
 

@@ -139,3 +139,7 @@ void ZTiledView::onCursorPosChange(double x, double y)  {
 		mTileWeightX = mInitialTileWeightX + deltaX;
 	}
 }
+
+vector<Z3DView *> ZTiledView::getTiles() {
+    return mTiles;
+}

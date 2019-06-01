@@ -28,6 +28,7 @@ public:
 	void setPerspective(bool);
 	ZScene* getScene();
 	void setNearClipping(float nearClipping);
+    vector<Z3DView*> getTiles();
 private:
 	int mTileCountX;
 	int mTileCountY;

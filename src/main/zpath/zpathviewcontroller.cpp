@@ -1,4 +1,5 @@
 #include <ui/zchart.h>
+#include <utils/zimageutil.h>
 #include "zpath/zpathviewcontroller.h"
 
 int ZPathViewController::mGridSizeX = 3;
@@ -159,6 +160,15 @@ void ZPathViewController::onCreate() {
     mAnimationButton->setOnClickListener(this);
     propertiesPanel->addSubView(mAnimationButton);
 
+
+    mSaveImageButton = new ZButton(150, 40, getResourcePath());
+    mSaveImageButton->setOffset(150,120);
+    mSaveImageButton->setMargin(10,10,10,10);
+    mSaveImageButton->setBackgroundColor(highlightColor);
+    mSaveImageButton->setText("SaveImage");
+    mSaveImageButton->setOnClickListener(this);
+    propertiesPanel->addSubView(mSaveImageButton);
+
 //    ZView* mSplash = new ZView(538, 336);
 //    mSplash->setBackgroundColor(vec4(0, 0.56, 0.56, 1));
 //    mSplash->setBackgroundImage(new ZTexture(getResourcePath() +
@@ -166,12 +176,12 @@ void ZPathViewController::onCreate() {
 //    mSplash->setOffset((getRootView()->getWindowWidth()) / 2.0, 0);
 //    getRootView()->addSubView(mSplash);
 
-    ZChart* chart = new ZChart(299, 400, getResourcePath());
-    float testPoints[10] = {1, 6, 6, 45, 1, 0.5, 0.5, 0.5, 6, 1};
-    float testPoints2[20] = {1, 6, 6, 30, 1, 0.5, 0.5, 0.5, 6, 1, 1, 6, 6, 20, 1, 0.5, 0.5, 0.5, 6, 1};
-    chart->addLine(testPoints, 10);
-    chart->addLine(testPoints2, 20);
-    getRootView()->addSubView(chart);
+//    ZChart* chart = new ZChart(299, 400, getResourcePath());
+//    float testPoints[10] = {1, 6, 6, 45, 1, 0.5, 0.5, 0.5, 6, 1};
+//    float testPoints2[20] = {1, 6, 6, 30, 1, 0.5, 0.5, 0.5, 6, 1, 1, 6, 6, 20, 1, 0.5, 0.5, 0.5, 6, 1};
+//    chart->addLine(testPoints, 10);
+//    chart->addLine(testPoints2, 20);
+//    getRootView()->addSubView(chart);
 
 }
 
@@ -320,6 +330,8 @@ void ZPathViewController::onClick(ZButton* sender) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         object->setBillboard(!object->isBillboard());
+    } else if (sender == mSaveImageButton) {
+        ZUtil::saveView(mTileView->getTiles().at(0));
     }
 }
 
