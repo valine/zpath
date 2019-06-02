@@ -128,11 +128,10 @@ void ZUtil::chart(double *points, int size) {
 }
 
 void ZUtil::chart(double *p, int s, int mod, int offset) {
-    int actualS = s / mod;
-    double actualP[actualS];
+    double actualP[s];
     int ia = 0;
     for (int i = 0; i < s; i++) {
-        if (i % mod == offset && ia < actualS) {
+        if (i % mod == offset) {
             actualP[ia] = p[i];
             ia++;
         }
