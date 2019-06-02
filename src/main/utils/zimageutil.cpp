@@ -134,6 +134,6 @@ void ZUtil::chart(double p[], int size, int mod, int offset) {
             values.push_back(p[i]);
         }
     }
-    chart(values.data(),size);
+    chart(values.data(),size / mod);
 }
 

@@ -53,7 +53,7 @@ void ZChartRenderer::updateBuffers() {
 void ZChartRenderer::onDraw() {
     mShader->use();
 
-    mat4 projection = ortho(0.0f, (float) mWidth, (float) mMax, mMin, -10.0f, 100.0f);
+    mat4 projection = ortho(0.0f, (float) mWidth, (float) mMin, mMax, -10.0f, 100.0f);
     mShader->setMat4("uVPMatrix", projection);
 
     glViewport(0, 0, mWidth, mHeight);
