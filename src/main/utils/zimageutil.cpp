@@ -134,6 +134,8 @@ void ZUtil::chart(double *p, int s, int mod, int offset) {
         if (i % mod == offset) {
             actualP[ia] = p[i];
             ia++;
+        } else {
+            actualP[ia] = 0;
         }
     }
     chart(actualP,s);
