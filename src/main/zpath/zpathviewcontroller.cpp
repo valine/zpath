@@ -334,8 +334,8 @@ void ZPathViewController::onClick(ZButton* sender) {
         ZUtil::saveView(mTileView->getTiles().at(0));
 
 
-        double data[5]{1,2,3,4,5};
-        ZUtil::chart(data, 5);
+        double data[9]{1,2,3,1,2,3,1,2,3};
+        ZUtil::chart(data, 5, 4, 0);
     }
 }
 

@@ -20,6 +20,7 @@ public:
     static void chart(float *p, int s);
     static void chart(const char *file, double *p, int s);
     static void chart(double *p, int s);
+    static void chart(double *p, int s, int mod, int offset);
 };
 
 

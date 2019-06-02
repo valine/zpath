@@ -127,3 +127,16 @@ void ZUtil::chart(double *points, int size) {
     chart(pchar, points, size);
 }
 
+void ZUtil::chart(double *p, int s, int mod, int offset) {
+    int actualS = s / mod;
+    double actualP[actualS];
+    int ia = 0;
+    for (int i = 0; i < s; i++) {
+        if (i % mod == offset && ia < actualS) {
+            actualP[ia] = p[i];
+            ia++;
+        }
+    }
+    chart(actualP,s);
+}
+
