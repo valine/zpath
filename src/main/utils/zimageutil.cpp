@@ -127,17 +127,13 @@ void ZUtil::chart(double *points, int size) {
     chart(pchar, points, size);
 }
 
-void ZUtil::chart(double *p, int s, int mod, int offset) {
-    double actualP[s];
-    int ia = 0;
-    for (int i = 0; i < s; i++) {
+void ZUtil::chart(double p[], int size, int mod, int offset) {
+    vector<double> values;
+    for (int i = 0; i < size; i++) {
         if (i % mod == offset) {
-            actualP[ia] = p[i];
-            ia++;
-        } else {
-            actualP[ia] = 0;
+            values.push_back(p[i]);
         }
     }
-    chart(actualP,s);
+    chart(values.data(),size);
 }
 
