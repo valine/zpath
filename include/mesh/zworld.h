@@ -24,6 +24,7 @@ class ZWorld {
 
 		void setColor(vec3);
 		vec3 getColor();
+
 	private:
 
 		void initEnvironment();

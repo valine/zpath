@@ -11,6 +11,7 @@
 
 #include <zlib.h>
 #include <ui/zchartrenderer.h>
+#include <pwd.h>
 #include "png.h"
 
 
@@ -89,12 +90,14 @@ void ZUtil::saveGlFBOMain(const char *file, int x, int y, int w, int h) {
 }
 
 void ZUtil::saveView(ZView *v) {
-    saveGlFBOMain("/home/lukas/Desktop/view", v->getLeft(), v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
+    saveGlFBOMain((getHomeFolder() + "/Desktop/view").c_str(), v->getLeft(), v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
 }
 
 void ZUtil::chart(float *points, int size) {
-    chart("/home/lukas/Desktop/chart", points, size);
+    chart((getHomeFolder() + "/Desktop/chart").c_str(), points, size);
 }
+
+
 
 void ZUtil::chart(const char *file, float *p, int s) {
     int w = 400;
@@ -122,7 +125,7 @@ void ZUtil::chart(double *points, int size) {
     time_t thetime;
     time(&thetime);
 
-    std::string s = "/home/lukas/Desktop/chart/chart" + std::to_string(thetime) + "---";
+    std::string s = getHomeFolder() + "/Desktop/chart/chart" + std::to_string(thetime) + "---";
     char const *pchar = s.c_str();
     chart(pchar, points, size);
 }
@@ -135,5 +138,15 @@ void ZUtil::chart(double p[], int size, int mod, int offset) {
         }
     }
     chart(values.data(),size / mod);
+}
+
+string ZUtil::getHomeFolder() {
+    const char *homedir;
+
+    if ((homedir = getenv("HOME")) == NULL) {
+        homedir = getpwuid(getuid())->pw_dir;
+    }
+
+    return homedir;
 }
 
