@@ -116,14 +116,22 @@ void ZUtil::saveImageR(const char *file, float *pixels, int w, int h) {
 }
 
 
-
 void ZUtil::saveImage(const char *file, double *pixels, int w, int h) {
     float floats[w * h];
     for (uint i = 0; i < w * h; i++) {
         floats[i] = (float) pixels[i];
     }
 
-    saveImage((getHomeFolder() + "/Desktop/doubleimage").c_str(), floats, w, h);
+    saveImage(file, floats, w, h);
+}
+
+void ZUtil::saveImageR(const char *file, double *pixels, int w, int h) {
+    float floats[w * h];
+    for (uint i = 0; i < w * h; i++) {
+        floats[i] = (float) pixels[i];
+    }
+
+    saveImageR(file, floats, w, h);
 }
 
 void ZUtil::saveGlTex(const char *file, unsigned int tex, int w, int h) {
