@@ -61,6 +61,15 @@ void ZUtil::saveImage(const char *file, float *pixels, int w, int h) {
 }
 
 
+void ZUtil::saveImage(const char *file, double *pixels, int w, int h) {
+    float floats[w * h];
+    for (uint i = 0; i < w * h; i++) {
+        floats[i] = (float) pixels[i];
+    }
+
+    saveImage((getHomeFolder() + "/Desktop/doubleimage").c_str(), floats, w, h);
+}
+
 void ZUtil::saveGlTex(const char *file, unsigned int tex, int w, int h) {
     int size = w * h * 4;
     auto* bytes = (float*) malloc(size * sizeof(float));
@@ -96,8 +105,6 @@ void ZUtil::saveView(ZView *v) {
 void ZUtil::chart(float *points, int size) {
     chart((getHomeFolder() + "/Desktop/chart").c_str(), points, size);
 }
-
-
 
 void ZUtil::chart(const char *file, float *p, int s) {
     int w = 400;
@@ -149,4 +156,5 @@ string ZUtil::getHomeFolder() {
 
     return homedir;
 }
+
 
