@@ -107,9 +107,18 @@ void ZUtil::saveImageR(const char *file, float *pixels, int w, int h) {
 
 
 void ZUtil::saveImage(const char *file, double *pixels, int w, int h) {
+    int max = 0;
     float floats[w * h];
     for (uint i = 0; i < w * h; i++) {
         floats[i] = (float) pixels[i];
+        if (floats[i] > max) {
+            max = floats[i];
+        }
+    }
+
+    for (uint i = 0; i < w * h; i++) {
+        floats[i] = floats[i] / max;
+
     }
 
     saveImage((getHomeFolder() + "/Desktop/doubleimage").c_str(), floats, w, h);
