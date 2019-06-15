@@ -12,6 +12,7 @@ class ZUtil {
 public:
     static void saveImage(const char *file, float* pixels, int w, int h);
     static void saveImage(const char *file, double* pixels, int w, int h);
+    static void saveImageR(const char *file, float* pixels, int w, int h);
     static void saveGlTex(const char *file, unsigned int tex, int w, int h);
     static void saveGlFBO(const char *file, unsigned int fbo, int w, int h);
     static void saveGlFBOMain(const char *file, int x, int y, int w, int h);
