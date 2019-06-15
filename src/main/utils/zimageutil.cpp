@@ -89,7 +89,7 @@ void ZUtil::saveImageR(const char *file, float *pixels, int w, int h) {
         }
     }
 
-    png_set_IHDR(png_ptr, info_ptr, w, h,
+    png_set_IHDR(png_ptr, info_ptr, h, w,
                  8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
                  PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
@@ -102,7 +102,6 @@ void ZUtil::saveImageR(const char *file, float *pixels, int w, int h) {
     free(row_pointers);
 
     fclose(fp);
-
 }
 
 
