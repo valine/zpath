@@ -338,7 +338,7 @@ void ZPathViewController::onClick(ZButton* sender) {
         for (int i = 0; i < 100; i++) {
             data[i] = i;
         }
-        ZUtil::chart(data, 100, 4, 0);
+        ZUtil::chart(data, 100, 4, 0, 0);
     }
 }
 

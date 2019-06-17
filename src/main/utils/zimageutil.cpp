@@ -166,11 +166,11 @@ void ZUtil::saveView(ZView *v) {
     saveGlFBOMain((getHomeFolder() + "/Desktop/view").c_str(), v->getLeft(), v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
 }
 
-void ZUtil::chart(float *points, int size) {
-    chart((getHomeFolder() + "/Desktop/chart").c_str(), points, size);
+void ZUtil::chart(float *points, int size, float max) {
+    chart((getHomeFolder() + "/Desktop/chart").c_str(), points, size, max);
 }
 
-void ZUtil::chart(const char *file, float *p, int s) {
+void ZUtil::chart(const char *file, float *p, int s, float max) {
     int w = 400;
     int h = 600;
 
@@ -178,37 +178,41 @@ void ZUtil::chart(const char *file, float *p, int s) {
 
     ZChartRenderer renderer = ZChartRenderer(w, h);
     renderer.addLine(p, s);
+
+    if (max != -1) {
+        renderer.setMax(max);
+    }
     renderer.onDraw();
 
     filename+="MIN=" + to_string(renderer.getMin()) + " MAX=" + to_string(renderer.getMax()) + ".png";
     saveGlTex(filename.c_str(), renderer.getTexID(), w, h);
 }
 
-void ZUtil::chart(const char *file, double *p, int s) {
+void ZUtil::chart(const char *file, double *p, int s, float max) {
     float pointsF[s];
     for (int i =0; i < s; i++) {
         pointsF[i] = p[i];
     }
-    chart(file, pointsF, s);
+    chart(file, pointsF, s, max);
 }
 
-void ZUtil::chart(double *points, int size) {
+void ZUtil::chart(double *points, int size, float max) {
     time_t thetime;
     time(&thetime);
 
     std::string s = getHomeFolder() + "/Desktop/chart/chart" + std::to_string(thetime) + "---";
     char const *pchar = s.c_str();
-    chart(pchar, points, size);
+    chart(pchar, points, size, max);
 }
 
-void ZUtil::chart(double p[], int size, int mod, int offset) {
+void ZUtil::chart(double *p, int size, int mod, int offset, float max) {
     vector<double> values;
     for (int i = 0; i < size; i++) {
         if (i % mod == offset) {
             values.push_back(p[i]);
         }
     }
-    chart(values.data(),size / mod);
+    chart(values.data(), size / mod, max);
 }
 
 string ZUtil::getHomeFolder() {

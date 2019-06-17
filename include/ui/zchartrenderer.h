@@ -22,6 +22,8 @@ public:
     void setSize(int width, int height);
     float getMin();
     float getMax();
+    void setMax(float max);
+    void setMin(float min);
 
 private:
     unsigned int mFBO;

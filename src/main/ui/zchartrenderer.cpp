@@ -152,3 +152,12 @@ float ZChartRenderer::getMin() {
 float ZChartRenderer::getMax() {
     return mMax;
 }
+
+void ZChartRenderer::setMax(float max) {
+    mMax = max;
+
+}
+
+void ZChartRenderer::setMin(float min) {
+    mMin = min;
+}
