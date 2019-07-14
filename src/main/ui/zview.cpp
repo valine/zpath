@@ -228,7 +228,7 @@ int ZView::getMarginBottom() {
 }
 
 void ZView::invalidate() {
-    glfwPostEmptyEvent();
+    //glfwPostEmptyEvent();
 }
 
 void ZView::setBackgroundImage(ZTexture* background) {

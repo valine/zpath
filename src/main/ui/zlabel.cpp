@@ -1,23 +1,12 @@
+#include <utils/zfontstore.h>
 #include "ui/zlabel.h"
 
 ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
 
-	// FreeType
-    FT_Library ft;
-    // All functions return a value different than 0 whenever an error occurred
-    if (FT_Init_FreeType(&ft))
-        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+        string resourceString = resourcePath + "resources/fonts/" + font ;
+        FT_Face face = ZFontStore::getInstance().loadFont(resourceString);
 
-    // Load font as face
-    FT_Face face;
-
-    string resourceString = resourcePath + "resources/fonts/" + font ;
-    const char *resourceChar = resourceString.c_str();
-
-    if (FT_New_Face(ft, resourceChar, 0, &face)) {
-        std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-    } else {
         // Set size to load glyphs as
         FT_Set_Pixel_Sizes(face, 0, mTextSize);
 
@@ -59,11 +48,9 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
                 (GLuint) face->glyph->advance.x
             };
             Characters.insert(std::pair<GLchar, Character>(c, character));
-        }
+
         glBindTexture(GL_TEXTURE_2D, 0);
         // Destroy FreeType once we're finished
-        FT_Done_Face(face);
-        FT_Done_FreeType(ft);
 
         // Configure VAO/VBO for texture quads
         glGenVertexArrays(1, &VAO);
