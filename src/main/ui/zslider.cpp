@@ -14,7 +14,7 @@ ZView(maxWidth, maxHeight) {
 	addSubView(mLine);
 
 	mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
-	mHighlight->setBackgroundColor(vec4(0.046663, 0.213823, 0.384374, 1.000000));
+	setFillColor(vec4(0.002965, 0.021420, 0.050874, 1.000000));
 	mHighlight->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
 	mHighlight->setGravity(ZView::bottomLeft);
 	addSubView(mHighlight);
@@ -232,6 +232,10 @@ void ZSlider::setLineColor(vec4 color) {
 
 void ZSlider::setThumbColor(vec4 color) {
 	mThumb->setBackgroundColor(color);
+}
+
+void ZSlider::setFillColor(vec4 color) {
+    mHighlight->setBackgroundColor(color);
 }
 
 

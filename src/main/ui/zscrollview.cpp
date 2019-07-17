@@ -1,3 +1,4 @@
+#include <ui/zlinearlayout.h>
 #include "ui/zscrollview.h"
 
 
@@ -28,7 +29,7 @@ void ZScrollView::init() {
 	mScrollBar->setGravity(ZView::topRight);
 	addSubView(mScrollBar);
 
-	mInnerView = new ZView(getWidth(), getHeight());
+	mInnerView = new ZLinearLayout(getWidth(), getHeight());
 	addSubView(mInnerView);
 }
 
@@ -38,6 +39,7 @@ void ZScrollView::addSubView(ZView* view) {
 		ZView::addSubView(view);
 	} else {
 		mInnerView->addSubView(view);
+		mInnerView->setMaxHeight(view->getOffsetY());
 	}
 }
 

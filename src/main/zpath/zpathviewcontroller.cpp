@@ -44,7 +44,6 @@ void ZPathViewController::onCreate() {
     propertiesPanel->addSubView(mGridViewButton);
 
     mExposureSlider = new ZSlider(10000, 60, "Exposure", getResourcePath());
-    mExposureSlider->setOffset(0,150);
     mExposureSlider->setMargin(10, 10, 10, 10);
     mExposureSlider->setListener(this);
     propertiesPanel->addSubView(mExposureSlider);
@@ -54,21 +53,18 @@ void ZPathViewController::onCreate() {
     mExposureSlider->setValue(mScene->getExposure());
 
     mRoughnessSlider = new ZSlider(10000, 60, "Roughness", getResourcePath());
-    mRoughnessSlider->setOffset(0,250);
     mRoughnessSlider->setMargin(10, 10, 10, 10);
     mRoughnessSlider->setTextColor(vec3(0));
     mRoughnessSlider->setListener(this);
     propertiesPanel->addSubView(mRoughnessSlider);
 
     mMetalSlider = new ZSlider(10000, 60, "Metallic", getResourcePath());
-    mMetalSlider->setOffset(0,350);
     mMetalSlider->setMargin(10, 10, 10, 10);
     mMetalSlider->setListener(this);
     mMetalSlider->setTextColor(vec3(0));
     propertiesPanel->addSubView(mMetalSlider);
 
     mRedSlider = new ZSlider(10000, 60, "Red", getResourcePath());
-    mRedSlider->setOffset(0,350 + (100 * 1));
     mRedSlider->setMargin(10, 10, 10, 10);
     mRedSlider->setListener(this);
     mRedSlider->setLineColor(vec4(1,0,0,1));
@@ -76,7 +72,6 @@ void ZPathViewController::onCreate() {
     propertiesPanel->addSubView(mRedSlider);
 
     mGreenSlider = new ZSlider(10000, 60, "Green", getResourcePath());
-    mGreenSlider->setOffset(0,350 + (100 * 2));
     mGreenSlider->setMargin(10, 10, 10, 10);
     mGreenSlider->setListener(this);
     mGreenSlider->setTextColor(vec3(0));
@@ -84,7 +79,6 @@ void ZPathViewController::onCreate() {
     propertiesPanel->addSubView(mGreenSlider);
 
     mBlueSlider = new ZSlider(10000, 60, "Blue", getResourcePath());
-    mBlueSlider->setOffset(0,350 + (100 * 3));
     mBlueSlider->setMargin(10, 10, 10, 10);
     mBlueSlider->setListener(this);
     mBlueSlider->setLineColor(vec4(0,0,1,1));
@@ -92,14 +86,12 @@ void ZPathViewController::onCreate() {
     propertiesPanel->addSubView(mBlueSlider);
 
     mAlphaSlider = new ZSlider(10000, 60, "Alpha", getResourcePath());
-    mAlphaSlider->setOffset(0,350 + (100 * 4));
     mAlphaSlider->setMargin(10, 10, 10, 10);
     mAlphaSlider->setListener(this);
     mAlphaSlider->setTextColor(vec3(0));
     propertiesPanel->addSubView(mAlphaSlider);
 
     mFocalLengthSlider = new ZSlider(10000, 60, "Focal Length", getResourcePath());
-    mFocalLengthSlider->setOffset(0,350 + (100 * 5));
     mFocalLengthSlider->setMargin(10, 10, 10, 10);
     mFocalLengthSlider->setListener(this);
     mFocalLengthSlider->setMaxValue(179);
@@ -107,24 +99,21 @@ void ZPathViewController::onCreate() {
     mFocalLengthSlider->setTextColor(vec3(0));
     propertiesPanel->addSubView(mFocalLengthSlider);
 
-    mBackgroundBlurButton = new ZButton(130, 40, getResourcePath());
-    mBackgroundBlurButton->setOffset(0, 300 + (100 * 6));
+    mBackgroundBlurButton = new ZButton(130, 25, getResourcePath());
     mBackgroundBlurButton->setMargin(10,10,10,10);
     mBackgroundBlurButton->setBackgroundColor(highlightColor);
     mBackgroundBlurButton->setText("Background Blur");
     mBackgroundBlurButton->setOnClickListener(this);
     propertiesPanel->addSubView(mBackgroundBlurButton);
     
-    mDeleteButton = new ZButton(130, 40, getResourcePath());
-    mDeleteButton->setOffset(140, 300 + (100 * 6));
+    mDeleteButton = new ZButton(130, 25, getResourcePath());
     mDeleteButton->setMargin(10,10,10,10);
     mDeleteButton->setBackgroundColor(highlightColor);
     mDeleteButton->setText("Delete Object");
     mDeleteButton->setOnClickListener(this);
     propertiesPanel->addSubView(mDeleteButton);
 
-    mBillboardButton = new ZButton(130, 40, getResourcePath());
-    mBillboardButton->setOffset(140, 300 + (100 * 7));
+    mBillboardButton = new ZButton(130, 25, getResourcePath());
     mBillboardButton->setMargin(10,10,10,10);
     mBillboardButton->setBackgroundColor(highlightColor);
     mBillboardButton->setText("Billboard");
@@ -152,8 +141,7 @@ void ZPathViewController::onCreate() {
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
 
-    mAnimationButton = new ZButton(150, 40, getResourcePath());
-    mAnimationButton->setOffset(150,50);
+    mAnimationButton = new ZButton(130, 25, getResourcePath());
     mAnimationButton->setMargin(10,10,10,10);
     mAnimationButton->setBackgroundColor(highlightColor);
     mAnimationButton->setText("Test Animation");
@@ -161,8 +149,7 @@ void ZPathViewController::onCreate() {
     propertiesPanel->addSubView(mAnimationButton);
 
 
-    mSaveImageButton = new ZButton(150, 40, getResourcePath());
-    mSaveImageButton->setOffset(150,120);
+    mSaveImageButton = new ZButton(130, 25, getResourcePath());
     mSaveImageButton->setMargin(10,10,10,10);
     mSaveImageButton->setBackgroundColor(highlightColor);
     mSaveImageButton->setText("SaveImage");

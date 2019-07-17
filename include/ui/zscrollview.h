@@ -5,6 +5,7 @@
 #include <iostream>
 #include "zview.h"
 #include "mesh/zpath_constants.h"
+#include "ui/zlinearlayout.h"
 
 using namespace std;
 using namespace ZPathConstants;
@@ -19,7 +20,6 @@ public:
 	ZScrollView(float maxWidth, Bounds maxHeight);
 	ZScrollView(Bounds maxWidth, Bounds maxHeight);
 
-
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
@@ -32,10 +32,9 @@ public:
 private:
 
 	void init();
-
 	ZView* mScrollBar;
 	ZView* mScrollBarBackground;
-	ZView* mInnerView;
+	ZLinearLayout* mInnerView;
 };
 
 #endif
