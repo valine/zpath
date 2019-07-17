@@ -27,6 +27,7 @@ public:
 	void addSubView(ZView* view);
 	void setInnerViewHeight(int height);
 	void setInnerViewWidth(int width);
+	void onWindowChange(int windowWidth, int windowHeight);
 	
 private:
 

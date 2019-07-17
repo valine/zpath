@@ -25,7 +25,7 @@ void ZScrollView::init() {
 	mScrollBar = new ZView(7,100);
 	mScrollBar->setOffset(3,0);
 	mScrollBar->setBackgroundColor(vec4(0.5,0.5,0.5,1));
-	mScrollBar->setGravity(ZView::bottomRight);
+	mScrollBar->setGravity(ZView::topRight);
 	addSubView(mScrollBar);
 
 	mInnerView = new ZView(getWidth(), getHeight());
@@ -63,9 +63,12 @@ void ZScrollView::onCursorPosChange(double x, double y) {
 
 }
 
+
 void ZScrollView::onScrollChange(double x, double y) {
+
+    mScrollBar->setVisibility(mInnerView->getHeight() >= getHeight());
 	int scrollSpeed = 50;
-	int scrollBottom = mInnerView->getOffsetY() + mInnerView->getMaxHeight();
+	double scrollBottom = mInnerView->getOffsetY() + mInnerView->getMaxHeight();
 
 	if (y < 0) { // Scrolling down
 		if (scrollBottom > getHeight()) {
@@ -82,12 +85,18 @@ void ZScrollView::onScrollChange(double x, double y) {
 	float viewHeight = (float) getHeight();
 	float scrollBarHeight = viewHeight * (viewHeight / innerHeight);
 
-	float scrollBarOffset = mInnerView->getOffsetY() / (viewHeight - scrollBarHeight);
-
-	//if (mInnerView->getMaxHeight() > getHeight()) {
-		mScrollBar->setMaxHeight(scrollBarHeight);
-		mScrollBar->setOffset(0, viewHeight - scrollBarHeight);
-	//}
+    mScrollBar->setMaxHeight(scrollBarHeight);
+    float min = 0;
+    float max = viewHeight - scrollBarHeight;
+    float factor = -(mInnerView->getOffsetY()) / (innerHeight - getHeight());
+    cout << factor << endl;
+    mScrollBar->setOffset(0, (max * factor));
 
 	invalidate();
+}
+
+void ZScrollView::onWindowChange(int windowWidth, int windowHeight) {
+    ZView::onWindowChange(windowWidth, windowHeight);
+
+    onScrollChange(0,0);
 }
