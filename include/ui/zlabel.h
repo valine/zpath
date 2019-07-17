@@ -18,14 +18,6 @@ using namespace glm;
 
 using namespace std;
 
-/// Holds all state information relevant to a character as loaded using FreeType
-struct Character {
-    GLuint TextureID;   // ID handle of the glyph texture
-    glm::ivec2 Size;    // Size of glyph
-    glm::ivec2 Bearing;  // Offset from baseline to left/top of glyph
-    GLuint Advance;    // Horizontal offset to advance to next glyph
-};
-
 class ZLabel : public ZView {
 	
 	public:
@@ -40,13 +32,12 @@ class ZLabel : public ZView {
 		string getText();
 	private: 
 		GLuint VAO, VBO;
-		map<GLchar, Character> Characters;
-
 		int mTextSize = 14;
 		vec3 mTextColor = vec3(1,1,1);
 		string mText = "";
 		string mFontPath = "";
 		bool mInvalid = true;
+		string mFont;
 };
 
 #endif
