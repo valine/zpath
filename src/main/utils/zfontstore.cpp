@@ -25,7 +25,7 @@ FT_Face ZFontStore::loadFont(string resourcePath) {
 
 
         // Set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 14);
+        FT_Set_Pixel_Sizes(face, 0, 11);
 
         // Disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

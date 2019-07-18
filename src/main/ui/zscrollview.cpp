@@ -39,7 +39,8 @@ void ZScrollView::addSubView(ZView* view) {
 		ZView::addSubView(view);
 	} else {
 		mInnerView->addSubView(view);
-		mInnerView->setMaxHeight(view->getOffsetY());
+		mInnerView->setMaxHeight(view->getOffsetY() + view->getMaxHeight() +
+		view->getMarginTop() + view->getMarginBottom());
 	}
 }
 
