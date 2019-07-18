@@ -26,6 +26,7 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 		button->setText(titles.at(i));
 		button->setOnClickListener(this);
 		button->setTag(titles.at(i));
+        mButtons.push_back(button);
 		addSubView(button);
 	}
 }
@@ -55,6 +56,7 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 		button->setText("");
 		button->setTag(tags.at(i));
 		button->setOnClickListener(this);
+		mButtons.push_back(button);
 		addSubView(button);
 	}
 }
@@ -193,4 +195,8 @@ void ZRadioButton::onCursorPosChange(double x, double y)  {
 
 void ZRadioButton::setOnClickListener(ZOnClickListener* l) {
 	mListener = l;
+}
+
+ZButton *ZRadioButton::getButton(int index) {
+    return mButtons.at(index);
 }

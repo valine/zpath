@@ -34,6 +34,7 @@ public:
 	void showLabel(bool);
 	void setHighlightColor(vec4);
 	void setBaseColor(vec4);
+	ZButton* getButton(int index);
 private:
 	int debug;
 
@@ -45,6 +46,7 @@ private:
 	bool mIsVertical = false;
 	vec4 mHighlightColor = vec4(0.006512, 0.242281, 0.651406, 1);
 	vec4 mBaseColor = vec4(0.5);
+	vector<ZButton*> mButtons;
 
 };
 

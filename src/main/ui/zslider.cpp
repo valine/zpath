@@ -192,7 +192,9 @@ void ZSlider::valueChanged(float offset) {
 	std::sprintf(&output[0], format, incValue);
 
 	mValue = incValue;
-	mLabel->setText(mTitle + " " + output);
+	if (mLabel != nullptr) {
+        mLabel->setText(mTitle + " " + output);
+    }
 	if (mListener != nullptr && !altKeyPressed()) {
 		mHighlight->setMaxWidth(offset + 1);
 		mListener->onSliderValueChanged(this, incValue);

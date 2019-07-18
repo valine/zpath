@@ -18,8 +18,14 @@ void ZPathViewController::addObject(ZObject* object) {
 void ZPathViewController::onCreate() {
     ZViewController::onCreate();
 
-    ZTabView<ZView> tabView = ZTabView<ZView>(300, 300, getResourcePath(), {"tab1", "tab2", "tab3"});
-    //getRootView()->addSubView(tabView);
+    ZTabView<ZScrollView>* tabView = new ZTabView<ZScrollView>(300, 300, getResourcePath(), {"tab1", "tab2", "tab3"});
+    getRootView()->addSubView(tabView);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 20; j++) {
+            ZSlider *slider = new ZSlider(100, 25, "title");
+            tabView->addToTab(slider, i);
+        }
+    }
 }
 
 //void ZPathViewController::onCreate() {
