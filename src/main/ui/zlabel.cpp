@@ -3,23 +3,37 @@
 
 ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
-
-        string resourceString = resourcePath + "resources/fonts/" + font ;
-        FT_Face face = ZFontStore::getInstance().loadFont(resourceString);
-
-        mFont = resourceString;
-        // Configure VAO/VBO for texture quads
-        glGenVertexArrays(1, &VAO);
-        glGenBuffers(1, &VBO);
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+    setup("resources/fonts/" + font, resourcePath);
 
 }
+
+void ZLabel::setup(const string &font, const string &resourcePath) {
+    string resourceString = resourcePath + font;
+    FT_Face face = ZFontStore::getInstance().loadFont(resourceString);
+
+    mFont = resourceString;
+    // Configure VAO/VBO for texture quads
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+ZLabel::ZLabel(float maxWidth, float maxHeight) : ZView(maxWidth, maxHeight) {
+    string fontPath = "";
+    #if defined(_WIN32) || defined(WIN32)
+        fontPath = "C:\\windows\\fonts";
+    #else
+        fontPath = "/usr/share/fonts/truetype/noto/";
+    #endif
+    setup("NotoSans-Regular.ttf", fontPath);
+}
+
 
 string ZLabel::getText() {
     return mText;
@@ -97,3 +111,4 @@ void ZLabel::setText(string text) {
 void ZLabel::setFont(string fontPath) {
 	mFontPath = fontPath;
 }
+

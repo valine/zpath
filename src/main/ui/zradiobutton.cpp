@@ -6,7 +6,7 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 
 	mTitles = titles;
 
-	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel = new ZLabel(maxWidth, 18);
 	mLabel->setOffset(0, 0);
 	mLabel->setText("Radio Button");
 	mLabel->setGravity(ZView::topLeft);
@@ -35,7 +35,7 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 	ZView(maxWidth, maxHeight) {
 
 	mTitles = tags;
-	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel = new ZLabel(maxWidth, 18);
 	mLabel->setOffset(0, 0);
 	mLabel->setText("");
 	mLabel->setGravity(ZView::topLeft);

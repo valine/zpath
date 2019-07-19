@@ -23,6 +23,7 @@ class ZLabel : public ZView {
 	public:
 
 		ZLabel(float maxWidth, float maxHeight, string font, string resourcePath);
+        ZLabel(float maxWidth, float maxHeight);
 		void draw();
 
 		void setTextSize(int textSize);
@@ -38,6 +39,8 @@ class ZLabel : public ZView {
 		string mFontPath = "";
 		bool mInvalid = true;
 		string mFont;
+
+    void setup(const string &font, const string &resourcePath);
 };
 
 #endif

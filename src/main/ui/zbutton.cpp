@@ -4,7 +4,7 @@ ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 	ZView(maxWidth, maxHeight) {
 
 
-	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel = new ZLabel(maxWidth, 18);
 	mLabel->setOffset(10, (maxHeight - 16) / 2);
 	mLabel->setText("Button");
 	mLabel->setGravity(ZView::topLeft);

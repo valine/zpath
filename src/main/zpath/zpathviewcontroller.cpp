@@ -26,6 +26,12 @@ void ZPathViewController::onCreate() {
             tabView->addToTab(slider, i);
         }
     }
+
+    ZLabel* label = new ZLabel(100, 300);
+    label->setText("hello");
+    label->setBackgroundColor(vec4(0,0,0,1));
+    label->setGravity(ZView::topRight);
+    getRootView()->addSubView(label);
 }
 
 //void ZPathViewController::onCreate() {

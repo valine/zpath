@@ -48,7 +48,7 @@ void ZSlider::setThumbBackground(ZTexture* tex) {
 ZSlider::ZSlider(float maxWidth, float maxHeight, string title, string resourcePath) : 
 ZSlider(maxWidth, maxHeight, title) {
 	
-	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel = new ZLabel(maxWidth, 18);
     mLabel->setOffset(0,0);
     mLabel->setTextColor(vec4(1.0));
     mLabel->setGravity(ZView::topLeft);

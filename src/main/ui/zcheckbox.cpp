@@ -12,7 +12,7 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	mCheck->setVisibility(mIsChecked);
 	addSubView(mCheck);
 
-	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+	mLabel = new ZLabel(maxWidth, 18);
 	mLabel->setOffset(maxHeight + 10, 1);
 	mLabel->setText("Checkbox");
 	mLabel->setGravity(ZView::topLeft);
