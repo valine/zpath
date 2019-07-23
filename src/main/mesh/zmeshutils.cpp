@@ -1,3 +1,4 @@
+#include <fstream>
 #include "mesh/zmeshutils.h"
 
 ZMeshUtils::ZMeshUtils() {
@@ -25,4 +26,20 @@ vec3 ZMeshUtils::calculateBoundingBoxCenter(ZMesh* mesh) {
 		}
 	}
 	return vec3(0);
+}
+
+void ZMeshUtils::exportObj(string path, ZMesh *mesh) {
+    std::ofstream out(path);
+    out << "# Mesh Export" << endl;
+
+    vector<float> verts =  mesh->getVertices();
+    vector<int> faces =  mesh->getFaceIndices();
+    for (int i = 0; i < verts.size()/3; i++) {
+        out << "v " << verts.at(i*3) << " " << verts.at(i*3 + 1) << " " << verts.at(i*3 + 2) << endl;
+    }
+
+    for (int i = 0; i < faces.size()/3; i++) {
+        out << "f " << faces.at(i*3) + 1 << " " << faces.at(i*3 + 1) + 1 << " " << faces.at(i*3 + 2) + 1 << endl;
+    }
+    out.close();
 }
