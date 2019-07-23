@@ -440,7 +440,12 @@ void ZRenderer::renderMain() {
 
         vec4 color = material->getColor();
 
-        shader->setVec4("uColor", color.r, color.g, color.b, color.a);
+        if (mWireMode) {
+            shader->setVec4("uColor", 0.0, 0.0, 0.0, 0.0);
+        } else {
+            shader->setVec4("uColor", color.r, color.g, color.b, color.a);
+        }
+
 
         float selected = 0;
         if (mScene->getActiveObjectIndex() == mSortedIndicies.at(objectIndex)) {
