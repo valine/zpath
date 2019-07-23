@@ -118,6 +118,8 @@ void ZRenderer::init() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
+    glLineWidth(2.0);
+
 }
 
 void ZRenderer::setRenderToTexture(bool toTexture) {
@@ -387,6 +389,7 @@ void ZRenderer::renderMain() {
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, mScene->getWorld()->getBrdfLutID());
+
 
     ZShader* shader;
     shader = mShader;
