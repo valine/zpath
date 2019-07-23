@@ -33,4 +33,7 @@ BasicScene::BasicScene(string resourcePath)
         addObject(object);
         i++;
     }
+
+
+    ZMeshUtils::exportObj(ZUtil::getHomeFolder() + "/Desktop/file.obj", getObjects().at(0)->getMesh());
 }
