@@ -10,10 +10,6 @@ ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 	mLabel->setGravity(ZView::topLeft);
 	mLabel->setTextColor(vec3(1, 1, 1));
 	addSubView(mLabel);
-
-	//ZLabel* label = new ZLabel(maxWidth, maxHeight, "roboto/Roboto-Regular.ttf", resourcePath);
-	//label->setMargin(0,0,0,0);
-	//addSubView(label);
 }
 
 void ZButton::draw() {
@@ -57,7 +53,6 @@ void ZButton::computeBounds(int windowHeight, int maxWidth) {
 }
 void ZButton::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);
-
 }
 
 void ZButton::onCursorPosChange(double x, double y)  {
