@@ -19,6 +19,7 @@ public:
 
 	ZMeshUtils();
 	vec3 calculateBoundingBoxCenter(ZMesh* mesh);
+	static void exportObj(string path, ZMesh* mesh);
 private:
 
 };

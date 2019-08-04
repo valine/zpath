@@ -118,6 +118,8 @@ void ZRenderer::init() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
+    glLineWidth(2.0);
+
 }
 
 void ZRenderer::setRenderToTexture(bool toTexture) {
@@ -363,6 +365,9 @@ void ZRenderer::renderMain() {
     mBackgroundShader->setMat4("projection", mCamera->getProjectionMatrix());
     mBackgroundShader->setMat4("view", ZRenderUtils::getViewMatrix(mCamera));
     mBackgroundShader->setVec3("uColorFactor", mScene->getWorld()->getColor());
+
+    glDisable(GL_CULL_FACE);
+
     glActiveTexture(GL_TEXTURE0);
     if (mScene->getWorld()->isBackgroundBlurred()) {
         glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getIrradienceID());
@@ -370,11 +375,19 @@ void ZRenderer::renderMain() {
         glBindTexture(GL_TEXTURE_CUBE_MAP, mScene->getWorld()->getBackgroundID());
     }
 
-    if (!mWireMode && mCamera->isPerspective()) {
+    if (!mCamera->isPerspective()) {
+        mCamera->setUsePerspective(true);
         renderCube();
-    } else if (mWireMode) {
+        mCamera->setUsePerspective(false);
+    } else {
+        renderCube();
+    }
+
+    if (mWireMode) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
+
+    glEnable(GL_CULL_FACE);
 
     vector<ZPointLight*> lights = mScene->getLights();
     vector<ZObject*> objects = mScene->getObjects();
@@ -387,6 +400,7 @@ void ZRenderer::renderMain() {
 
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, mScene->getWorld()->getBrdfLutID());
+
 
     ZShader* shader;
     shader = mShader;
@@ -440,7 +454,12 @@ void ZRenderer::renderMain() {
 
         vec4 color = material->getColor();
 
-        shader->setVec4("uColor", color.r, color.g, color.b, color.a);
+        if (mWireMode) {
+            shader->setVec4("uColor", 0.0, 0.0, 0.0, 1.0);
+        } else {
+            shader->setVec4("uColor", color.r, color.g, color.b, color.a);
+        }
+
 
         float selected = 0;
         if (mScene->getActiveObjectIndex() == mSortedIndicies.at(objectIndex)) {

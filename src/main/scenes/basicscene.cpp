@@ -1,4 +1,5 @@
 
+#include <utils/zimageutil.h>
 #include "scenes/basicscene.h"
 
 BasicScene::BasicScene(string resourcePath) 
@@ -21,15 +22,18 @@ BasicScene::BasicScene(string resourcePath)
 
 	int i = 0;
 	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-		ZObject *object = (*it);
-		//if (i % 3 ==0) {
-			//object->setBillboard(true);
-		//}
-		mat4 model = ZRenderUtils::getModelMatrix(object, nullptr);
-		cout << "model matrix::" << ZRenderUtils::extractScale(model).x <<endl;
-		cout << "translation::" << ZRenderUtils::extractTranslation(model).x << endl;
+        ZObject *object = (*it);
+        //if (i % 3 ==0) {
+        //object->setBillboard(true);
+        //}
+        mat4 model = ZRenderUtils::getModelMatrix(object, nullptr);
+        cout << "model matrix::" << ZRenderUtils::extractScale(model).x << endl;
+        cout << "translation::" << ZRenderUtils::extractTranslation(model).x << endl;
 
-		addObject(object);
-		i++;
-	}
+        addObject(object);
+        i++;
+    }
+
+
+    ZMeshUtils::exportObj(ZUtil::getHomeFolder() + "/Desktop/file.obj", getObjects().at(0)->getMesh());
 }

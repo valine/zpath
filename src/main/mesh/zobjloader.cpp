@@ -108,15 +108,23 @@ ZMesh* ZObjLoader::convertAiMesh(aiMesh* mesh) {
     	vertices.push_back(mesh->mVertices[i].y);
     	vertices.push_back(mesh->mVertices[i].z);
 
-    	vertexNormals.push_back(mesh->mNormals[i].x);
-    	vertexNormals.push_back(mesh->mNormals[i].y);
-    	vertexNormals.push_back(mesh->mNormals[i].z);
+    	if (mesh->mNormals != nullptr) {
+            vertexNormals.push_back(mesh->mNormals[i].x);
+            vertexNormals.push_back(mesh->mNormals[i].y);
+            vertexNormals.push_back(mesh->mNormals[i].z);
+        } else {
+            vertexNormals.push_back(0);
+            vertexNormals.push_back(0);
+            vertexNormals.push_back(0);
+    	}
 
     	if(mesh->mTextureCoords[0]) {
 
 			textureCoordinates.push_back(mesh->mTextureCoords[0][i].x); 
 			textureCoordinates.push_back(mesh->mTextureCoords[0][i].y); 
     	} else {
+
+
     		textureCoordinates.push_back(0.0); 
 			textureCoordinates.push_back(0.0); 
     	}
