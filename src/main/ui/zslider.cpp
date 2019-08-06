@@ -2,6 +2,11 @@
 
 ZSlider::ZSlider(float maxWidth, float maxHeight, string label): 
 ZView(maxWidth, maxHeight) {
+	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
+    mLabel->setOffset(0,0);
+    mLabel->setTextColor(vec4(1.0));
+    mLabel->setGravity(ZView::topLeft);
+    addSubView(mLabel);
 	
 	float lineColor[4] = {0.0, 0.0, 0.0, 1.0};
 	float thumbColor[4] = {0.1, 0.2, 0.9, 1.0};
