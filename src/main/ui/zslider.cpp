@@ -2,12 +2,7 @@
 
 ZSlider::ZSlider(float maxWidth, float maxHeight, string label): 
 ZView(maxWidth, maxHeight) {
-	mLabel = new ZLabel(maxWidth, 18, "roboto/Roboto-Medium.ttf", resourcePath);
-    mLabel->setOffset(0,0);
-    mLabel->setTextColor(vec4(1.0));
-    mLabel->setGravity(ZView::topLeft);
-    addSubView(mLabel);
-	
+
 	float lineColor[4] = {0.0, 0.0, 0.0, 1.0};
 	float thumbColor[4] = {0.1, 0.2, 0.9, 1.0};
 
@@ -197,7 +192,10 @@ void ZSlider::valueChanged(float offset) {
 	std::sprintf(&output[0], format, incValue);
 
 	mValue = incValue;
-	mLabel->setText(mTitle + " " + output);
+
+	if (mLabel != nullptr) {
+        mLabel->setText(mTitle + " " + output);
+    }
 	if (mListener != nullptr && !altKeyPressed()) {
 		mHighlight->setMaxWidth(offset + 1);
 		mListener->onSliderValueChanged(this, incValue);
