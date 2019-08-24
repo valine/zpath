@@ -1,5 +1,5 @@
 # ZPath
-Render engine and cross platform UI framework 
+Physically based render engine and cross platform UI framework 
 
 ## Build instructions
 
