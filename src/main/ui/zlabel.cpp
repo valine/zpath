@@ -29,9 +29,9 @@ ZLabel::ZLabel(float maxWidth, float maxHeight) : ZView(maxWidth, maxHeight) {
     #if defined(_WIN32) || defined(WIN32)
         fontPath = "C:\\windows\\fonts";
     #else
-        fontPath = "/usr/share/fonts/truetype/noto/";
+        fontPath = "/usr/share/fonts/truetype/liberation2/";
     #endif
-    setup("NotoSans-Regular.ttf", fontPath);
+    setup("LiberationSans-Regular.ttf", fontPath);
 }
 
 
