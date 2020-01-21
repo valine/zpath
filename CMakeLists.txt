@@ -152,8 +152,7 @@ externalproject_add(glm
         GIT_SHALLOW 1
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-        LOG_DOWNLOAD ON
-    )
+        LOG_DOWNLOAD ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glm/src/glm/)
 add_dependencies(zpath glm)

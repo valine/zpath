@@ -1,9 +1,10 @@
 #include <functional>
+#include <utility>
+#include <mesh/zpath_constants.h>
 #include "ui/zbutton.h"
 
 ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 	ZView(maxWidth, maxHeight) {
-
 
 	mLabel = new ZLabel(maxWidth, 18);
 	mLabel->setOffset(10, (maxHeight - 16) / 2);
@@ -13,12 +14,28 @@ ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 	addSubView(mLabel);
 }
 
-void ZButton::draw() {
-	ZView::draw();
+ZButton::ZButton(string label, ZView *parent) :
+    ZView(DEFAULT_WIDTH, DEFAULT_HEIGHT){
+    mLabel = new ZLabel(DEFAULT_WIDTH, BTN_LABEL_HEIGHT);
+    mLabel->setOffset(10, (DEFAULT_HEIGHT - 16) / 2);
+    mLabel->setText("Button");
+    mLabel->setGravity(ZView::topLeft);
+    mLabel->setTextColor(vec3(1, 1, 1));
+    addSubView(mLabel);
 
+    setText(std::move(label));
+    setOffset(0, BTN_OFFSET);
+    setMargin(BTN_MARGIN, BTN_MARGIN, BTN_MARGIN, BTN_MARGIN);
+    setBackgroundColor(vec4(0.2, 0.2, 0.2, 1.0));
+    parent->addSubView(this);
 }
 
-void ZButton::setOnClick(std::function<void()> onClick) {
+void ZButton::draw() {
+	ZView::draw();
+}
+
+void ZButton::setOnClick(std::function<void(ZView* sender)> onClick) {
+
     mOnClick = onClick;
 }
 
@@ -44,7 +61,7 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 			setBackgroundColor(getBackgroundColor() - highlight);
 
 			if (mOnClick != nullptr) {
-			    mOnClick();
+			    mOnClick(this);
 			}
 			if (mListener != nullptr) {
 				mListener->onClick(this);

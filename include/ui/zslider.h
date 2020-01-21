@@ -7,7 +7,7 @@
 #include "mesh/zpath_constants.h"
 #include "zsliderlistener.h"
 #include "zlabel.h"
-
+#include <functional>
 using namespace std;
 using namespace ZPathConstants;
 
@@ -19,7 +19,10 @@ class ZSlider : public ZView {
 public:
 	ZSlider(float maxWidth, float maxHeight, string title);
 	ZSlider(float maxWidth, float maxHeight, string title, string resourcePath);
-	void onKeyPress(int key, int scancode, int action, int mods);
+
+    ZSlider(string label, float min, float max, float value, ZView *parent);
+
+    void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void onScrollChange(double x, double y);
@@ -39,6 +42,7 @@ public:
 	
 	void setThumbBackground(ZTexture* tex);
 	float getValue();
+    void setOnSlide(function<void(ZView*, float)> onSlide);
 	
 private:
 	ZView* mThumb;
@@ -55,6 +59,7 @@ private:
 	float mValue = 0.0;
 
 	void valueChanged(float offset);
+    function<void(ZView*, float)> mSlideListener;
 };
 
 #endif

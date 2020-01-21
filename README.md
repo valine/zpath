@@ -37,3 +37,24 @@ mkdir build && cd build
 cmake ..
 msbuild ALL_BUILD.vsfx
 ```
+
+### UI Examples
+```
+// Button example
+auto* button = new ZButton("Button name", parent);
+saveButton->setOnClick([this](ZView*){
+    // Do stuff here
+});
+
+// Slider example
+auto* exposureSlider = new ZSlider("Slider name", min, max, defaultValue, parent);
+exposureSlider->setOnSlide([this](ZView*, float v){
+    // Do stuff
+});
+
+// Checkbox example
+auto* checkbox = new ZCheckbox("Checkbox name", getResourcePath(), parent);
+checkbox->setOnClick([this](ZView*, bool checked){
+    // Do stuff
+});
+```

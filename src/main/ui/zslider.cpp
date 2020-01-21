@@ -1,3 +1,4 @@
+#include <functional>
 #include "ui/zslider.h"
 
 ZSlider::ZSlider(float maxWidth, float maxHeight, string label): 
@@ -43,6 +44,48 @@ void ZSlider::setHighlightBackground(ZTexture* tex) {
 
 void ZSlider::setThumbBackground(ZTexture* tex) {
 	mThumb->setBackgroundImage(tex);
+}
+
+ZSlider::ZSlider(string label, float min, float max, float value, ZView *parent) :
+ZView(10000, 60){
+    float lineColor[4] = {0.0, 0.0, 0.0, 1.0};
+    float thumbColor[4] = {0.1, 0.2, 0.9, 1.0};
+
+    float lineHeight = SLIDER_THUMB_SIZE;
+    mLine = new ZView(getWidth(), lineHeight);
+    mLine->setOffset(0,getHeight() / 2 - (lineHeight / 2));
+    mLine->setBackgroundColor(lineColor);
+    mLine->setGravity(ZView::bottomLeft);
+    addSubView(mLine);
+
+    mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
+    setFillColor(vec4(0.002965, 0.021420, 0.050874, 1.000000));
+    mHighlight->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
+    mHighlight->setGravity(ZView::bottomLeft);
+    addSubView(mHighlight);
+
+    mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
+    mThumb->setBackgroundColor(thumbColor);
+    mThumb->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
+    mThumb->setGravity(ZView::bottomLeft);
+    addSubView(mThumb);
+
+    mTitle = label;
+
+    mLabel = new ZLabel(10000, 18);
+    mLabel->setOffset(0,0);
+    mLabel->setTextColor(vec4(1.0));
+    mLabel->setGravity(ZView::topLeft);
+    addSubView(mLabel);
+
+    setMargin(5,5,5,5);
+    setMaxValue(max);
+    setMinValue(min);
+
+    setTextColor(vec3(0,0,0));
+
+    parent->addSubView(this);
+    setValue(value);
 }
 
 ZSlider::ZSlider(float maxWidth, float maxHeight, string title, string resourcePath) : 
@@ -198,7 +241,14 @@ void ZSlider::valueChanged(float offset) {
 	if (mListener != nullptr && !altKeyPressed()) {
 		mHighlight->setMaxWidth(offset + 1);
 		mListener->onSliderValueChanged(this, incValue);
+
 	}
+
+	if (mSlideListener != nullptr) {
+        mHighlight->setMaxWidth(offset + 1);
+        mSlideListener(this, incValue);
+	}
+
 }
 
 void ZSlider::setMaxValue(float max) {
@@ -238,6 +288,10 @@ void ZSlider::setThumbColor(vec4 color) {
 
 void ZSlider::setFillColor(vec4 color) {
     mHighlight->setBackgroundColor(color);
+}
+
+void ZSlider::setOnSlide(std::function<void(ZView*, float)> onSlide) {
+    mSlideListener = onSlide;
 }
 
 
