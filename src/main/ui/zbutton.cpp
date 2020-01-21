@@ -1,3 +1,4 @@
+#include <functional>
 #include "ui/zbutton.h"
 
 ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
@@ -15,6 +16,10 @@ ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
 void ZButton::draw() {
 	ZView::draw();
 
+}
+
+void ZButton::setOnClick(std::function<void()> onClick) {
+    mOnClick = onClick;
 }
 
 string ZButton::getText() {
@@ -38,6 +43,9 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 		if (mWasPressed) {
 			setBackgroundColor(getBackgroundColor() - highlight);
 
+			if (mOnClick != nullptr) {
+			    mOnClick();
+			}
 			if (mListener != nullptr) {
 				mListener->onClick(this);
 			}

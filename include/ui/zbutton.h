@@ -8,6 +8,7 @@
 
 #include "zlabel.h"
 #include "zonclicklistener.h"
+#include <functional>
 
 using namespace std;
 
@@ -25,12 +26,14 @@ public:
 	void setText(string text);
 	string getText();
 	void setOnClickListener(ZOnClickListener* listener);
-	void computeBounds(int windowHeight, int maxWidth); 
+	void computeBounds(int windowHeight, int maxWidth);
+    void setOnClick(std::function<void()> onClick);
 private:
 int debug;
 	ZLabel* mLabel;
 	ZOnClickListener* mListener = nullptr;
 	bool mWasPressed = false;
+	std::function<void()> mOnClick;
 
 };
 

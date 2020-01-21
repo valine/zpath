@@ -173,7 +173,9 @@ void ZPathViewController::onCreate() {
     mSaveImageButton->setMargin(5,5,5,5);
     mSaveImageButton->setBackgroundColor(highlightColor);
     mSaveImageButton->setText("SaveImage");
-    mSaveImageButton->setOnClickListener(this);
+    mSaveImageButton->setOnClick([this](){
+        ZUtil::saveView(mTileView->getTiles().at(0));
+    });
     propertiesPanel->addSubView(mSaveImageButton);
 
 //    ZView* mSplash = new ZView(538, 336);
@@ -337,15 +339,6 @@ void ZPathViewController::onClick(ZButton* sender) {
         ZScene* scene = mTileView->getScene();
         ZObject* object = scene->getObjects().at(selectionIndex);
         object->setBillboard(!object->isBillboard());
-    } else if (sender == mSaveImageButton) {
-        ZUtil::saveView(mTileView->getTiles().at(0));
-
-
-        double data[100];
-        for (int i = 0; i < 100; i++) {
-            data[i] = i;
-        }
-        ZUtil::chart(data, 100, 4, 0, 0);
     }
 }
 
