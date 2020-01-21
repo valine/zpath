@@ -40,6 +40,7 @@ class ZViewController : public ZOnClickListener, public ZSliderListener, public 
 
 public:
 	ZViewController(string resourcePath);
+    ZViewController(char* argv[]);
 
 	virtual ZView* getRootView();
 

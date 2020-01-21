@@ -108,15 +108,15 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwSwapBuffers(window);
 
-    viewController = controller;
-    viewController->onCreate();
+    mViewController = controller;
+    mViewController->onCreate();
 
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
 
   //  glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
-    viewController->onWindowChange(windowWidth, windowHeight);
-    viewController->draw();
+    mViewController->onWindowChange(windowWidth, windowHeight);
+    mViewController->draw();
     glfwSwapBuffers(window);
 
     while (!glfwWindowShouldClose(window)) {
@@ -126,11 +126,11 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
             glfwWaitEvents();
         }
 
-        viewController->draw();
+        mViewController->draw();
         glfwSwapBuffers(window);
     }
 
-    viewController->onTerminate();
+    mViewController->onTerminate();
     glfwDestroyWindow(window);
     glfwTerminate();
     exit(EXIT_SUCCESS);
@@ -141,7 +141,7 @@ void ZApplication::setShouldPollEvents(bool shouldPoll) {
 }
 
 void ZApplication::onWindowResize(int width, int height) {
-    viewController->onWindowChange(width, height);
+    mViewController->onWindowChange(width, height);
 }
 
 void ZApplication::onWindowMove(GLFWwindow *window) {
@@ -149,23 +149,23 @@ void ZApplication::onWindowMove(GLFWwindow *window) {
 }
 
 void ZApplication::onKeyPress(int key, int scancode, int action, int mods) {
-    viewController->onKeyPress(key, scancode, action, mods);
+    mViewController->onKeyPress(key, scancode, action, mods);
 }
 
 void ZApplication::onMouseEvent(GLFWwindow* window, int button, int action, int mods) {
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-    viewController->onMouseEvent(button, action, mods, xpos, ypos);
+    mViewController->onMouseEvent(button, action, mods, xpos, ypos);
 }
 
 void ZApplication::onCursorPosChange(double x, double y) {
-    viewController->onCursorPosChange(x, y);
+    mViewController->onCursorPosChange(x, y);
 }
 
 void ZApplication::onScrollEvent(GLFWwindow* window, double xoffset, double yoffset) {
-    viewController->onScrollChange(xoffset, yoffset);
+    mViewController->onScrollChange(xoffset, yoffset);
 }
 
 void ZApplication::onFileDrop(GLFWwindow* window, int count, const char** paths) {
-    viewController->onFileDrop(count, paths);
+    mViewController->onFileDrop(count, paths);
 }

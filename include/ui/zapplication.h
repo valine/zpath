@@ -24,7 +24,7 @@ public:
 	void onFileDrop(GLFWwindow *window, int count, const char** paths);
 	void setShouldPollEvents(bool);
 private:
-	ZViewController *viewController;
+	ZViewController *mViewController;
 	bool mShouldSwapBuffer = true;
 	void init(ZViewController* viewcontroller, string windowName,
 		bool shouldPoll, int width, int height);

@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <ui/zchart.h>
 #include <utils/zimageutil.h>
 #include <ui/ztabview.h>
@@ -7,32 +9,13 @@ int ZPathViewController::mGridSizeX = 3;
 int ZPathViewController::mGridSizeY = 2;
 
 
-ZPathViewController::ZPathViewController(string resources) 
-: ZViewController(resources) {
+ZPathViewController::ZPathViewController(char* argv[])
+: ZViewController(std::move(argv)) {
 }
 
 void ZPathViewController::addObject(ZObject* object) {
 
 }
-//
-//void ZPathViewController::onCreate() {
-//    ZViewController::onCreate();
-//
-//    ZTabView<ZScrollView>* tabView = new ZTabView<ZScrollView>(300, 300, getResourcePath(), {"tab1", "tab2", "tab3"});
-//    getRootView()->addSubView(tabView);
-//    for (int i = 0; i < 3; i++) {
-//        for (int j = 0; j < 20; j++) {
-//            ZSlider *slider = new ZSlider(100, 25, "title");
-//            tabView->addToTab(slider, i);
-//        }
-//    }
-//
-//    ZLabel* label = new ZLabel(100, 300);
-//    label->setText("hello");
-//    label->setBackgroundColor(vec4(0,0,0,1));
-//    label->setGravity(ZView::topRight);
-//    getRootView()->addSubView(label);
-//}
 
 void ZPathViewController::onCreate() {
 	ZViewController::onCreate();
@@ -60,7 +43,17 @@ void ZPathViewController::onCreate() {
     mGridViewButton->setMargin(5,5,5,5);
     mGridViewButton->setBackgroundColor(highlightColor);
     mGridViewButton->setText("Toggle Grid View");
-    mGridViewButton->setOnClickListener(this);
+    mGridViewButton->setOnClick([this]() {
+        if (mIsQuadView) {
+            mIsQuadView = false;
+            mTileView->setTileCount(1,1);
+        } else {
+            mIsQuadView = true;
+            mTileView->setTileCount(mGridSizeX,mGridSizeY);
+        }
+    });
+
+
     propertiesPanel->addSubView(mGridViewButton);
 
     mExposureSlider = new ZSlider(10000, 60, "Exposure", getResourcePath());
@@ -175,6 +168,7 @@ void ZPathViewController::onCreate() {
     mSaveImageButton->setText("SaveImage");
     mSaveImageButton->setOnClick([this](){
         ZUtil::saveView(mTileView->getTiles().at(0));
+
     });
     propertiesPanel->addSubView(mSaveImageButton);
 
@@ -308,17 +302,9 @@ void ZPathViewController::onClick(ZButton* sender) {
     int selectionIndex = mScene->getActiveObjectIndex();
 
 	ZViewController::onClick(sender);
-	if (sender == mGridViewButton) {
-	    if (mIsQuadView) {
-	        mIsQuadView = false;
-	        mTileView->setTileCount(1,1);
-	    } else {
-	        mIsQuadView = true;
-	        mTileView->setTileCount(mGridSizeX,mGridSizeY);
-	    }
-	} 
 
-    else if (sender == mBackgroundBlurButton) {
+
+	if (sender == mBackgroundBlurButton) {
         ZScene* scene = mTileView->getScene();
         ZWorld* world = scene->getWorld();
         world->blurBackground(!world->isBackgroundBlurred());

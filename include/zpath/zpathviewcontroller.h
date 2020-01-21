@@ -16,7 +16,7 @@ using namespace std;
 class ZPathViewController : public ZViewController {
 
 public:
- 	ZPathViewController(string resources);
+ 	ZPathViewController(char* argv[]);
  	void onCreate();
  	void onClick(ZButton* sender);
  	void onSliderValueChanged(ZSlider* sender, float value);

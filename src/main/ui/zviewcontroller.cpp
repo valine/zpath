@@ -12,6 +12,24 @@ ZViewController::ZViewController(string resourcePath) {
     mResourcePath = resourcePath;
 }
 
+ZViewController::ZViewController(char **argv) {
+    std::string aux(argv[0]);
+
+    // get '/' or '\\' depending on unix/mac or windows.
+#if defined(_WIN32) || defined(WIN32)
+    int pos = aux.rfind('\\');
+#else
+    int pos = aux.rfind('/');
+#endif
+
+
+    // Get the path and the name
+    std::string path = aux.substr(0,pos+1);
+    std::string name = aux.substr(pos+1);
+    mResourcePath = path;
+}
+
+
 void ZViewController::onCreate() {
     mUIShader = new ZShader(ui_vs, ui_fs);
     mTextShader = new ZShader(text_vs, text_fs);
@@ -95,3 +113,4 @@ void ZViewController::draw() {
 string ZViewController::getResourcePath() {
     return mResourcePath;
 }
+
