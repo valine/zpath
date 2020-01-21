@@ -1,3 +1,4 @@
+#include <memory>
 #include <utility>
 
 #include <ui/zchart.h>
@@ -22,7 +23,7 @@ void ZPathViewController::onCreate() {
 	float panelColor[4] = {0.7, 0.7, 0.71, 1.0};
 
     auto* propertiesPanel = new ZScrollView(300, ZView::fillParent);
-    propertiesPanel->setOffset(0, 22);
+    propertiesPanel->setOffset(0, 0);
     propertiesPanel->setBackgroundColor(panelColor);
     propertiesPanel->setGravity(ZView::topRight);
     propertiesPanel->setInnerViewHeight(1200);
@@ -69,7 +70,15 @@ void ZPathViewController::onCreate() {
         }
     });
 
-    ZRadioButton* gridSetting = new ZRadioButton(
+    auto* chart = new ZChart(1000, 1000, getResourcePath());
+    auto* points = (float*) malloc(sizeof(float) * 6);
+    for (int i = 0; i < 6; i++) {
+        points[i] = i %2;
+    }
+    chart->addLine(points, 6);
+    propertiesPanel->addSubView(chart);
+
+    auto* gridSetting = new ZRadioButton(
             10000, 45, getResourcePath(), {"2x1", "2x2", "1x1"});
     gridSetting->setMargin(10,0,10,10);
     gridSetting->setText("View Grid");
@@ -78,7 +87,7 @@ void ZPathViewController::onCreate() {
 
     mTileView = new ZTiledView(mScene, 10000, 10000, 1, 1, getResourcePath());
     mIsQuadView = false;
-    mTileView->setOffset(propertiesPanel->getWidth(), 24);
+    mTileView->setOffset(propertiesPanel->getWidth(), 0);
     mTileView->setGravity(ZView::topRight);
     getRootView()->addSubView(mTileView);
 }
