@@ -1,16 +1,17 @@
 #include <functional>
 #include <utility>
 #include <mesh/zpath_constants.h>
+#include <utils/zsettingsstore.h>
 #include "ui/zbutton.h"
 
-ZButton::ZButton(float maxWidth, float maxHeight, string resourcePath) :
+ZButton::ZButton(float maxWidth, float maxHeight) :
 	ZView(maxWidth, maxHeight) {
 
 	mLabel = new ZLabel(maxWidth, 18);
 	mLabel->setOffset(10, (maxHeight - 16) / 2);
 	mLabel->setText("Button");
 	mLabel->setGravity(ZView::topLeft);
-	mLabel->setTextColor(vec3(1, 1, 1));
+	mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
 	addSubView(mLabel);
 }
 
@@ -20,13 +21,13 @@ ZButton::ZButton(string label, ZView *parent) :
     mLabel->setOffset(10, (DEFAULT_HEIGHT - 16) / 2);
     mLabel->setText("Button");
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(vec3(1, 1, 1));
+    mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
     addSubView(mLabel);
 
     setText(std::move(label));
     setOffset(0, BTN_OFFSET);
     setMargin(BTN_MARGIN, BTN_MARGIN, BTN_MARGIN, BTN_MARGIN);
-    setBackgroundColor(vec4(0.2, 0.2, 0.2, 1.0));
+    setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
     parent->addSubView(this);
 }
 

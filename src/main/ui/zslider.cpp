@@ -1,27 +1,24 @@
 #include <functional>
+#include <utils/zsettingsstore.h>
 #include "ui/zslider.h"
 
 ZSlider::ZSlider(float maxWidth, float maxHeight, string label): 
 ZView(maxWidth, maxHeight) {
-	
-	float lineColor[4] = {0.0, 0.0, 0.0, 1.0};
-	float thumbColor[4] = {0.1, 0.2, 0.9, 1.0};
-
 	float lineHeight = SLIDER_THUMB_SIZE;
 	mLine = new ZView(getWidth(), lineHeight);
 	mLine->setOffset(0,getHeight() / 2 - (lineHeight / 2));
-	mLine->setBackgroundColor(lineColor);
+	mLine->setBackgroundColor(ZSettingsStore::getInstance().getInactiveColor());
 	mLine->setGravity(ZView::bottomLeft);
 	addSubView(mLine);
 
 	mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
-	setFillColor(vec4(0.002965, 0.021420, 0.050874, 1.000000));
+	setFillColor(ZSettingsStore::getInstance().getHighlightColor());
 	mHighlight->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
 	mHighlight->setGravity(ZView::bottomLeft);
 	addSubView(mHighlight);
 
 	mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
-	mThumb->setBackgroundColor(thumbColor);
+	mThumb->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
 	mThumb->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
 	mThumb->setGravity(ZView::bottomLeft);
 	addSubView(mThumb);
@@ -47,34 +44,30 @@ void ZSlider::setThumbBackground(ZTexture* tex) {
 }
 
 ZSlider::ZSlider(string label, float min, float max, float value, ZView *parent) :
-ZView(10000, 60){
-    float lineColor[4] = {0.0, 0.0, 0.0, 1.0};
-    float thumbColor[4] = {0.1, 0.2, 0.9, 1.0};
-
+ZView(ZView::fillParent, 40){
     float lineHeight = SLIDER_THUMB_SIZE;
     mLine = new ZView(getWidth(), lineHeight);
-    mLine->setOffset(0,getHeight() / 2 - (lineHeight / 2));
-    mLine->setBackgroundColor(lineColor);
+    mLine->setOffset(0, Y_OFFSET - (lineHeight / 2));
+    mLine->setBackgroundColor(ZSettingsStore::getInstance().getInactiveColor());
     mLine->setGravity(ZView::bottomLeft);
     addSubView(mLine);
 
     mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
-    setFillColor(vec4(0.002965, 0.021420, 0.050874, 1.000000));
-    mHighlight->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
+    setFillColor(ZSettingsStore::getInstance().getHighlightColor());
+    mHighlight->setOffset(0, Y_OFFSET - (SLIDER_THUMB_SIZE / 2));
     mHighlight->setGravity(ZView::bottomLeft);
     addSubView(mHighlight);
 
     mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
-    mThumb->setBackgroundColor(thumbColor);
-    mThumb->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
+    mThumb->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
+    mThumb->setOffset(0, Y_OFFSET - (SLIDER_THUMB_SIZE / 2));
     mThumb->setGravity(ZView::bottomLeft);
     addSubView(mThumb);
 
     mTitle = label;
 
-    mLabel = new ZLabel(10000, 18);
+    mLabel = new ZLabel(ZView::fillParent, 18);
     mLabel->setOffset(0,0);
-    mLabel->setTextColor(vec4(1.0));
     mLabel->setGravity(ZView::topLeft);
     addSubView(mLabel);
 
@@ -82,7 +75,7 @@ ZView(10000, 60){
     setMaxValue(max);
     setMinValue(min);
 
-    setTextColor(vec3(0,0,0));
+    setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
 
     parent->addSubView(this);
     setValue(value);
@@ -143,7 +136,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 			newOffset = getWidth() - SLIDER_THUMB_SIZE;
 		}
 
-		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
+		int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
 		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
@@ -158,7 +151,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 			newOffset = getWidth() - SLIDER_THUMB_SIZE;
 		}
 
-		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
+		int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
 		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
@@ -173,7 +166,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 			newOffset = getWidth() - SLIDER_THUMB_SIZE;
 		}
 
-		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
+		int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && shiftKeyPressed() && altKeyPressed()) {
@@ -187,7 +180,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 			newOffset = getWidth() - SLIDER_THUMB_SIZE;
 		}
 
-		int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
+		int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
 		valueChanged(newOffset);
 	}
@@ -212,7 +205,7 @@ void ZSlider::onScrollChange(double x, double y) {
 		newOffset = getWidth() - SLIDER_THUMB_SIZE;
 	}
 
-	int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
+	int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 	mThumb->setOffset(newOffset, yPosition);
 	mHighlight->setMaxWidth(newOffset + 1);
 	valueChanged(newOffset);
@@ -231,7 +224,7 @@ void ZSlider::valueChanged(float offset) {
 
 	auto format = "%.2f";
 	auto size = std::snprintf(nullptr, 0, format, incValue);
-	std::string output(size + 1, '\0');
+	std::string output(size, '\0');
 	std::sprintf(&output[0], format, incValue);
 
 	mValue = incValue;
@@ -263,7 +256,7 @@ void ZSlider::setValue(float value) {
 	float maxOffset = (float) (getWidth() - SLIDER_THUMB_SIZE);
 	float factor = (value - mMinValue) / (mMaxValue - mMinValue);
 	float offset = factor * maxOffset;
-	int yPosition = getHeight() / 2 - (SLIDER_THUMB_SIZE / 2);
+	int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 
 	float newOffset= offset;
 	if (newOffset < 0) {

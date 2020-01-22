@@ -3,35 +3,20 @@
 
 ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath, vector<string> titles) :
 	ZView(maxWidth, maxHeight) {
-
-	mTitles = titles;
-
-	mLabel = new ZLabel(maxWidth, 18);
-	mLabel->setOffset(0, 0);
-	mLabel->setText("Radio Button");
-	mLabel->setGravity(ZView::topLeft);
-	mLabel->setTextColor(vec3(1, 1, 1));
-	addSubView(mLabel);
-
-	for (uint i = 0; i < titles.size(); i++) {
-		ZButton* button = new ZButton((getRight() - getLeft()) / titles.size(), maxHeight - 20, resourcePath);
-	
-		if (i == 0) {
-		    button->setBackgroundColor(vec4(0.006512, 0.242281, 0.651406, 1));
-		    mHighlighted = button;
-		} else {
-			button->setBackgroundColor(vec4(0.5));
-		}
-		
-		button->setText(titles.at(i));
-		button->setOnClickListener(this);
-		button->setTag(titles.at(i));
-        mButtons.push_back(button);
-		addSubView(button);
-	}
+    init(maxWidth, maxHeight, titles);
 }
 
-ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath, vector<ZTexture*> backgrounds, vector<string> tags) :
+
+
+ZRadioButton::ZRadioButton(string label, vector<string> titles, ZView *parent) :
+    ZView(10000, 45) {
+    init(10000, 45, titles);
+    setMargin(5,5,5,5);
+    mLabel->setText(label);
+    parent->addSubView(this);
+}
+
+ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, vector<ZTexture *> backgrounds, vector<string> tags) :
 	ZView(maxWidth, maxHeight) {
 
 	mTitles = tags;
@@ -39,11 +24,11 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 	mLabel->setOffset(0, 0);
 	mLabel->setText("");
 	mLabel->setGravity(ZView::topLeft);
-	mLabel->setTextColor(vec3(1, 1, 1));
+	mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
 	addSubView(mLabel);
 
 	for (uint i = 0; i < tags.size(); i++) {
-		ZButton* button = new ZButton((getRight() - getLeft()) / tags.size(), maxHeight - 20, resourcePath);
+		auto* button = new ZButton((getRight() - getLeft()) / tags.size(), maxHeight - 20);
 	
 		button->setBackgroundImage(backgrounds.at(i));
 		if (i == 0) {
@@ -59,6 +44,32 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
 		mButtons.push_back(button);
 		addSubView(button);
 	}
+}
+void ZRadioButton::init(float maxWidth, float maxHeight, vector<string> &titles) {
+    mTitles = titles;
+    mLabel = new ZLabel(maxWidth, 18);
+    mLabel->setOffset(0, 0);
+    mLabel->setText("Radio Button");
+    mLabel->setGravity(topLeft);
+    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    addSubView(mLabel);
+
+    for (uint i = 0; i < titles.size(); i++) {
+        auto* button = new ZButton((getRight() - getLeft()) / titles.size(), maxHeight - 20);
+
+        if (i == 0) {
+            button->setBackgroundColor(mHighlightColor);
+            mHighlighted = button;
+        } else {
+            button->setBackgroundColor(mBaseColor);
+        }
+
+        button->setText(titles.at(i));
+        button->setOnClickListener(this);
+        button->setTag(titles.at(i));
+        mButtons.push_back(button);
+        addSubView(button);
+    }
 }
 
 void ZRadioButton::showLabel(bool shouldShow) {
@@ -96,12 +107,15 @@ void ZRadioButton::setBaseColor(vec4 color) {
 
 void ZRadioButton::onClick(ZButton* sender) {
 //	ZOnClickListener::onClick(sender);
-
+    int index = 0;
 	for (uint i = 0; i < getSubViews().size(); i++) {
         ZView* view = getSubViews().at(i);
         if (i > 0) {
 	       view->setBackgroundColor(mBaseColor);
-    	} 
+	       if (view == sender) {
+	           index = i - 1;
+	       }
+    	}
     }
     
     mHighlighted = sender;
@@ -111,6 +125,10 @@ void ZRadioButton::onClick(ZButton* sender) {
    	if (mListener != nullptr) {
    	 	mListener->onClick(sender);
    	 }
+
+   	if (mOnClick != nullptr) {
+   	    mOnClick(this, index);
+   	}
 }
 
 void ZRadioButton::setVertical(bool isVertical) {
@@ -200,3 +218,8 @@ void ZRadioButton::setOnClickListener(ZOnClickListener* l) {
 ZButton *ZRadioButton::getButton(int index) {
     return mButtons.at(index);
 }
+
+void ZRadioButton::setOnClick(function<void(ZView *, int)> onclick) {
+    mOnClick = onclick;
+}
+

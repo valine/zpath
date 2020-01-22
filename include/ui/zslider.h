@@ -1,7 +1,9 @@
 #ifndef ZSLIDER_H
 #define ZSLIDER_H
 
-#include <string> 
+static const int Y_OFFSET = 10;
+
+#include <string>
 #include <iostream>
 #include "zview.h"
 #include "mesh/zpath_constants.h"

@@ -1,8 +1,12 @@
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
-
     init(maxWidth, maxHeight);
+}
+
+ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
+    init(maxWidth, maxHeight);
+    parent->addSubView(this);
 }
 
 ZView::ZView(Bounds maxWidth, float maxHeight) {
@@ -38,7 +42,6 @@ void ZView::draw() {
             mShader->use();
             shader = mShader;
         }
-
 
         glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
                     mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);

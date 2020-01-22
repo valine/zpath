@@ -26,7 +26,7 @@ class ZOnClickListener;
 class ZButton : public ZView {
 	
 public:
-	ZButton(float maxWidth, float maxHeight, string title);
+	ZButton(float maxWidth, float maxHeight);
     ZButton(string label, ZView *parent);
 
     void draw();

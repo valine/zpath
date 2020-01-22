@@ -1,8 +1,6 @@
 #ifndef ZCHECKBOX_H
 #define ZCHECKBOX_H
 
-static const int CB_WIDTH = 10000;
-
 static const int CB_HEIGHT = 20;
 
 #include "zview.h"

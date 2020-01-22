@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <utils/zsettingsstore.h>
 
 #include "zlabel.h"
 #include "zonclicklistener.h"
@@ -19,8 +20,11 @@ class ZRadioButton : public ZView, public ZOnClickListener {
 public:
 
 	ZRadioButton(float maxWidth, float maxHeight, string resource, vector<string> titles);
-	ZRadioButton(float maxWidth, float maxHeight, string resource, vector<ZTexture*> backgrounds, vector<string> tags);
-	void draw();
+	ZRadioButton(float maxWidth, float maxHeight, vector<ZTexture *> backgrounds, vector<string> tags);
+
+    ZRadioButton(string label, vector<string> titles, ZView *parent);
+
+    void draw();
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
@@ -35,6 +39,7 @@ public:
 	void setHighlightColor(vec4);
 	void setBaseColor(vec4);
 	ZButton* getButton(int index);
+	void setOnClick(function<void(ZView*, int)>);
 private:
 	int debug;
 
@@ -44,10 +49,12 @@ private:
 	ZOnClickListener* mListener = nullptr;
 	vector<string> mTitles;
 	bool mIsVertical = false;
-	vec4 mHighlightColor = vec4(0.006512, 0.242281, 0.651406, 1);
-	vec4 mBaseColor = vec4(0.5);
+	vec4 mHighlightColor = ZSettingsStore::getInstance().getHighlightColor();
+	vec4 mBaseColor = ZSettingsStore::getInstance().getBaseColor();
 	vector<ZButton*> mButtons;
 
+    void init(float maxWidth, float maxHeight, vector<string> &titles);
+    function<void(ZView*, int)> mOnClick;
 };
 
 #endif

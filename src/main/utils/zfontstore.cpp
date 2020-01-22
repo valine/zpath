@@ -12,6 +12,10 @@ ZFontStore::ZFontStore() {
     }
 }
 
+FT_Face ZFontStore::loadFont() {
+    return loadFont(mDefaultResource);
+}
+
 FT_Face ZFontStore::loadFont(string resourcePath) {
     if (mFonts.find(resourcePath) == mFonts.end()) {
 
@@ -80,5 +84,13 @@ FT_Face ZFontStore::loadFont(string resourcePath) {
 
 Character ZFontStore::getCharacter(string resourcePath, GLchar c) {
     return mCharacters.at(pair<GLchar, string>(c, resourcePath));
+}
+
+void ZFontStore::setDefaultResource(string r) {
+    mDefaultResource = r;
+}
+
+string ZFontStore::getDefaultResource() {
+    return mDefaultResource;
 }
 

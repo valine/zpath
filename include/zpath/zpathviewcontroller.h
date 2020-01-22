@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "mesh/zobject.h"
+#include "ui/zchart.h"
 #include "ui/zscrollview.h"
 
 using namespace glm;
@@ -24,6 +25,7 @@ private:
 
 	ZTiledView *mTileView = nullptr;
 	ZScene* mScene{};
+    ZChart* mChart;
 
 	static int mGridSizeX;
 	static int mGridSizeY;

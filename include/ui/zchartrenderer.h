@@ -18,7 +18,7 @@ public:
     unsigned int getFrameID();
 
     void addLine(float points[], int size);
-    void updateLine(int index, float points[]);
+    void updateLine(int index, float *points, int size);
     void setSize(int width, int height);
     float getMin();
     float getMax();

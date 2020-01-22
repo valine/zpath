@@ -1,6 +1,7 @@
 #include "ui/zcheckbox.h"
 
 #include <utility>
+#include <utils/zsettingsstore.h>
 
 ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	ZView(maxWidth, maxHeight) {
@@ -10,7 +11,7 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	addSubView(mBox);
 
 	mCheck = new ZView(maxHeight, maxHeight);
-	mCheck->setBackgroundColor(vec4(0.5));
+	mCheck->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
 	mCheck->setVisibility(mIsChecked);
 	addSubView(mCheck);
 
@@ -18,7 +19,7 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	mLabel->setOffset(maxHeight + 10, 1);
 	mLabel->setText("Checkbox");
 	mLabel->setGravity(ZView::topLeft);
-	mLabel->setTextColor(vec3(0, 0, 0));
+	mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
 	addSubView(mLabel);
 
 	//ZLabel* label = new ZLabel(maxWidth, maxHeight, "roboto/Roboto-Regular.ttf", resourcePath);
@@ -27,21 +28,21 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 }
 
 ZCheckbox::ZCheckbox(string label, string resourcePath, ZView* parent) :
-ZView(CB_WIDTH, CB_HEIGHT) {
+ZView(ZView::fillParent, CB_HEIGHT) {
     mBox = new ZView(CB_HEIGHT, CB_HEIGHT);
     mBox->setBackgroundColor(vec4(1));
     addSubView(mBox);
 
     mCheck = new ZView(CB_HEIGHT, CB_HEIGHT);
-    mCheck->setBackgroundColor(vec4(0.5));
+    mCheck->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
     mCheck->setVisibility(mIsChecked);
     addSubView(mCheck);
 
-    mLabel = new ZLabel(CB_WIDTH, 18);
+    mLabel = new ZLabel(ZView::fillParent, 18);
     mLabel->setOffset(CB_HEIGHT + 10, 1);
     mLabel->setText(label);
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(vec3(0, 0, 0));
+    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     addSubView(mLabel);
     
     setCheckBackground(new ZTexture(resourcePath +
@@ -50,7 +51,7 @@ ZView(CB_WIDTH, CB_HEIGHT) {
                                                        "resources/icons/box.png"));
 
     setMargin(5,5,5,5);
-    setCheckColor(vec4(0.5,0.5,0.5,1.0));
+    setCheckColor(ZSettingsStore::getInstance().getBaseColor());
     setVisibility(true);
     parent->addSubView(this);
 

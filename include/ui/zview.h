@@ -21,10 +21,14 @@
 using namespace std;
 using namespace glm;
 
+
 class ZView {
-	
+
 	public:
-		enum Gravity {
+
+    ZView(float maxWidth, float maxHeight, ZView *parent);
+
+    enum Gravity {
 		    topLeft,
 		    topRight,
 		    bottomLeft,
@@ -32,8 +36,10 @@ class ZView {
 		};
 
 		enum Bounds {
-		    fillParent
+
 		};
+
+		static const int fillParent = 100000;
 
 		ZView(float maxWidth, float maxHeight);
 		ZView(Bounds maxWidth, float maxHeight);

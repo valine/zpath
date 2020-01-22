@@ -10,7 +10,7 @@
 template<typename V>
 ZTabView<V>::ZTabView(float maxWidth1, float maxHeight1, string resourcePath, vector<string> tabs) : ZView(maxWidth1, maxHeight1) {
     setBackgroundColor(vec4(1,0,0,1));
-    ZRadioButton* tabBar = new ZRadioButton(maxWidth1, 40, resourcePath, tabs);
+    ZRadioButton* tabBar = new ZRadioButton("", tabs, this);
     tabBar->setGravity(ZView::bottomLeft);
     tabBar->setText("");
     tabBar->setOnClickListener(this);

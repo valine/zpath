@@ -24,7 +24,10 @@ class ZLabel : public ZView {
 
 		ZLabel(float maxWidth, float maxHeight, string font, string resourcePath);
         ZLabel(float maxWidth, float maxHeight);
-		void draw();
+
+    ZLabel(string label, ZView *parent);
+
+    void draw();
 
 		void setTextSize(int textSize);
 		void setTextColor(vec3 color);

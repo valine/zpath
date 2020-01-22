@@ -1,3 +1,4 @@
+#include <utils/zfontstore.h>
 #include "ui/zapplication.h"
 // #include <unistd.h>
 
@@ -95,6 +96,12 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
 
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 
+
+    string resourceString = controller->getResourcePath() + "resources/fonts/roboto/Roboto-Bold.ttf";
+    ZFontStore::getInstance().loadFont(resourceString);
+    ZFontStore::getInstance().setDefaultResource(resourceString);
+
+
     glEnable(GL_MULTISAMPLE);  
     glfwSwapInterval(0);
 
@@ -118,6 +125,8 @@ void ZApplication::init(ZViewController* controller, string windowName, bool sho
     mViewController->onWindowChange(windowWidth, windowHeight);
     mViewController->draw();
     glfwSwapBuffers(window);
+
+
 
     while (!glfwWindowShouldClose(window)) {
         if (mShouldPoll) {

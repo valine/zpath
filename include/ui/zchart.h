@@ -10,10 +10,10 @@
 class ZChart : public ZView {
 
 public:
-    ZChart(float maxWidth, float maxHeight, string resources);
+    ZChart(float maxWidth, float maxHeight, ZView *parent);
     void draw();
     void addLine(float points[], int size);
-    void updateLine(int index, float points[]);
+    void updateLine(int index, float points[], int size);
     void onWindowChange(int width, int height) override;
 
 private:

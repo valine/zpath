@@ -1,4 +1,5 @@
 #include <ui/zlinearlayout.h>
+#include <utils/zsettingsstore.h>
 #include "ui/zscrollview.h"
 
 
@@ -31,6 +32,11 @@ void ZScrollView::init() {
 
 	mInnerView = new ZLinearLayout(getWidth(), getHeight());
 	addSubView(mInnerView);
+
+	setGravity(ZView::topRight);
+	setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
+
+	setInnerViewHeight(1000);
 }
 
 void ZScrollView::addSubView(ZView* view) {

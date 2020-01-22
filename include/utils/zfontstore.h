@@ -36,6 +36,9 @@ public:
     FT_Face loadFont(string resoucePath);
     Character getCharacter(string resourcePath, GLchar);
 
+    string getDefaultResource();
+    void setDefaultResource(string);
+    FT_Face loadFont();
 private:
     ZFontStore();
     static ZFontStore *mInstance;
@@ -44,6 +47,7 @@ private:
     map<string, FT_Face> mFonts;
     ZFontStore(ZFontStore const&);              // Don't Implement
     void operator=(ZFontStore const&); // Don't implement
+    string mDefaultResource;
 };
 
 

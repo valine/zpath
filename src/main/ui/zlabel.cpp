@@ -1,10 +1,30 @@
 #include <utils/zfontstore.h>
+#include <utils/zsettingsstore.h>
 #include "ui/zlabel.h"
 
 ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
     setup("resources/fonts/" + font, resourcePath);
+}
 
+ZLabel::ZLabel(string label, ZView *parent)
+: ZView(ZView::fillParent, 21) {
+   setOffset(5,0);
+   setText(label);
+   setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+   parent->addSubView(this);
+
+    mFont = ZFontStore::getInstance().getDefaultResource();
+    // Configure VAO/VBO for texture quads
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 void ZLabel::setup(const string &font, const string &resourcePath) {
