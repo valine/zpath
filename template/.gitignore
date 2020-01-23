@@ -1,0 +1,15 @@
+build/*
+cmake-build-debug/*
+.idea/*
+build-test/*
+deps/*
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+TestTestfile.cmake
+.DS_Store
