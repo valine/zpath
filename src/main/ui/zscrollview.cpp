@@ -8,6 +8,12 @@ ZView(maxWidth, maxHeight) {
 	init();
 }
 
+ZScrollView::ZScrollView(float maxWidth, float maxHeight, ZView* parent):
+        ZView(maxWidth, maxHeight) {
+    init();
+    parent->addSubView(this);
+}
+
 ZScrollView::ZScrollView(Bounds maxWidth, float maxHeight):
 ZView(maxWidth, maxHeight) {
 	init();
