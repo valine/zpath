@@ -173,6 +173,15 @@ void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int margin
     computeBounds(mParentWidth, mParentWidth);
 }
 
+void ZView::setMargin(vec4 margin) {
+    mMarginLeft = margin.x;
+    mMarginTop = margin.y;
+    mMarginRight =  margin.z;
+    mMarginBottom =  margin.w;
+
+    computeBounds(mParentWidth, mParentWidth);
+}
+
 void ZView::setOffset(double x, double y) {
     mOffsetX = x;
     mOffsetY = y;

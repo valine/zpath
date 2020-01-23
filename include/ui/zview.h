@@ -204,6 +204,7 @@ class ZView {
 
 		string mTag;
 
+    void setMargin(vec4 margin);
 };
 
 #endif
