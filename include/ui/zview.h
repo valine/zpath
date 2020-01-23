@@ -130,7 +130,7 @@ class ZView {
 
 		void setVisibility(bool visible);
 		bool getVisibility();
-
+        void setMargin(vec4 margin);
 		virtual void onExit();
 
 		vector<ZView*> getSubViews();
@@ -204,7 +204,7 @@ class ZView {
 
 		string mTag;
 
-    void setMargin(vec4 margin);
+
 };
 
 #endif
