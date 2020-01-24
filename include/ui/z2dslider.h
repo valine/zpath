@@ -21,7 +21,7 @@ using namespace ZPathConstants;
 class Z2DSlider : public ZView {
 
 public:
-    Z2DSlider(string label, vec2 min, vec2 max, ZView *parent);
+    Z2DSlider(float maxWidth, float maxHeight, vec2 min, vec2 max, ZView *parent);
 
 	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);

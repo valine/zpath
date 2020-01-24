@@ -68,7 +68,7 @@ void ZPathViewController::onCreate() {
         }
     });
 
-    auto* slider2d = new Z2DSlider("Slider", vec2(0,0), vec2(5), tab2);
+    auto* slider2d = new Z2DSlider(200, 200, vec2(0,0), vec2(5), tab2);
     slider2d->setIncrement(1);
 
     mTileView = new ZTiledView(mScene, ZView::fillParent,  ZView::fillParent, 1, 1, getResourcePath());

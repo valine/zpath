@@ -2,9 +2,8 @@
 #include <utils/zsettingsstore.h>
 #include "ui/z2dslider.h"
 
-Z2DSlider::Z2DSlider(string label, vec2 min, vec2 max, ZView *parent) :
-ZView(200, 200){
-    mTitle = label;
+Z2DSlider::Z2DSlider(float maxWidth, float maxHeight, vec2 min, vec2 max, ZView *parent) :
+ZView(maxWidth, maxHeight){
     mLabel = new ZLabel(ZView::fillParent, 18);
     mLabel->setOffset(0,0);
     mLabel->setGravity(ZView::topLeft);
