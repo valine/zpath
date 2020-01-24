@@ -1,10 +1,9 @@
-
 #ifndef ZPATH_ZFFTUTIL_H
 #define ZPATH_ZFFTUTIL_H
 
 #include <string>
 #include <complex.h>
-#include "ui/z3dview.h"
+#include <vector>
 
 using namespace std;
 
