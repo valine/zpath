@@ -5,6 +5,7 @@
 #include <utils/zimageutil.h>
 #include <ui/ztabview.h>
 #include <ui/zradiobutton.h>
+#include <ui/z2dslider.h>
 #include "zpath/zpathviewcontroller.h"
 
 int ZPathViewController::mGridSizeX = 3;
@@ -46,20 +47,6 @@ void ZPathViewController::onCreate() {
         ZUtil::saveView(mTileView->getTiles().at(0));
     });
 
-    // Checkbox example
-    auto* checkbox = new ZCheckbox("Checkbox", getResourcePath(), tab1);
-    checkbox->setOnClick([this](ZView*, bool checked){
-        if (checked) {
-            mIsQuadView = false;
-            mTileView->setTileCount(1,1);
-        } else {
-            mIsQuadView = true;
-            mTileView->setTileCount(mGridSizeX, mGridSizeY);
-        }
-    });
-
-    auto* label2 = new ZLabel("Second label", tab1);
-
     mChart = new ZChart(200, 200, tab1);
     auto* points = (float*) malloc(sizeof(float) * 6);
     for (int i = 0; i < 6; i++) {
@@ -67,10 +54,6 @@ void ZPathViewController::onCreate() {
     }
     mChart->addLine(points, 6);
 
-    auto* radioButton = new ZRadioButton("Radio", {"One", "Two", "Three"}, tab1);
-    radioButton->setOnClick([this](ZView* sender, int index) {
-        cout << index << endl;
-    });
 
     // Slider example
     auto* slider2 = new ZSlider("Exposure", 0, 20, mScene->getExposure(), tab1);
@@ -85,11 +68,8 @@ void ZPathViewController::onCreate() {
         }
     });
 
-
-    auto* radioButton2 = new ZRadioButton("Radio", {"One", "Two", "Three", "Four"}, tab2);
-    radioButton2->setOnClick([=](ZView* sender, int index) {
-        cout << index << endl;
-    });
+    auto* slider2d = new Z2DSlider("Slider", vec2(0,0), vec2(5), tab2);
+    slider2d->setIncrement(1);
 
     mTileView = new ZTiledView(mScene, ZView::fillParent,  ZView::fillParent, 1, 1, getResourcePath());
     mIsQuadView = false;
