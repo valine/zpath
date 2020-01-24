@@ -44,9 +44,12 @@ public:
 	
 	void setThumbBackground(ZTexture* tex);
 	float getValue();
-    void setOnSlide(function<void(ZView*, float)> onSlide);
-	
+    void setOnSlide(function<void(ZView*, float, bool)> onSlide);
+
+
 private:
+    function<void(ZSlider* sender, float value, bool)> mSlideListener;
+
 	ZView* mThumb;
 	ZView* mLine;
 	ZView* mHighlight;
@@ -61,7 +64,6 @@ private:
 	float mValue = 0.0;
 
 	void valueChanged(float offset);
-    function<void(ZView*, float)> mSlideListener;
 };
 
 #endif

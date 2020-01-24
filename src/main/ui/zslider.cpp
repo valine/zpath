@@ -109,6 +109,10 @@ void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
  		if (mListener != nullptr) {
 			mListener->onSliderValueChanged(this, incValue);
 		}
+
+        if (mSlideListener != nullptr) {
+            mSlideListener(this, incValue, true);
+        }
  	}
 }
 
@@ -239,7 +243,7 @@ void ZSlider::valueChanged(float offset) {
 
 	if (mSlideListener != nullptr) {
         mHighlight->setMaxWidth(offset + 1);
-        mSlideListener(this, incValue);
+        mSlideListener(this, incValue, false);
 	}
 
 }
@@ -283,7 +287,7 @@ void ZSlider::setFillColor(vec4 color) {
     mHighlight->setBackgroundColor(color);
 }
 
-void ZSlider::setOnSlide(std::function<void(ZView*, float)> onSlide) {
+void ZSlider::setOnSlide(std::function<void(ZView*, float, bool)> onSlide) {
     mSlideListener = onSlide;
 }
 

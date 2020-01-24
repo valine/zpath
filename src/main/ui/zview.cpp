@@ -517,9 +517,7 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             mMiddleMouseDown = true;
         }
 
-        for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-            ZView* view = (*it);
-
+        for (auto view : mViews) {
             bool isInViewX = view->getLeft() < mMouseX && view->getRight() > mMouseX;
             bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
 
@@ -531,12 +529,12 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                 view->onMouseEvent(button, action, mods, x, y);
             }
         }
-        }
+    }
 }
 
 void ZView::onExit() {
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->onExit();
+    for (auto & mView : mViews) {
+        mView->onExit();
     }
 }
 

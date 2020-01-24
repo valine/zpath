@@ -74,13 +74,15 @@ void ZPathViewController::onCreate() {
 
     // Slider example
     auto* slider2 = new ZSlider("Exposure", 0, 20, mScene->getExposure(), tab1);
-    slider2->setOnSlide([this](ZView*, float v){
-        mScene->setExposure(v);
-        float* newpoints= (float*) malloc(sizeof(float) * 6);
-        for (int i = 0; i < 6; i++) {
-            newpoints[i] = i % (int) (v + 1);
+    slider2->setOnSlide([this](ZView* view, float v, bool actionUp){
+        if (actionUp) {
+            mScene->setExposure(v);
+            auto *newpoints = (float *) malloc(sizeof(float) * 6);
+            for (int i = 0; i < 6; i++) {
+                newpoints[i] = i % (int) (v + 1);
+            }
+            mChart->updateLine(0, newpoints, 6);
         }
-        mChart->updateLine(0,newpoints,6);
     });
 
 
