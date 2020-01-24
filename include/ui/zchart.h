@@ -15,7 +15,7 @@ public:
     void addLine(float points[], int size);
     void updateLine(int index, float points[], int size);
     void onWindowChange(int width, int height) override;
-
+    void setMinMax(float, float);
 private:
 
     ZChartRenderer* mRenderer;

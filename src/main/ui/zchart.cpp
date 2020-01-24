@@ -40,3 +40,8 @@ void ZChart::onWindowChange(int width, int height) {
     ZView::onWindowChange(width, height);
     mRenderer->setSize(getWidth(), getHeight());
 }
+
+void ZChart::setMinMax(float min, float max) {
+    mRenderer->setMax(max);
+    mRenderer->setMax(min);
+}
