@@ -16,7 +16,14 @@ public:
     void updateLine(int index, float points[], int size);
     void onWindowChange(int width, int height) override;
     void setMinMax(float, float);
+
+
+    void addLine(vector<float>);
+    void updateLine(int index, vector<float>);
 private:
+
+    vector<bool> mLinesInvalid;
+    vector<vector<float>> mPendingLines;
 
     ZChartRenderer* mRenderer;
     ZTexture* mBackground;

@@ -19,6 +19,20 @@ ZChart::ZChart(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth,
 
 void ZChart::draw() {
     ZView::draw();
+    
+    int index = 0;
+    for(bool invalid : mLinesInvalid) {
+
+        if (invalid) {
+            if (mRenderer->getLineCount() < mLinesInvalid.size()) {
+                mRenderer->addLine(mPendingLines.at(index));
+            } else {
+                mRenderer->updateLine(index, mPendingLines.at(index));
+            }
+        }
+
+        index++;
+    }
     mRenderer->onDraw();
 }
 
@@ -44,4 +58,16 @@ void ZChart::onWindowChange(int width, int height) {
 void ZChart::setMinMax(float min, float max) {
     mRenderer->setMax(max);
     mRenderer->setMax(min);
+}
+
+void ZChart::addLine(vector<float> line) {
+    mPendingLines.push_back(line);
+    mLinesInvalid.push_back(true);
+    invalidate();
+}
+
+void ZChart::updateLine(int index, vector<float> line) {
+    mPendingLines.at(index) = line;
+    mLinesInvalid.at(index) = true;
+    invalidate();
 }

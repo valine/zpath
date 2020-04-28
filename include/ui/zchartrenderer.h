@@ -25,6 +25,12 @@ public:
     void setMax(float max);
     void setMin(float min);
 
+    int getLineCount();
+
+    void addLine(vector<float> points);
+
+    void updateLine(int index, vector<float> points);
+
 private:
     unsigned int mFBO;
     unsigned int mFinalFBO;
@@ -56,6 +62,7 @@ private:
 
 
     void updateBuffers();
+
 };
 
 
