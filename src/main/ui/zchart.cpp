@@ -60,7 +60,7 @@ void ZChart::resetZoom() {
 }
 
 void ZChart::setMinMax(float min, float max) {
-    mRenderer->setMax(max);
+    mRenderer->setMin(max);
     mRenderer->setMax(min);
 }
 
