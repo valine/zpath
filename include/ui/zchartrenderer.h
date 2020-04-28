@@ -31,6 +31,8 @@ public:
 
     void updateLine(int index, vector<float> points);
 
+    void resetZoom(vector<float> &points);
+
 private:
     unsigned int mFBO;
     unsigned int mFinalFBO;

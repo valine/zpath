@@ -19,7 +19,7 @@ ZChart::ZChart(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth,
 
 void ZChart::draw() {
     ZView::draw();
-    
+
     int index = 0;
     for(bool invalid : mLinesInvalid) {
 
@@ -53,6 +53,10 @@ void ZChart::updateLine(int index, float *points, int size) {
 void ZChart::onWindowChange(int width, int height) {
     ZView::onWindowChange(width, height);
     mRenderer->setSize(getWidth(), getHeight());
+}
+
+void ZChart::resetZoom() {
+    mRenderer->resetZoom(mPendingLines.at(0));
 }
 
 void ZChart::setMinMax(float min, float max) {

@@ -143,15 +143,7 @@ void ZChartRenderer::addLine(vector<float> points) {
     vector<float> verts;
     vector<int> edges;
 
-    for (uint i = 0; i < points.size(); i++) {
-        if (points.at(i) > mMax) {
-            mMax = points.at(i);
-        }
-
-        if (points.at(i) < mMin) {
-            mMin = points.at(i);
-        }
-    }
+    resetZoom(points);
 
     for (uint i = 0; i <  points.size(); i++) {
         verts.push_back(((float) i / (float) ( points.size() - 1)) * mWidth);
@@ -178,6 +170,18 @@ void ZChartRenderer::addLine(vector<float> points) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
     mEdges.push_back(edgeBuffer);
+}
+
+void ZChartRenderer::resetZoom(vector<float> &points) {
+    for (uint i = 0; i < points.size(); i++) {
+        if (points.at(i) > mMax) {
+            mMax = points.at(i);
+        }
+
+        if (points.at(i) < mMin) {
+            mMin = points.at(i);
+        }
+    }
 }
 
 void ZChartRenderer::updateLine(int index, float *points, int size) {

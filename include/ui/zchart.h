@@ -18,6 +18,7 @@ public:
     void setMinMax(float, float);
 
 
+    void resetZoom();
     void addLine(vector<float>);
     void updateLine(int index, vector<float>);
 private:
