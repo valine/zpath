@@ -17,5 +17,6 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-    ZApplication(new ZPathViewController(argv), "ZPATH", false);
+    vector<ZViewController*> controller = {new ZPathViewController(argv), new ZPathViewController(argv)};
+    ZApplication(controller, "ZPATH", false);
 }

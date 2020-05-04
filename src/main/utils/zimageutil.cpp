@@ -32,7 +32,7 @@ void ZUtil::saveImage(const char *file, float *pixels, int w, int h) {
     }
 
     int i = 0;
-    for(int y = 0; y < h; y++) {
+    for(int y = h - 1; y >= 0; y--) {
         png_bytep row = row_pointers[h - y - 1];
         for(int x = 0; x < w; x++) {
             row[x * 4] = (int) (pixels[i] * 255);

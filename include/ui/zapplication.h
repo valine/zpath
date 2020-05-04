@@ -15,19 +15,29 @@ public:
 	ZApplication(ZViewController* controller, string name, bool shouldPoll);
 	ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight);
 
-	void onWindowResize(int width, int height);
+
+    ZApplication(vector<ZViewController*> controllers);
+    ZApplication(vector<ZViewController*> controllers, string name);
+    ZApplication(vector<ZViewController*> controllers, string name, bool shouldPoll);
+    ZApplication(vector<ZViewController*> controllers, string name, bool shouldPoll, int windowWidth, int windowHeight);
+
+	void onWindowResize(int width, int height, ZViewController *viewController);
 	void onWindowMove(GLFWwindow *window);
-	void onKeyPress(int key, int scancode, int action, int mods);
-	void onMouseEvent(GLFWwindow* window, int button, int action, int mods);
-	void onCursorPosChange(double x, double y);
-	void onScrollEvent(GLFWwindow *window, double xoffset, double yoffset);
-	void onFileDrop(GLFWwindow *window, int count, const char** paths);
+	void onKeyPress(int key, int scancode, int action, int mods, ZViewController *viewController);
+	void onMouseEvent(GLFWwindow* window, int button, int action, int mods, double, double);
+	void onCursorPosChange(double x, double y, ZViewController *viewController);
+	void onScrollEvent(GLFWwindow *window, double xoffset, double yoffset, ZViewController *viewController);
+	void onFileDrop(GLFWwindow *window, int count, const char **paths, ZViewController *viewController);
 	void setShouldPollEvents(bool);
 private:
-	ZViewController *mViewController;
-	bool mShouldSwapBuffer = true;
-	void init(ZViewController* viewcontroller, string windowName,
-		bool shouldPoll, int width, int height);
 
+    map<GLFWwindow*, ZViewController*> mWindows;
+	vector<ZViewController*> mViewControllers;
+	bool mShouldSwapBuffer = true;
+	void init(vector<ZViewController *> controllers, string windowName, bool shouldPoll, int width, int height,
+              ZApplication *application);
 	bool mShouldPoll = false;
+
+    static void startUiThread(ZViewController *viewController, bool shouldPoll, ZApplication *app, string windowName,
+                              int width, int height);
 };
