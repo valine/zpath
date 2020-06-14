@@ -185,6 +185,14 @@ void ZChartRenderer::resetZoom(vector<float> &points) {
 }
 
 void ZChartRenderer::updateLine(int index, float *points, int size) {
+    if (mPoints.size() <= index) {
+        for (int i = mPoints.size(); i < index; i++) {
+            addLine(new float[1], 0);
+        }
+        addLine(points, size);
+        return;
+    }
+
     vector<float> verts;
     vector<int> edges;
 

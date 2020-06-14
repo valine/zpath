@@ -45,9 +45,6 @@ void ZChart::addLine(float *points, int size) {
 void ZChart::updateLine(int index, float *points, int size) {
     mRenderer->updateLine(index, points, size);
     mRenderer->onDraw();
-//
-//    ZUtil::saveGlFBO("/home/lukas/Desktop/test.png", mRenderer->getFrameID(), getWidth(),
-                     //     getHeight());
 }
 
 void ZChart::onWindowChange(int width, int height) {

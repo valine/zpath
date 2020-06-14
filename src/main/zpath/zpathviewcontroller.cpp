@@ -52,7 +52,7 @@ void ZPathViewController::onCreate() {
     for (int i = 0; i < 6; i++) {
         points[i] = i % 2;
     }
-    mChart->addLine(points, 6);
+    mChart->updateLine(0, points, 6);
 
 
     // Slider example
