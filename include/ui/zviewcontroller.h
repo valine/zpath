@@ -36,7 +36,7 @@ using glm::ortho;
 using std::vector;
 using std::string;
 
-class ZViewController : public ZOnClickListener, public ZSliderListener, public ZCheckboxListener {
+class ZViewController {
 
 public:
 	ZViewController(string resourcePath);
@@ -44,21 +44,23 @@ public:
     ZViewController(const char* argv[]);
 
 	virtual ZView* getRootView();
+    string getResourcePath();
 
+    // Life cycle events driven by application
 	virtual void onCreate();
-	virtual void onWindowChange(int width, int height);
-	virtual void onKeyPress(int key, int scancode, int action, int mods);
-	virtual void onMouseEvent(int button, int action, int mods, int x, int y);
-	virtual void onCursorPosChange(double x, double y);
-	virtual void onScrollChange(double x, double y);
-	virtual void draw();
-	virtual void onClick(ZButton* sender);
-	virtual void onSliderValueChanged(ZSlider* sender, float value);
-	virtual void onCheckChange(ZCheckbox* sender, bool isChecked);
+    virtual void draw();
+    virtual void onTerminate();
+
+	// Glfw window events
+    virtual void onWindowChange(int width, int height);
+    virtual void onKeyPress(int key, int scancode, int action, int mods);
+    virtual void onMouseEvent(int button, int action, int mods, int x, int y);
+    virtual void onCursorPosChange(double x, double y);
+    virtual void onScrollChange(double x, double y);
 	virtual void onFileDrop(int count, const char** paths);
-	virtual void onTerminate();
+
 	void setDrawingEnabled(bool);
-	string getResourcePath();
+
 private:
 	ZView *mRootView = nullptr;
 	int mParentWidth = 0;

@@ -1,12 +1,5 @@
 #include "ui/zviewcontroller.h"
 
-void ZViewController::onClick(ZButton* sender) {
-
-}
-
-void ZViewController::onCheckChange(ZCheckbox* sender, bool isChecked) {
-
-}
 
 ZViewController::ZViewController(string resourcePath) {
     mResourcePath = resourcePath;
@@ -74,10 +67,6 @@ void ZViewController::setDrawingEnabled(bool draw) {
 
 void ZViewController::onFileDrop(int count, const char** paths) {
 
-}
-
-void ZViewController::onSliderValueChanged(ZSlider* sender, float value) {
-    
 }
 
 void ZViewController::onWindowChange(int width, int height) {

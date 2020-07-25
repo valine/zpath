@@ -28,7 +28,7 @@ class ZView {
 
     ZView(float maxWidth, float maxHeight, ZView *parent);
 
-    enum Gravity {
+        enum Gravity {
 		    topLeft,
 		    topRight,
 		    bottomLeft,
@@ -45,55 +45,86 @@ class ZView {
 		ZView(Bounds maxWidth, float maxHeight);
 		ZView(float maxWidth, Bounds maxHeight);
 		ZView(Bounds maxWidth, Bounds maxHeight);
-		
-		void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
-		void setOffset(double x, double y);
 
-		virtual void addSubView(ZView *view);
-		void clearSubViews();
+        virtual void onWindowChange(int windowWidth, int windowHeight);
+        virtual void onKeyPress(int key, int scancode, int action, int mods);
+        virtual void onMouseEvent(int button, int action, int mods, int x, int y);
+        virtual void onCursorPosChange(double x, double y);
+        virtual void onScrollChange(double x, double y);
 
-		void setParentView(ZView *parentView);
+        // Lifecycle
+        virtual void draw();
+        void invalidate();
+        virtual void onExit();
 
-		double getOffsetX();
-		double getOffsetY();
+        // OpenGL shader
+        virtual void setShader(ZShader *shader);
+        virtual void setTextShader(ZShader *shader);
+        virtual void setImageShader(ZShader *shader);
 
-		void offsetBy(int x, int y);
+        ZShader* getTextShader();
+        ZShader* getImageShader();
 
-		int getMarginLeft();
-		int getMarginTop();
-		int getMarginRight();
-		int getMarginBottom();
+        // View hierarchy
+        virtual void addSubView(ZView *view);
+        void clearSubViews();
+        void setParentView(ZView *parentView);
+        ZView* getParentView();
+        vector<ZView*> getSubViews();
 
-		int getLeft();
-		int getTop();
-		int getRight();
-		int getBottom();
+        // Margin
+        void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
+        void setMargin(vec4 margin);
+        int getMarginLeft();
+        int getMarginTop();
+        int getMarginRight();
+        int getMarginBottom();
 
-		void setTag(string);
-		string getTag();
+        // Offset
+        void setOffset(double x, double y);
+        void setYOffset(int y);
+        void offsetBy(int x, int y);
+        double getOffsetX();
+        double getOffsetY();
 
-		virtual int getMaxWidth();
-		virtual int getMaxHeight();
+        int getLeft();
+        int getTop();
+        int getRight();
+        int getBottom();
 
-		int getWidth();
-		int getHeight();
+        // View width / height
+        virtual int getMaxWidth();
+        virtual int getMaxHeight();
 
-		void setWindowWidth(int width);
-		void setWindowHeight(int height);
+        int getWidth();
+        int getHeight();
 
-		int getWindowHeight();
-		int getWindowWidth();
+        void setWindowWidth(int width);
+        void setWindowHeight(int height);
 
-		void setBackgroundColor(float color[4]);
-		void setBackgroundColor(vec4 color);
+        int getWindowHeight();
+        int getWindowWidth();
 
-		vec4 getBackgroundColor();
-		
-		void setGravity(ZView::Gravity gravity);
+        void setMaxWidth(int width);
+        void setMaxHeight(int height);
 
-		void setMaxWidth(int width);
-		void setMaxHeight(int height);
+        virtual void computeBounds(int windowHeight, int maxWidth);
 
+        // Misc view properties
+        void setGravity(ZView::Gravity gravity);
+
+        void setVisibility(bool visible);
+        bool getVisibility();
+
+        void setBackgroundColor(float color[4]);
+        void setBackgroundColor(vec4 color);
+        vec4 getBackgroundColor();
+        void setBackgroundImage(ZTexture* background);
+
+        void setTag(string);
+        string getTag();
+
+        // Mouse pointer / input state
 		bool mouseIsDown();
 		bool middleMouseIsDown();
 		bool shiftKeyPressed();
@@ -105,35 +136,6 @@ class ZView {
 		double getLastX();
 		double getLastY();
 
-		void setYOffset(int y);
-
-		ZView* getParentView();
-
-		virtual void draw();
-		virtual void setShader(ZShader *shader);
-		virtual void setTextShader(ZShader *shader);
-		virtual void setImageShader(ZShader *shader);
-
-		ZShader* getTextShader();
-		ZShader* getImageShader();
-
-		virtual void computeBounds(int windowHeight, int maxWidth);
-
-		virtual void onWindowChange(int windowWidth, int windowHeight);
-		virtual void onKeyPress(int key, int scancode, int action, int mods);
-		virtual void onMouseEvent(int button, int action, int mods, int x, int y);
-		virtual void onCursorPosChange(double x, double y);
-		virtual void onScrollChange(double x, double y);
-
-		void setBackgroundImage(ZTexture* background);
-		void invalidate();
-
-		void setVisibility(bool visible);
-		bool getVisibility();
-        void setMargin(vec4 margin);
-		virtual void onExit();
-
-		vector<ZView*> getSubViews();
 	private:
 
 		void init(int width, int height);
@@ -199,12 +201,8 @@ class ZView {
 		bool mVisible = true;
 
 		ZTexture* mBackgroundImage = nullptr;
-
 		vector<ZView*> mViews;
-
 		string mTag;
-
-
 };
 
 #endif

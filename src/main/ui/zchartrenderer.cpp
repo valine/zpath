@@ -80,7 +80,6 @@ void ZChartRenderer::onDraw() {
 
     glDepthMask(true);
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, mFBO);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFinalFBO);
     glBlitFramebuffer(0, 0, mWidth, mHeight, 0, 0, mWidth, mHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
@@ -94,7 +93,6 @@ unsigned int ZChartRenderer::getTexID() {
 unsigned int ZChartRenderer::getFrameID() {
     return mFinalFBO;
 }
-
 
 void ZChartRenderer::addLine(float *points, int size) {
 
@@ -230,6 +228,14 @@ void ZChartRenderer::updateLine(int index, float *points, int size) {
 void ZChartRenderer::updateLine(int index, vector<float> points) {
     vector<float> verts;
     vector<int> edges;
+
+    if (mPoints.size() <= index) {
+        for (int i = mPoints.size(); i < index; i++) {
+            addLine(vector<float>(1,0));
+        }
+        addLine(points);
+        return;
+    }
 
     for (float point : points) {
         if (point > mMax) {
