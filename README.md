@@ -47,8 +47,8 @@ saveButton->setOnClick([this](ZView*){
 });
 
 // Slider example
-auto* exposureSlider = new ZSlider("Slider name", min, max, defaultValue, parent);
-exposureSlider->setOnSlide([this](ZView*, float v){
+auto* slider = new ZSlider("Slider name", min, max, defaultValue, parent);
+slider->setOnSlide([this](ZView*, float v){
     // Do stuff
 });
 
