@@ -139,7 +139,7 @@ void ZRadioButton::setSpacing(int spacing) {
 	mSpacing = spacing;
 }
 
-void ZRadioButton::computeBounds(int windowHeight, int maxWidth) {
+void ZRadioButton::computeBounds() {
 //	ZView::computeBounds(windowHeight, maxWidth);
 	int labelMargin = 20;
 

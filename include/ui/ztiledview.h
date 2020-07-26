@@ -14,7 +14,7 @@ public:
 
 	ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath);
 	void setTileCount(int x, int y);
-	void computeBounds(int windowHeight, int maxWidth);
+	void computeBounds();
 	void setTileMargin(int margin);
 
 	void onKeyPress(int key, int scancode, int action, int mods);

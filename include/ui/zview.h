@@ -96,6 +96,11 @@ class ZView {
         int getRight();
         int getBottom();
 
+        int calculateLeft();
+        int calculateTop();
+        int calculateRight();
+        int calculateBottom();
+
         // View width / height
         virtual int getMaxWidth();
         virtual int getMaxHeight();
@@ -112,7 +117,7 @@ class ZView {
         void setMaxWidth(int width);
         void setMaxHeight(int height);
 
-        virtual void computeBounds(int windowHeight, int maxWidth);
+        virtual void computeBounds();
 
         // Misc view properties
         void setGravity(ZView::Gravity gravity);
@@ -209,6 +214,12 @@ class ZView {
 		ZTexture* mBackgroundImage = nullptr;
 		vector<ZView*> mViews;
 		string mTag;
+
+        int mLeft = 0;
+        int mRight = 0;
+        int mTop = 0;
+        int mBottom = 0;
+
 };
 
 #endif

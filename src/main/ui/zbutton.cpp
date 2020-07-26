@@ -73,9 +73,9 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	}
 }
 
-void ZButton::computeBounds(int windowHeight, int maxWidth) {
+void ZButton::computeBounds() {
 	mLabel->setOffset(10, (getHeight() - 16) / 2);
-	ZView::computeBounds(windowHeight, maxWidth);
+    ZView::computeBounds();
 }
 void ZButton::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);

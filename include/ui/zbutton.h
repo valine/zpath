@@ -36,7 +36,7 @@ public:
 	void setText(string text);
 	string getText();
 	void setOnClickListener(ZOnClickListener* listener);
-	void computeBounds(int windowHeight, int maxWidth);
+	void computeBounds();
     void setOnClick(std::function<void(ZView* sender)> onClick);
 private:
 int debug;

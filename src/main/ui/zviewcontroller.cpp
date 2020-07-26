@@ -70,6 +70,11 @@ void ZViewController::onFileDrop(int count, const char** paths) {
 }
 
 void ZViewController::onWindowChange(int width, int height) {
+    calculateLeft();
+    calculateTop();
+    calculateBottom();
+    calculateRight();
+
     if (mDrawingEnabled) {
         ZView::onWindowChange(width, height);
         mParentWidth = width;

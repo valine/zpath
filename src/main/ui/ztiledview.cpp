@@ -54,7 +54,7 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 		mTiles.at(j)->setMaxWidth(0);
 	}
 
-	computeBounds(getWindowHeight(), getWindowWidth());
+    computeBounds();
 	invalidate();
 }
 
@@ -88,7 +88,7 @@ void ZTiledView::setWireMode(bool wireMode) {
     }
 }
 
-void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
+void ZTiledView::computeBounds() {
 	int i = 0;
 	for (int x = 0; x < mTileCountX; x++) {
 		for (int y = 0; y < mTileCountY; y++) {	
@@ -106,7 +106,7 @@ void ZTiledView::computeBounds(int windowHeight, int maxWidth) {
 		}
 	}
 
-	ZView::computeBounds(windowHeight, maxWidth);
+    ZView::computeBounds();
 }
 
 void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {

@@ -32,7 +32,7 @@ public:
 	void setVertical(bool);
 
 	void setOnClickListener(ZOnClickListener* listener);
-	void computeBounds(int windowHeight, int maxWidth); 
+	void computeBounds();
 	void onClick(ZButton* sender);
 	void setSpacing(int spacing);
 	void showLabel(bool);

@@ -111,6 +111,8 @@ void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
         if (mSlideListener != nullptr) {
             mSlideListener(this, incValue, true);
         }
+
+        invalidate();
  	}
 }
 
@@ -243,6 +245,7 @@ void ZSlider::valueChanged(float offset) {
         mHighlight->setMaxWidth(offset + 1);
         mSlideListener(this, incValue, false);
 	}
+	invalidate();
 
 }
 
