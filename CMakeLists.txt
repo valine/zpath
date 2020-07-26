@@ -226,7 +226,7 @@ if (LINUX)
           "${assimp_install_dir}/lib/libassimp.so"
           "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/lib/libpng.a"
           "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib/libz.a"
-          "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b-build/libfreetyped.a")
+          "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b-build/libfreetype.a")
 
 endif (LINUX)
 
