@@ -59,6 +59,8 @@ public:
 	virtual void onFileDrop(int count, const char** paths);
 
 	void setDrawingEnabled(bool);
+	void setName(string name);
+	string getName();
 
 private:
 	ZView *mRootView = nullptr;
@@ -72,6 +74,7 @@ private:
 	bool mDrawingEnabled = true;
 
 	string mResourcePath;
+	string mName = "View controller";
 
 	// Shader code 
 	const string ui_vs =

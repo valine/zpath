@@ -17,7 +17,7 @@ ZTabView<V>::ZTabView(float maxWidth1, float maxHeight1, string resourcePath, ve
 
     for (uint i = 0; i < tabs.size(); i++) {
         V *tab = new V(maxWidth1, maxHeight1);
-        double fi = (double) i;
+        auto fi = (double) i;
         tab->setBackgroundColor(vec4(fi / 3.0,0.0,0.0,1.0));
         addSubView(tab);
         mViews.push_back(tab);

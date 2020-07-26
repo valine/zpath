@@ -13,10 +13,13 @@ using namespace std;
 #include <ui/zapplication.h>
 #include <ui/zviewcontroller.h>
 #include <zpath/zpathviewcontroller.h>
+#include <ztabbedviewcontroller.h>
 
 
 int main(int argc, char* argv[]) {
 
-    vector<ZViewController*> controller = {new ZPathViewController(argv)};
-    ZApplication(controller, "ZPATH", false);
+    vector<ZViewController*> controller = {new ZPathViewController(argv), new ZPathViewController(argv)};
+
+    ZTabbedViewController* tabs = new ZTabbedViewController(argv, controller);
+    ZApplication(tabs, "ZPATH", false);
 }

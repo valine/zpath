@@ -123,3 +123,11 @@ void ZViewController::draw() {
 string ZViewController::getResourcePath() {
     return mResourcePath;
 }
+
+void ZViewController::setName(string name) {
+    mName = name;
+}
+
+string ZViewController::getName() {
+    return mName;
+}
