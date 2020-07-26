@@ -49,7 +49,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight) : ZView(maxWidth, maxHeight) {
     #if defined(_WIN32) || defined(WIN32)
         fontPath = "C:\\windows\\fonts";
     #else
-        fontPath = "/usr/share/fonts/truetype/liberation2/";
+        fontPath = "/usr/share/fonts/truetype/liberation/";
     #endif
     setup("LiberationSans-Regular.ttf", fontPath);
 }
