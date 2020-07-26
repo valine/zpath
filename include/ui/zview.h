@@ -143,6 +143,8 @@ class ZView {
 
 		void init(int width, int height);
 
+		bool mNeedsRender = true;
+
 		Gravity mGravity;
 		ZView *mParentView;
 

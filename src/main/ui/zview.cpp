@@ -73,6 +73,10 @@ void ZView::setTag(string tag) {
 }
 
 void ZView::draw() {
+    if (!mNeedsRender) {
+        return;
+    }
+
     ZShader* shader;
     if (mVisible) {
         if (mBackgroundImage != nullptr) {
@@ -117,7 +121,7 @@ void ZView::draw() {
 
 
         glBindTexture(GL_TEXTURE_2D, 0);
-
+        mNeedsRender = false;
     }
 }
 
@@ -204,6 +208,7 @@ void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int margin
     mMarginBottom = marginBottom;
 
     computeBounds(mParentWidth, mParentWidth);
+    invalidate();
 }
 
 void ZView::setMargin(vec4 margin) {
@@ -213,22 +218,26 @@ void ZView::setMargin(vec4 margin) {
     mMarginBottom =  margin.w;
 
     computeBounds(mParentWidth, mParentWidth);
+    invalidate();
 }
 
 void ZView::setOffset(double x, double y) {
     mOffsetX = x;
     mOffsetY = y;
     computeBounds(mParentWidth, mParentWidth);
+    invalidate();
 }
 
 void ZView::setYOffset(int y) {
     mOffsetY = y;
+    invalidate();
 }
 
 void ZView::offsetBy(int x, int y) {
     mOffsetX += x;
     mOffsetY += y;
     computeBounds(mParentWidth, mParentWidth);
+    invalidate();
 }
 
 double ZView::getOffsetX() {
@@ -273,6 +282,10 @@ int ZView::getMarginBottom() {
 }
 
 void ZView::invalidate() {
+    mNeedsRender = true;
+    if (getParentView() != this) {
+        getParentView()->invalidate();
+    }
     //glfwPostEmptyEvent();
 }
 

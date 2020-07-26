@@ -25,6 +25,7 @@ void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
  	if ((button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2) && action == GLFW_RELEASE && !altKeyPressed()) {
  		int index = mRenderer->getObjectIndexAtLocation(x - getLeft(), getTop() + getHeight() - 1 - y);
  		mRenderer->getScene()->setActiveObjectIndex(index);
+ 		invalidate();
  	} 
 }
 
@@ -63,6 +64,7 @@ void Z3DView::onCursorPosChange(double x, double y) {
 
 		mRotationX += deltaX / 2;
 		mRotationY -= deltaY / 2;
+		invalidate();
 	} else if ((middleMouseIsDown() || (mouseIsDown() && altKeyPressed()))  && shiftKeyPressed()) {
 		// Pan
 		double panSpeed = 0.02;
@@ -70,6 +72,7 @@ void Z3DView::onCursorPosChange(double x, double y) {
 		vec4 rotation = vec4(deltaX * panSpeed, deltaY * -panSpeed, 0.0, 0.0);
 		rotation = cameraMatrix * rotation;
 		mSpinRig->translateBy(dvec3(rotation));
+		invalidate();
 	}
 
 	updateCameraPosition();
