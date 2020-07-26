@@ -44,6 +44,7 @@ void ZTabbedViewController::onCreate() {
             controller->setVisibility(false);
         }
         mControllers.at(index)->setVisibility(true);
+        mControllers.at(index)->invalidate();
     });
 
 }

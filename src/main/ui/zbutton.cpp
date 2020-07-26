@@ -55,6 +55,7 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	if (action == GLFW_PRESS) {
 		setBackgroundColor(getBackgroundColor() + highlight);
 		mWasPressed = true;
+		invalidate();
 	}
 
 	if (action == GLFW_RELEASE) {
@@ -70,7 +71,9 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 		}
 
 		mWasPressed = false;
+		invalidate();
 	}
+
 }
 
 void ZButton::computeBounds() {

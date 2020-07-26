@@ -35,6 +35,7 @@ void ZTabView<V>::onClick(ZButton *sender) {
         mViews.at(i)->setVisibility(false);
     }
     mTabMap.at(sender)->setVisibility(true);
+    mTabMap.at(sender)->invalidate();
 }
 
 template<typename V>
