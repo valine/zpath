@@ -174,7 +174,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
             glfwWaitEvents();
         }
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         viewController->draw();
         glfwSwapBuffers(window);
     }
