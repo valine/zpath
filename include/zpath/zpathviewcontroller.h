@@ -21,6 +21,7 @@ class ZPathViewController : public ZViewController {
 
 public:
  	ZPathViewController(char* argv[]);
+    ZPathViewController(string path);
  	void onCreate();
     void onFileDrop(int count, const char** paths);
 private:

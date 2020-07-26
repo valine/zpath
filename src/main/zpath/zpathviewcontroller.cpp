@@ -15,6 +15,10 @@ ZPathViewController::ZPathViewController(char* argv[])
 : ZViewController(argv) {
 }
 
+ZPathViewController::ZPathViewController(string path)
+        : ZViewController(path) {
+}
+
 void ZPathViewController::onCreate() {
 	ZViewController::onCreate();
 	mScene = new BasicScene(getResourcePath());
@@ -26,7 +30,7 @@ void ZPathViewController::onCreate() {
     tabView->setGravity(ZView::topRight);
     tabView->addToTab(tab1, 0);
     tabView->addToTab(tab2, 1);
-    getRootView()->addSubView(tabView);
+    addSubView(tabView);
 
     auto* label = new ZLabel("Panel", tab1);
 
@@ -68,14 +72,19 @@ void ZPathViewController::onCreate() {
         }
     });
 
-    auto* slider2d = new Z2DSlider(200, 200, vec2(0,0), vec2(5), tab2);
-    slider2d->setIncrement(1);
-
     mTileView = new ZTiledView(mScene, ZView::fillParent,  ZView::fillParent, 1, 1, getResourcePath());
     mIsQuadView = false;
     mTileView->setOffset(tab1->getWidth(), 0);
     mTileView->setGravity(ZView::topRight);
-    getRootView()->addSubView(mTileView);
+    addSubView(mTileView);
+
+
+    ZViewController* subViewController = new ZViewController(getResourcePath());
+    tab2->addSubView(subViewController);
+    subViewController->setBackgroundColor(vec4(1,0,0,1));
+
+    auto* slider2d = new Z2DSlider(200, 200, vec2(0,0), vec2(5), subViewController);
+    slider2d->setIncrement(1);
 }
 
 void ZPathViewController::onFileDrop(int count, const char** paths) {

@@ -43,7 +43,6 @@ public:
     ZViewController(char* argv[]);
     ZViewController(const char* argv[]);
 
-	virtual ZView* getRootView();
     string getResourcePath();
 
     // Life cycle events driven by application
