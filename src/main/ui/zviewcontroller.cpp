@@ -83,19 +83,27 @@ void ZViewController::onWindowChange(int width, int height) {
 }
 
 void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
-    ZView::onKeyPress(key, scancode, action, mods);
+    if (getVisibility()) {
+        ZView::onKeyPress(key, scancode, action, mods);
+    }
 }
 	
 void ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
-    ZView::onMouseEvent(button, action, mods, x, y);
+    if (getVisibility()) {
+        ZView::onMouseEvent(button, action, mods, x, y);
+    }
 }
 
 void ZViewController::onCursorPosChange(double x, double y) {
-    ZView::onCursorPosChange(x, y);
+    if (getVisibility()) {
+        ZView::onCursorPosChange(x, y);
+    }
 }
 
 void ZViewController::onScrollChange(double x, double y) {
-    ZView::onScrollChange(x, y);
+    if (getVisibility()) {
+        ZView::onScrollChange(x, y);
+    }
 }
 
 void ZViewController::onTerminate() {
@@ -103,7 +111,7 @@ void ZViewController::onTerminate() {
 }
 
 void ZViewController::draw() {
-    if (mDrawingEnabled) {
+    if (mDrawingEnabled && getVisibility()) {
         mUIShader->use();
         GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
         mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -10.0f, 100.0f);
@@ -115,7 +123,7 @@ void ZViewController::draw() {
 
         glViewport(0, 0, mParentWidth, mParentHeight);
         ZView::draw();
-    } else {
+    } else if (getVisibility()){
         ZView::draw();
     }
 }

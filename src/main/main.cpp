@@ -19,7 +19,6 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
     vector<ZViewController*> controller = {new ZPathViewController(argv), new ZPathViewController(argv)};
-
     ZTabbedViewController* tabs = new ZTabbedViewController(argv, controller);
     ZApplication(tabs, "ZPATH", false);
 }
