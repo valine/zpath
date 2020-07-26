@@ -73,52 +73,51 @@ void ZView::setTag(string tag) {
 }
 
 void ZView::draw() {
-    if (!mNeedsRender) {
-        return;
-    }
-
     ZShader* shader;
     if (mVisible) {
-        if (mBackgroundImage != nullptr) {
-            mImageShader->use();
-            shader = mImageShader;
+        if (mNeedsRender) {
+            if (mBackgroundImage != nullptr) {
+                mImageShader->use();
+                shader = mImageShader;
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
-        } else {
-            mShader->use();
-            shader = mShader;
-        }
-
-        glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
-                    mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
-
-        glViewport(0, 0, mWindowWidth, mWindowHeight);
-
-        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-        glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "vPosUi"));
-        glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                              sizeof(float) * 4, (void*) 0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-        glEnableVertexAttribArray(glGetUniformLocation(shader->mID, "aTexCoords"));
-        glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
-                              sizeof(float) * 2, (void*) 0);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-
-        if (mParentView != this) {
-            if (getVisibility()) {
-                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
+            } else {
+                mShader->use();
+                shader = mShader;
             }
+
+            glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+                        mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
+
+            glViewport(0, 0, mWindowWidth, mWindowHeight);
+
+            glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+            glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "vPosUi"));
+            glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                                  sizeof(float) * 4, (void *) 0);
+
+            glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+            glEnableVertexAttribArray(glGetUniformLocation(shader->mID, "aTexCoords"));
+            glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
+                                  sizeof(float) * 2, (void *) 0);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+
+            if (mParentView != this) {
+                if (getVisibility()) {
+                    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+                }
+            }
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-            (*it)->draw();
+        for (ZView* view : mViews) {
+            view->draw();
         }
-
 
         glBindTexture(GL_TEXTURE_2D, 0);
         mNeedsRender = false;
@@ -283,8 +282,8 @@ int ZView::getMarginBottom() {
 
 void ZView::invalidate() {
     mNeedsRender = true;
-    if (getParentView() != this) {
-        getParentView()->invalidate();
+    for (ZView* view : mViews) {
+        view->invalidate();
     }
     //glfwPostEmptyEvent();
 }
@@ -626,5 +625,9 @@ void ZView::onCursorPosChange(double x, double y) {
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->onCursorPosChange(x, y);
     }
+}
+
+bool ZView::needsRender() {
+    return mNeedsRender;
 }
 

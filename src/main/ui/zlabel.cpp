@@ -60,60 +60,66 @@ string ZLabel::getText() {
 }
 
 void ZLabel::draw() {
-	ZView::draw();
+	if (needsRender()) {
 
-	int yv = getWindowHeight() - getBottom();
-	glViewport(getLeft(),yv,getWidth(),getHeight());
-    GLfloat scale = 1.0;
-   
-	// Activate corresponding render state	
-    getTextShader()->use();
-    glUniform3f(glGetUniformLocation(getTextShader()->mID, "textColor"), mTextColor.x, mTextColor.y, mTextColor.z);
+        int yv = getWindowHeight() - getBottom();
+        glViewport(getLeft(), yv, getWidth(), getHeight());
+        GLfloat scale = 1.0;
 
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(getWidth()), 0.0f, static_cast<GLfloat>(getHeight()));
-    glUniformMatrix4fv(glGetUniformLocation(getTextShader()->mID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-  
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(VAO);
+        // Activate corresponding render state
+        getTextShader()->use();
+        glUniform3f(glGetUniformLocation(getTextShader()->mID, "textColor"), mTextColor.x, mTextColor.y, mTextColor.z);
 
-    GLfloat x = 0;
-    GLfloat y = 5 * scale;
+        glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(getWidth()), 0.0f,
+                                          static_cast<GLfloat>(getHeight()));
+        glUniformMatrix4fv(glGetUniformLocation(getTextShader()->mID, "projection"), 1, GL_FALSE,
+                           glm::value_ptr(projection));
 
-    // Iterate through all characters
-    std::string::const_iterator c;
-    for (c = mText.begin(); c != mText.end(); c++) 
-    {
-        Character ch = ZFontStore::getInstance().getCharacter(mFont,*c);
+        glActiveTexture(GL_TEXTURE0);
+        glBindVertexArray(VAO);
 
-        GLfloat xpos = x + ch.Bearing.x * scale;
-        GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+        GLfloat x = 0;
+        GLfloat y = 5 * scale;
 
-        GLfloat w = ch.Size.x * scale;
-        GLfloat h = ch.Size.y * scale;
-        // Update VBO for each character
-        GLfloat vertices[6][4] = {
-            { xpos,     ypos + h,   0.0, 0.0 },            
-            { xpos,     ypos,       0.0, 1.0 },
-            { xpos + w, ypos,       1.0, 1.0 },
+        // Iterate through all characters
+        std::string::const_iterator c;
+        for (c = mText.begin(); c != mText.end(); c++) {
+            Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
 
-            { xpos,     ypos + h,   0.0, 0.0 },
-            { xpos + w, ypos,       1.0, 1.0 },
-            { xpos + w, ypos + h,   1.0, 0.0 }           
-        };
-        // Render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-        // Update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, vertices); // Be sure to use glBufferSubData and not glBufferData
+            GLfloat xpos = x + ch.Bearing.x * scale;
+            GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // Render quad
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+            GLfloat w = ch.Size.x * scale;
+            GLfloat h = ch.Size.y * scale;
+            // Update VBO for each character
+            GLfloat vertices[6][4] = {
+                    {xpos,     ypos + h, 0.0, 0.0},
+                    {xpos,     ypos,     0.0, 1.0},
+                    {xpos + w, ypos,     1.0, 1.0},
+
+                    {xpos,     ypos + h, 0.0, 0.0},
+                    {xpos + w, ypos,     1.0, 1.0},
+                    {xpos + w, ypos + h, 1.0, 0.0}
+            };
+            // Render glyph texture over quad
+            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+            // Update content of VBO memory
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4,
+                            vertices); // Be sure to use glBufferSubData and not glBufferData
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            // Render quad
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            x += (ch.Advance >> 6) *
+                 scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+        }
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+
+    ZView::draw();
 }
 
 void ZLabel::setTextSize(int textSize) {
@@ -122,10 +128,12 @@ void ZLabel::setTextSize(int textSize) {
 
 void ZLabel::setTextColor(vec3 color) {
 	mTextColor = color;
+	invalidate();
 }
 
 void ZLabel::setText(string text) {
 	mText = text;
+    invalidate();
 }
 
 void ZLabel::setFont(string fontPath) {

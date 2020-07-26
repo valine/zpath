@@ -57,6 +57,7 @@ class ZView {
         // Lifecycle
         virtual void draw();
         void invalidate();
+        bool needsRender();
         virtual void onCreate();
         virtual void onExit();
 
