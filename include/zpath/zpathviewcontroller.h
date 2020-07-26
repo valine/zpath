@@ -1,3 +1,6 @@
+#ifndef ZPATHVIEWCONTROLLER_H
+#define ZPATHVIEWCONTROLLER_H
+
 #include "ui/zviewcontroller.h"
 
 #include "mesh/zscene.h"
@@ -33,3 +36,5 @@ private:
 	string getFileExtension(string path);
 
 };
+
+#endif

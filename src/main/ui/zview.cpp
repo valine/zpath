@@ -1,24 +1,67 @@
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
-    init(maxWidth, maxHeight);
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mVertices[4] = (GLfloat) mMaxWidth;
+    mVertices[8] = (GLfloat) mMaxHeight;
+    mVertices[12] = (GLfloat) mMaxWidth;
+    mVertices[13] = (GLfloat) mMaxHeight;
+    mParentView = this;
 }
 
 ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
-    init(maxWidth, maxHeight);
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mVertices[4] = (GLfloat) mMaxWidth;
+    mVertices[8] = (GLfloat) mMaxHeight;
+    mVertices[12] = (GLfloat) mMaxWidth;
+    mVertices[13] = (GLfloat) mMaxHeight;
     parent->addSubView(this);
 }
 
 ZView::ZView(Bounds maxWidth, float maxHeight) {
-    init(100000, maxHeight);
+    mMaxWidth = 100000;
+    mMaxHeight = maxHeight;
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mVertices[4] = (GLfloat) mMaxWidth;
+    mVertices[8] = (GLfloat) mMaxHeight;
+    mVertices[12] = (GLfloat) mMaxWidth;
+    mVertices[13] = (GLfloat) mMaxHeight;
+    mParentView = this;
 }
 
 ZView::ZView(float maxWidth, Bounds maxHeight) {
-    init(maxWidth, 100000);
+    mMaxWidth = maxWidth;
+    mMaxHeight = 100000;
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mVertices[4] = (GLfloat) mMaxWidth;
+    mVertices[8] = (GLfloat) mMaxHeight;
+    mVertices[12] = (GLfloat) mMaxWidth;
+    mVertices[13] = (GLfloat) mMaxHeight;
+    mParentView = this;
 }
 
 ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
-    init(100000, 100000);
+    mMaxWidth = 100000;
+    mMaxHeight = 100000;
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mVertices[4] = (GLfloat) mMaxWidth;
+    mVertices[8] = (GLfloat) mMaxHeight;
+    mVertices[12] = (GLfloat) mMaxWidth;
+    mVertices[13] = (GLfloat) mMaxHeight;
+    mParentView = this;
+}
+
+void ZView::onCreate() {
+    init((int) mMaxWidth, (int) mMaxHeight);
 }
 
 string ZView::getTag() {
@@ -79,16 +122,6 @@ void ZView::draw() {
 }
 
 void ZView::init(int maxWidth, int maxHeight) {
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-
-    mVertices[4] = (GLfloat) mMaxWidth;
-
-    mVertices[8] = (GLfloat) mMaxHeight;
-
-    mVertices[12] = (GLfloat) mMaxWidth;
-    mVertices[13] = (GLfloat) mMaxHeight;
-
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float),  &mVertices, GL_STATIC_DRAW);
@@ -100,7 +133,7 @@ void ZView::init(int maxWidth, int maxHeight) {
     glGenBuffers(1, &mTexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), mTexCoords, GL_STATIC_DRAW);
-    mParentView = this;
+
 }
 
 void ZView::setShader(ZShader *shader) {
@@ -391,6 +424,8 @@ void ZView::addSubView(ZView *view) {
         view->setTextShader(mTextShader);
         view->setImageShader(mImageShader);
     }
+
+    view->onCreate();
 }
 
 void ZView::clearSubViews() {
@@ -529,6 +564,12 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                 view->onMouseEvent(button, action, mods, x, y);
             }
         }
+    }
+}
+
+void ZView::onFileDrop(int count, const char** paths) {
+    for (auto & mView : mViews) {
+        mView->onFileDrop(count, paths);
     }
 }
 

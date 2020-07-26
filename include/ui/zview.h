@@ -26,7 +26,7 @@ class ZView {
 
 	public:
 
-    ZView(float maxWidth, float maxHeight, ZView *parent);
+        ZView(float maxWidth, float maxHeight, ZView *parent);
 
         enum Gravity {
 		    topLeft,
@@ -51,10 +51,13 @@ class ZView {
         virtual void onMouseEvent(int button, int action, int mods, int x, int y);
         virtual void onCursorPosChange(double x, double y);
         virtual void onScrollChange(double x, double y);
+        virtual void onFileDrop(int count, const char** paths);
+
 
         // Lifecycle
         virtual void draw();
         void invalidate();
+        virtual void onCreate();
         virtual void onExit();
 
         // OpenGL shader

@@ -1,12 +1,13 @@
 #include "ui/zviewcontroller.h"
 
 
-ZViewController::ZViewController(string resourcePath) {
+ZViewController::ZViewController(string resourcePath) : ZView(ZView::fillParent, ZView::fillParent) {
     mResourcePath = resourcePath;
 }
 
 
-ZViewController::ZViewController(const char **argv) {
+ZViewController::ZViewController(const char **argv) : ZView(ZView::fillParent, ZView::fillParent) {
+
     std::string aux(argv[0]);
 
     // get '/' or '\\' depending on unix/mac or windows.
@@ -23,7 +24,7 @@ ZViewController::ZViewController(const char **argv) {
     mResourcePath = path;
 }
 
-ZViewController::ZViewController(char **argv) {
+ZViewController::ZViewController(char **argv) : ZView(ZView::fillParent, ZView::fillParent) {
     std::string aux(argv[0]);
 
     // get '/' or '\\' depending on unix/mac or windows.
@@ -49,12 +50,16 @@ void ZViewController::onCreate() {
     float backgroundColor[4] = {0.4f, 0.4, 0.4, 1.000};
 
     mRootView = new ZView(ZView::fillParent, ZView::fillParent);
+    mRootView->onCreate();
     mRootView->setOffset(0,0);
     mRootView->setMargin(0,0,0,0);
     mRootView->setBackgroundColor(backgroundColor);
     mRootView->setShader(mUIShader);
     mRootView->setTextShader(mTextShader);
     mRootView->setImageShader(mImageViewShader);
+
+
+    ZView::onCreate();
 }
 
 ZView* ZViewController::getRootView() {
@@ -66,7 +71,7 @@ void ZViewController::setDrawingEnabled(bool draw) {
 }
 
 void ZViewController::onFileDrop(int count, const char** paths) {
-
+    mRootView->onFileDrop(count, paths);
 }
 
 void ZViewController::onWindowChange(int width, int height) {

@@ -36,7 +36,7 @@ using glm::ortho;
 using std::vector;
 using std::string;
 
-class ZViewController {
+class ZViewController : public ZView {
 
 public:
 	ZViewController(string resourcePath);
