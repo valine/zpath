@@ -61,7 +61,6 @@ string ZLabel::getText() {
 }
 
 void ZLabel::draw() {
-    ZView::draw();
 	if (needsRender()) {
 
         int yv = getWindowHeight() - getBottom();
@@ -119,7 +118,10 @@ void ZLabel::draw() {
         }
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        ZView::draw();
     }
+
 }
 
 void ZLabel::setTextSize(int textSize) {
