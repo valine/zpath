@@ -63,6 +63,7 @@ string ZLabel::getText() {
 void ZLabel::draw() {
 	if (needsRender()) {
 
+        ZView::draw();
         int yv = getWindowHeight() - getBottom();
         glViewport(getLeft(), yv, getWidth(), getHeight());
         GLfloat scale = 1.0;
@@ -81,6 +82,7 @@ void ZLabel::draw() {
 
         GLfloat x = 0;
         GLfloat y = 5 * scale;
+
 
         // Iterate through all characters
         std::string::const_iterator c;
@@ -119,7 +121,7 @@ void ZLabel::draw() {
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        ZView::draw();
+
     }
 
 }
