@@ -39,26 +39,32 @@ void ZChart::draw() {
 void ZChart::addLine(float *points, int size) {
     mRenderer->addLine(points, size);
     mRenderer->onDraw();
+    invalidate();
 
 }
 
 void ZChart::updateLine(int index, float *points, int size) {
     mRenderer->updateLine(index, points, size);
     mRenderer->onDraw();
+    invalidate();
+
 }
 
 void ZChart::onWindowChange(int width, int height) {
     ZView::onWindowChange(width, height);
     mRenderer->setSize(getWidth(), getHeight());
+    invalidate();
 }
 
 void ZChart::resetZoom() {
     mRenderer->resetZoom(mPendingLines.at(0));
+    invalidate();
 }
 
 void ZChart::setMinMax(float min, float max) {
     mRenderer->setMin(max);
     mRenderer->setMax(min);
+    invalidate();
 }
 
 void ZChart::addLine(vector<float> line) {

@@ -93,6 +93,7 @@ void ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 
 	if (action == GLFW_PRESS) {
 		setBackgroundColor(getBackgroundColor() + highlight);
+        invalidate();
 	}
 
 	if (action == GLFW_RELEASE) {
@@ -107,6 +108,8 @@ void ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 		if (mClickListener != nullptr) {
 		    mClickListener(this, mIsChecked);
 		}
+
+        invalidate();
 	}
 }
 

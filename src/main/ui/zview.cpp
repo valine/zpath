@@ -105,11 +105,11 @@ void ZView::draw() {
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
 
-            if (mParentView != this) {
+//            if (mParentView != this) {
                 if (getVisibility()) {
                     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
                 }
-            }
+           // }
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -198,6 +198,8 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->onWindowChange(right, bottom);
     }
+
+    invalidate();
 }
 
 void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
@@ -397,10 +399,12 @@ vector<ZView*> ZView::getSubViews() {
 
 void ZView::setBackgroundColor(float color[4]) {
     mBackgroundColor = vec4(color[0], color[1], color[2], color[3]);
+    invalidate();
 }
 
 void ZView::setBackgroundColor(vec4 color) {
     mBackgroundColor = color;
+    invalidate();
 }
 
 vec4 ZView::getBackgroundColor() {
@@ -409,6 +413,7 @@ vec4 ZView::getBackgroundColor() {
 
 void ZView::setGravity(Gravity gravity) {
     mGravity = gravity;
+    invalidate();
 }
 
 void ZView::setMaxWidth(int width) {
@@ -685,6 +690,10 @@ int ZView::getRight() {
 
 int ZView::getBottom() {
     return mBottom;
+}
+
+vec4 ZView::getMargin() {
+    return vec4(mMarginLeft, mMarginTop, mMarginRight, mMarginBottom);
 }
 
 

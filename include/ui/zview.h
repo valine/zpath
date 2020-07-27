@@ -83,6 +83,7 @@ class ZView {
         int getMarginTop();
         int getMarginRight();
         int getMarginBottom();
+        vec4 getMargin();
 
         // Offset
         void setOffset(double x, double y);

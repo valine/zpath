@@ -1,12 +1,13 @@
 #include "ui/ztiledview.h"
 #include <iostream>
+#include <utils/zsettingsstore.h>
 
 ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
    	mScene = scene;
    	mResourcePath = resourcePath;
 	setTileCount(tilesX, tilesY);
-	setBackgroundColor(vec4(0,0,0,1));
+    setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
 }
 
 void ZTiledView::setTileCount(int tilesX, int tilesY) {
