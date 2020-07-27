@@ -38,6 +38,7 @@ void ZScrollView::init() {
 
 	mInnerView = new ZLinearLayout(getWidth(), getHeight());
 	addSubView(mInnerView);
+	mInnerView->setMargin(0,0,7,0);
 
 	setGravity(ZView::topRight);
 	setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
