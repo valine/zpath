@@ -25,6 +25,7 @@ ZView(maxWidth, maxHeight){
     setMinValue(min);
 
     parent->addSubView(this);
+    setBackgroundColor(parent->getBackgroundColor());
 }
 
 void Z2DSlider::setTextColor(vec3 color) {
@@ -105,6 +106,7 @@ void Z2DSlider::valueChanged(float x, float y) {
         mSlideListener(this, mValue, false);
     }
 
+    invalidate();
 }
 
 vec2 Z2DSlider::getValue() {

@@ -13,6 +13,7 @@ ZLabel::ZLabel(string label, ZView *parent)
    setText(label);
    setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
    parent->addSubView(this);
+   setBackgroundColor(parent->getBackgroundColor());
 
     mFont = ZFontStore::getInstance().getDefaultResource();
     // Configure VAO/VBO for texture quads
