@@ -74,7 +74,7 @@ private:
 	bool mDrawingEnabled = true;
 
 	string mResourcePath;
-	string mName = "View controller";
+	string mName = "VC";
 
 	// Shader code 
 	const string ui_vs =

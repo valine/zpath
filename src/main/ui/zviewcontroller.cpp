@@ -70,7 +70,7 @@ void ZViewController::onFileDrop(int count, const char** paths) {
 }
 
 void ZViewController::onWindowChange(int width, int height) {
-    invalidate();
+
     calculateLeft();
     calculateTop();
     calculateBottom();
@@ -86,9 +86,9 @@ void ZViewController::onWindowChange(int width, int height) {
 
         ZView::onWindowChange(width, height);
     } else {
+
         ZView::onWindowChange(width, height);
     }
-
 }
 
 void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
@@ -120,7 +120,9 @@ void ZViewController::onTerminate() {
 }
 
 void ZViewController::draw() {
+
     if (mDrawingEnabled) {
+
         mUIShader->use();
         GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
         mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -10.0f, 100.0f);
@@ -129,7 +131,6 @@ void ZViewController::draw() {
         mImageViewShader->use();
         GLint vp_locationi = glGetUniformLocation(mImageViewShader->mID, "uVPMatrix");
         glUniformMatrix4fv(vp_locationi, 1, GL_FALSE, glm::value_ptr(projection));
-
         ZView::draw();
     } else if (getVisibility()){
         ZView::draw();
