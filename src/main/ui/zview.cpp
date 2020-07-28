@@ -25,7 +25,7 @@ ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
 }
 
 ZView::ZView(Bounds maxWidth, float maxHeight) {
-    mMaxWidth = 100000;
+    mMaxWidth = 10000;
     mMaxHeight = maxHeight;
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
@@ -38,7 +38,7 @@ ZView::ZView(Bounds maxWidth, float maxHeight) {
 
 ZView::ZView(float maxWidth, Bounds maxHeight) {
     mMaxWidth = maxWidth;
-    mMaxHeight = 100000;
+    mMaxHeight = 10000;
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
     mVertices[4] = (GLfloat) mMaxWidth;
@@ -49,8 +49,8 @@ ZView::ZView(float maxWidth, Bounds maxHeight) {
 }
 
 ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
-    mMaxWidth = 100000;
-    mMaxHeight = 100000;
+    mMaxWidth = 10000;
+    mMaxHeight = 10000;
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
     mVertices[4] = (GLfloat) mMaxWidth;
@@ -105,7 +105,11 @@ void ZView::draw() {
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
 
-//            if (mParentView != this) {
+            // Draw polygons as lines
+           // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+
+            //if (mParentView != this) {
                 if (getVisibility()) {
                     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
                 }

@@ -26,7 +26,7 @@ if (BUILD_LIB)
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
    target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
-  add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/ztabview.cpp include/ui/ztabview.h src/main/ui/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h)
+  add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/ztabview.cpp include/ui/ztabview.h src/main/ui/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/zlineview.cpp include/ui/zlineview.h)
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
   file(COPY ${data} DESTINATION resources)
   add_custom_command(TARGET zpath PRE_BUILD

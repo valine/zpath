@@ -2,6 +2,7 @@
 // Created by lukas on 7/27/20.
 //
 
+#include <ui/zlineview.h>
 #include "zpath/nodeviewcontroller.h"
 
 /**
@@ -18,5 +19,8 @@ void NodeViewController::onCreate() {
     button->setOnClick([this](ZView*){
         // Do stuff here
     });
+
+
+    ZLineView* lineView = new ZLineView(100,100, this);
 }
 

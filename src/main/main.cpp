@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
    // vector<ZViewController*> controller = {new ZPathViewController(argv), new ZPathViewController(argv)};
 
 
-    vector<ZViewController*> controller = {new NodeViewController(argv)};
+    vector<ZViewController*> controller = {new NodeViewController(argv), new NodeViewController(argv)};
 
 
     ZTabbedViewController* tabs = new ZTabbedViewController(argv, controller);

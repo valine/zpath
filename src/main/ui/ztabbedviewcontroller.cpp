@@ -12,7 +12,6 @@
 
 ZTabbedViewController::ZTabbedViewController(char **argv, vector<ZViewController *> controllers) : ZViewController(argv){
     mControllers = std::move(controllers);
-    setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
     for (ZViewController* controller : mControllers) {
         controller->setDrawingEnabled(false);
     }
@@ -26,9 +25,9 @@ ZTabbedViewController::ZTabbedViewController(string path, vector<ZViewController
 void ZTabbedViewController::onCreate() {
     ZViewController::onCreate();
 
-    ZView* controllerHolder = new ZView(fillParent, fillParent, this);
+    auto* controllerHolder = new ZView(fillParent, fillParent, this);
     controllerHolder->setMargin(0,0,0,25);
-
+    controllerHolder->setBackgroundColor(vec4(1,0,0,1));
 
     vector<string> names;
     for (ZViewController* controller : mControllers) {
@@ -38,17 +37,18 @@ void ZTabbedViewController::onCreate() {
     for (ZViewController* controller : mControllers) {
         controllerHolder->addSubView(controller);
         controller->setVisibility(false);
+        controller->invalidate();
     }
     mControllers.at(0)->setVisibility(true);
 
-
-
     ZRadioButton* tabBar = new ZRadioButton("", names, this);
+    tabBar->showLabel(false);
     tabBar->setGravity(ZView::bottomLeft);
     tabBar->setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
     tabBar->setText("");
     tabBar->setMargin(0,0,0,0);
     tabBar->setMaxWidth(100 * mControllers.size());
+    tabBar->setMaxHeight(25);
     tabBar->setOnClick([this](ZView*, int index){
         for (ZViewController* controller : mControllers) {
             controller->setVisibility(false);

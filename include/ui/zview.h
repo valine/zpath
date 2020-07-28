@@ -53,7 +53,6 @@ class ZView {
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
 
-
         // Lifecycle
         virtual void draw();
         void invalidate();

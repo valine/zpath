@@ -140,7 +140,7 @@ void ZRadioButton::setSpacing(int spacing) {
 }
 
 void ZRadioButton::computeBounds() {
-//	ZView::computeBounds(windowHeight, maxWidth);
+	ZView::computeBounds();
 	int labelMargin = 20;
 
 	if (!mLabel->getVisibility()) {
@@ -166,7 +166,6 @@ void ZRadioButton::computeBounds() {
 
 			tile->setMaxWidth(width);
 			tile->setMaxHeight(getHeight() - labelMargin);
-
 			tile->setOffset(i * (width + mSpacing), labelMargin);
 
 		}
