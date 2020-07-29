@@ -3,6 +3,7 @@
 //
 
 #include <ui/zlineview.h>
+#include <ui/zdropdown.h>
 #include "zpath/nodeviewcontroller.h"
 
 /**
@@ -21,6 +22,9 @@ void NodeViewController::onCreate() {
     });
 
 
-    ZLineView* lineView = new ZLineView(100,100, this);
+    //ZLineView* lineView = new ZLineView(100,100, this);
+
+    ZDropDown* dropDown = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5"}, this);
+
 }
 

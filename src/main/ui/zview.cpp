@@ -474,10 +474,8 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
         }
 
         for (auto view : mViews) {
-            bool isInViewX = view->getLeft() < mMouseX && view->getRight() > mMouseX;
-            bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
 
-            if (isInViewY && isInViewX) {
+            if (isMouseInBounds(view)) {
                 view->onMouseEvent(button, action, mods, x, y);
             }
 
@@ -486,6 +484,12 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             }
         }
     }
+}
+
+bool ZView::isMouseInBounds(ZView *view) const {
+    bool isInViewX = view->getLeft() < mMouseX &&view->getRight() > mMouseX;
+    bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
+    return isInViewX && isInViewY;
 }
 
 void ZView::onFileDrop(int count, const char** paths) {
@@ -502,6 +506,7 @@ void ZView::onExit() {
 
 void ZView::setVisibility(bool visible) {
     mVisible = visible;
+    invalidate();
 }
 
 bool ZView::getVisibility() {
@@ -698,6 +703,12 @@ int ZView::getBottom() {
 
 vec4 ZView::getMargin() {
     return vec4(mMarginLeft, mMarginTop, mMarginRight, mMarginBottom);
+}
+
+void ZView::onGlobalMouseUp() {
+    for (auto view : mViews) {
+        view->onGlobalMouseUp();
+    }
 }
 
 

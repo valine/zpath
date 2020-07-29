@@ -101,6 +101,12 @@ void ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
     if (getVisibility()) {
         ZView::onMouseEvent(button, action, mods, x, y);
     }
+
+    for (ZView* view : getSubViews()) {
+        if (action == GLFW_RELEASE) {
+            view->onGlobalMouseUp();
+        }
+    }
 }
 
 void ZViewController::onCursorPosChange(double x, double y) {

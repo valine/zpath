@@ -97,8 +97,8 @@ void ZScrollView::onScrollChange(double x, double y) {
 	}
 
 	mInnerView->onWindowChange(getWidth(), getHeight());
-	float innerHeight = (float) mInnerView->getMaxHeight();
-	float viewHeight = (float) getHeight();
+	auto innerHeight = (float) mInnerView->getMaxHeight();
+    auto viewHeight = (float) getHeight();
 	float scrollBarHeight = viewHeight * (viewHeight / innerHeight);
 
     mScrollBar->setMaxHeight(scrollBarHeight);

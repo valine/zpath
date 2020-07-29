@@ -145,6 +145,11 @@ class ZView {
 		double getLastX();
 		double getLastY();
 
+		/**
+		 * Called when mouse up anywhere on the screen
+		 */
+		virtual void onGlobalMouseUp();
+        bool isMouseInBounds(ZView *view) const;
 	private:
 
 		void init(int width, int height);
@@ -219,6 +224,7 @@ class ZView {
         int mRight = 0;
         int mTop = 0;
         int mBottom = 0;
+
 
 };
 
