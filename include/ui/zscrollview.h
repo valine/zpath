@@ -30,12 +30,15 @@ public:
 	void setInnerViewWidth(int width);
 	void onWindowChange(int windowWidth, int windowHeight);
 
+    ZView *getInnerView();
+
 private:
 
 	void init();
 	ZView* mScrollBar;
 	ZView* mScrollBarBackground;
 	ZLinearLayout* mInnerView;
+
 };
 
 #endif

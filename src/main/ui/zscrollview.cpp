@@ -76,9 +76,11 @@ void ZScrollView::onMouseEvent(int button, int action, int mods, int x, int y) {
 
 void ZScrollView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
-
 }
 
+ZView* ZScrollView::getInnerView() {
+    return mInnerView;
+}
 
 void ZScrollView::onScrollChange(double x, double y) {
 

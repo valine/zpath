@@ -26,6 +26,12 @@ class ZOnClickListener;
 class ZButton : public ZView {
 	
 public:
+    enum ClickMode {
+        upAndDown,
+        onlyUp
+    };
+
+
 	ZButton(float maxWidth, float maxHeight);
     ZButton(string label, ZView *parent);
 
@@ -38,12 +44,19 @@ public:
 	void setOnClickListener(ZOnClickListener* listener);
 	void computeBounds();
     void setOnClick(std::function<void(ZView* sender)> onClick);
+
+    void setClickMode(ClickMode clickMode);
+
+    ZLabel *getLabel();
+
 private:
 int debug;
 	ZLabel* mLabel;
 	ZOnClickListener* mListener = nullptr;
 	bool mWasPressed = false;
 	std::function<void(ZView* sender)> mOnClick;
+
+	ClickMode mClickMode = upAndDown;
 
 };
 

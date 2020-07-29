@@ -59,8 +59,11 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	}
 
 	if (action == GLFW_RELEASE) {
-		if (mWasPressed) {
-			setBackgroundColor(getBackgroundColor() - highlight);
+		if (mWasPressed || mClickMode == upAndDown) {
+
+		    if (mWasPressed) {
+                setBackgroundColor(getBackgroundColor() - highlight);
+            }
 
 			if (mOnClick != nullptr) {
 			    mOnClick(this);
@@ -74,6 +77,10 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 		invalidate();
 	}
 
+}
+
+ZLabel* ZButton::getLabel(){
+    return mLabel;
 }
 
 void ZButton::computeBounds() {
@@ -95,4 +102,8 @@ void ZButton::onCursorPosChange(double x, double y)  {
 
 void ZButton::setOnClickListener(ZOnClickListener* l) {
 	mListener = l;
+}
+
+void ZButton::setClickMode(ClickMode clickMode) {
+    mClickMode = clickMode;
 }

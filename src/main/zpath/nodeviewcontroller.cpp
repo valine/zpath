@@ -26,5 +26,10 @@ void NodeViewController::onCreate() {
 
     ZDropDown* dropDown = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5"}, this);
 
+
+
+    ZDropDown* dropDown2 = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5", "hello4", "hello7", "hello8"}, this);
+    dropDown2->setOffset(200, 0);
+
 }
 
