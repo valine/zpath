@@ -103,20 +103,29 @@ void ZView::draw() {
             glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
                                   sizeof(float) * 2, (void *) 0);
 
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+
 
             // Draw polygons as lines
-           // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+            glLineWidth(2.0);
+            if (mDrawWire) {
 
-            //if (mParentView != this) {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
+                if (getVisibility()) {
+                    glDrawElements(GL_LINES, 10, GL_UNSIGNED_INT, nullptr);
+                }
+            } else {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
                 if (getVisibility()) {
                     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
                 }
-           // }
+            }
+
+
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            //glEnable(GL_DEPTH_TEST);
 
         }
 
@@ -137,6 +146,10 @@ void ZView::init(int maxWidth, int maxHeight) {
     glGenBuffers(1, &mFaceIndicesBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(int), &mFaceIndices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &mEdgeIndicesBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 10 * sizeof(int), &mEdgeIndices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &mTexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
@@ -709,6 +722,18 @@ void ZView::onGlobalMouseUp() {
     for (auto view : mViews) {
         view->onGlobalMouseUp();
     }
+}
+
+void ZView::setDrawWire(bool wire) {
+    mDrawWire = wire;
+}
+
+float* ZView::getVertices() {
+    return mVertices;
+}
+
+GLuint ZView::getVertexBuffer() {
+    return mVertexBuffer;
 }
 
 

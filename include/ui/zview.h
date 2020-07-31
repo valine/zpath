@@ -145,6 +145,13 @@ class ZView {
 		double getLastX();
 		double getLastY();
 
+		void setDrawWire(bool wire);
+
+		float* getVertices();
+
+        GLuint getVertexBuffer();
+
+
 		/**
 		 * Called when mouse up anywhere on the screen
 		 */
@@ -170,11 +177,14 @@ class ZView {
 		GLuint mVertexBuffer = 0;
 		GLuint mTexBuffer = 0;
 		GLuint mFaceIndicesBuffer = 0;
+        GLuint mEdgeIndicesBuffer = 0;
 
-		float mVertices[4*4] = {0,0,0,0,  0,0,1,0,  0,0,0,1, 0,0,1,1};
+
+    float mVertices[4*4] = {0,0,0,0,  0,0,1,0,  0,0,0,1, 0,0,1,1};
 		float mTexCoords[2*4] = {-1,-1, -1,1, 1,-1, 1,1};
 
 		int mFaceIndices[6] = {2,1,0,1,2,3};
+        int mEdgeIndices[10] = {2,1,1,0,0,1,1,2,2,3};
 
 		int mColorLocation;
 		int mPositionLocation;
@@ -224,6 +234,8 @@ class ZView {
         int mRight = 0;
         int mTop = 0;
         int mBottom = 0;
+
+        bool mDrawWire = false;
 
 
 };

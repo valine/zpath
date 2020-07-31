@@ -13,8 +13,15 @@ class ZLineView : public ZView {
 
 public:
 
-    ZLineView(float maxWidth, float maxHeight, ZView *parent);
+
+    ZLineView(vec2 point1, vec2 point2, ZView *parent);
+
     void init();
+    void computeBounds();
+
+private:
+    vec2 mPoint1;
+    vec2 mPoint2;
 };
 
 

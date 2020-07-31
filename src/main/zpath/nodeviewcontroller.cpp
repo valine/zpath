@@ -22,11 +22,9 @@ void NodeViewController::onCreate() {
     });
 
 
-    //ZLineView* lineView = new ZLineView(100,100, this);
+    ZLineView* lineView = new ZLineView(vec2(0, 0),vec2(50, 100), this);
 
     ZDropDown* dropDown = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5"}, this);
-
-
 
     ZDropDown* dropDown2 = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5", "hello4", "hello7", "hello8"}, this);
     dropDown2->setOffset(200, 0);
