@@ -103,13 +103,8 @@ void ZView::draw() {
             glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
                                   sizeof(float) * 2, (void *) 0);
 
-
-
-            // Draw polygons as lines
-
             glLineWidth(2.0);
             if (mDrawWire) {
-
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
                 if (getVisibility()) {
                     glDrawElements(GL_LINES, 10, GL_UNSIGNED_INT, nullptr);
@@ -121,12 +116,8 @@ void ZView::draw() {
                 }
             }
 
-
-
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            //glEnable(GL_DEPTH_TEST);
-
         }
 
         for (ZView* view : mViews) {
