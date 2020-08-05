@@ -4,6 +4,7 @@
 
 #include <ui/zlineview.h>
 #include <ui/zdropdown.h>
+#include <ui/znodeview.h>
 #include "zpath/nodeviewcontroller.h"
 
 /**
@@ -28,6 +29,8 @@ void NodeViewController::onCreate() {
 
     ZDropDown* dropDown2 = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5", "hello4", "hello7", "hello8"}, this);
     dropDown2->setOffset(200, 0);
+
+    ZNodeView* nodeView = new ZNodeView(fillParent, fillParent, this);
 
 }
 

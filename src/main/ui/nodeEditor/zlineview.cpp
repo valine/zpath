@@ -4,9 +4,6 @@
 
 #include "ui/zlineview.h"
 
-
-
-
 ZLineView::ZLineView(vec2 point1, vec2 point2, ZView *parent): ZView(fillParent, fillParent, parent)  {
     mPoint1 = point1;
     mPoint2 = point2;

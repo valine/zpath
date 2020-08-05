@@ -128,6 +128,7 @@ void ZLabel::draw() {
 
 void ZLabel::setTextSize(int textSize) {
 	mTextSize = textSize;
+	invalidate();
 }
 
 void ZLabel::setTextColor(vec3 color) {
