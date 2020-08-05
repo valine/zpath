@@ -3,7 +3,7 @@
 
 #define BTN_LABEL_HEIGHT 19
 #define BTN_MARGIN 5
-#define BTN_OFFSET 50
+#define BTN_OFFSET 5
 
 #define DEFAULT_WIDTH 140
 #define DEFAULT_HEIGHT 25

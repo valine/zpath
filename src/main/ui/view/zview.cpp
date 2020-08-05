@@ -21,6 +21,9 @@ ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
     mVertices[8] = (GLfloat) mMaxHeight;
     mVertices[12] = (GLfloat) mMaxWidth;
     mVertices[13] = (GLfloat) mMaxHeight;
+    mWindowHeight = parent->getWindowHeight();
+    mWindowWidth = parent->getWindowWidth();
+    mParentView = parent;
     parent->addSubView(this);
 }
 

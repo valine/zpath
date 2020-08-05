@@ -15,6 +15,9 @@ ZLabel::ZLabel(string label, ZView *parent)
    parent->addSubView(this);
    setBackgroundColor(parent->getBackgroundColor());
 
+    setWindowHeight(parent->getWindowHeight());
+    setWindowWidth(parent->getWindowWidth());
+
     mFont = ZFontStore::getInstance().getDefaultResource();
     // Configure VAO/VBO for texture quads
     glGenVertexArrays(1, &VAO);
