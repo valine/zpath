@@ -464,9 +464,11 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
+    cout << "mouse" << endl;
     if (getVisibility()) {
         if (action == GLFW_PRESS) {
-
+            onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
+                    vec2(x - mMouseDownX, y - mMouseDownY), mouseDown);
             mMouseDown  = true;
             mMouseDownX = x;
             mMouseDownY = y;
@@ -479,15 +481,15 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
         } else if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
             mMiddleMouseDown = true;
         }
-
         for (auto view : mViews) {
-
             if (isMouseInBounds(view)) {
                 view->onMouseEvent(button, action, mods, x, y);
             }
 
             if (action == GLFW_RELEASE && view->mouseIsDown()) {
                 view->onMouseEvent(button, action, mods, x, y);
+                onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
+                        vec2(x - mMouseDownX, y - mMouseDownY), mouseUp);
             }
         }
     }
@@ -543,6 +545,12 @@ void ZView::onCursorPosChange(double x, double y) {
 
     mMouseX = x;
     mMouseY = y;
+
+    if (mouseIsDown()) {
+        onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
+                    vec2(x - mMouseDownX, y - mMouseDownY), mouseDrag);
+    }
+
     for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
         (*it)->onCursorPosChange(x, y);
     }
@@ -728,6 +736,10 @@ float* ZView::getVertices() {
 
 GLuint ZView::getVertexBuffer() {
     return mVertexBuffer;
+}
+
+void ZView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
+
 }
 
 

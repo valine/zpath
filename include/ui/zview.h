@@ -39,12 +39,22 @@ class ZView {
 
 		};
 
+        static const int mouseDown = 0;
+        static const int mouseDrag = 1;
+        static const int mouseUp = 2;
 		static const int fillParent = 100000;
 
 		ZView(float maxWidth, float maxHeight);
 		ZView(Bounds maxWidth, float maxHeight);
 		ZView(float maxWidth, Bounds maxHeight);
 		ZView(Bounds maxWidth, Bounds maxHeight);
+
+        // Lifecycle
+        virtual void draw();
+        void invalidate();
+        bool needsRender();
+        virtual void onCreate();
+        virtual void onExit();
 
         virtual void onWindowChange(int windowWidth, int windowHeight);
         virtual void onKeyPress(int key, int scancode, int action, int mods);
@@ -53,12 +63,7 @@ class ZView {
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
 
-        // Lifecycle
-        virtual void draw();
-        void invalidate();
-        bool needsRender();
-        virtual void onCreate();
-        virtual void onExit();
+        virtual void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state);
 
         // OpenGL shader
         virtual void setShader(ZShader *shader);

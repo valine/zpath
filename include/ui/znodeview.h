@@ -13,6 +13,15 @@ public:
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
 
     void addNode();
+
+    void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
+
+
+private:
+    vector<ZView*> mNodeViews;
+    vec2 mInitialOffset;
+    int mDragNode = 0;
+
 };
 
 
