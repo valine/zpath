@@ -464,7 +464,6 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
-    cout << "mouse" << endl;
     if (getVisibility()) {
         if (action == GLFW_PRESS) {
             onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),

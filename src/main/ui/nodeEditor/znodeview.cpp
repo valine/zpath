@@ -36,7 +36,6 @@ void ZNodeView::addNode() {
 
 void ZNodeView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute, start, delta, state);
-    cout << delta.x << " " << delta.y << endl;
     if (state == mouseDown) {
         int i = 0;
         for(ZView* node : mNodeViews) {
@@ -50,7 +49,7 @@ void ZNodeView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
         }
     } else if (state == mouseDrag && !mNodeViews.empty()) {
         mNodeViews.at(mDragNode)->setOffset((int) mInitialOffset.x + delta.x, (int) mInitialOffset.y + delta.y);
-        cout << delta.x << " " << delta.y << endl;
+        mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
         invalidate();
     } else {
 
