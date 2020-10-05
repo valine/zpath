@@ -47,14 +47,15 @@ void ZNodeView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
 
             i++;
         }
-    } else if (state == mouseDrag && !mNodeViews.empty()) {
+    } else if (state == mouseDrag && !mNodeViews.empty() && mDragNode != NO_SELECTION) {
         mNodeViews.at(mDragNode)->setOffset((int) mInitialOffset.x + delta.x, (int) mInitialOffset.y + delta.y);
         mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
         getParentView()->invalidate();
-    } else {
-
+    } else if (state == mouseUp) {
+        mDragNode = NO_SELECTION;
     }
 
+    cout << state << endl;
 
 
 }

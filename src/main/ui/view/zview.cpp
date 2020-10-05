@@ -491,6 +491,10 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                         vec2(x - mMouseDownX, y - mMouseDownY), mouseUp);
             }
         }
+        if (action == GLFW_RELEASE) {
+            onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
+                        vec2(x - mMouseDownX, y - mMouseDownY), mouseUp);
+        }
     }
 }
 

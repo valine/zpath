@@ -6,6 +6,8 @@
 #define ZPATH_ZNODEVIEW_H
 
 
+static const int NO_SELECTION = -1;
+
 #include <ui/zview.h>
 
 class ZNodeView : public ZView {
