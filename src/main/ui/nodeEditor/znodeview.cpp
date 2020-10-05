@@ -50,7 +50,7 @@ void ZNodeView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     } else if (state == mouseDrag && !mNodeViews.empty()) {
         mNodeViews.at(mDragNode)->setOffset((int) mInitialOffset.x + delta.x, (int) mInitialOffset.y + delta.y);
         mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
-        invalidate();
+        getParentView()->invalidate();
     } else {
 
     }
