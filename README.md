@@ -25,7 +25,6 @@ cmake ..
 make
 ```
 
-
 ### To build on Windows
 
 Install Visual Studio build tools
