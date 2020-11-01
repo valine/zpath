@@ -5,6 +5,7 @@
 #ifndef ZPATH_NODEVIEW_H
 #define ZPATH_NODEVIEW_H
 
+static const int SOCKET_SIZE = 8;
 using namespace std;
 #include <vector>
 #include "zview.h"

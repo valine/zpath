@@ -25,14 +25,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 void ZNodeEditor::addNode() {
 
     auto* node = new NodeView(100, 150, this);
-    node->setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
-    node->setOffset(10, 10);
-
-    ZLabel* nodeLabel = new ZLabel("Node", node);
-
-    getParentView()->invalidate();
     mNodeViews.push_back(node);
-
 }
 
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
