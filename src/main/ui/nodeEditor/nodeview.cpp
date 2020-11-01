@@ -14,9 +14,6 @@ NodeView::NodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWi
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
     setOffset(10, 10);
 
-
-
-
     // Add input sockets
     for (int i = 0; i < 3; i++) {
         float yOffset = 50;
@@ -25,6 +22,7 @@ NodeView::NodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWi
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setBackgroundColor(vec4(1, 0.611956, 0.052950, 1));
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
+        mSocketsIn.push_back(socket);
     }
 
     // Add output sockets
@@ -35,7 +33,14 @@ NodeView::NodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWi
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setBackgroundColor(vec4(1, 0.611956, 0.052950, 1));
         socket->setOffset(maxWidth - SOCKET_SIZE, yOffset + i * (SOCKET_SIZE + margin));
+        mSocketsOut.push_back(socket);
     }
 
     parent->invalidate();
 }
+
+void NodeView::getClostestSocket() {
+
+}
+
+

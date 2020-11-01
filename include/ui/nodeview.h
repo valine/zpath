@@ -42,9 +42,13 @@ public:
     vector<NodeView*> mInputs;
     Type mType;
 
+    vector<ZView*> mSocketsIn;
+    vector<ZView*> mSocketsOut;
+
 private:
 
 
+    void getClostestSocket();
 };
 
 
