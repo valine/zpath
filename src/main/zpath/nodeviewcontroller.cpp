@@ -4,7 +4,7 @@
 
 #include <ui/zlineview.h>
 #include <ui/zdropdown.h>
-#include <ui/znodeview.h>
+#include <ui/znodeeditor.h>
 #include "zpath/nodeviewcontroller.h"
 
 /**
@@ -22,7 +22,7 @@ void NodeViewController::onCreate() {
         // Do stuff here
     });
 
-    ZNodeView* nodeView = new ZNodeView(fillParent, fillParent, this);
+    ZNodeEditor* nodeView = new ZNodeEditor(fillParent, fillParent, this);
 
     ZLineView* lineView = new ZLineView(vec2(0, 0),vec2(50, 100), this);
 

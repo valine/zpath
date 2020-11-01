@@ -2,17 +2,18 @@
 // Created by lukas on 8/4/20.
 //
 
-#ifndef ZPATH_ZNODEVIEW_H
-#define ZPATH_ZNODEVIEW_H
+#ifndef ZPATH_ZNODEEDITOR_H
+#define ZPATH_ZNODEEDITOR_H
 
 
 static const int NO_SELECTION = -1;
 
 #include <ui/zview.h>
+#include "nodeview.h"
 
-class ZNodeView : public ZView {
+class ZNodeEditor : public ZView {
 public:
-    ZNodeView(float maxWidth, float maxHeight, ZView *parent);
+    ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
 
     void addNode();
 
@@ -20,11 +21,11 @@ public:
 
 
 private:
-    vector<ZView*> mNodeViews;
+    vector<NodeView*> mNodeViews;
     vec2 mInitialOffset;
     int mDragNode = 0;
 
 };
 
 
-#endif //ZPATH_ZNODEVIEW_H
+#endif //ZPATH_ZNODEEDITOR_H
