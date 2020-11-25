@@ -16,6 +16,12 @@ void ZLineView::init() {
     setDrawWire(true);
 }
 
+void ZLineView::setPoints(vec2 point1, vec2 point2) {
+    mPoint1 = point1;
+    mPoint2 = point2;
+    computeBounds();
+}
+
 void ZLineView::computeBounds() {
     ZView::computeBounds();
     calculateLeft();

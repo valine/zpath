@@ -7,7 +7,7 @@
 
 
 static const int NO_SELECTION = -1;
-
+static const int SOCKET_DRAG = -2;
 #include <ui/zview.h>
 #include "nodeview.h"
 
@@ -21,10 +21,12 @@ public:
 
 
 private:
-    vector<NodeView*> mNodeViews;
+    vector<ZNodeView*> mNodeViews;
+    ZLineView* mTmpLine;
     vec2 mInitialOffset;
     int mDragNode = 0;
 
+    void socketMouseDown(ZView *inSocket);
 };
 
 

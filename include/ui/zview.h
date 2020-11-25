@@ -88,6 +88,7 @@ class ZView {
         int getMarginRight();
         int getMarginBottom();
         vec4 getMargin();
+        vec2 getCenter();
 
         // Offset
         void setOffset(double x, double y);
@@ -241,6 +242,7 @@ class ZView {
         int mBottom = 0;
 
         bool mDrawWire = false;
+
 
 
 };

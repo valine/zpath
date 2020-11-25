@@ -18,10 +18,12 @@ public:
 
     void init();
     void computeBounds();
-
+    void setPoints(vec2 point1, vec2 point2);
 private:
     vec2 mPoint1;
     vec2 mPoint2;
+
+
 };
 
 

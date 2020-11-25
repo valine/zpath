@@ -5,17 +5,17 @@
 #ifndef ZPATH_NODEVIEW_H
 #define ZPATH_NODEVIEW_H
 
-static const int SOCKET_SIZE = 8;
+static const int SOCKET_SIZE = 12;
 using namespace std;
 #include <vector>
 #include "zview.h"
 
-class NodeView : public ZView {
+class ZNodeView : public ZView {
 
 
 public:
 
-    NodeView(float maxWidth, float maxHeight, ZView *parent);
+    ZNodeView(float maxWidth, float maxHeight, ZView *parent);
 
 
     enum Type {
@@ -39,13 +39,16 @@ public:
         CROSS
     };
 
-    vector<NodeView*> mInputs;
+    vector<ZNodeView*> mInputs;
     Type mType;
 
+
+
+    vector<ZView*> getSocketsIn();
+    vector<ZView*> getSocketsOut();
+private:
     vector<ZView*> mSocketsIn;
     vector<ZView*> mSocketsOut;
-
-private:
 
 
     void getClostestSocket();

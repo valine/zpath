@@ -5,9 +5,7 @@
 #include <ui/zlabel.h>
 #include "ui/nodeview.h"
 
-NodeView::NodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
-
-
+ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
     ZLabel* nodeLabel = new ZLabel("Node", this);
 
@@ -39,8 +37,16 @@ NodeView::NodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWi
     parent->invalidate();
 }
 
-void NodeView::getClostestSocket() {
+void ZNodeView::getClostestSocket() {
 
+}
+
+vector<ZView *> ZNodeView::getSocketsIn() {
+    return mSocketsIn;
+}
+
+vector<ZView *> ZNodeView::getSocketsOut() {
+    return mSocketsOut;
 }
 
 

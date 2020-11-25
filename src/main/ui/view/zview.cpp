@@ -302,6 +302,11 @@ void ZView::invalidate() {
     //glfwPostEmptyEvent();
 }
 
+vec2 ZView::getCenter() {
+    return vec2(((getRight() - getLeft()) / 2.0) + getLeft(),
+            ((getBottom() - getTop()) / 2.0) + getTop());
+}
+
 void ZView::setBackgroundImage(ZTexture* background) {
     mBackgroundImage = background;
     setBackgroundColor(vec4(1));
