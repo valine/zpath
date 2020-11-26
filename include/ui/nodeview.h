@@ -99,11 +99,13 @@ public:
     vector<ZNodeView*> mInputs;
     vector<ZNodeView*> mOutputs;
 
-    vector<int> mInputIndices;
-    vector<int> mOutputIndices;
+    vector<vector<pair<ZNodeView*, int>>> mInputIndices;
+    vector<vector<pair<ZNodeView*, int>>> mOutputIndices;
 
     vector<ZView*> getSocketsIn();
     vector<ZView*> getSocketsOut();
+
+    virtual void onMouseEvent(int button, int action, int mods, int x, int y) override;
 private:
     vector<ZView*> mSocketsIn;
     vector<ZView*> mSocketsOut;

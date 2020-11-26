@@ -30,7 +30,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 void ZNodeEditor::addNode() {
     auto* node = new ZNodeView(100, 150, this);
     mNodeViews.push_back(node);
-    node->setType(ZNodeView::ADD);
+   // node->setType(ZNodeView::ADD);
 }
 
 void ZNodeEditor::updateLines() {
@@ -43,11 +43,13 @@ void ZNodeEditor::updateLines() {
         int outputIndex = 0;
         for (ZNodeView* nextNode : node->mOutputs) {
             if (nextNode != nullptr) {
-                int inputIndex = node->mOutputIndices.at(outputIndex);
-                ZLineView* line = getLine(lineIndex++);
-                line->setPoints(node->getSocketsOut().at(outputIndex)->getCenter(),
-                        nextNode->getSocketsIn().at(inputIndex)->getCenter());
-                line->setVisibility(true);
+
+                for (pair<ZNodeView*, int> inputIndex : node->mOutputIndices.at(outputIndex)) {
+                    ZLineView* line = getLine(lineIndex++);
+                    line->setPoints(node->getSocketsOut().at(outputIndex)->getCenter(),
+                                    inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter());
+                    line->setVisibility(true);
+                }
             }
             outputIndex++;
         }
@@ -57,7 +59,7 @@ void ZNodeEditor::updateLines() {
 }
 
 ZLineView* ZNodeEditor::getLine(int index) {
-    if (mLineBucket.size() >= index + 2) {
+    if (mLineBucket.size() >= index + 1) {
         return mLineBucket.at(index);
     } else {
         ZLineView* line = new ZLineView(vec2(0), vec2(0), this);
@@ -71,7 +73,7 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
     if (state == mouseDown) {
         onMouseDown();
     } else if (state == mouseDrag) {
-        onMouseDrag(absolute, delta);
+        onMouseMove(absolute, delta);
     } else if (state == mouseUp) {
         onMouseUp();
     }
@@ -115,7 +117,7 @@ void ZNodeEditor::onMouseDown() {
     }
 }
 
-void ZNodeEditor::onMouseDrag(const vec2 &absolute, const vec2 &delta) {
+void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
     if (!mNodeViews.empty() && mDragNode != NO_SELECTION) {
         if (isSocketDrag()) {
             mTmpLine->setVisibility(true);
@@ -145,8 +147,8 @@ void ZNodeEditor::onMouseUp() {
                     targetNode->mOutputs.at(socketOutIndex) = activeNode;
                     activeNode->mInputs.at(mDragSocket) = targetNode;
 
-                    targetNode->mOutputIndices.at(socketOutIndex) = mDragSocket;
-                    activeNode->mInputIndices.at(mDragSocket) = socketOutIndex;
+                    targetNode->mOutputIndices.at(socketOutIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
+                    activeNode->mInputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketOutIndex));
                 }
                 break;
             case SOCKET_DRAG_OUT:
@@ -154,8 +156,9 @@ void ZNodeEditor::onMouseUp() {
                     targetNode->mInputs.at(socketInIndex) = activeNode;
                     activeNode->mOutputs.at(mDragSocket) = targetNode;
 
-                    targetNode->mInputIndices.at(socketInIndex) = mDragSocket;
-                    activeNode->mOutputIndices.at(mDragSocket) = socketInIndex;
+
+                    targetNode->mInputIndices.at(socketInIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
+                    activeNode->mOutputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketInIndex));
                 }
                 break;
             case NO_SELECTION:

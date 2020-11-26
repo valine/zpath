@@ -43,7 +43,7 @@ private:
 
     void onMouseUp();
 
-    void onMouseDrag(const vec2 &absolute, const vec2 &delta);
+    void onMouseMove(const vec2 &absolute, const vec2 &delta);
 
     void onMouseDown();
 };

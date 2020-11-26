@@ -37,8 +37,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mInputs = vector<ZNodeView*>(MAX_INPUT_COUNT, nullptr);
     mOutputs = vector<ZNodeView*>(MAX_OUTPUT_COUNT, nullptr);
 
-    mInputIndices = vector<int>(MAX_INPUT_COUNT, -1);
-    mOutputIndices = vector<int>(MAX_OUTPUT_COUNT, -1);
+    mInputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_INPUT_COUNT, vector<pair<ZNodeView*, int>>());
+    mOutputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_OUTPUT_COUNT,  vector<pair<ZNodeView*, int>>());
 
     parent->invalidate();
 }
@@ -68,6 +68,10 @@ vector<ZView *> ZNodeView::getSocketsIn() {
 
 vector<ZView *> ZNodeView::getSocketsOut() {
     return mSocketsOut;
+}
+
+void ZNodeView::onMouseEvent(int button, int action, int mods, int x, int y) {
+
 }
 
 
