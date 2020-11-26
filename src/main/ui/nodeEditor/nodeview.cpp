@@ -13,7 +13,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     setOffset(10, 10);
 
     // Add input sockets
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         float yOffset = 50;
         float margin = 10;
 
@@ -24,7 +24,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     }
 
     // Add output sockets
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
         float yOffset = 50;
         float margin = 10;
 
@@ -33,6 +33,12 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
         socket->setOffset(maxWidth - SOCKET_SIZE, yOffset + i * (SOCKET_SIZE + margin));
         mSocketsOut.push_back(socket);
     }
+
+    mInputs = vector<ZNodeView*>(MAX_INPUT_COUNT, nullptr);
+    mOutputs = vector<ZNodeView*>(MAX_OUTPUT_COUNT, nullptr);
+
+    mInputIndices = vector<int>(MAX_INPUT_COUNT, -1);
+    mOutputIndices = vector<int>(MAX_OUTPUT_COUNT, -1);
 
     parent->invalidate();
 }

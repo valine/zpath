@@ -6,6 +6,8 @@
 #define ZPATH_NODEVIEW_H
 
 static const int SOCKET_SIZE = 12;
+static const int MAX_INPUT_COUNT = 5;
+static const int MAX_OUTPUT_COUNT = 5;
 using namespace std;
 #include <vector>
 #include "zview.h"
@@ -40,8 +42,11 @@ public:
     };
 
     vector<ZNodeView*> mInputs;
-    Type mType;
+    vector<ZNodeView*> mOutputs;
 
+    vector<int> mInputIndices;
+    vector<int> mOutputIndices;
+    Type mType;
 
 
     vector<ZView*> getSocketsIn();
@@ -50,8 +55,9 @@ private:
     vector<ZView*> mSocketsIn;
     vector<ZView*> mSocketsOut;
 
-
     void getClostestSocket();
+
+    void getLine(int index);
 };
 
 

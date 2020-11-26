@@ -485,7 +485,11 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
         } else if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
             mMiddleMouseDown = true;
         }
-        for (auto view : mViews) {
+        for (ZView* view : mViews) {
+            if (view == nullptr) {
+                return;
+            }
+
             if (isMouseInBounds(view)) {
                 view->onMouseEvent(button, action, mods, x, y);
             }

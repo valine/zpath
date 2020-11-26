@@ -7,7 +7,9 @@
 
 
 static const int NO_SELECTION = -1;
-static const int SOCKET_DRAG = -2;
+static const int SOCKET_DRAG_IN = -2;
+static const int SOCKET_DRAG_OUT = -3;
+static const int NODE_DRAG = -4;
 #include <ui/zview.h>
 #include "nodeview.h"
 
@@ -25,8 +27,19 @@ private:
     ZLineView* mTmpLine;
     vec2 mInitialOffset;
     int mDragNode = 0;
+    int mDragType = NO_SELECTION;
+    int mDragSocket = NO_SELECTION;
+    vector<ZLineView*> mLineBucket;
 
-    void socketMouseDown(ZView *inSocket);
+    bool isSocketDrag();
+
+    int getMouseOverNode();
+    int getMouseOverOutSocket(ZNodeView *node);
+    int getMouseOverInSocket(ZNodeView *node);
+
+    void updateLines();
+
+    ZLineView * getLine(int index);
 };
 
 
