@@ -10,6 +10,9 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mNameLabel = new ZLabel("Node", this);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
 
+    mOutputLabel = new ZLabel("1.0", this);
+    mOutputLabel->setOffset(vec2(30, 30));
+
     float yOffset = 30;
     float margin = 10;
     // Add input sockets

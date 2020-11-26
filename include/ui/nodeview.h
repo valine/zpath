@@ -41,8 +41,43 @@ public:
         LAST // Fake enum to allow easy iteration
     };
 
-    vector<float> compute(const vector<float>& in) {
-        switch (mType) {
+    vector<float> evaluate() {
+
+        vec2 size = getSocketCount();
+
+        // Todo: pull from UI
+        vector<float> output((int) size.y, 3);
+        if (size.x > 0) {
+            vector<float> summedInputs((int) size.x);
+
+            for (int i = 0; i < size.x; i++) {
+                const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
+
+                // Sum all inputs. This is useful for dot products.
+                float sum = 0;
+
+                if (!inputs.empty()) {
+                    for (pair<ZNodeView *, int> input : inputs) {
+                        sum += input.first->evaluate().at(input.second);
+                    }
+                } else {
+                    sum += 2.0;
+                }
+                summedInputs.at(i) = sum;
+            }
+
+            output = compute(summedInputs, mType);
+        }
+
+
+        cout << "Evaluating" << endl;
+        mOutputLabel->setText(to_string(output.at(0)));
+        return output;
+
+    }
+
+    static vector<float> compute(const vector<float>& in, Type type) {
+        switch (type) {
             case SIN:return {sin(in.at(0))};
             case COS:return {cos(in.at(0))};
             case TAN:return {tan(in.at(0))};
@@ -139,6 +174,7 @@ private:
 
     Type mType = ADD;
 
+    ZLabel* mOutputLabel;
     ZLabel* mNameLabel;
 };
 
