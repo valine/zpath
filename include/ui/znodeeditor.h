@@ -40,6 +40,12 @@ private:
     void updateLines();
 
     ZLineView * getLine(int index);
+
+    void onMouseUp();
+
+    void onMouseDrag(const vec2 &absolute, const vec2 &delta);
+
+    void onMouseDown();
 };
 
 

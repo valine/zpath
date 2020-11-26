@@ -68,41 +68,54 @@ ZLineView* ZNodeEditor::getLine(int index) {
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute, start, delta, state);
     if (state == mouseDown) {
-        int i = 0;
-        for(ZNodeView* node : mNodeViews) {
-            if (isMouseInBounds(node)) {
-                mDragNode = i;
-                int j = 0;
-                for (ZView* socket : node->getSocketsIn()) {
-                    if (isMouseInBounds(socket)) {
-                        mDragType = SOCKET_DRAG_IN;
-                        mInitialOffset = socket->getCenter();
-                        mDragSocket = j;
-                    }
-                    j++;
-                }
+        onMouseDown();
+    } else if (state == mouseDrag) {
+        onMouseDrag(absolute, delta);
+    } else if (state == mouseUp) {
+        onMouseUp();
+    }
 
-                j = 0;
-                for (ZView* socket : node->getSocketsOut()) {
-                    if (isMouseInBounds(socket)) {
-                        mDragType = SOCKET_DRAG_OUT;
-                        mInitialOffset = socket->getCenter();
-                        mDragSocket = j;
-                    }
-                    j++;
-                }
+    updateLines();
+}
 
-                if (!isSocketDrag()) {
-                    mDragType = NODE_DRAG;
-                    mInitialOffset = vec2(node->getOffsetX(), node->getOffsetY());
+void ZNodeEditor::onMouseDown() {
+    int i = 0;
+    for (ZNodeView *node : mNodeViews) {
+        if (isMouseInBounds(node)) {
+            mDragNode = i;
+            int j = 0;
+            for (ZView *socket : node->getSocketsIn()) {
+                if (isMouseInBounds(socket)) {
+                    mDragType = SOCKET_DRAG_IN;
+                    mInitialOffset = socket->getCenter();
+                    mDragSocket = j;
                 }
-               break;
+                j++;
             }
 
-            i++;
-        }
-    } else if (state == mouseDrag && !mNodeViews.empty() && mDragNode != NO_SELECTION) {
+            j = 0;
+            for (ZView *socket : node->getSocketsOut()) {
+                if (isMouseInBounds(socket)) {
+                    mDragType = SOCKET_DRAG_OUT;
+                    mInitialOffset = socket->getCenter();
+                    mDragSocket = j;
+                }
+                j++;
+            }
 
+            if (!isSocketDrag()) {
+                mDragType = NODE_DRAG;
+                mInitialOffset = vec2(node->getOffsetX(), node->getOffsetY());
+            }
+            break;
+        }
+
+        i++;
+    }
+}
+
+void ZNodeEditor::onMouseDrag(const vec2 &absolute, const vec2 &delta) {
+    if (!mNodeViews.empty() && mDragNode != NO_SELECTION) {
         if (isSocketDrag()) {
             mTmpLine->setVisibility(true);
             mTmpLine->setPoints(absolute, mInitialOffset);
@@ -113,54 +126,50 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
             mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
 
         }
-    } else if (state == mouseUp) {
+    }
+}
 
-        int nodeIndex = getMouseOverNode();
+void ZNodeEditor::onMouseUp() {
+    int nodeIndex = getMouseOverNode();
 
-        if (isSocketDrag() && nodeIndex != NO_SELECTION) {
-            int socketOutIndex = getMouseOverOutSocket(mNodeViews.at(nodeIndex));
-            int socketInIndex = getMouseOverInSocket(mNodeViews.at(nodeIndex));
+    if (isSocketDrag() && nodeIndex != NO_SELECTION) {
+        int socketOutIndex = getMouseOverOutSocket(mNodeViews.at(nodeIndex));
+        int socketInIndex = getMouseOverInSocket(mNodeViews.at(nodeIndex));
 
-            ZNodeView *activeNode = mNodeViews.at(mDragNode);
-            ZNodeView *targetNode = mNodeViews.at(nodeIndex);
-            switch (mDragType) {
-                case SOCKET_DRAG_IN:
-                    if (socketOutIndex != NO_SELECTION) {
-                        targetNode->mOutputs.at(socketOutIndex) = activeNode;
-                        activeNode->mInputs.at(mDragSocket) = targetNode;
+        ZNodeView *activeNode = mNodeViews.at(mDragNode);
+        ZNodeView *targetNode = mNodeViews.at(nodeIndex);
+        switch (mDragType) {
+            case SOCKET_DRAG_IN:
+                if (socketOutIndex != NO_SELECTION) {
+                    targetNode->mOutputs.at(socketOutIndex) = activeNode;
+                    activeNode->mInputs.at(mDragSocket) = targetNode;
 
-                        targetNode->mOutputIndices.at(socketOutIndex) = mDragSocket;
-                        activeNode->mInputIndices.at(mDragSocket) = socketOutIndex;
-                    }
-                    break;
-                case SOCKET_DRAG_OUT:
-                    if (socketInIndex != NO_SELECTION) {
-                        targetNode->mInputs.at(socketInIndex) = activeNode;
-                        activeNode->mOutputs.at(mDragSocket) = targetNode;
+                    targetNode->mOutputIndices.at(socketOutIndex) = mDragSocket;
+                    activeNode->mInputIndices.at(mDragSocket) = socketOutIndex;
+                }
+                break;
+            case SOCKET_DRAG_OUT:
+                if (socketInIndex != NO_SELECTION) {
+                    targetNode->mInputs.at(socketInIndex) = activeNode;
+                    activeNode->mOutputs.at(mDragSocket) = targetNode;
 
-                        targetNode->mInputIndices.at(socketInIndex) = mDragSocket;
-                        activeNode->mOutputIndices.at(mDragSocket) = socketInIndex;
-                    }
-                    break;
-                case NO_SELECTION:
-                    break;
-                default:
-                    break;
-            }
-
-
+                    targetNode->mInputIndices.at(socketInIndex) = mDragSocket;
+                    activeNode->mOutputIndices.at(mDragSocket) = socketInIndex;
+                }
+                break;
+            case NO_SELECTION:
+                break;
+            default:
+                break;
         }
-
-        mDragNode = NO_SELECTION;
-        mDragType = NO_SELECTION;
-        mDragSocket = NO_SELECTION;
-        mTmpLine->setVisibility(false);
 
 
     }
 
-    updateLines();
-
+    mDragNode = NO_SELECTION;
+    mDragType = NO_SELECTION;
+    mDragSocket = NO_SELECTION;
+    mTmpLine->setVisibility(false);
 }
 
 int ZNodeEditor::getMouseOverOutSocket(ZNodeView* node) {
