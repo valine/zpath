@@ -43,9 +43,24 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     parent->invalidate();
 }
 
-void ZNodeView::getClostestSocket() {
+void ZNodeView::setType(ZNodeView::Type type) {
+    mType = type;
+    vec2 socketCount = getSocketCount();
+
+    for (int i = 0; i < MAX_INPUT_COUNT; i++) {
+        if (i >= socketCount.x) {
+            mSocketsIn.at(i)->setVisibility(false);
+        }
+    }
+
+    for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
+        if (i >= socketCount.y) {
+            mSocketsOut.at(i)->setVisibility(false);
+        }
+    }
 
 }
+
 
 vector<ZView *> ZNodeView::getSocketsIn() {
     return mSocketsIn;

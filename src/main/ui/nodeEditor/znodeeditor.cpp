@@ -30,6 +30,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 void ZNodeEditor::addNode() {
     auto* node = new ZNodeView(100, 150, this);
     mNodeViews.push_back(node);
+    node->setType(ZNodeView::ADD);
 }
 
 void ZNodeEditor::updateLines() {
