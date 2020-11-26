@@ -36,7 +36,6 @@ void ZButton::draw() {
 }
 
 void ZButton::setOnClick(std::function<void(ZView* sender)> onClick) {
-
     mOnClick = onClick;
 }
 

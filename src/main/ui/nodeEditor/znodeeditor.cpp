@@ -6,6 +6,7 @@
 #include <ui/zlabel.h>
 #include <ui/zbutton.h>
 #include <ui/nodeview.h>
+#include <ui/zdropdown.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -19,19 +20,45 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Button example
     auto* addNodeBtn = new ZButton("Add node", parent);
     addNodeBtn->setOnClick([this](ZView* btn){
-        addNode();
+        addNode(ZNodeView::ADD);
     });
 
 
+    vector<string> allTypes;
+    for (int i = 0; i != ZNodeView::Type::LAST; i++) {
+        auto type = static_cast<ZNodeView::Type>(i);
+        allTypes.push_back(ZNodeView::getName(type));
+    }
+
+    ZDropDown* dropDown = new ZDropDown(100,500, allTypes, this);
+    dropDown->setOffset(500, 0);
+
+    dropDown->setOnItemChange([this](int index){
+        auto type = static_cast<ZNodeView::Type>(index);
+        addNode(type);
+    });
 
 }
 
-
-void ZNodeEditor::addNode() {
-    auto* node = new ZNodeView(100, 150, this);
+void ZNodeEditor::addNode(ZNodeView::Type type) {
+    auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, this);
     mNodeViews.push_back(node);
-   // node->setType(ZNodeView::ADD);
+
+
+    node->setOffset(mAddNodePosition);
+    
+    if (mAddNodePosition.x + NODE_WIDTH > getWidth()) {
+        mAddNodePosition.x = DEFAULT_NODE_X;
+        mAddNodePosition.y += NODE_HEIGHT + NODE_MARGIN;
+    } else {
+        mAddNodePosition.x += NODE_WIDTH + NODE_MARGIN;
+    }
+
+    node->setType(type);
+    node->onWindowChange(getWidth(), getHeight());
 }
+
+
 
 void ZNodeEditor::updateLines() {
     for (ZLineView* lineView : mLineBucket) {
@@ -127,7 +154,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
                     (int) mInitialOffset.x + delta.x,
                     (int) mInitialOffset.y + delta.y);
             mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
-
+            mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
         }
     }
 }

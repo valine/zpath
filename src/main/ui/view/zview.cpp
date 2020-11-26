@@ -241,6 +241,10 @@ void ZView::setOffset(double x, double y) {
     invalidate();
 }
 
+void ZView::setOffset(vec2 pos) {
+    setOffset(pos.x, pos.y);
+}
+
 void ZView::setYOffset(int y) {
     mOffsetY = y;
     invalidate();
@@ -752,6 +756,14 @@ GLuint ZView::getVertexBuffer() {
 
 void ZView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
 
+}
+
+int ZView::getIndexTag() {
+    return mIndexTag;
+}
+
+void ZView::setIndexTag(int index) {
+    mIndexTag = index;
 }
 
 

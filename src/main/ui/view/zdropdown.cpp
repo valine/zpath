@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 #include <ui/zscrollview.h>
 #include <utils/zsettingsstore.h>
 #include "ui/zdropdown.h"
@@ -21,9 +23,10 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     mDrawer->setVisibility(false);
     addSubView(mDrawer);
 
+    int index = 0;
     for (const string& item : items) {
         ZButton* button = new ZButton(item, mDrawer);
-
+        button->setIndexTag(index);
         button->setBackgroundColor(vec4(0,0,0,0));
         button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
         button->setClickMode(ZButton::ClickMode::upAndDown);
@@ -31,9 +34,15 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
             mDrawer->setVisibility(false);
             getParentView()->invalidate();
             mTitle->setText(item);
+
+            if (mOnItemChange != nullptr) {
+                mOnItemChange(sender->getIndexTag());
+            }
         });
 
         mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
+
+        index++;
     }
 }
 
@@ -92,5 +101,9 @@ void ZDropDown::onGlobalMouseUp() {
         mDrawer->setVisibility(false);
         getParentView()->invalidate();
     }
+}
+
+void ZDropDown::setOnItemChange(std::function<void(int item)> onItemChange) {
+    mOnItemChange = std::move(onItemChange);
 }
 

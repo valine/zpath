@@ -93,6 +93,7 @@ class ZView {
         // Offset
         void setOffset(double x, double y);
         void setYOffset(int y);
+        void setOffset(vec2 pos);
         void offsetBy(int x, int y);
         double getOffsetX();
         double getOffsetY();
@@ -156,6 +157,9 @@ class ZView {
 		float* getVertices();
 
         GLuint getVertexBuffer();
+
+        int getIndexTag();
+        void setIndexTag(int index);
 
 
 		/**
@@ -235,6 +239,7 @@ class ZView {
 		ZTexture* mBackgroundImage = nullptr;
 		vector<ZView*> mViews;
 		string mTag;
+		int mIndexTag;
 
         int mLeft = 0;
         int mRight = 0;
@@ -242,9 +247,6 @@ class ZView {
         int mBottom = 0;
 
         bool mDrawWire = false;
-
-
-
 };
 
 #endif

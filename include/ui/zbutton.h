@@ -2,8 +2,8 @@
 #define ZBUTTON_H
 
 #define BTN_LABEL_HEIGHT 19
-#define BTN_MARGIN 5
-#define BTN_OFFSET 5
+#define BTN_MARGIN 0
+#define BTN_OFFSET 0
 
 #define DEFAULT_WIDTH 140
 #define DEFAULT_HEIGHT 25

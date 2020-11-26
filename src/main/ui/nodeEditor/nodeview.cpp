@@ -7,8 +7,7 @@
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
-    ZLabel* nodeLabel = new ZLabel("Node", this);
-
+    mNameLabel = new ZLabel("Node", this);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
     setOffset(10, 10);
 
@@ -47,6 +46,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
     mType = type;
     vec2 socketCount = getSocketCount();
 
+
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         if (i >= socketCount.x) {
             mSocketsIn.at(i)->setVisibility(false);
@@ -58,7 +58,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsOut.at(i)->setVisibility(false);
         }
     }
-
+    mNameLabel->setText(getName(mType));
 }
 
 

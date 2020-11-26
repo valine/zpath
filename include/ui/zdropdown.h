@@ -24,12 +24,15 @@ public:
     void onScrollChange(double x, double y) override;
     void onGlobalMouseUp() override;
 
+
+    void setOnItemChange(std::function<void(int item)> onClick);
 	void setTitle(string title);
 private:
 	ZLabel* mTitle;
 	ZScrollView* mDrawer;
 	float mButtonHeight;
 
+    std::function<void(int item)> mOnItemChange;
 };
 
 #endif

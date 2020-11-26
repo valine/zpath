@@ -10,6 +10,13 @@ static const int NO_SELECTION = -1;
 static const int SOCKET_DRAG_IN = -2;
 static const int SOCKET_DRAG_OUT = -3;
 static const int NODE_DRAG = -4;
+
+static const int NODE_WIDTH = 80;
+static const int NODE_HEIGHT = 100;
+static const int DEFAULT_NODE_X = 10;
+static const int DEFAULT_NODE_Y = 35;
+static const int NODE_MARGIN = 10;
+
 #include <ui/zview.h>
 #include "nodeview.h"
 
@@ -17,7 +24,7 @@ class ZNodeEditor : public ZView {
 public:
     ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
 
-    void addNode();
+    void addNode(ZNodeView::Type type);
 
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
 
@@ -30,6 +37,8 @@ private:
     int mDragType = NO_SELECTION;
     int mDragSocket = NO_SELECTION;
     vector<ZLineView*> mLineBucket;
+
+    vec2 mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
 
     bool isSocketDrag();
 

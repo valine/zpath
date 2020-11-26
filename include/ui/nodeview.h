@@ -38,6 +38,7 @@ public:
         SECOND_DIFF,
         DOT,
         CROSS,
+        LAST // Fake enum to allow easy iteration
     };
 
     vector<float> compute(const vector<float>& in) {
@@ -60,6 +61,7 @@ public:
             case SECOND_DIFF:break;
             case DOT:break;
             case CROSS:break;
+            case LAST:break;
         }
 
         return vector<float>(3);
@@ -91,6 +93,31 @@ public:
             case SECOND_DIFF:return ivec2(1,0);
             case DOT:return ivec2(4,1);
             case CROSS:return ivec2(4,2);
+            case LAST:return ivec2(0,0);
+        }
+    }
+
+    static string getName(Type type) {
+        switch (type) {
+            case SIN:return "sin";
+            case COS:return "cos";
+            case TAN:return "tan";
+            case EXP:return "exp";
+            case SQRT:return "sqrt";
+            case ADD:return "+";
+            case SUBTRACT:return "-";
+            case MULTIPLY:return "*";
+            case DIVIDE:return "/";
+            case VALUE:return "constant";
+            case RANGE:return "input";
+            case FILE:return "file";
+            case FFT:return "FFT";
+            case LAPLACE:return "Laplace";
+            case FIRST_DIFF:return "1st diff";
+            case SECOND_DIFF:return "2nd diff";
+            case DOT:return "dot";
+            case CROSS:return "cross";
+            case LAST:return "none";
         }
     }
 
@@ -111,6 +138,8 @@ private:
     vector<ZView*> mSocketsOut;
 
     Type mType = ADD;
+
+    ZLabel* mNameLabel;
 };
 
 
