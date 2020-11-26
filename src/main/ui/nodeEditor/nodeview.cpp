@@ -9,13 +9,11 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     mNameLabel = new ZLabel("Node", this);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
-    setOffset(10, 10);
 
+    float yOffset = 30;
+    float margin = 10;
     // Add input sockets
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
-        float yOffset = 50;
-        float margin = 10;
-
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setBackgroundColor(vec4(1, 0.611956, 0.052950, 1));
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
@@ -24,11 +22,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     // Add output sockets
     for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
-        float yOffset = 50;
-        float margin = 10;
-
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-        socket->setBackgroundColor(vec4(1, 0.611956, 0.052950, 1));
+        socket->setBackgroundColor(vec4(0.429225, 0.213118, 0.021705, 1));
         socket->setOffset(maxWidth - SOCKET_SIZE, yOffset + i * (SOCKET_SIZE + margin));
         mSocketsOut.push_back(socket);
     }

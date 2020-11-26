@@ -12,13 +12,17 @@
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     setBackgroundColor(vec4(0.005130, 0.013321, 0.025381, 1.000000));
 
-    mTmpLine = new ZLineView(vec2(20, 20), vec2(200, 200), this);
+    mNodeContainer = new ZView(fillParent, fillParent, this);
+    mLineContainer = new ZView(fillParent, fillParent, this);
+    mHeader = new ZView(fillParent, fillParent, this);
+
+    mTmpLine = new ZLineView(vec2(20, 20), vec2(200, 200), mLineContainer);
     mTmpLine->setVisibility(false);
 
-    ZLineView* line = new ZLineView(vec2(0), vec2(0), this);
+    ZLineView* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
     // Button example
-    auto* addNodeBtn = new ZButton("Add node", parent);
+    auto* addNodeBtn = new ZButton("Add node", mHeader);
     addNodeBtn->setOnClick([this](ZView* btn){
         addNode(ZNodeView::ADD);
     });
@@ -30,8 +34,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         allTypes.push_back(ZNodeView::getName(type));
     }
 
-    ZDropDown* dropDown = new ZDropDown(100,500, allTypes, this);
+    ZDropDown* dropDown = new ZDropDown(100,500, allTypes, mHeader);
     dropDown->setOffset(500, 0);
+    dropDown->setTitle("Add node");
 
     dropDown->setOnItemChange([this](int index){
         auto type = static_cast<ZNodeView::Type>(index);
@@ -41,7 +46,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 }
 
 void ZNodeEditor::addNode(ZNodeView::Type type) {
-    auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, this);
+    auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, mNodeContainer);
     mNodeViews.push_back(node);
 
 
@@ -89,7 +94,7 @@ ZLineView* ZNodeEditor::getLine(int index) {
     if (mLineBucket.size() >= index + 1) {
         return mLineBucket.at(index);
     } else {
-        ZLineView* line = new ZLineView(vec2(0), vec2(0), this);
+        ZLineView* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
         mLineBucket.push_back(line);
         return mLineBucket.at(index);
     }
@@ -115,7 +120,7 @@ void ZNodeEditor::onMouseDown() {
             mDragNode = i;
             int j = 0;
             for (ZView *socket : node->getSocketsIn()) {
-                if (isMouseInBounds(socket)) {
+                if (isMouseInBounds(socket) && socket->getVisibility()) {
                     mDragType = SOCKET_DRAG_IN;
                     mInitialOffset = socket->getCenter();
                     mDragSocket = j;
@@ -125,7 +130,7 @@ void ZNodeEditor::onMouseDown() {
 
             j = 0;
             for (ZView *socket : node->getSocketsOut()) {
-                if (isMouseInBounds(socket)) {
+                if (isMouseInBounds(socket) && socket->getVisibility()) {
                     mDragType = SOCKET_DRAG_OUT;
                     mInitialOffset = socket->getCenter();
                     mDragSocket = j;

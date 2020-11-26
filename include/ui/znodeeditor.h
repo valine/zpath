@@ -32,12 +32,16 @@ public:
 private:
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
+
+    ZView* mHeader;
+    ZView* mLineContainer;
+    ZView* mNodeContainer;
+
     vec2 mInitialOffset;
     int mDragNode = 0;
     int mDragType = NO_SELECTION;
     int mDragSocket = NO_SELECTION;
     vector<ZLineView*> mLineBucket;
-
     vec2 mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
 
     bool isSocketDrag();
