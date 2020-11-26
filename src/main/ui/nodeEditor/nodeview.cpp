@@ -24,7 +24,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setBackgroundColor(vec4(0.429225, 0.213118, 0.021705, 1));
-        socket->setOffset(maxWidth - SOCKET_SIZE, yOffset + i * (SOCKET_SIZE + margin));
+        socket->setGravity(Gravity::topRight);
+        socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         mSocketsOut.push_back(socket);
     }
 

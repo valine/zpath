@@ -98,6 +98,9 @@ class ZView {
         double getOffsetX();
         double getOffsetY();
 
+        void resetInitialPosition();
+        vec2 getInitialPosition();
+
         int getLeft();
         int getTop();
         int getRight();
@@ -141,10 +144,12 @@ class ZView {
         string getTag();
 
         // Mouse pointer / input state
+        bool rightMouseIsDown();
 		bool mouseIsDown();
 		bool middleMouseIsDown();
 		bool shiftKeyPressed();
 		bool altKeyPressed();
+		bool anyMouseDown();
 
 		int getMouseDownX();
 		int getMouseDownY();
@@ -230,6 +235,7 @@ class ZView {
 
 		bool mMouseDown = false;
 		bool mMiddleMouseDown = false;
+		bool mRightMouseDown = false;
 
 		bool mShiftKeyPressed = false;
 		bool mAltKeyPressed = false;
@@ -247,6 +253,9 @@ class ZView {
         int mBottom = 0;
 
         bool mDrawWire = false;
+
+        vec2 mInitialPosition;
+
 };
 
 #endif

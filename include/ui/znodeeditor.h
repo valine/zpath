@@ -38,6 +38,7 @@ private:
     ZView* mNodeContainer;
 
     vec2 mInitialOffset;
+    vec2 mInitialSize;
     int mDragNode = 0;
     int mDragType = NO_SELECTION;
     int mDragSocket = NO_SELECTION;

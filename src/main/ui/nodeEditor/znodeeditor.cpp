@@ -101,6 +101,7 @@ ZLineView* ZNodeEditor::getLine(int index) {
 }
 
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
+
     ZView::onMouseDrag(absolute, start, delta, state);
     if (state == mouseDown) {
         onMouseDown();
@@ -141,10 +142,12 @@ void ZNodeEditor::onMouseDown() {
             if (!isSocketDrag()) {
                 mDragType = NODE_DRAG;
                 mInitialOffset = vec2(node->getOffsetX(), node->getOffsetY());
+                mInitialSize = vec2(node->getWidth(), node->getHeight());
             }
             break;
         }
 
+        node->resetInitialPosition();
         i++;
     }
 }
@@ -155,12 +158,34 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
             mTmpLine->setVisibility(true);
             mTmpLine->setPoints(absolute, mInitialOffset);
         } else {
-            mNodeViews.at(mDragNode)->setOffset(
-                    (int) mInitialOffset.x + delta.x,
-                    (int) mInitialOffset.y + delta.y);
+
+            if (mouseIsDown()) {
+                mNodeViews.at(mDragNode)->setOffset(
+                        (int) mInitialOffset.x + delta.x,
+                        (int) mInitialOffset.y + delta.y);
+
+
+            } else if (rightMouseIsDown()) {
+                mNodeViews.at(mDragNode)->setMaxWidth(
+                        mInitialSize.x + delta.x);
+                mNodeViews.at(mDragNode)->setMaxHeight(
+                        mInitialSize.y + delta.y);
+
+            }
             mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
             mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
         }
+    }
+
+    if (middleMouseIsDown()) {
+        for (ZNodeView* node : mNodeViews) {
+            node->setOffset(
+                    (int) node->getInitialPosition().x + delta.x,
+                    (int)  node->getInitialPosition().y + delta.y);
+            node->onWindowChange(getWidth(), getHeight());
+        }
+
+        mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
     }
 }
 
@@ -200,6 +225,10 @@ void ZNodeEditor::onMouseUp() {
         }
 
 
+    }
+
+    for (ZNodeView* node : mNodeViews) {
+        node->resetInitialPosition();
     }
 
     mDragNode = NO_SELECTION;

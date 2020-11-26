@@ -387,6 +387,10 @@ bool ZView::middleMouseIsDown() {
     return mMiddleMouseDown;
 }
 
+bool ZView::rightMouseIsDown() {
+    return mRightMouseDown;
+}
+
 bool ZView::shiftKeyPressed() {
     return mShiftKeyPressed;
 }
@@ -477,11 +481,14 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
         if (action == GLFW_PRESS) {
             onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
                     vec2(x - mMouseDownX, y - mMouseDownY), mouseDown);
-            mMouseDown  = true;
             mMouseDownX = x;
             mMouseDownY = y;
-        } else {
+        }
+
+        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
             mMouseDown = false;
+        } else if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
+            mMouseDown = true;
         }
 
         if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE) {
@@ -489,6 +496,13 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
         } else if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
             mMiddleMouseDown = true;
         }
+
+        if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
+            mRightMouseDown = false;
+        } else if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
+            mRightMouseDown = true;
+        }
+
         for (ZView* view : mViews) {
             if (view == nullptr) {
                 return;
@@ -498,7 +512,8 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                 view->onMouseEvent(button, action, mods, x, y);
             }
 
-            if (action == GLFW_RELEASE && view->mouseIsDown()) {
+
+            if (action == GLFW_RELEASE && view->anyMouseDown()) {
                 view->onMouseEvent(button, action, mods, x, y);
                 onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
                         vec2(x - mMouseDownX, y - mMouseDownY), mouseUp);
@@ -509,6 +524,10 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                         vec2(x - mMouseDownX, y - mMouseDownY), mouseUp);
         }
     }
+}
+
+bool ZView::anyMouseDown() {
+    return mouseIsDown() || middleMouseIsDown() || rightMouseIsDown();
 }
 
 bool ZView::isMouseInBounds(ZView *view) const {
@@ -562,7 +581,7 @@ void ZView::onCursorPosChange(double x, double y) {
     mMouseX = x;
     mMouseY = y;
 
-    if (mouseIsDown()) {
+    if (anyMouseDown()) {
         onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
                     vec2(x - mMouseDownX, y - mMouseDownY), mouseDrag);
     }
@@ -767,3 +786,9 @@ void ZView::setIndexTag(int index) {
 }
 
 
+void ZView::resetInitialPosition() {
+    mInitialPosition = vec2(mOffsetX, mOffsetY);
+}
+vec2 ZView::getInitialPosition() {
+    return mInitialPosition;
+}
