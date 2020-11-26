@@ -35,8 +35,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     }
 
     ZDropDown* dropDown = new ZDropDown(100,500, allTypes, mHeader);
-    dropDown->setOffset(500, 0);
-    dropDown->setTitle("Add node");
+    dropDown->setOffset(150, 0);
+    dropDown->setTitle("Node Picker");
 
     dropDown->setOnItemChange([this](int index){
         auto type = static_cast<ZNodeView::Type>(index);
