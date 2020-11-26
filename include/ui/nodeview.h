@@ -5,7 +5,7 @@
 #ifndef ZPATH_NODEVIEW_H
 #define ZPATH_NODEVIEW_H
 
-static const int SOCKET_SIZE = 12;
+static const int SOCKET_SIZE = 15;
 static const int MAX_INPUT_COUNT = 5;
 static const int MAX_OUTPUT_COUNT = 5;
 using namespace std;

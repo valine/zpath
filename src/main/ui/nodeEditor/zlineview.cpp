@@ -2,6 +2,7 @@
 // Created by lukas on 7/27/20.
 //
 
+#include <utils/zsettingsstore.h>
 #include "ui/zlineview.h"
 
 ZLineView::ZLineView(vec2 point1, vec2 point2, ZView *parent): ZView(fillParent, fillParent, parent)  {
@@ -12,7 +13,7 @@ ZLineView::ZLineView(vec2 point1, vec2 point2, ZView *parent): ZView(fillParent,
 }
 
 void ZLineView::init() {
-    setBackgroundColor(vec4(1,0,0,1));
+    setBackgroundColor(ZSettingsStore::getInstance().getHighlightColor());
     setDrawWire(true);
 }
 
