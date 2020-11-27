@@ -98,6 +98,7 @@ class ZView {
         double getOffsetX();
         double getOffsetY();
 
+        void setInitialPosition(vec2 position);
         void resetInitialPosition();
         vec2 getInitialPosition();
 
@@ -153,6 +154,8 @@ class ZView {
 
 		int getMouseDownX();
 		int getMouseDownY();
+
+		vec2 getMouseDragDelta();
 
 		double getLastX();
 		double getLastY();
@@ -239,6 +242,8 @@ class ZView {
 
 		double mLastX;
 		double mLastY;
+
+		vec2 mMouseDragDelta;
 
 		int mMouseDownX;
 		int mMouseDownY;

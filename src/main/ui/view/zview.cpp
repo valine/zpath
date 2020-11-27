@@ -586,8 +586,8 @@ void ZView::onCursorPosChange(double x, double y) {
                     vec2(x - mMouseDownX, y - mMouseDownY), mouseDrag);
     }
 
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->onCursorPosChange(x, y);
+    for (auto & mView : mViews) {
+        mView->onCursorPosChange(x, y);
     }
 }
 
@@ -774,8 +774,13 @@ GLuint ZView::getVertexBuffer() {
 }
 
 void ZView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
-
+    if (state == mouseUp) {
+        mMouseDragDelta = vec2(0);
+    } else if (state == mouseDrag || state == mouseDown) {
+        mMouseDragDelta = absolute - start;
+    }
 }
+
 
 int ZView::getIndexTag() {
     return mIndexTag;
@@ -799,4 +804,12 @@ bool ZView::isClickable() {
 
 void ZView::setClickable(bool clickable) {
     mClickable = clickable;
+}
+
+vec2 ZView::getMouseDragDelta() {
+    return mMouseDragDelta;
+}
+
+void ZView::setInitialPosition(vec2 position) {
+    mInitialPosition = position;
 }

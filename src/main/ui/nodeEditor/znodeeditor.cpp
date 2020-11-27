@@ -53,6 +53,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
 
 
     node->setOffset(mAddNodePosition);
+    node->setInitialPosition(mAddNodePosition - getMouseDragDelta());
     
     if (mAddNodePosition.x + NODE_WIDTH > getWidth()) {
         mAddNodePosition.x = DEFAULT_NODE_X;
@@ -64,6 +65,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
     node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+
 }
 
 void ZNodeEditor::updateLines() {
@@ -279,5 +281,12 @@ int ZNodeEditor::getMouseOverNode() {
 
 bool ZNodeEditor::isSocketDrag() {
     return mDragType == SOCKET_DRAG_OUT || mDragType == SOCKET_DRAG_IN;
+}
+
+void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
+    ZView::onKeyPress(key, scancode, action, mods);
+    if (key == GLFW_KEY_R && shiftKeyPressed() && action == GLFW_PRESS) {
+        addNode(mLastType);
+    }
 }
 
