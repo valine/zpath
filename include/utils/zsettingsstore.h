@@ -8,8 +8,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 using namespace glm;
+using namespace std;
 
 class ZSettingsStore {
 
@@ -32,6 +34,8 @@ public:
     vec4 getBackgroundColor();
     vec3 getHighlightTextColor();
     vec3 getBaseTextColor();
+    string getResourcePath();
+    void setResourcePath(string path);
 
     void setHighlightColor(vec4);
     void setBaseColor(vec4);
@@ -48,6 +52,7 @@ private:
     vec3 mHighlightTextColor = vec3(1.0,1.0,1.0);
     vec3 mBaseTextColor = vec3(0,0,0);
 
+    string mResourcePath;
     ZSettingsStore();
     static ZSettingsStore *mInstance;
     ZSettingsStore(ZSettingsStore const&);              // Don't Implement

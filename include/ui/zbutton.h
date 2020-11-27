@@ -44,7 +44,7 @@ public:
 	void setOnClickListener(ZOnClickListener* listener);
 	void computeBounds();
     void setOnClick(std::function<void(ZView* sender)> onClick);
-
+    void setOnClick(std::function<void()> onClick);
     void setClickMode(ClickMode clickMode);
 
     ZLabel *getLabel();
@@ -55,6 +55,9 @@ int debug;
 	ZOnClickListener* mListener = nullptr;
 	bool mWasPressed = false;
 	std::function<void(ZView* sender)> mOnClick;
+
+	// Less code to setup. Works well when you only have a single button.
+    std::function<void()> mOnClickSimple;
 
 	ClickMode mClickMode = upAndDown;
 

@@ -23,6 +23,7 @@ public:
 	ZCheckbox(float maxWidth, float maxHeight, string resources);
 
     ZCheckbox(string label, string resourcePath, ZView *parent);
+    ZCheckbox(string label, ZView *parent);
 
     void draw();
 	void onKeyPress(int key, int scancode, int action, int mods);

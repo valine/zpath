@@ -166,12 +166,25 @@ class ZView {
         int getIndexTag();
         void setIndexTag(int index);
 
+        void setClickable(bool);
+        bool isClickable();
 
 		/**
 		 * Called when mouse up anywhere on the screen
 		 */
 		virtual void onGlobalMouseUp();
         bool isMouseInBounds(ZView *view) const;
+
+        /**
+         * Color library. Useful for quickly setting a color to a view for testing
+         *
+         */
+
+        vec4 red = vec4(1,0,0,1);
+        vec4 blue = vec4(0,0,1,1);
+        vec4 green = vec4(0,1,0,1);
+        vec4 grey = vec4(0.5, 0.5, 0.5, 1.0);
+        vec4 yellow = vec4(1,1,0,1);
 	private:
 
 		void init(int width, int height);
@@ -241,6 +254,7 @@ class ZView {
 		bool mAltKeyPressed = false;
 
 		bool mVisible = true;
+		bool mClickable = true;
 
 		ZTexture* mBackgroundImage = nullptr;
 		vector<ZView*> mViews;

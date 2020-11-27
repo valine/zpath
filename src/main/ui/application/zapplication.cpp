@@ -2,6 +2,8 @@
 #include "ui/zapplication.h"
 // #include <unistd.h>
 #include <thread>
+#include <utils/zsettingsstore.h>
+
 static void error_callback(int error, const char* description) {
     cout<<description;
     fprintf(stderr, "Error: %s\n", description);
@@ -143,6 +145,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     string resourceString = viewController->getResourcePath() + "resources/fonts/roboto/Roboto-Bold.ttf";
     ZFontStore::getInstance().loadFont(resourceString);
     ZFontStore::getInstance().setDefaultResource(resourceString);
+    ZSettingsStore::getInstance().setResourcePath(viewController->getResourcePath());
 
     glEnable(GL_MULTISAMPLE);
     glfwSwapInterval(0);

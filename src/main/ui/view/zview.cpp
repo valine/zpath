@@ -157,15 +157,15 @@ void ZView::setShader(ZShader *shader) {
     mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
     mColorLocation = glGetUniformLocation(shader->mID, "uColor");
     mTexCoordLocation = glGetUniformLocation(shader->mID, "aTexCoords");
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->setShader(shader);
+    for (auto & mView : mViews) {
+        mView->setShader(shader);
     }
 }
 
 void ZView::setTextShader(ZShader *shader) {
     mTextShader = shader;
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->setTextShader(shader);
+    for (auto & mView : mViews) {
+        mView->setTextShader(shader);
     }
 }
 
@@ -176,8 +176,8 @@ ZShader* ZView::getTextShader() {
 
 void ZView::setImageShader(ZShader *shader) {
     mImageShader = shader;
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->setImageShader(shader);
+    for (auto & mView : mViews) {
+        mView->setImageShader(shader);
     }
 }
 
@@ -187,15 +187,15 @@ ZShader* ZView::getImageShader() {
 
 void ZView::setWindowWidth(int width) {
     mWindowWidth = width;
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->setWindowWidth(width);
+    for (auto & mView : mViews) {
+        mView->setWindowWidth(width);
     }
 }
 
 void ZView::setWindowHeight(int height) {
     mWindowHeight = height;
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->setWindowHeight(height);
+    for (auto & mView : mViews) {
+        mView->setWindowHeight(height);
     }
 }
 
@@ -206,8 +206,8 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
         mMaxHeight = windowHeight;
     }
 
-    for (vector<ZView*>::iterator it = mViews.begin() ; it != mViews.end(); ++it) {
-        (*it)->onWindowChange(right, bottom);
+    for (auto & mView : mViews) {
+        mView->onWindowChange(right, bottom);
     }
 
     invalidate();
@@ -477,7 +477,7 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
-    if (getVisibility()) {
+    if (getVisibility() && isClickable()) {
         if (action == GLFW_PRESS) {
             onMouseDrag(vec2(x, y), vec2(mMouseDownX, mMouseDownY),
                     vec2(x - mMouseDownX, y - mMouseDownY), mouseDown);
@@ -791,4 +791,12 @@ void ZView::resetInitialPosition() {
 }
 vec2 ZView::getInitialPosition() {
     return mInitialPosition;
+}
+
+bool ZView::isClickable() {
+    return mClickable;
+}
+
+void ZView::setClickable(bool clickable) {
+    mClickable = clickable;
 }

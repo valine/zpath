@@ -56,3 +56,11 @@ void ZSettingsStore::setHighlightTextColor(vec3 color) {
 void ZSettingsStore::setBaseTextColor(vec3 color) {
     mBaseTextColor = color;
 }
+
+string ZSettingsStore::getResourcePath() {
+    return mResourcePath;
+}
+
+void ZSettingsStore::setResourcePath(string path) {
+    mResourcePath = path;
+}

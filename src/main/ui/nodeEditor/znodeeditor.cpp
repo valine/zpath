@@ -7,6 +7,7 @@
 #include <ui/zbutton.h>
 #include <ui/nodeview.h>
 #include <ui/zdropdown.h>
+#include <ui/zcheckbox.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -24,9 +25,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Button example
     auto* addNodeBtn = new ZButton("Add node", mHeader);
     addNodeBtn->setOnClick([this](ZView* btn){
-        addNode(ZNodeView::ADD);
+        addNode(mLastType);
     });
-
 
     vector<string> allTypes;
     for (int i = 0; i != ZNodeView::Type::LAST; i++) {
@@ -46,6 +46,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 }
 
 void ZNodeEditor::addNode(ZNodeView::Type type) {
+    mLastType = type;
+
     auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, mNodeContainer);
     mNodeViews.push_back(node);
 

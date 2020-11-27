@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <utils/zsettingsstore.h>
+#include <utils/zfontstore.h>
 
 ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	ZView(maxWidth, maxHeight) {
@@ -26,6 +27,38 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	//label->setMargin(0,0,0,0);
 	//addSubView(label);
 }
+
+ZCheckbox::ZCheckbox(string label, ZView *parent)  :
+        ZView(ZView::fillParent, CB_HEIGHT) {
+
+    string resourcePath = ZSettingsStore::getInstance().getResourcePath();
+    mBox = new ZView(CB_HEIGHT, CB_HEIGHT);
+    mBox->setBackgroundColor(vec4(1));
+    addSubView(mBox);
+
+    mCheck = new ZView(CB_HEIGHT, CB_HEIGHT);
+    mCheck->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
+    mCheck->setVisibility(mIsChecked);
+    addSubView(mCheck);
+
+    mLabel = new ZLabel(ZView::fillParent, 18);
+    mLabel->setOffset(CB_HEIGHT + 10, 1);
+    mLabel->setText(label);
+    mLabel->setGravity(ZView::topLeft);
+    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    addSubView(mLabel);
+
+    setCheckBackground(new ZTexture(resourcePath +
+                                    "resources/icons/check.png"));
+    setBoxBackground(new ZTexture(resourcePath +
+                                  "resources/icons/box.png"));
+
+    setMargin(5,5,5,5);
+    setCheckColor(ZSettingsStore::getInstance().getBaseColor());
+    setVisibility(true);
+    parent->addSubView(this);
+}
+
 
 ZCheckbox::ZCheckbox(string label, string resourcePath, ZView* parent) :
 ZView(ZView::fillParent, CB_HEIGHT) {

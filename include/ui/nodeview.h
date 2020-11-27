@@ -13,8 +13,6 @@ using namespace std;
 #include "zview.h"
 
 class ZNodeView : public ZView {
-
-
 public:
 
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
@@ -42,22 +40,52 @@ public:
     };
 
     vector<float> evaluate(vector<float> x) {
-        vec2 size = getSocketCount();
-        vector<float> output = compute(x, mType);
+        ivec2 size = getSocketCount();
+        vector<float> output;
+        if (x.size() < size.x) {
+          //  mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+          //  return vector<float>();
+        } else {
+            output = compute(x, mType);
+        }
+
         if (size.x > 0) {
             vector<float> summedInputs = vector<float>((int) size.x);
+
+            // Loop over input sockets
             for (int i = 0; i < size.x; i++) {
                 const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
 
+                // If inputs are connected evaluate recursively, otherwise use the specified input.
                 if (!inputs.empty()) {
-                    // Sum all inputs. This is useful for dot products.
+                    // Summing all inputs is useful for dot products.
                     float sum = 0;
+
+                    // Loop over all inputs on a single socket
                     for (pair<ZNodeView *, int> input : inputs) {
-                        sum += input.first->evaluate(x).at(input.second);
+
+                        // It's possible a previous node on the stack has too few inputs.
+                        // When that happens display an error message.
+                        vector<float> recurOutput = input.first->evaluate(x);
+                        if (recurOutput.empty()) {
+                            mOutputLabel->setText("Bad input");
+                            return vector<float>();
+                        } else {
+                            sum += input.first->evaluate(x).at(input.second);
+                        }
                     }
                     summedInputs.at(i) = sum;
                 } else {
-                    summedInputs.at(i) = x.at(i);
+
+                    // Check that the passed input vector dimension matches
+                    // the number of input sockets on the node. If not
+                    // display an error message.
+                    if (x.size() <= size.x) {
+                        mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+                        return vector<float>();
+                    } else {
+                        summedInputs.at(i) = x.at(i);
+                    }
                 }
             }
             output = compute(summedInputs, mType);
@@ -158,8 +186,6 @@ public:
 
     vector<ZView*> getSocketsIn();
     vector<ZView*> getSocketsOut();
-
-    virtual void onMouseEvent(int button, int action, int mods, int x, int y) override;
 private:
     vector<ZView*> mSocketsIn;
     vector<ZView*> mSocketsOut;
@@ -168,8 +194,6 @@ private:
 
     ZLabel* mOutputLabel;
     ZLabel* mNameLabel;
-
-    vector<float> mDefaultInputs;
 };
 
 

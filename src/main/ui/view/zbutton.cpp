@@ -1,3 +1,5 @@
+#include <utility>
+
 #include <functional>
 #include <utility>
 #include <mesh/zpath_constants.h>
@@ -16,19 +18,16 @@ ZButton::ZButton(float maxWidth, float maxHeight) :
 }
 
 ZButton::ZButton(string label, ZView *parent) :
-    ZView(DEFAULT_WIDTH, DEFAULT_HEIGHT){
-    mLabel = new ZLabel(DEFAULT_WIDTH, BTN_LABEL_HEIGHT);
-    mLabel->setOffset(10, (DEFAULT_HEIGHT - 16) / 2);
-    mLabel->setText("Button");
+    ZView(DEFAULT_WIDTH, DEFAULT_HEIGHT, parent){
+    mLabel = new ZLabel(std::move(label), this);
+  //  mLabel->setOffset(10, (DEFAULT_HEIGHT - 16) / 2);
     mLabel->setGravity(ZView::topLeft);
     mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
-    addSubView(mLabel);
 
-    setText(std::move(label));
-    setOffset(0, BTN_OFFSET);
+   // mLabel->computeBounds();
+   // setOffset(0, BTN_OFFSET);
     setMargin(BTN_MARGIN, BTN_MARGIN, BTN_MARGIN, BTN_MARGIN);
     setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
-    parent->addSubView(this);
 }
 
 void ZButton::draw() {
@@ -67,6 +66,10 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 			if (mOnClick != nullptr) {
 			    mOnClick(this);
 			}
+
+            if (mOnClickSimple != nullptr) {
+                mOnClickSimple();
+            }
 			if (mListener != nullptr) {
 				mListener->onClick(this);
 			}
@@ -83,7 +86,7 @@ ZLabel* ZButton::getLabel(){
 }
 
 void ZButton::computeBounds() {
-	mLabel->setOffset(10, (getHeight() - 16) / 2);
+	//mLabel->setOffset(10, (getHeight() - 16) / 2);
     ZView::computeBounds();
 }
 void ZButton::onKeyPress(int key, int scancode, int action, int mods) {
@@ -91,7 +94,7 @@ void ZButton::onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void ZButton::onCursorPosChange(double x, double y)  {
-	// ZView::onCursorPosChange(x, y);
+	 ZView::onCursorPosChange(x, y);
 
 	// if (mouseIsDown()) {
 	// 	int deltaX =  x - getMouseDownX();
@@ -105,4 +108,8 @@ void ZButton::setOnClickListener(ZOnClickListener* l) {
 
 void ZButton::setClickMode(ClickMode clickMode) {
     mClickMode = clickMode;
+}
+
+void ZButton::setOnClick(std::function<void()> onClick) {
+    mOnClickSimple = onClick;
 }

@@ -3,6 +3,8 @@
 //
 
 #include <ui/zlabel.h>
+#include <ui/zbutton.h>
+#include <ui/zcheckbox.h>
 #include "ui/nodeview.h"
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -13,6 +15,9 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mOutputLabel = new ZLabel("1.0", this);
     mOutputLabel->setOffset(vec2(30, 30));
 
+    //evaluate->setOffset(vec2(0, 100));
+
+
     float yOffset = 30;
     float margin = 10;
     // Add input sockets
@@ -20,6 +25,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setBackgroundColor(vec4(1, 0.611956, 0.052950, 1));
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
+        socket->setClickable(false);
         mSocketsIn.push_back(socket);
     }
 
@@ -29,6 +35,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
         socket->setBackgroundColor(vec4(0.429225, 0.213118, 0.021705, 1));
         socket->setGravity(Gravity::topRight);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
+        socket->setClickable(false);
         mSocketsOut.push_back(socket);
     }
 
@@ -38,10 +45,17 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mInputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_INPUT_COUNT, vector<pair<ZNodeView*, int>>());
     mOutputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_OUTPUT_COUNT,  vector<pair<ZNodeView*, int>>());
 
-    // Todo: set default to zero, or something reasonable.
-    mDefaultInputs = vector<float>(MAX_INPUT_COUNT, 3.14159);
+    ZButton* evaluateBtn = new ZButton("->", this);
+    evaluateBtn->setGravity(Gravity::bottomRight);
+    evaluateBtn->setMaxWidth(30);
+    evaluateBtn->setMaxHeight(20);
+    evaluateBtn->setOnClick([this](){
+        cout << "evaluate" << endl;
+        evaluate({3.14159});
+    });
 
     parent->invalidate();
+
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
@@ -71,9 +85,3 @@ vector<ZView *> ZNodeView::getSocketsIn() {
 vector<ZView *> ZNodeView::getSocketsOut() {
     return mSocketsOut;
 }
-
-void ZNodeView::onMouseEvent(int button, int action, int mods, int x, int y) {
-
-}
-
-

@@ -52,7 +52,7 @@ slider->setOnSlide([this](ZView*, float v){
 });
 
 // Checkbox example
-auto* checkbox = new ZCheckbox("Checkbox name", getResourcePath(), parent);
+auto* checkbox = new ZCheckbox("Checkbox name", parent);
 checkbox->setOnClick([this](ZView*, bool checked){
     // Handle check change
 });
