@@ -38,6 +38,9 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mInputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_INPUT_COUNT, vector<pair<ZNodeView*, int>>());
     mOutputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_OUTPUT_COUNT,  vector<pair<ZNodeView*, int>>());
 
+    // Todo: set default to zero, or something reasonable.
+    mDefaultInputs = vector<float>(MAX_INPUT_COUNT, 3.14159);
+
     parent->invalidate();
 }
 

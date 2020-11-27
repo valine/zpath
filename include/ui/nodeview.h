@@ -41,36 +41,39 @@ public:
         LAST // Fake enum to allow easy iteration
     };
 
-    vector<float> evaluate() {
+    vector<float> evaluate(vector<float> x) {
+        cout << "Evaluating: " << x.at(0) << ", " << x.at(1) << endl;
 
+        if (x.at(0) > 3) {
+            cout << "error" << endl;
+        }
         vec2 size = getSocketCount();
+        //vector<float> summedInputs((int) size.x, x);
 
-        // Todo: pull from UI
-        vector<float> output((int) size.y, 3);
+        vector<float> output = compute(x, mType);
         if (size.x > 0) {
-            vector<float> summedInputs((int) size.x);
-
+            vector<float> summedInputs = vector<float>((int) size.x);
             for (int i = 0; i < size.x; i++) {
                 const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
 
-                // Sum all inputs. This is useful for dot products.
-                float sum = 0;
-
                 if (!inputs.empty()) {
+                    // Sum all inputs. This is useful for dot products.
+                    float sum = 0;
                     for (pair<ZNodeView *, int> input : inputs) {
-                        sum += input.first->evaluate().at(input.second);
+                        sum += input.first->evaluate(x).at(input.second);
                     }
+                    summedInputs.at(i) = sum;
                 } else {
-                    sum += 2.0;
+                    summedInputs.at(i) = x.at(i);
                 }
-                summedInputs.at(i) = sum;
+
             }
 
             output = compute(summedInputs, mType);
         }
 
 
-        cout << "Evaluating" << endl;
+
         mOutputLabel->setText(to_string(output.at(0)));
         return output;
 
@@ -176,6 +179,8 @@ private:
 
     ZLabel* mOutputLabel;
     ZLabel* mNameLabel;
+
+    vector<float> mDefaultInputs;
 };
 
 

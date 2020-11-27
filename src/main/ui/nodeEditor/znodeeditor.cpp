@@ -61,6 +61,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
 
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
+    node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 }
 
 void ZNodeEditor::updateLines() {
@@ -205,7 +206,8 @@ void ZNodeEditor::onMouseUp() {
                     targetNode->mOutputIndices.at(socketOutIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
                     activeNode->mInputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketOutIndex));
 
-                    activeNode->evaluate();
+                    activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+                    targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
                 }
                 break;
             case SOCKET_DRAG_OUT:
@@ -217,7 +219,8 @@ void ZNodeEditor::onMouseUp() {
                     targetNode->mInputIndices.at(socketInIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
                     activeNode->mOutputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketInIndex));
 
-                    activeNode->evaluate();
+                    activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+                    targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
                 }
                 break;
             case NO_SELECTION:
