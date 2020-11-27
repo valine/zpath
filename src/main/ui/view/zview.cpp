@@ -1,6 +1,8 @@
+#include <utils/zsettingsstore.h>
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
+    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
     mMaxWidth = maxWidth;
@@ -13,6 +15,7 @@ ZView::ZView(float maxWidth, float maxHeight) {
 }
 
 ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
+    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
     mMaxWidth = maxWidth;
@@ -28,6 +31,7 @@ ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
 }
 
 ZView::ZView(Bounds maxWidth, float maxHeight) {
+    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
     mMaxWidth = 10000;
     mMaxHeight = maxHeight;
     mMaxWidth = maxWidth;
@@ -40,6 +44,7 @@ ZView::ZView(Bounds maxWidth, float maxHeight) {
 }
 
 ZView::ZView(float maxWidth, Bounds maxHeight) {
+    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
     mMaxWidth = maxWidth;
     mMaxHeight = 10000;
     mMaxWidth = maxWidth;
@@ -52,6 +57,7 @@ ZView::ZView(float maxWidth, Bounds maxHeight) {
 }
 
 ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
+    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
     mMaxWidth = 10000;
     mMaxHeight = 10000;
     mMaxWidth = maxWidth;
@@ -65,6 +71,7 @@ ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
 
 void ZView::onCreate() {
     init((int) mMaxWidth, (int) mMaxHeight);
+
     computeBounds();
 }
 
@@ -107,15 +114,28 @@ void ZView::draw() {
                                   sizeof(float) * 2, (void *) 0);
 
             glLineWidth(2.0);
-            if (mDrawWire) {
+            if (mDrawWire == full) {
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
                 if (getVisibility()) {
-                    glDrawElements(GL_LINES, 10, GL_UNSIGNED_INT, nullptr);
+                    glDrawElements(GL_LINES, EDGE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+                }
+            } else if (mDrawWire == outline) {
+                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+                            mOutlineColor.r, mOutlineColor.g, mOutlineColor.b, mOutlineColor.a);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
+                if (getVisibility()) {
+                    glDrawElements(GL_LINES, OUTLINE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+                }
+                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+                            mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+                if (getVisibility()) {
+                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
                 }
             } else {
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
                 if (getVisibility()) {
-                    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
                 }
             }
 
@@ -139,11 +159,17 @@ void ZView::init(int maxWidth, int maxHeight) {
 
     glGenBuffers(1, &mFaceIndicesBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(int), &mFaceIndices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, FACE_INDEX_COUNT * sizeof(int), &mFaceIndices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &mEdgeIndicesBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 10 * sizeof(int), &mEdgeIndices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, EDGE_INDEX_COUNT * sizeof(int), &mEdgeIndices, GL_STATIC_DRAW);
+
+
+    glGenBuffers(1, &mOutlineIndicesBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, OUTLINE_INDEX_COUNT * sizeof(int), &mOutlineIndices, GL_STATIC_DRAW);
+
 
     glGenBuffers(1, &mTexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
@@ -761,7 +787,7 @@ void ZView::onGlobalMouseUp() {
     }
 }
 
-void ZView::setDrawWire(bool wire) {
+void ZView::setDrawWire(WireType wire) {
     mDrawWire = wire;
 }
 
@@ -812,4 +838,8 @@ vec2 ZView::getMouseDragDelta() {
 
 void ZView::setInitialPosition(vec2 position) {
     mInitialPosition = position;
+}
+
+void ZView::setOutlineColor(vec4 color) {
+    mOutlineColor = color;
 }

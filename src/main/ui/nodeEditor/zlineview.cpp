@@ -14,7 +14,7 @@ ZLineView::ZLineView(vec2 point1, vec2 point2, ZView *parent): ZView(fillParent,
 
 void ZLineView::init() {
     setBackgroundColor(ZSettingsStore::getInstance().getHighlightColor());
-    setDrawWire(true);
+    setDrawWire(full);
 }
 
 void ZLineView::setPoints(vec2 point1, vec2 point2) {

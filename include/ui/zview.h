@@ -1,7 +1,9 @@
 #ifndef ZVIEW_H
 #define ZVIEW_H
 
-#include <string> 
+
+
+#include <string>
 #include <iostream>
 #include "glad/glad.h"
 
@@ -34,6 +36,12 @@ class ZView {
 		    bottomLeft,
 		    bottomRight
 		};
+
+        enum WireType {
+            full,
+            outline,
+            none
+        };
 
 		enum Bounds {
 
@@ -140,6 +148,7 @@ class ZView {
         void setBackgroundColor(vec4 color);
         vec4 getBackgroundColor();
         void setBackgroundImage(ZTexture* background);
+        void setOutlineColor(vec4 color);
 
         void setTag(string);
         string getTag();
@@ -160,7 +169,7 @@ class ZView {
 		double getLastX();
 		double getLastY();
 
-		void setDrawWire(bool wire);
+		void setDrawWire(WireType wire);
 
 		float* getVertices();
 
@@ -204,18 +213,25 @@ class ZView {
 		float mMaxHeight = 0;
 
 		vec4 mBackgroundColor = vec4(0);
+		vec4 mOutlineColor = red;
 
 		GLuint mVertexBuffer = 0;
 		GLuint mTexBuffer = 0;
 		GLuint mFaceIndicesBuffer = 0;
         GLuint mEdgeIndicesBuffer = 0;
+        GLuint mOutlineIndicesBuffer = 0;
 
+        static const int OUTLINE_INDEX_COUNT = 8;
+        static const int EDGE_INDEX_COUNT = 10;
+        static const int FACE_INDEX_COUNT = 6;
 
-    float mVertices[4*4] = {0,0,0,0,  0,0,1,0,  0,0,0,1, 0,0,1,1};
+        float mVertices[4*4] = {0,0,0,0,  0,0,1,0,  0,0,0,1, 0,0,1,1};
 		float mTexCoords[2*4] = {-1,-1, -1,1, 1,-1, 1,1};
 
 		int mFaceIndices[6] = {2,1,0,1,2,3};
         int mEdgeIndices[10] = {2,1,1,0,0,1,1,2,2,3};
+
+        int mOutlineIndices[10] = {3,1, 1,0, 0,2, 2,3};
 
 		int mColorLocation;
 		int mPositionLocation;
@@ -271,7 +287,8 @@ class ZView {
         int mTop = 0;
         int mBottom = 0;
 
-        bool mDrawWire = false;
+
+        WireType mDrawWire = none;
 
         vec2 mInitialPosition;
 

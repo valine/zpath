@@ -17,6 +17,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     //evaluate->setOffset(vec2(0, 100));
 
+    setDrawWire(WireType::outline);
 
     float yOffset = 30;
     float margin = 10;
