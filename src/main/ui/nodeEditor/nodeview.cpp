@@ -5,15 +5,17 @@
 #include <ui/zlabel.h>
 #include <ui/zbutton.h>
 #include <ui/zcheckbox.h>
+#include <utils/zsettingsstore.h>
 #include "ui/nodeview.h"
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
     mNameLabel = new ZLabel("Node", this);
+    mNameLabel->setTextColor(grey);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
 
     mOutputLabel = new ZLabel("1.0", this);
-    mOutputLabel->setOffset(vec2(30, 30));
+    mOutputLabel->setOffset(vec2(30, 0));
 
     //evaluate->setOffset(vec2(0, 100));
 
@@ -48,8 +50,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     ZButton* evaluateBtn = new ZButton("->", this);
     evaluateBtn->setGravity(Gravity::bottomRight);
-    evaluateBtn->setMaxWidth(30);
-    evaluateBtn->setMaxHeight(20);
+    evaluateBtn->setMaxWidth(15);
+    evaluateBtn->setMaxHeight(15);
     evaluateBtn->setOnClick([this](){
         cout << "evaluate" << endl;
         evaluate({3.14159});
