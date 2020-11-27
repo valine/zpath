@@ -42,14 +42,7 @@ public:
     };
 
     vector<float> evaluate(vector<float> x) {
-        cout << "Evaluating: " << x.at(0) << ", " << x.at(1) << endl;
-
-        if (x.at(0) > 3) {
-            cout << "error" << endl;
-        }
         vec2 size = getSocketCount();
-        //vector<float> summedInputs((int) size.x, x);
-
         vector<float> output = compute(x, mType);
         if (size.x > 0) {
             vector<float> summedInputs = vector<float>((int) size.x);
@@ -66,13 +59,9 @@ public:
                 } else {
                     summedInputs.at(i) = x.at(i);
                 }
-
             }
-
             output = compute(summedInputs, mType);
         }
-
-
 
         mOutputLabel->setText(to_string(output.at(0)));
         return output;
