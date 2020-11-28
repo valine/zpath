@@ -187,10 +187,7 @@ void ZRadioButton::onMouseEvent(int button, int action, int mods, int x, int y) 
 	for (int i = 0; i < getSubViews().size(); i++) {
         ZView* view = getSubViews().at(i);
         if (i > 0) {
-	        bool isInViewX = view->getLeft() < x && view->getRight() > x;
-	        bool isInViewY = view->getTop() < y && view->getBottom() > y;
-
-	        if (isInViewY && isInViewX && action == GLFW_PRESS) {
+	        if (  isMouseInBounds(view) && action == GLFW_PRESS) {
 	            view->onMouseEvent(button, action, mods, x, y);
 	        }
     	}
@@ -202,7 +199,7 @@ void ZRadioButton::onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void ZRadioButton::onCursorPosChange(double x, double y)  {
-	// ZView::onCursorPosChange(x, y);
+	 ZView::onCursorPosChange(x, y);
 
 	// if (mouseIsDown()) {
 	// 	int deltaX =  x - getMouseDownX();
