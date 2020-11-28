@@ -189,6 +189,7 @@ class ZView {
         void setClickable(bool);
         bool isClickable();
 
+        vec2 getMouse();
 		/**
 		 * Called when mouse up anywhere on the screen
 		 */
@@ -303,7 +304,6 @@ class ZView {
 
         vec2 mInitialPosition;
 
-    vec2 getMouse();
 };
 
 #endif

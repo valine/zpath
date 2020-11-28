@@ -192,10 +192,13 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
     }
 
     if (middleMouseIsDown()) {
-        mNodeContainer->setInnerTranslation(vec2(
-               mAllInitialOffset.x + delta.x,
-               mAllInitialOffset.y + delta.y));
-        mNodeContainer->onWindowChange(getWidth(), getHeight());
+        for (ZNodeView* node : mNodeViews) {
+            node->setOffset(
+                    (int) node->getInitialPosition().x + delta.x,
+                    (int)  node->getInitialPosition().y + delta.y);
+            node->onWindowChange(getWidth(), getHeight());
+        }
+
         mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
     }
 }
@@ -308,16 +311,30 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
     float scaleDelta = 1.0 + (y / 5.0);
-    vec2 newScale = min(vec2(1.0), mNodeContainer->getRelativeScale() * vec2(scaleDelta));
+    vec2 originalScale = mNodeContainer->getRelativeScale();
+    vec2 newScale = min(vec2(1.0), originalScale * vec2(scaleDelta));
+
+    vec2 initialPos = mNodeContainer->getInnerTranslation();
+    vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
+
+
+    vec2 scaled = ((initialPos - origin) * newScale) + origin;
+    vec2 scaledZero = (initialPos * newScale);
+
+    vec2 offset = scaled - scaledZero;
+
     mNodeContainer->setScale(newScale);
     mLineContainer->setScale(newScale);
 
-    int offset = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
-    mNodeContainer->setYOffset(offset);
-    mNodeContainer->onWindowChange(getWindowWidth(), getWindowWidth());
+    vec2 delta = (offset) / newScale;
+
+    int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
+    mNodeContainer->setYOffset(margin);
+    mNodeContainer->setInnerTranslation(delta);
+    mNodeContainer->onWindowChange(getWidth(), getHeight());
 
     updateLines();
-
+    mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
     getParentView()->invalidate();
 }
 
