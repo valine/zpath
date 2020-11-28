@@ -130,6 +130,9 @@ class ZView {
         vec2 getScale();
         void setScale(vec2 scale);
 
+        vec2 getInnerTranslation();
+        void setInnerTranslation(vec2 scale);
+
         vec2 getRelativeScale();
 
         void setWindowWidth(int width);
@@ -256,6 +259,7 @@ class ZView {
 		double mOffsetY = 0;
 
 		vec2 mScale = vec2(1);
+		vec2 mInnerTranslation = vec2(0);
 
 		int mParentWidth = 100;
 		int mParentHeight = 100;

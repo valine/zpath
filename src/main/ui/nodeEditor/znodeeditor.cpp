@@ -15,6 +15,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
+    mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
+    
     mHeader = new ZView(fillParent, fillParent, this);
 
     mTmpLine = new ZLineView(vec2(20, 20), vec2(200, 200), mLineContainer);
@@ -51,10 +53,13 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     mNodeViews.push_back(node);
 
 
-    node->setOffset(mAddNodePosition);
-    node->setInitialPosition(mAddNodePosition - getMouseDragDelta());
+    vec2 scale = mNodeContainer->getScale();
+    vec2 tranlsation = mNodeContainer->getInnerTranslation();
+
+    node->setOffset(mAddNodePosition - tranlsation);
+    node->setInitialPosition((mAddNodePosition - tranlsation) - getMouseDragDelta());
     
-    if (mAddNodePosition.x + NODE_WIDTH > getWidth()) {
+    if (mAddNodePosition.x + NODE_WIDTH > getWidth() / scale.x) {
         mAddNodePosition.x = DEFAULT_NODE_X;
         mAddNodePosition.y += NODE_HEIGHT + NODE_MARGIN;
     } else {
@@ -156,6 +161,9 @@ void ZNodeEditor::onMouseDown() {
         node->resetInitialPosition();
         i++;
     }
+
+    mAllInitialOffset = vec2(mNodeContainer->getInnerTranslation());
+
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
@@ -184,13 +192,10 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
     }
 
     if (middleMouseIsDown()) {
-        for (ZNodeView* node : mNodeViews) {
-            node->setOffset(
-                    (int) node->getInitialPosition().x + delta.x,
-                    (int)  node->getInitialPosition().y + delta.y);
-            node->onWindowChange(getWidth(), getHeight());
-        }
-
+        mNodeContainer->setInnerTranslation(vec2(
+               mAllInitialOffset.x + delta.x,
+               mAllInitialOffset.y + delta.y));
+        mNodeContainer->onWindowChange(getWidth(), getHeight());
         mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
     }
 }
@@ -243,6 +248,8 @@ void ZNodeEditor::onMouseUp() {
         node->resetInitialPosition();
     }
 
+    mAllInitialOffset = vec2(0);
+
     mDragNode = NO_SELECTION;
     mDragType = NO_SELECTION;
     mDragSocket = NO_SELECTION;
@@ -291,6 +298,10 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_R && shiftKeyPressed() && action == GLFW_PRESS) {
         addNode(mLastType);
     }
+
+    if (key == GLFW_KEY_E && shiftKeyPressed()) {
+        addNode(mLastType);
+    }
 }
 
 void ZNodeEditor::onScrollChange(double x, double y) {
@@ -300,6 +311,13 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     vec2 newScale = min(vec2(1.0), mNodeContainer->getRelativeScale() * vec2(scaleDelta));
     mNodeContainer->setScale(newScale);
     mLineContainer->setScale(newScale);
+
+    int offset = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
+    mNodeContainer->setYOffset(offset);
+    mNodeContainer->onWindowChange(getWindowWidth(), getWindowWidth());
+
+    updateLines();
+
     getParentView()->invalidate();
 }
 

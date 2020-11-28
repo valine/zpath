@@ -652,26 +652,30 @@ int ZView::calculateLeft() {
     }
 
     int thisLeft = mOffsetX + mMarginLeft;
+    vec2 translation = getInnerTranslation();
+    float scale = getRelativeScale().x;
+    float parentLeft = mParentView->getLeft() / scale + translation.x;
+    float parentRight = mParentView->getRight() / scale + translation.x;
 
     if (mParentView == this) {
         mLeft = thisLeft;
         return mLeft;
     } else {
         if (mGravity == bottomRight || mGravity == topRight) {
-            thisLeft = mParentView->getRight() - mMarginRight - mMaxWidth - mOffsetX;
+            thisLeft = parentRight - mMarginRight - mMaxWidth - mOffsetX;
 
-            if (thisLeft - mMarginLeft < mParentView->getLeft()) {
-                thisLeft = mParentView->getLeft() + mMarginLeft;
+            if (thisLeft - mMarginLeft < parentLeft) {
+                thisLeft = parentLeft + mMarginLeft;
             }
 
             mLeft = thisLeft;
             return mLeft;
         } else {
-            if (thisLeft + mParentView->getLeft() > mParentView->getRight()) {
-                mLeft = mParentView->getRight();
+            if (thisLeft + parentLeft > parentRight) {
+                mLeft = parentRight;
                 return mLeft;
             }
-            mLeft = mParentView->getLeft() + thisLeft;
+            mLeft = parentLeft + thisLeft;
             return mLeft;
         }
     }
@@ -684,9 +688,10 @@ int ZView::calculateRight() {
 
     int thisRight = mMaxWidth + mMarginLeft + mOffsetX;
 
+    vec2 translation = getInnerTranslation();
     float scale = getRelativeScale().x;
-    float parentLeft = mParentView->getLeft();
-    float parentRight = mParentView->getRight() / scale;
+    float parentLeft = mParentView->getLeft() / scale + translation.x;
+    float parentRight = mParentView->getRight() / scale + translation.x;
 
     if (mParentView == this) {
         mRight = thisRight;
@@ -723,27 +728,31 @@ int ZView::calculateTop() {
         mParentView->calculateTop();
     }
 
-    int thisTop = mOffsetY + mMarginTop;
+    int thisTop = (int) (mOffsetY + mMarginTop);
+
+    vec2 translation = getInnerTranslation();
+    float parentTop = mParentView->getTop() / getRelativeScale().y  + translation.y;
+    float parentBottom = mParentView->getBottom() / getRelativeScale().y + translation.y;
 
     if (mParentView == this) {
         mTop = thisTop;
         return mTop;
     } else {
         if (mGravity == bottomRight || mGravity == bottomLeft) {
-            thisTop = mParentView->getBottom() - mMarginBottom - mMaxHeight - mOffsetY;
+            thisTop = (int) (parentBottom - mMarginBottom - mMaxHeight - mOffsetY);
 
-            if (thisTop - mMarginTop < mParentView->getTop()) {
-                thisTop = mParentView->getTop() + mMarginTop;
+            if (thisTop - mMarginTop < parentTop) {
+                thisTop = (int) parentTop + mMarginTop;
             }
 
             mTop = thisTop;
             return mTop;
         } else {
-            if (thisTop + mParentView->getTop() > mParentView->getBottom()) {
-                mTop = mParentView->getBottom();
+            if (thisTop + parentTop > parentBottom) {
+                mTop = (int) parentBottom;
                 return mTop;
             }
-            mTop = mParentView->getTop() + thisTop;
+            mTop = (int) parentTop + thisTop;
             return mTop;
         }
     }
@@ -754,10 +763,11 @@ int ZView::calculateBottom() {
         mParentView->calculateBottom();
     }
 
-    float parentTop = mParentView->getTop();
-    float parentBottom = mParentView->getBottom() / getRelativeScale().y;
+    vec2 translation = getInnerTranslation();
+    float parentTop = mParentView->getTop() / getRelativeScale().y  + translation.y;
+    float parentBottom = mParentView->getBottom() / getRelativeScale().y + translation.y;
 
-    int thisBottom = mMaxHeight + mMarginTop + mOffsetY;
+    int thisBottom = (int) (mMaxHeight + mMarginTop + mOffsetY);
 
     if (mParentView == this) {
         mBottom = thisBottom;
@@ -871,6 +881,13 @@ vec2 ZView::getScale() {
 
 void ZView::setScale(vec2 scale) {
     mScale = scale;
+}
+
+vec2 ZView::getInnerTranslation() {
+    return mInnerTranslation;
+}
+void ZView::setInnerTranslation(vec2 scale) {
+    mInnerTranslation = scale;
 }
 
 vec2 ZView::getRelativeScale() {

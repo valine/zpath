@@ -14,8 +14,10 @@ static const int NODE_DRAG = -4;
 static const int NODE_WIDTH = 80;
 static const int NODE_HEIGHT = 100;
 static const int DEFAULT_NODE_X = 10;
-static const int DEFAULT_NODE_Y = 35;
+static const int DEFAULT_NODE_Y = 10;
 static const int NODE_MARGIN = 10;
+
+static const int NODE_CONTAINER_OFFSET = 30;
 
 #include <ui/zview.h>
 #include "nodeview.h"
@@ -37,6 +39,7 @@ private:
     ZView* mLineContainer;
     ZView* mNodeContainer;
 
+    vec2 mAllInitialOffset = vec2(0);
     vec2 mInitialOffset;
     vec2 mInitialSize;
     int mDragNode = 0;
