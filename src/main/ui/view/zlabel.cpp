@@ -65,26 +65,33 @@ string ZLabel::getText() {
 
 void ZLabel::draw() {
 	if (needsRender()) {
-
         ZView::draw();
-        int yv = getWindowHeight() - getBottom();
-        glViewport(getLeft(), yv, getWidth(), getHeight());
-        GLfloat scale = 1.0;
+
+        vec2 viewScale = getScale();
+
+        int yv = getWindowHeight() - (getBottom() * viewScale.x);
+        glViewport(getLeft() * viewScale.x, yv, getWidth() * viewScale.x, getHeight() * viewScale.x);
+        GLfloat labelScale = 1.0;
 
         // Activate corresponding render state
         getTextShader()->use();
         glUniform3f(glGetUniformLocation(getTextShader()->mID, "textColor"), mTextColor.x, mTextColor.y, mTextColor.z);
 
+
+
+        // Update scale, useful for zooming a view out
         glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(getWidth()), 0.0f,
                                           static_cast<GLfloat>(getHeight()));
+        mat4 scaleMat = scale(projection, vec3(viewScale.x, viewScale.y, 0));
+
         glUniformMatrix4fv(glGetUniformLocation(getTextShader()->mID, "projection"), 1, GL_FALSE,
-                           glm::value_ptr(projection));
+                           glm::value_ptr(scaleMat));
 
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(VAO);
 
         GLfloat x = 0;
-        GLfloat y = 5 * scale;
+        GLfloat y = 5 * labelScale;
 
 
         // Iterate through all characters
@@ -92,11 +99,11 @@ void ZLabel::draw() {
         for (c = mText.begin(); c != mText.end(); c++) {
             Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
 
-            GLfloat xpos = x + ch.Bearing.x * scale;
-            GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+            GLfloat xpos = x + ch.Bearing.x * labelScale;
+            GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * labelScale;
 
-            GLfloat w = ch.Size.x * scale;
-            GLfloat h = ch.Size.y * scale;
+            GLfloat w = ch.Size.x * labelScale;
+            GLfloat h = ch.Size.y * labelScale;
             // Update VBO for each character
             GLfloat vertices[6][4] = {
                     {xpos,     ypos + h, 0.0, 0.0},
@@ -119,12 +126,10 @@ void ZLabel::draw() {
             glDrawArrays(GL_TRIANGLES, 0, 6);
             // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
             x += (ch.Advance >> 6) *
-                 scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+                 labelScale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
         }
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
-
-
     }
 
 }

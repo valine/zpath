@@ -66,7 +66,7 @@ class ZView {
 
         virtual void onWindowChange(int windowWidth, int windowHeight);
         virtual void onKeyPress(int key, int scancode, int action, int mods);
-        virtual void onMouseEvent(int button, int action, int mods, int x, int y);
+        virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
         virtual void onCursorPosChange(double x, double y);
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
@@ -126,6 +126,11 @@ class ZView {
 
         int getWidth();
         int getHeight();
+
+        vec2 getScale();
+        void setScale(vec2 scale);
+
+        vec2 getRelativeScale();
 
         void setWindowWidth(int width);
         void setWindowHeight(int height);
@@ -250,6 +255,8 @@ class ZView {
 		double mOffsetX = 0;
 		double mOffsetY = 0;
 
+		vec2 mScale = vec2(1);
+
 		int mParentWidth = 100;
 		int mParentHeight = 100;
 
@@ -292,6 +299,7 @@ class ZView {
 
         vec2 mInitialPosition;
 
+    vec2 getMouse();
 };
 
 #endif

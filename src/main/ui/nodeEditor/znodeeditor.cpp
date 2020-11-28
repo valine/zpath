@@ -42,7 +42,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         auto type = static_cast<ZNodeView::Type>(index);
         addNode(type);
     });
-
 }
 
 void ZNodeEditor::addNode(ZNodeView::Type type) {
@@ -65,7 +64,6 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
     node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
-
 }
 
 void ZNodeEditor::updateLines() {
@@ -104,8 +102,13 @@ ZLineView* ZNodeEditor::getLine(int index) {
 }
 
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
-
     ZView::onMouseDrag(absolute, start, delta, state);
+
+    vec2 scale = mNodeContainer->getRelativeScale();
+    absolute /= scale;
+    start /= scale;
+    delta /= scale;
+
     if (state == mouseDown) {
         onMouseDown();
     } else if (state == mouseDrag) {
@@ -288,5 +291,15 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_R && shiftKeyPressed() && action == GLFW_PRESS) {
         addNode(mLastType);
     }
+}
+
+void ZNodeEditor::onScrollChange(double x, double y) {
+    ZView::onScrollChange(x, y);
+
+    float scaleDelta = 1.0 + (y / 5.0);
+    vec2 newScale = min(vec2(1.0), mNodeContainer->getRelativeScale() * vec2(scaleDelta));
+    mNodeContainer->setScale(newScale);
+    mLineContainer->setScale(newScale);
+    getParentView()->invalidate();
 }
 

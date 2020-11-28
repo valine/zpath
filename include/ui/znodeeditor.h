@@ -61,7 +61,7 @@ private:
     void onMouseMove(const vec2 &absolute, const vec2 &delta);
 
     void onMouseDown();
-
+    virtual void onScrollChange(double x, double y);
     virtual void onKeyPress(int key, int scancode, int action, int mods);
 
 
