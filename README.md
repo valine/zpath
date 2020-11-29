@@ -41,19 +41,19 @@ msbuild ALL_BUILD.vsfx
 ```
 // Button example
 auto* button = new ZButton("Button name", parent);
-saveButton->setOnClick([this](ZView*){
+saveButton->setOnClick([this](ZView* sender){
     // Handle click
 });
 
 // Slider example
 auto* slider = new ZSlider("Slider name", min, max, defaultValue, parent);
-slider->setOnSlide([this](ZView*, float v){
+slider->setOnSlide([this](ZView* sender, float value, bool wasUserAction){
     // Handle slide
 });
 
 // Checkbox example
 auto* checkbox = new ZCheckbox("Checkbox name", parent);
-checkbox->setOnClick([this](ZView*, bool checked){
+checkbox->setOnClick([this](ZView* sender, bool checked){
     // Handle check change
 });
 ```

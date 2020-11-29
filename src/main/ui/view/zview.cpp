@@ -178,6 +178,10 @@ void ZView::onCursorPosChange(double x, double y) {
     }
 }
 
+void ZView::setMouseDown(bool isDown) {
+    mMouseDown = isDown;
+}
+
 bool ZView::isMouseInBounds(ZView *view) const {
 
     vec2 inner = view->getInnerTranslation();

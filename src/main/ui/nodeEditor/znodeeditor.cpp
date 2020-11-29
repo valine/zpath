@@ -86,6 +86,11 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
                 offset.x - difference,
                 nodeView->getOffsetY() - mMagnitudePicker->getHeight()));
         mMagnitudePicker->setVisibility(true);
+        mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
+
+        mMagnitudePicker->setValueChangedListener([this, label](float value){
+            label->setText(to_string(value));
+        });
 
     });
 }

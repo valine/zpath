@@ -171,6 +171,7 @@ class ZView {
 		bool altKeyPressed();
 		bool anyMouseDown();
 
+		void setMouseDown(bool isDown);
 		int getMouseDownX();
 		int getMouseDownY();
 
@@ -308,6 +309,7 @@ class ZView {
         WireType mDrawWire = none;
 
         vec2 mInitialPosition;
+
 
 };
 

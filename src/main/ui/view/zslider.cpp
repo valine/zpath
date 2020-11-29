@@ -129,11 +129,15 @@ void ZSlider::onKeyPress(int key, int scancode, int action, int mods) {
 void ZSlider::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
 
+
+
+	float scale = getScale().x;
+	float lastX = getLastX() * scale;
 	if (mouseIsDown() && !shiftKeyPressed() && !altKeyPressed()) {
 
-		int deltaX =  getLastX() - x;
+		int deltaX = lastX - x;
 		int currentOffset = mThumb->getOffsetX();
-		int newOffset = currentOffset - deltaX;
+		float newOffset = currentOffset - deltaX;
 
 		if (newOffset < 0) {
 			newOffset = 0;
@@ -146,7 +150,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && shiftKeyPressed() && !altKeyPressed()) {
-		double deltaX =  (x - getLastX());
+		double deltaX =  (x - lastX);
 		double currentOffset = mThumb->getOffsetX();
 		double newOffset = currentOffset + (deltaX * 0.1);
 
@@ -161,7 +165,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && !shiftKeyPressed() && altKeyPressed()) {
-		int deltaX =  getLastX() - x;
+		int deltaX =  lastX - x;
 		int currentOffset = mThumb->getOffsetX();
 		int newOffset = currentOffset - deltaX;
 
@@ -175,7 +179,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 		mThumb->setOffset(newOffset, yPosition);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && shiftKeyPressed() && altKeyPressed()) {
-		double deltaX =  (x - getLastX());
+		double deltaX =  (x - lastX);
 		double currentOffset = mThumb->getOffsetX();
 		double newOffset = currentOffset + (deltaX * 0.1);
 
