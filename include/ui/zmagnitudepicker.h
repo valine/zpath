@@ -16,6 +16,8 @@ public:
 
 private:
     void onGlobalMouseUp() override;
+
+    void onMouseEvent(int button, int action, int mods, int sx, int sy);
 };
 
 

@@ -48,7 +48,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
-
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(mNodeContainer);
     mMagnitudePicker->setVisibility(false);
@@ -61,7 +60,6 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
 
     auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, mNodeContainer);
     mNodeViews.push_back(node);
-
 
     vec2 scale = mNodeContainer->getScale();
     vec2 tranlsation = mNodeContainer->getInnerTranslation();
@@ -81,7 +79,12 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 
     node->setOnValueSelect([this](ZLabel* label, ZNodeView* nodeView){
-        mMagnitudePicker->setOffset(nodeView->getOffset());
+        vec2 offset = nodeView->getOffset() + label->getOffset();
+
+        float difference = (mMagnitudePicker->getWidth() - label->getWidth()) / 2.0;
+        mMagnitudePicker->setOffset(vec2(
+                offset.x - difference,
+                nodeView->getOffsetY() - mMagnitudePicker->getHeight()));
         mMagnitudePicker->setVisibility(true);
 
     });
@@ -128,7 +131,7 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
     if (middleMouseIsDown()) {
         mMagnitudePicker->setVisibility(false);
     }
-    
+
     vec2 scale = mNodeContainer->getRelativeScale();
     absolute /= scale;
     start /= scale;
@@ -330,11 +333,10 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
     float scaleDelta = 1.0 + (y / 5.0);
     vec2 originalScale = mNodeContainer->getRelativeScale();
-    vec2 newScale = min(vec2(1.0), originalScale * vec2(scaleDelta));
+    vec2 newScale = max(vec2(0.3), min(vec2(1.0), originalScale * vec2(scaleDelta)));
 
     vec2 initialPos = mNodeContainer->getInnerTranslation();
     vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
-
 
     vec2 scaled = ((initialPos - origin) * newScale) + origin;
     vec2 scaledZero = (initialPos * newScale);

@@ -18,8 +18,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     mOutputLabel = new ZLabel("1.0", this);
     mOutputLabel->setOffset(vec2(30, 0));
-
-    //evaluate->setOffset(vec2(0, 100));
+    mOutputLabel->setMaxWidth(80);
 
     setDrawWire(WireType::outline);
 
@@ -60,7 +59,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     });
 
     parent->invalidate();
-
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
