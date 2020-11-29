@@ -133,12 +133,14 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
     if (state == mouseDown) {
         onMouseDown();
     } else if (state == mouseDrag) {
-        onMouseMove(absolute, delta);
+        if (!mMagnitudePicker->getVisibility()) {
+            onMouseMove(absolute, delta);
+        }
     } else if (state == mouseUp) {
         onMouseUp();
     }
-
     updateLines();
+
 }
 
 void ZNodeEditor::onMouseDown() {

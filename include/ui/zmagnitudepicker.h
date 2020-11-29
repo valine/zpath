@@ -15,6 +15,7 @@ public:
     ZMagnitudePicker(ZView *parent);
 
 private:
+    void onGlobalMouseUp() override;
 };
 
 

@@ -70,6 +70,9 @@ public:
                         vector<float> recurOutput = input.first->evaluate(x);
                         if (recurOutput.empty()) {
                             mOutputLabel->setText("Bad input");
+                            setBackgroundColor(red);
+                            mOutputLabel->setBackgroundColor(red);
+                            mOutputLabel->setTextColor(white);
                             return vector<float>();
                         } else {
                             sum += input.first->evaluate(x).at(input.second);
@@ -83,6 +86,9 @@ public:
                     // display an error message.
                     if (x.size() <= size.x) {
                         mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+                        setBackgroundColor(red);
+                        mOutputLabel->setBackgroundColor(red);
+                        mOutputLabel->setTextColor(white);
                         return vector<float>();
                     } else {
                         summedInputs.at(i) = x.at(i);
@@ -93,6 +99,9 @@ public:
         }
 
         mOutputLabel->setText(to_string(output.at(0)));
+        setBackgroundColor(white);
+        mOutputLabel->setTextColor(black);
+        mOutputLabel->setBackgroundColor(white);
         return output;
 
     }

@@ -202,7 +202,8 @@ class ZView {
          * Color library. Useful for quickly setting a color to a view for testing
          *
          */
-
+        vec4 white = vec4(1,1,1,1);
+        vec4 black = vec4(0,0,0,1);
         vec4 red = vec4(1,0,0,1);
         vec4 blue = vec4(0,0,1,1);
         vec4 green = vec4(0,1,0,1);
