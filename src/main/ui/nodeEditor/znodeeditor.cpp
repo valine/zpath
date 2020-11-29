@@ -125,6 +125,10 @@ ZLineView* ZNodeEditor::getLine(int index) {
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute, start, delta, state);
 
+    if (middleMouseIsDown()) {
+        mMagnitudePicker->setVisibility(false);
+    }
+    
     vec2 scale = mNodeContainer->getRelativeScale();
     absolute /= scale;
     start /= scale;
