@@ -16,6 +16,7 @@ class ZNodeView : public ZView {
 public:
 
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
+    void setOnValueSelect(function<void(ZLabel* sender, ZNodeView* node)> onValueSelect);
 
     enum Type {
         SIN,
@@ -194,7 +195,17 @@ private:
 
     ZLabel* mOutputLabel;
     ZLabel* mNameLabel;
+
+
+    function<void(ZLabel* sender, ZNodeView* node)> mListener;
+
+
+    virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
 };
+
+
+
+
 
 
 #endif //ZPATH_NODEVIEW_H

@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by lukas on 10/4/20.
 //
@@ -53,7 +55,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     evaluateBtn->setMaxWidth(15);
     evaluateBtn->setMaxHeight(15);
     evaluateBtn->setOnClick([this](){
-        cout << "evaluate" << endl;
+        // todo: change input to something reasonable. Maybe zero, maybe pull from somewhere
         evaluate({3.14159});
     });
 
@@ -87,4 +89,20 @@ vector<ZView *> ZNodeView::getSocketsIn() {
 
 vector<ZView *> ZNodeView::getSocketsOut() {
     return mSocketsOut;
+}
+
+void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+    ZView::onMouseEvent(button, action, mods, sx, sy);
+
+    if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel)) {
+        if (mListener != nullptr) {
+            mListener(mOutputLabel, this);
+            cout << "node label clicked" << endl;
+        }
+
+    }
+}
+
+void ZNodeView::setOnValueSelect(function<void(ZLabel *sender, ZNodeView *node)> onValueSelect) {
+    mListener = std::move(onValueSelect);
 }

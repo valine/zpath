@@ -21,6 +21,7 @@ static const int NODE_CONTAINER_OFFSET = 30;
 
 #include <ui/zview.h>
 #include "nodeview.h"
+#include "zmagnitudepicker.h"
 
 class ZNodeEditor : public ZView {
 public:
@@ -34,12 +35,12 @@ public:
 private:
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
+    ZMagnitudePicker* mMagnitudePicker;
 
     ZView* mHeader;
     ZView* mLineContainer;
     ZView* mNodeContainer;
 
-    vec2 mAllInitialOffset = vec2(0);
     vec2 mInitialOffset;
     vec2 mInitialSize;
     int mDragNode = 0;
@@ -49,6 +50,7 @@ private:
     vec2 mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
 
     ZNodeView::Type mLastType = ZNodeView::Type::ADD;
+
     bool isSocketDrag();
 
     int getMouseOverNode();
@@ -64,8 +66,8 @@ private:
     void onMouseMove(const vec2 &absolute, const vec2 &delta);
 
     void onMouseDown();
-    virtual void onScrollChange(double x, double y);
-    virtual void onKeyPress(int key, int scancode, int action, int mods);
+    void onScrollChange(double x, double y) override;
+    void onKeyPress(int key, int scancode, int action, int mods) override;
 
 
 };

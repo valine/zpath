@@ -105,6 +105,8 @@ class ZView {
         void offsetBy(int x, int y);
         double getOffsetX();
         double getOffsetY();
+        vec2 getOffset();
+
 
         void setInitialPosition(vec2 position);
         void resetInitialPosition();
@@ -205,6 +207,8 @@ class ZView {
         vec4 blue = vec4(0,0,1,1);
         vec4 green = vec4(0,1,0,1);
         vec4 grey = vec4(0.5, 0.5, 0.5, 1.0);
+
+        vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
         vec4 yellow = vec4(1,1,0,1);
 	private:
 

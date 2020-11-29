@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by lukas on 8/4/20.
 //
@@ -8,6 +10,7 @@
 #include <ui/nodeview.h>
 #include <ui/zdropdown.h>
 #include <ui/zcheckbox.h>
+#include <ui/zmagnitudepicker.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -44,6 +47,13 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         auto type = static_cast<ZNodeView::Type>(index);
         addNode(type);
     });
+
+
+    // Magnitude picker work
+    mMagnitudePicker = new ZMagnitudePicker(mNodeContainer);
+    mMagnitudePicker->setVisibility(false);
+
+
 }
 
 void ZNodeEditor::addNode(ZNodeView::Type type) {
@@ -69,6 +79,12 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
     node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+
+    node->setOnValueSelect([this](ZLabel* label, ZNodeView* nodeView){
+        mMagnitudePicker->setOffset(nodeView->getOffset());
+        mMagnitudePicker->setVisibility(true);
+
+    });
 }
 
 void ZNodeEditor::updateLines() {
@@ -162,8 +178,6 @@ void ZNodeEditor::onMouseDown() {
         i++;
     }
 
-    mAllInitialOffset = vec2(mNodeContainer->getInnerTranslation());
-
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
@@ -251,8 +265,6 @@ void ZNodeEditor::onMouseUp() {
         node->resetInitialPosition();
     }
 
-    mAllInitialOffset = vec2(0);
-
     mDragNode = NO_SELECTION;
     mDragType = NO_SELECTION;
     mDragSocket = NO_SELECTION;
@@ -337,4 +349,3 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
     getParentView()->invalidate();
 }
-

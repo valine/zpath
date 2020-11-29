@@ -26,7 +26,7 @@ if (BUILD_LIB)
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
    target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
-  add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/nodeview.cpp include/ui/nodeview.h)
+  add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/nodeview.cpp include/ui/nodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h)
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
   file(COPY ${data} DESTINATION resources)
   add_custom_command(TARGET zpath PRE_BUILD

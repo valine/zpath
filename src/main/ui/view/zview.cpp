@@ -179,8 +179,10 @@ void ZView::onCursorPosChange(double x, double y) {
 }
 
 bool ZView::isMouseInBounds(ZView *view) const {
-    bool isInViewX = view->getLeft() < view->getMouse().x &&view->getRight() > view->getMouse().x;
-    bool isInViewY = view->getTop() < view->getMouse().y && view->getBottom() > view->getMouse().y;
+
+    vec2 inner = view->getInnerTranslation();
+    bool isInViewX = view->getLeft() - inner.x < view->getMouse().x  && view->getRight() - inner.x > view->getMouse().x ;
+    bool isInViewY = view->getTop() - inner.y < view->getMouse().y && view->getBottom() - inner.x > view->getMouse().y;
     return isInViewX && isInViewY;
 }
 
@@ -892,4 +894,8 @@ void ZView::setInnerTranslation(vec2 scale) {
 
 vec2 ZView::getRelativeScale() {
     return mScale;
+}
+
+vec2 ZView::getOffset() {
+    return vec2(getOffsetX(), getOffsetY());
 }
