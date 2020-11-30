@@ -17,7 +17,6 @@ ZChart::ZChart(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth,
 }
 
 void ZChart::draw() {
-    ZView::draw();
 
     int index = 0;
     for(bool invalid : mLinesInvalid) {
@@ -33,6 +32,8 @@ void ZChart::draw() {
         index++;
     }
     mRenderer->onDraw();
+    ZView::draw();
+
 }
 
 void ZChart::addLine(float *points, int size) {

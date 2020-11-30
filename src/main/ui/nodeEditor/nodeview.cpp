@@ -65,7 +65,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mChart->setBackgroundColor(grey);
     mChart->setOffset(vec2(0,10));
     mChart->addLine({0,1,2,3,4,0,1,2,3,4});
-    mChart->invalidate();
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
