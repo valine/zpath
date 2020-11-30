@@ -102,8 +102,8 @@ void ZNodeEditor::updateLines() {
     int lineIndex = 0;
     for (ZNodeView* node : mNodeViews) {
         int outputIndex = 0;
-        for (ZNodeView* nextNode : node->mOutputs) {
-            if (nextNode != nullptr) {
+        for (vector<pair<ZNodeView*, int>> nextNode : node->mOutputIndices) {
+            if (!nextNode.empty()) {
 
                 for (pair<ZNodeView*, int> inputIndex : node->mOutputIndices.at(outputIndex)) {
                     ZLineView* line = getLine(lineIndex++);
@@ -162,9 +162,25 @@ void ZNodeEditor::onMouseDown() {
             int j = 0;
             for (ZView *socket : node->getSocketsIn()) {
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
-                    mDragType = SOCKET_DRAG_IN;
-                    mInitialOffset = socket->getCenter();
-                    mDragSocket = j;
+
+                    // If nothing connected show input line
+                    if (node->mInputIndices.at(j).empty()) {
+                        mDragType = SOCKET_DRAG_IN;
+                        mInitialOffset = socket->getCenter();
+                        mDragSocket = j;
+                    } else {
+                        // Otherwise remove the last added connection
+                        pair<ZNodeView*, int> prevNode = node->mInputIndices.at(j).at(node->mInputIndices.at(j).size() - 1);
+                       int k = 0;
+                       for (pair<ZNodeView*, int> outputNode : prevNode.first->mOutputIndices.at(prevNode.second)) {
+                           if (outputNode.second == j) {
+                               remove(prevNode.first->mOutputIndices.at(prevNode.second), k);
+                               break;
+                           }
+                           k++;
+                       }
+                       node->mInputIndices.at(j).pop_back();
+                    }
                 }
                 j++;
             }
@@ -191,6 +207,15 @@ void ZNodeEditor::onMouseDown() {
         i++;
     }
 
+    updateLines();
+
+}
+
+template <typename T>
+void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){
+    typename std::vector<T>::iterator it = vec.begin();
+    std::advance(it, pos);
+    vec.erase(it);
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
@@ -243,9 +268,6 @@ void ZNodeEditor::onMouseUp() {
         switch (mDragType) {
             case SOCKET_DRAG_IN:
                 if (socketOutIndex != NO_SELECTION) {
-                    targetNode->mOutputs.at(socketOutIndex) = activeNode;
-                    activeNode->mInputs.at(mDragSocket) = targetNode;
-
                     targetNode->mOutputIndices.at(socketOutIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
                     activeNode->mInputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketOutIndex));
 
@@ -255,10 +277,6 @@ void ZNodeEditor::onMouseUp() {
                 break;
             case SOCKET_DRAG_OUT:
                 if (socketInIndex != NO_SELECTION) {
-                    targetNode->mInputs.at(socketInIndex) = activeNode;
-                    activeNode->mOutputs.at(mDragSocket) = targetNode;
-
-
                     targetNode->mInputIndices.at(socketInIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
                     activeNode->mOutputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketInIndex));
 

@@ -70,6 +70,9 @@ private:
     void onKeyPress(int key, int scancode, int action, int mods) override;
 
 
+    template<typename T>
+    void remove(vector<T> &vec, size_t pos);
+
 };
 
 

@@ -125,9 +125,6 @@ public:
 
     void setType(Type type);
 
-    vector<ZNodeView*> mInputs;
-    vector<ZNodeView*> mOutputs;
-
     vector<vector<pair<ZNodeView*, int>>> mInputIndices;
     vector<vector<pair<ZNodeView*, int>>> mOutputIndices;
 
@@ -155,7 +152,6 @@ private:
     vector<float> mConstantValue = {0.0};
 
     function<void(ZLabel* sender, ZNodeView* node)> mListener;
-
 
     virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
 
