@@ -144,6 +144,12 @@ private:
     ZLabel* mOutputLabel;
     ZLabel* mNameLabel;
 
+    /**
+     * Number of line segments on the chart
+     */
+    int mChartRes = 10;
+    vec2 mChartMin = vec2(0);
+    vec2 mChartMax = vec2(5);
     ZChart* mChart;
 
     vector<float> mConstantValue = {0.0};
@@ -152,6 +158,8 @@ private:
 
 
     virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
+
+    void updateChart();
 };
 
 

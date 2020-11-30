@@ -56,6 +56,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     evaluateBtn->setOnClick([this](){
         // todo: change input to something reasonable. Maybe zero, maybe pull from somewhere
         evaluate({0.0});
+
+        updateChart();
     });
 
     parent->invalidate();
@@ -120,13 +122,28 @@ void ZNodeView::setConstantValue(vector<float> value) {
     }
 }
 
+void ZNodeView::updateChart() {
+    vector<float> points;
+    for (int i = 0; i < mChartRes; i++) {
+        float factor = (float) i / (float) mChartRes;
+        float x = mix(mChartMin, mChartMax, factor).x;
+        vector<float> fx = evaluate({x});
+        if (fx.empty()) {
+            mChart->setVisibility(false);
+            return;
+        }
+
+        points.push_back(evaluate({x}).at(0));
+    }
+
+    mChart->updateLine(0, points);
+    mChart->setVisibility(true);
+}
+
 vector<float> ZNodeView::evaluate(vector<float> x) {
     ivec2 size = getSocketCount();
     vector<float> output;
-    if (x.size() < size.x) {
-        //  mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-        //  return vector<float>();
-    } else {
+    if (x.size() >= size.x) {
         output = compute(x, mType);
     }
 

@@ -91,10 +91,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
         mMagnitudePicker->setValueChangedListener([nodeView](float value){
             nodeView->setConstantValue({value});
         });
-
     });
-
-
 }
 
 void ZNodeEditor::updateLines() {
