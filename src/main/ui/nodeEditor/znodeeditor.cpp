@@ -173,7 +173,7 @@ void ZNodeEditor::onMouseDown() {
                         pair<ZNodeView*, int> prevNode = node->mInputIndices.at(j).at(node->mInputIndices.at(j).size() - 1);
                        int k = 0;
                        for (pair<ZNodeView*, int> outputNode : prevNode.first->mOutputIndices.at(prevNode.second)) {
-                           if (outputNode.second == j) {
+                           if (outputNode.first == node && outputNode.second == j) {
                                remove(prevNode.first->mOutputIndices.at(prevNode.second), k);
                                break;
                            }
