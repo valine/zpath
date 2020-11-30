@@ -11,6 +11,7 @@ static const int MAX_OUTPUT_COUNT = 5;
 using namespace std;
 #include <vector>
 #include "zview.h"
+#include "zchart.h"
 
 class ZNodeView : public ZView {
 public:
@@ -40,73 +41,9 @@ public:
         LAST // Fake enum to allow easy iteration
     };
 
-    vector<float> evaluate(vector<float> x) {
-        ivec2 size = getSocketCount();
-        vector<float> output;
-        if (x.size() < size.x) {
-          //  mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-          //  return vector<float>();
-        } else {
-            output = compute(x, mType);
-        }
+    vector<float> evaluate(vector<float> x);
 
-        if (size.x > 0) {
-            vector<float> summedInputs = vector<float>((int) size.x);
-
-            // Loop over input sockets
-            for (int i = 0; i < size.x; i++) {
-                const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
-
-                // If inputs are connected evaluate recursively, otherwise use the specified input.
-                if (!inputs.empty()) {
-                    // Summing all inputs is useful for dot products.
-                    float sum = 0;
-
-                    // Loop over all inputs on a single socket
-                    for (pair<ZNodeView *, int> input : inputs) {
-
-                        // It's possible a previous node on the stack has too few inputs.
-                        // When that happens display an error message.
-                        vector<float> recurOutput = input.first->evaluate(x);
-                        if (recurOutput.empty()) {
-                            mOutputLabel->setText("Bad input");
-                            setBackgroundColor(red);
-                            mOutputLabel->setBackgroundColor(red);
-                            mOutputLabel->setTextColor(white);
-                            return vector<float>();
-                        } else {
-                            sum += input.first->evaluate(x).at(input.second);
-                        }
-                    }
-                    summedInputs.at(i) = sum;
-                } else {
-
-                    // Check that the passed input vector dimension matches
-                    // the number of input sockets on the node. If not
-                    // display an error message.
-                    if (x.size() <= size.x) {
-                        mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-                        setBackgroundColor(red);
-                        mOutputLabel->setBackgroundColor(red);
-                        mOutputLabel->setTextColor(white);
-                        return vector<float>();
-                    } else {
-                        summedInputs.at(i) = x.at(i);
-                    }
-                }
-            }
-            output = compute(summedInputs, mType);
-        }
-
-        mOutputLabel->setText(to_string(output.at(0)));
-        setBackgroundColor(white);
-        mOutputLabel->setTextColor(black);
-        mOutputLabel->setBackgroundColor(white);
-        return output;
-
-    }
-
-    static vector<float> compute(const vector<float>& in, Type type) {
+    vector<float> compute(const vector<float>& in, Type type) {
         switch (type) {
             case SIN:return {sin(in.at(0))};
             case COS:return {cos(in.at(0))};
@@ -117,7 +54,7 @@ public:
             case SUBTRACT:return {in.at(0) - in.at(1)};
             case MULTIPLY:return {in.at(0) * in.at(1)};
             case DIVIDE:return {in.at(0) / in.at(1)};
-            case VALUE:return {3}; // TODO: This needs to pull from slider UI
+            case VALUE:return mConstantValue;
             case RANGE:return {in.at(0)};
             case FILE:break;
             case FFT:break;
@@ -196,6 +133,8 @@ public:
 
     vector<ZView*> getSocketsIn();
     vector<ZView*> getSocketsOut();
+
+    void setConstantValue(vector<float> value);
 private:
     vector<ZView*> mSocketsIn;
     vector<ZView*> mSocketsOut;
@@ -205,6 +144,9 @@ private:
     ZLabel* mOutputLabel;
     ZLabel* mNameLabel;
 
+    ZChart* mChart;
+
+    vector<float> mConstantValue = {0.0};
 
     function<void(ZLabel* sender, ZNodeView* node)> mListener;
 

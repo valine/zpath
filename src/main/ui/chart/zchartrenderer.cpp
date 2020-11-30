@@ -11,50 +11,54 @@ ZChartRenderer::ZChartRenderer(int width, int height) {
     mWidth = width;
     mHeight = height;
     updateBuffers();
+
+    glGenFramebuffers(1, &mFBO);
+    glGenTextures(1, &mTexBuffer);
+    glGenRenderbuffers(1, &mRBO);
+
+
+    glGenTextures(1, &mFinalTexBuffer);
+    glGenFramebuffers(1, &mFinalFBO);
+    glGenRenderbuffers(1, &mFinalRBO);
 }
 
 void ZChartRenderer::updateBuffers() {
-    glGenFramebuffers(1, &mFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
-    glGenTextures(1, &mTexBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer);
 
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, GL_RGBA, mWidth, mHeight, GL_TRUE);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glGenRenderbuffers(1, &mRBO);
     glBindRenderbuffer(GL_RENDERBUFFER, mRBO);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_DEPTH_COMPONENT, mWidth, mHeight);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mTexBuffer);
 
-
-    glGenFramebuffers(1, &mFinalFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
-
-    glGenTextures(1, &mFinalTexBuffer);
     glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWidth, mHeight, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glGenRenderbuffers(1, &mFinalRBO);
+
     glBindRenderbuffer(GL_RENDERBUFFER, mFinalRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mWidth, mHeight);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFinalTexBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mFinalTexBuffer);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void ZChartRenderer::onDraw() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     mShader->use();
 
-    mat4 projection = ortho(0.0f, (float) mWidth, (float) mMin, mMax, -10.0f, 100.0f);
+    mat4 projection = ortho(0.0f, (float) 1.0, (float) mMin, mMax, -10.0f, 100.0f);
     mShader->setMat4("uVPMatrix", projection);
 
     glViewport(0, 0, mWidth, mHeight);
@@ -92,6 +96,19 @@ unsigned int ZChartRenderer::getTexID() {
 
 unsigned int ZChartRenderer::getFrameID() {
     return mFinalFBO;
+}
+
+
+void ZChartRenderer::resetZoom(vector<float> &points) {
+    for (uint i = 0; i < points.size(); i++) {
+        if (points.at(i) > mMax) {
+            mMax = points.at(i);
+        }
+
+        if (points.at(i) < mMin) {
+            mMin = points.at(i);
+        }
+    }
 }
 
 void ZChartRenderer::addLine(float *points, int size) {
@@ -134,52 +151,6 @@ void ZChartRenderer::addLine(float *points, int size) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
     mEdges.push_back(edgeBuffer);
-}
-
-void ZChartRenderer::addLine(vector<float> points) {
-
-    vector<float> verts;
-    vector<int> edges;
-
-    resetZoom(points);
-
-    for (uint i = 0; i <  points.size(); i++) {
-        verts.push_back(((float) i / (float) ( points.size() - 1)) * mWidth);
-        verts.push_back(points.at(i));
-        verts.push_back(0);
-        verts.push_back(0);
-
-        if (i !=  points.size() - 1) {
-            edges.push_back(i);
-            edges.push_back(i + 1);
-        }
-    }
-
-    mPointCount.push_back(edges.size());
-    unsigned int lineBuffer;
-    glGenBuffers(1, &lineBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
-    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
-    mPoints.push_back(lineBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    unsigned int edgeBuffer;
-    glGenBuffers(1, &edgeBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
-    mEdges.push_back(edgeBuffer);
-}
-
-void ZChartRenderer::resetZoom(vector<float> &points) {
-    for (uint i = 0; i < points.size(); i++) {
-        if (points.at(i) > mMax) {
-            mMax = points.at(i);
-        }
-
-        if (points.at(i) < mMin) {
-            mMin = points.at(i);
-        }
-    }
 }
 
 void ZChartRenderer::updateLine(int index, float *points, int size) {
@@ -225,6 +196,40 @@ void ZChartRenderer::updateLine(int index, float *points, int size) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 }
 
+void ZChartRenderer::addLine(vector<float> points) {
+
+    vector<float> verts;
+    vector<int> edges;
+
+    resetZoom(points);
+
+    for (uint i = 0; i <  points.size(); i++) {
+        verts.push_back(((float) i / (float) ( points.size() - 1)));
+        verts.push_back(points.at(i));
+        verts.push_back(0);
+        verts.push_back(0);
+
+        if (i !=  points.size() - 1) {
+            edges.push_back(i);
+            edges.push_back(i + 1);
+        }
+    }
+
+    mPointCount.push_back(edges.size());
+    unsigned int lineBuffer;
+    glGenBuffers(1, &lineBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+    mPoints.push_back(lineBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    unsigned int edgeBuffer;
+    glGenBuffers(1, &edgeBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+    mEdges.push_back(edgeBuffer);
+}
+
 void ZChartRenderer::updateLine(int index, vector<float> points) {
     vector<float> verts;
     vector<int> edges;
@@ -248,7 +253,7 @@ void ZChartRenderer::updateLine(int index, vector<float> points) {
     }
 
     for (uint i = 0; i < points.size(); i++) {
-        verts.push_back(((float) i / (float) (points.size() - 1)) * mWidth);
+        verts.push_back(((float) i / (float) (points.size() - 1)));
         verts.push_back(points.at(i));
         verts.push_back(0);
         verts.push_back(0);
@@ -268,11 +273,11 @@ void ZChartRenderer::updateLine(int index, vector<float> points) {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 }
 
-
 void ZChartRenderer::setSize(int width, int height) {
     mWidth = width;
     mHeight = height;
-  //  updateBuffers();
+    updateBuffers();
+    onDraw();
 }
 
 float ZChartRenderer::getMin() {

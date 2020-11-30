@@ -88,11 +88,13 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
         mMagnitudePicker->setVisibility(true);
         mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
 
-        mMagnitudePicker->setValueChangedListener([this, label](float value){
-            label->setText(to_string(value));
+        mMagnitudePicker->setValueChangedListener([nodeView](float value){
+            nodeView->setConstantValue({value});
         });
 
     });
+
+
 }
 
 void ZNodeEditor::updateLines() {
@@ -215,6 +217,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
 
             }
             mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
+            mNodeViews.at(mDragNode)->invalidate();
             mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
         }
     }

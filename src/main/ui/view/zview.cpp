@@ -235,7 +235,7 @@ void ZView::draw() {
             }
 
             // Update scale, useful for zooming a view out
-            GLint vp_location = glGetUniformLocation(mShader->mID, "uVPMatrix");
+            GLint vp_location = glGetUniformLocation(shader->mID, "uVPMatrix");
             mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -10.0f, 100.0f);
 
             vec2 absoluteScale = getScale();

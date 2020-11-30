@@ -55,10 +55,17 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     evaluateBtn->setMaxHeight(15);
     evaluateBtn->setOnClick([this](){
         // todo: change input to something reasonable. Maybe zero, maybe pull from somewhere
-        evaluate({3.14159});
+        evaluate({0.0});
     });
 
     parent->invalidate();
+
+    mChart = new ZChart(fillParent, fillParent, this);
+    mChart->setMargin(vec4(20));
+    mChart->setBackgroundColor(grey);
+    mChart->setOffset(vec2(0,10));
+    mChart->addLine({0,1,2,3,4,0,1,2,3,4});
+    mChart->invalidate();
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
@@ -103,4 +110,79 @@ void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
 
 void ZNodeView::setOnValueSelect(function<void(ZLabel *sender, ZNodeView *node)> onValueSelect) {
     mListener = std::move(onValueSelect);
+}
+
+void ZNodeView::setConstantValue(vector<float> value) {
+    if (value.empty()) {
+        mOutputLabel->setText("Bad input");
+    } else {
+        mOutputLabel->setText(to_string(value.at(0)));
+        mConstantValue = value;
+    }
+}
+
+vector<float> ZNodeView::evaluate(vector<float> x) {
+    ivec2 size = getSocketCount();
+    vector<float> output;
+    if (x.size() < size.x) {
+        //  mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+        //  return vector<float>();
+    } else {
+        output = compute(x, mType);
+    }
+
+    if (size.x > 0) {
+        vector<float> summedInputs = vector<float>((int) size.x);
+
+        // Loop over input sockets
+        for (int i = 0; i < size.x; i++) {
+            const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
+
+            // If inputs are connected evaluate recursively, otherwise use the specified input.
+            if (!inputs.empty()) {
+                // Summing all inputs is useful for dot products.
+                float sum = 0;
+
+                // Loop over all inputs on a single socket
+                for (pair<ZNodeView *, int> input : inputs) {
+
+                    // It's possible a previous node on the stack has too few inputs.
+                    // When that happens display an error message.
+                    vector<float> recurOutput = input.first->evaluate(x);
+                    if (recurOutput.empty()) {
+                        mOutputLabel->setText("Bad input");
+                        setBackgroundColor(red);
+                        mOutputLabel->setBackgroundColor(red);
+                        mOutputLabel->setTextColor(white);
+                        return vector<float>();
+                    } else {
+                        sum += input.first->evaluate(x).at(input.second);
+                    }
+                }
+                summedInputs.at(i) = sum;
+            } else {
+
+                // Check that the passed input vector dimension matches
+                // the number of input sockets on the node. If not
+                // display an error message.
+                if (x.size() <= size.x) {
+                    mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+                    setBackgroundColor(red);
+                    mOutputLabel->setBackgroundColor(red);
+                    mOutputLabel->setTextColor(white);
+                    return vector<float>();
+                } else {
+                    summedInputs.at(i) = x.at(i);
+                }
+            }
+        }
+        output = compute(summedInputs, mType);
+    }
+
+    mOutputLabel->setText(to_string(output.at(0)));
+    setBackgroundColor(white);
+    mOutputLabel->setTextColor(black);
+    mOutputLabel->setBackgroundColor(white);
+    return output;
+
 }

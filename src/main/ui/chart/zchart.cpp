@@ -6,7 +6,7 @@
 #include <utils/zimageutil.h>
 #include "ui/zchart.h"
 
-ZChart::ZChart(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight) {
+ZChart::ZChart(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     mRenderer = new ZChartRenderer(maxWidth, maxHeight);
     mRenderer->onDraw();
 
@@ -14,7 +14,6 @@ ZChart::ZChart(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth,
     mBackground = new ZTexture(mRenderer->getTexID());
 
     setBackgroundImage(mBackground);
-    parent->addSubView(this);
 }
 
 void ZChart::draw() {
