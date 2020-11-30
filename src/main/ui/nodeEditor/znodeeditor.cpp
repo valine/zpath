@@ -61,6 +61,8 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, mNodeContainer);
     mNodeViews.push_back(node);
 
+    node->setIndexTag(mNodeViews.size() - 1);
+
     vec2 scale = mNodeContainer->getScale();
     vec2 tranlsation = mNodeContainer->getInnerTranslation();
 
@@ -175,6 +177,15 @@ void ZNodeEditor::onMouseDown() {
                        for (pair<ZNodeView*, int> outputNode : prevNode.first->mOutputIndices.at(prevNode.second)) {
                            if (outputNode.first == node && outputNode.second == j) {
                                remove(prevNode.first->mOutputIndices.at(prevNode.second), k);
+
+                               // Attach line to previous node after remove
+                               mDragType = SOCKET_DRAG_OUT;
+                               mInitialOffset = prevNode.first->getSocketsOut().at(prevNode.second)->getCenter();
+                               mDragSocket = prevNode.second;
+                               mDragNode = prevNode.first->getIndexTag();
+                               mTmpLine->setVisibility(true);
+
+                               mTmpLine->setPoints(getMouse(), mInitialOffset);
                                break;
                            }
                            k++;
