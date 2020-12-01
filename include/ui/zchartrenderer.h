@@ -53,6 +53,9 @@ private:
     float mMin = INT_MAX;
     float mMax = INT_MIN;
 
+    unsigned int mGridVertBuffer;
+    unsigned int mGridEdgeBuffer;
+
     // Shader code
     const string ui_vs =
 #include "shaders/chart.vs"
@@ -65,6 +68,7 @@ private:
 
     void updateBuffers();
 
+    void addGrid();
 };
 
 

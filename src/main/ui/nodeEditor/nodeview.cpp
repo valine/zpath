@@ -203,6 +203,9 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
 void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
-    mChartRes = getWidth() / 5.0;
-    updateChart();
+    int newRes = (int) (getWidth() / 2.0);
+    if (newRes != mChartRes) {
+        mChartRes = newRes;
+        updateChart();
+    }
 }

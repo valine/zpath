@@ -20,6 +20,8 @@ ZChartRenderer::ZChartRenderer(int width, int height) {
     glGenTextures(1, &mFinalTexBuffer);
     glGenFramebuffers(1, &mFinalFBO);
     glGenRenderbuffers(1, &mFinalRBO);
+
+    addGrid();
 }
 
 void ZChartRenderer::updateBuffers() {
@@ -81,6 +83,16 @@ void ZChartRenderer::onDraw() {
         glDrawElements(GL_LINES, mPointCount.at(i), GL_UNSIGNED_INT, nullptr);
 
     }
+
+    // draw grid
+    glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
+    glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+    glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                          sizeof(float) * 4, (void*) 0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
+    glDrawElements(GL_LINES, mGridEdgeBuffer, GL_UNSIGNED_INT, nullptr);
+
 
     glDepthMask(true);
 
@@ -228,6 +240,21 @@ void ZChartRenderer::addLine(vector<float> points) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
     mEdges.push_back(edgeBuffer);
+}
+
+void ZChartRenderer::addGrid() {
+    vector<float> verts = {-1e7, 0, 0, 0,
+                           1e7, 0, 0, 0,
+                           0, -1e7, 0, 0,
+                           0, 1e7, 0, 0};
+    vector<int> edges = {0, 1, 2, 3};
+    glGenBuffers(1, &mGridVertBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
+    glGenBuffers(1, &mGridEdgeBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 }
 
 void ZChartRenderer::updateLine(int index, vector<float> points) {
