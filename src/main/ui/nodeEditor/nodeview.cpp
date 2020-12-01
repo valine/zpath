@@ -124,13 +124,13 @@ void ZNodeView::updateChart() {
     for (int i = 0; i < mChartRes; i++) {
         float factor = (float) i / (float) mChartRes;
         float x = mix(mChartMin, mChartMax, factor).x;
-        vector<float> fx = evaluate({x});
+        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
         }
 
-        points.push_back(evaluate({x}).at(0));
+        points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
     }
 
     mChart->updateLine(0, points);
@@ -198,4 +198,11 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
     mOutputLabel->setBackgroundColor(white);
     return output;
 
+}
+
+void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
+    ZView::onWindowChange(windowWidth, windowHeight);
+
+    mChartRes = getWidth() / 5.0;
+    updateChart();
 }

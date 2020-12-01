@@ -79,6 +79,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
     node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+    node->updateChart();
 
     node->setOnValueSelect([this](ZLabel* label, ZNodeView* nodeView){
         vec2 offset = nodeView->getOffset() + label->getOffset();
@@ -94,6 +95,9 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
             nodeView->setConstantValue({value});
         });
     });
+
+
+
 }
 
 void ZNodeEditor::updateLines() {
@@ -184,7 +188,6 @@ void ZNodeEditor::onMouseDown() {
                                mDragSocket = prevNode.second;
                                mDragNode = prevNode.first->getIndexTag();
                                mTmpLine->setVisibility(true);
-
                                mTmpLine->setPoints(getMouse(), mInitialOffset);
                                break;
                            }

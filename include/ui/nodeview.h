@@ -131,6 +131,8 @@ public:
     vector<ZView*> getSocketsIn();
     vector<ZView*> getSocketsOut();
 
+    void updateChart();
+    void onWindowChange(int windowWidth, int windowHeight) override;
     void setConstantValue(vector<float> value);
 private:
     vector<ZView*> mSocketsIn;
@@ -155,7 +157,7 @@ private:
 
     virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
 
-    void updateChart();
+
 };
 
 
