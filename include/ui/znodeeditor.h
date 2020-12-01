@@ -26,11 +26,8 @@ static const int NODE_CONTAINER_OFFSET = 30;
 class ZNodeEditor : public ZView {
 public:
     ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
-
     void addNode(ZNodeView::Type type);
-
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
-
 
 private:
     vector<ZNodeView*> mNodeViews;
@@ -62,17 +59,14 @@ private:
     ZLineView * getLine(int index);
 
     void onMouseUp();
-
     void onMouseMove(const vec2 &absolute, const vec2 &delta);
 
     void onMouseDown();
     void onScrollChange(double x, double y) override;
     void onKeyPress(int key, int scancode, int action, int mods) override;
 
-
     template<typename T>
     void remove(vector<T> &vec, size_t pos);
-
 };
 
 

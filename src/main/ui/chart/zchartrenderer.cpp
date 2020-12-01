@@ -127,7 +127,7 @@ void ZChartRenderer::addLine(float *points, int size) {
     }
 
     for (uint i = 0; i < size; i++) {
-        verts.push_back(((float) i / (float) (size - 1)) * mWidth);
+        verts.push_back(((float) i / (float) (size - 1)));
         verts.push_back(points[i]);
         verts.push_back(0);
         verts.push_back(0);
@@ -176,7 +176,7 @@ void ZChartRenderer::updateLine(int index, float *points, int size) {
     }
 
     for (uint i = 0; i < size; i++) {
-        verts.push_back(((float) i / (float) (size - 1)) * mWidth);
+        verts.push_back(((float) i / (float) (size - 1)));
         verts.push_back(points[i]);
         verts.push_back(0);
         verts.push_back(0);

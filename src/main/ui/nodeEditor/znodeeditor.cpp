@@ -95,9 +95,6 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
             nodeView->setConstantValue({value});
         });
     });
-
-
-
 }
 
 void ZNodeEditor::updateLines() {
@@ -227,7 +224,7 @@ void ZNodeEditor::onMouseDown() {
 
 template <typename T>
 void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){
-    typename std::vector<T>::iterator it = vec.begin();
+    auto it = vec.begin();
     std::advance(it, pos);
     vec.erase(it);
 }
