@@ -52,7 +52,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     evaluateBtn->setMaxHeight(15);
     evaluateBtn->setOnClick([this](){
         // todo: change input to something reasonable. Maybe zero, maybe pull from somewhere
-        evaluate({0.0});
+        //evaluate({0.0});
 
         updateChart();
     });
@@ -116,25 +116,32 @@ void ZNodeView::setConstantValue(vector<float> value) {
     } else {
         mOutputLabel->setText(to_string(value.at(0)));
         mConstantValue = value;
+        invalidateNode();
     }
 }
 
 void ZNodeView::updateChart() {
-    vector<float> points;
-    for (int i = 0; i < mChartRes; i++) {
-        float factor = (float) i / (float) mChartRes;
-        float x = mix(mChartMin, mChartMax, factor).x;
-        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
-        if (fx.empty()) {
-            mChart->setVisibility(false);
-            return;
+
+    if (mInvalid) {
+        mChartRes = (int) (getWidth() / 2.0);
+
+        vector<float> points;
+        for (int i = 0; i < mChartRes; i++) {
+            float factor = (float) i / (float) mChartRes;
+            float x = mix(mChartMin, mChartMax, factor).x;
+            vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
+            if (fx.empty()) {
+                mChart->setVisibility(false);
+                return;
+            }
+
+            points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
         }
 
-        points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
+        mChart->updateLine(0, points);
+        mChart->setVisibility(true);
+        clearInvalidateNode();
     }
-
-    mChart->updateLine(0, points);
-    mChart->setVisibility(true);
 }
 
 vector<float> ZNodeView::evaluate(vector<float> x) {
@@ -164,7 +171,6 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
                     vector<float> recurOutput = input.first->evaluate(x);
                     if (recurOutput.empty()) {
                         mOutputLabel->setText("Bad input");
-                        setBackgroundColor(red);
                         mOutputLabel->setBackgroundColor(red);
                         mOutputLabel->setTextColor(white);
                         return vector<float>();
@@ -180,7 +186,6 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
                 // display an error message.
                 if (x.size() <= size.x) {
                     mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-                    setBackgroundColor(red);
                     mOutputLabel->setBackgroundColor(red);
                     mOutputLabel->setTextColor(white);
                     return vector<float>();
@@ -192,8 +197,7 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
         output = compute(summedInputs, mType);
     }
 
-    mOutputLabel->setText(to_string(output.at(0)));
-    setBackgroundColor(white);
+    //mOutputLabel->setText(to_string(output.at(0)));
     mOutputLabel->setTextColor(black);
     mOutputLabel->setBackgroundColor(white);
     return output;
@@ -204,8 +208,55 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
     int newRes = (int) (getWidth() / 2.0);
-    if (newRes != mChartRes) {
-        mChartRes = newRes;
+    if (abs(newRes - mChartRes) > CHART_RES_THRESHOLD) {
+       invalidateSingleNode();
+    } else {
+        clearInvalidateNode();
+    }
+}
+
+void ZNodeView::clearInvalidateNode() {
+    setBackgroundColor(white);
+    mInvalid = false;
+}
+
+/**
+ * Only invalidate this node, don't update children.
+ */
+void ZNodeView::invalidateSingleNode() {
+    setBackgroundColor(blue);
+    mInvalid = true;
+
+    if (mInvalidateListener != nullptr) {
+        mInvalidateListener(this);
+    }  else {
+
+        cout << "Node evaluation happening on main ui thread. "
+                "Set the node invalidate listener to fix this." << endl;
         updateChart();
     }
+}
+
+bool ZNodeView::isInvalid() {
+    return mInvalid;
+}
+
+/**
+ * Ivalidate this node and all child nodes
+ */
+void ZNodeView::invalidateNode() {
+    ZView::invalidate();
+    invalidateSingleNode();
+
+    for (const vector<pair<ZNodeView*, int>>& outputSocket : mOutputIndices) {
+        for (pair<ZNodeView*, int> child : outputSocket) {
+            if (!child.first->isInvalid()) {
+                child.first->invalidateNode();
+            }
+        }
+    }
+}
+
+void ZNodeView::setInvalidateListener(function<void(ZNodeView *node)> listener) {
+    mInvalidateListener = listener;
 }

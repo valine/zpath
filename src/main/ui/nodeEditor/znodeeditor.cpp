@@ -11,6 +11,7 @@
 #include <ui/zdropdown.h>
 #include <ui/zcheckbox.h>
 #include <ui/zmagnitudepicker.h>
+#include <thread>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -53,7 +54,27 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mMagnitudePicker->setVisibility(false);
 
 
+    thread evalThread = thread(ZNodeEditor::startEvaluation, this);
+    evalThread.detach();
 }
+
+
+/**
+ * Starts the evaluation background thread
+ */
+void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
+
+    while(true) {
+        if (!editor->mEvalQueue.empty()) {
+            ZNodeView *node = editor->mEvalQueue.front();
+            node->updateChart();
+            editor->mEvalSet.erase(node);
+            editor->mEvalQueue.pop();
+            cout << "evaluating" << endl;
+        }
+    }
+}
+
 
 void ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
@@ -94,6 +115,12 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
         mMagnitudePicker->setValueChangedListener([nodeView](float value){
             nodeView->setConstantValue({value});
         });
+    });
+
+    node->setInvalidateListener([this](ZNodeView* node){
+        if (mEvalSet.insert(node).second) {
+            mEvalQueue.push(node);
+        }
     });
 }
 
@@ -191,6 +218,9 @@ void ZNodeEditor::onMouseDown() {
                            k++;
                        }
                        node->mInputIndices.at(j).pop_back();
+
+                       node->invalidateNode();
+                       node->invalidate();
                     }
                 }
                 j++;
@@ -220,13 +250,6 @@ void ZNodeEditor::onMouseDown() {
 
     updateLines();
 
-}
-
-template <typename T>
-void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){
-    auto it = vec.begin();
-    std::advance(it, pos);
-    vec.erase(it);
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
@@ -265,6 +288,8 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
 
         mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
     }
+
+    getParentView()->getParentView()->getParentView()->invalidate();
 }
 
 void ZNodeEditor::onMouseUp() {
@@ -284,6 +309,8 @@ void ZNodeEditor::onMouseUp() {
 
                     activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
                     targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+
+                    activeNode->invalidateNode();
                 }
                 break;
             case SOCKET_DRAG_OUT:
@@ -293,7 +320,10 @@ void ZNodeEditor::onMouseUp() {
 
                     activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
                     targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+
+                    targetNode->invalidateNode();
                 }
+
                 break;
             case NO_SELECTION:
                 break;
@@ -389,5 +419,14 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
     updateLines();
     mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
-    getParentView()->invalidate();
+    getParentView()->getParentView()->getParentView()->invalidate();
+
+
+}
+
+template <typename T>
+void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){
+    auto it = vec.begin();
+    std::advance(it, pos);
+    vec.erase(it);
 }

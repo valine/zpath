@@ -206,6 +206,8 @@ void ZChartRenderer::updateLine(int index, float *points, int size) {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,  mEdges.at(index));
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+
+    updateBuffers();
 }
 
 void ZChartRenderer::addLine(vector<float> points) {
@@ -298,6 +300,8 @@ void ZChartRenderer::updateLine(int index, vector<float> points) {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,  mEdges.at(index));
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+
+    updateBuffers();
 }
 
 void ZChartRenderer::setSize(int width, int height) {

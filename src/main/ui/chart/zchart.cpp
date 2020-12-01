@@ -27,6 +27,8 @@ void ZChart::draw() {
             } else {
                 mRenderer->updateLine(index, mPendingLines.at(index));
             }
+
+            mLinesInvalid.at(index) = false;
         }
 
         index++;

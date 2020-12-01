@@ -8,6 +8,7 @@
 static const int SOCKET_SIZE = 15;
 static const int MAX_INPUT_COUNT = 5;
 static const int MAX_OUTPUT_COUNT = 5;
+static const int CHART_RES_THRESHOLD = 4;
 using namespace std;
 #include <vector>
 #include "zview.h"
@@ -18,6 +19,7 @@ public:
 
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
     void setOnValueSelect(function<void(ZLabel* sender, ZNodeView* node)> onValueSelect);
+    void setInvalidateListener(function<void(ZNodeView* node)> listener);
 
     enum Type {
         SIN,
@@ -122,7 +124,6 @@ public:
             case LAST:return "none";
         }
     }
-
     void setType(Type type);
 
     vector<vector<pair<ZNodeView*, int>>> mInputIndices;
@@ -134,7 +135,12 @@ public:
     void updateChart();
     void onWindowChange(int windowWidth, int windowHeight) override;
     void setConstantValue(vector<float> value);
+
+    void invalidateSingleNode();
+    void invalidateNode();
 private:
+    bool mInvalid = true;
+
     vector<ZView*> mSocketsIn;
     vector<ZView*> mSocketsOut;
 
@@ -154,10 +160,12 @@ private:
     vector<float> mConstantValue = {0.0};
 
     function<void(ZLabel* sender, ZNodeView* node)> mListener;
+    function<void(ZNodeView* node)> mInvalidateListener;
 
     virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
 
-
+    void clearInvalidateNode();
+    bool isInvalid();
 };
 
 

@@ -22,6 +22,8 @@ static const int NODE_CONTAINER_OFFSET = 30;
 #include <ui/zview.h>
 #include "nodeview.h"
 #include "zmagnitudepicker.h"
+#include <queue>
+#include <set>
 
 class ZNodeEditor : public ZView {
 public:
@@ -29,7 +31,15 @@ public:
     void addNode(ZNodeView::Type type);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
 
+    // Background evaluation
+    queue<ZNodeView*> mEvalQueue;
+    set<ZNodeView*> mEvalSet;
+    static void startEvaluation(ZNodeEditor* editor);
 private:
+
+
+
+
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
     ZMagnitudePicker* mMagnitudePicker;

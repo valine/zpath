@@ -57,5 +57,7 @@ void ZTabbedViewController::onCreate() {
         mControllers.at(index)->invalidate();
     });
 
+    setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
+
 }
 

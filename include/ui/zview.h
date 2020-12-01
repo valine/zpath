@@ -2,7 +2,6 @@
 #define ZVIEW_H
 
 
-
 #include <string>
 #include <iostream>
 #include "glad/glad.h"
