@@ -416,6 +416,13 @@ void ZView::setOffset(vec2 pos) {
     setOffset(pos.x, pos.y);
 }
 
+
+void ZView::setXOffset(int x) {
+    mOffsetX = x;
+    invalidate();
+}
+
+
 void ZView::setYOffset(int y) {
     mOffsetY = y;
     invalidate();
@@ -467,6 +474,22 @@ int ZView::getMarginRight() {
 
 int ZView::getMarginBottom() {
     return mMarginBottom;
+}
+
+void ZView::setMarginLeft(float m){
+    mMarginLeft = m;
+}
+
+void ZView::setMarginTop(float m){
+    mMarginTop = m;
+}
+
+void ZView::setMarginRight(float m){
+    mMarginRight = m;
+}
+
+void ZView::setMarginBottom(float m){
+    mMarginBottom = m;
 }
 
 void ZView::invalidate() {

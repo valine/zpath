@@ -15,21 +15,23 @@
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
     mNameLabel = new ZLabel("Node", this);
-    mNameLabel->setTextColor(grey);
+    mNameLabel->setTextColor(black);
+    mNameLabel->setXOffset(30);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
 
-    mOutputLabel = new ZLabel("1.0", this);
-    mOutputLabel->setOffset(vec2(30, 0));
-    mOutputLabel->setMaxWidth(80);
+    mOutputLabel = new ZLabel("", this);
+    mOutputLabel->setOffset(vec2(20, 0));
+    mOutputLabel->setMaxWidth(40);
+    mOutputLabel->setGravity(Gravity::topRight);
 
     setDrawWire(WireType::outline);
 
-    float yOffset = 30;
+    float yOffset = 3;
     float margin = 10;
     // Add input sockets
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-        socket->setBackgroundColor(vec4(1, 0.611956, 0.052950, 1));
+        socket->setBackgroundColor(mVariableColor);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
         mSocketsIn.push_back(socket);
@@ -48,21 +50,24 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mInputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_INPUT_COUNT, vector<pair<ZNodeView*, int>>());
     mOutputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_OUTPUT_COUNT,  vector<pair<ZNodeView*, int>>());
 
+
+    // Manually trigger evaluation. This was needed before the async eval was working.
+    // May be useful for debugging in the future. If so set visibility to true.
     ZButton* evaluateBtn = new ZButton("->", this);
     evaluateBtn->setGravity(Gravity::bottomRight);
     evaluateBtn->setMaxWidth(15);
     evaluateBtn->setMaxHeight(15);
+    evaluateBtn->setVisibility(false);
     evaluateBtn->setOnClick([this](){
         // todo: change input to something reasonable. Maybe zero, maybe pull from somewhere
         //evaluate({0.0});
-
         updateChart();
     });
 
     parent->invalidate();
 
     mChart = new ZChart(fillParent, fillParent, this);
-    mChart->setMargin(vec4(20));
+    mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
     mChart->setBackgroundColor(grey);
     mChart->setOffset(vec2(0,10));
     mChart->addLine({0,1,2,3,4,0,1,2,3,4});
@@ -71,7 +76,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 void ZNodeView::setType(ZNodeView::Type type) {
     mType = type;
     vec2 socketCount = getSocketCount();
-
 
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         if (i >= socketCount.x) {
@@ -85,6 +89,25 @@ void ZNodeView::setType(ZNodeView::Type type) {
         }
     }
     mNameLabel->setText(getName(mType));
+    mOutputLabel->setVisibility(isOutputLabelVisible(mType));
+    setBackgroundColor(getNodeColor(mType));
+
+    if (isOutputLabelVisible(mType)) {
+        mOutputLabel->setText(to_string(mConstantValue.at(0)));
+        mOutputLabel->setBackgroundColor(getNodeColor(mType));
+    }
+
+    if (getSocketCount().x == 0) {
+        mNameLabel->setXOffset(MIN_MARGIN);
+    }
+
+    if (getSocketCount().x > 1) {
+        mChart->setMarginLeft(CHART_SIDE_MARGIN_WIDE);
+    }
+
+    if (getSocketCount().y > 1) {
+        mChart->setMarginRight(CHART_SIDE_MARGIN_WIDE);
+    }
 }
 
 
@@ -141,6 +164,7 @@ void ZNodeView::updateChart() {
         mChart->updateLine(0, points);
         mChart->setVisibility(true);
         clearInvalidateNode();
+        mChart->invalidate();
     }
 }
 
@@ -171,8 +195,8 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
                     vector<float> recurOutput = input.first->evaluate(x);
                     if (recurOutput.empty()) {
                         mOutputLabel->setText("Bad input");
-                        mOutputLabel->setBackgroundColor(red);
-                        mOutputLabel->setTextColor(white);
+                        //mOutputLabel->setBackgroundColor(red);
+                        mOutputLabel->setTextColor(red);
                         return vector<float>();
                     } else {
                         sum += input.first->evaluate(x).at(input.second);
@@ -186,7 +210,7 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
                 // display an error message.
                 if (x.size() <= size.x) {
                     mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-                    mOutputLabel->setBackgroundColor(red);
+                    //mOutputLabel->setBackgroundColor(red);
                     mOutputLabel->setTextColor(white);
                     return vector<float>();
                 } else {
@@ -198,8 +222,8 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
     }
 
     //mOutputLabel->setText(to_string(output.at(0)));
-    mOutputLabel->setTextColor(black);
-    mOutputLabel->setBackgroundColor(white);
+//    mOutputLabel->setTextColor(black);
+//    mOutputLabel->setBackgroundColor(white);
     return output;
 
 }

@@ -9,6 +9,9 @@ static const int SOCKET_SIZE = 15;
 static const int MAX_INPUT_COUNT = 5;
 static const int MAX_OUTPUT_COUNT = 5;
 static const int CHART_RES_THRESHOLD = 4;
+static const int CHART_SIDE_MARGIN_WIDE = 20;
+static const int MIN_MARGIN = 3;
+static const int CHART_TOP_MARGIN = 15;
 using namespace std;
 #include <vector>
 #include "zview.h"
@@ -31,7 +34,7 @@ public:
         SUBTRACT,
         MULTIPLY,
         DIVIDE,
-        VALUE, // Constant value
+        CONSTANT, // Constant value
         RANGE, // Complex number range
         FILE,
         FFT,
@@ -56,7 +59,7 @@ public:
             case SUBTRACT:return {in.at(0) - in.at(1)};
             case MULTIPLY:return {in.at(0) * in.at(1)};
             case DIVIDE:return {in.at(0) / in.at(1)};
-            case VALUE:return mConstantValue;
+            case CONSTANT:return mConstantValue;
             case RANGE:return {in.at(0)};
             case FILE:break;
             case FFT:break;
@@ -88,7 +91,7 @@ public:
             case SUBTRACT:return ivec2(2,1);
             case MULTIPLY:return ivec2(2,1);
             case DIVIDE:return ivec2(2,1);
-            case VALUE:return ivec2(0,1);
+            case CONSTANT:return ivec2(0,1);
             case RANGE:return ivec2(0,1);
             case FILE:return ivec2(0,1);
             case FFT:return ivec2(1,0);
@@ -112,8 +115,8 @@ public:
             case SUBTRACT:return "-";
             case MULTIPLY:return "*";
             case DIVIDE:return "/";
-            case VALUE:return "constant";
-            case RANGE:return "input";
+            case CONSTANT:return "C";
+            case RANGE:return "x";
             case FILE:return "file";
             case FFT:return "FFT";
             case LAPLACE:return "Laplace";
@@ -124,6 +127,28 @@ public:
             case LAST:return "none";
         }
     }
+
+    vec4 getNodeColor(Type type) {
+        switch (type) {
+            case CONSTANT:
+                return vec4(1, 0.437324, 0.419652, 1);
+            case RANGE:
+                return mVariableColor;
+            default:
+                return vec4(1);
+        }
+    }
+
+    bool isOutputLabelVisible(Type type) {
+        switch(type) {
+            case CONSTANT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+
     void setType(Type type);
 
     vector<vector<pair<ZNodeView*, int>>> mInputIndices;
@@ -158,6 +183,7 @@ private:
     ZChart* mChart;
 
     vector<float> mConstantValue = {0.0};
+    vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
 
     function<void(ZLabel* sender, ZNodeView* node)> mListener;
     function<void(ZNodeView* node)> mInvalidateListener;

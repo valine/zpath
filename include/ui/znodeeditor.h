@@ -24,6 +24,8 @@ static const int NODE_CONTAINER_OFFSET = 30;
 #include "zmagnitudepicker.h"
 #include <queue>
 #include <set>
+#include <mutex>
+#include <condition_variable>
 
 class ZNodeEditor : public ZView {
 public:
@@ -35,6 +37,9 @@ public:
     queue<ZNodeView*> mEvalQueue;
     set<ZNodeView*> mEvalSet;
     bool mRunEvaluation = true;
+    mutex mEvalMutex;
+    condition_variable mEvalConVar;
+
     static void startEvaluation(ZNodeEditor* editor);
 private:
 
@@ -75,6 +80,8 @@ private:
 
     template<typename T>
     void remove(vector<T> &vec, size_t pos);
+
+    bool needsEval();
 };
 
 

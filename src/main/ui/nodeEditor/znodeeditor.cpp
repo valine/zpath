@@ -57,20 +57,28 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     evalThread.detach();
 }
 
+bool ZNodeEditor::needsEval() {
+    return !mEvalSet.empty();
+}
+
 
 /**
  * Starts the evaluation background thread
  */
 void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
-    while(editor->mRunEvaluation) {
-        if (!editor->mEvalQueue.empty()) {
+    bool shouldRun = true;
+    while(shouldRun) {
+        while (!editor->mEvalQueue.empty()) {
             ZNodeView *node = editor->mEvalQueue.front();
             node->updateChart();
             editor->mEvalSet.erase(node);
             editor->mEvalQueue.pop();
             glfwPostEmptyEvent();
         }
+
+        std::unique_lock<std::mutex> lck(editor->mEvalMutex);
+        editor->mEvalConVar.wait(lck);
     }
 }
 
@@ -117,10 +125,14 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     });
 
     node->setInvalidateListener([this](ZNodeView* node){
+        std::unique_lock<std::mutex> lck(mEvalMutex);
+
         if (mEvalSet.count(node) == 0) {
             mEvalQueue.push(node);
             mEvalSet.insert(node);
         }
+
+        mEvalConVar.notify_one();
     });
 }
 
