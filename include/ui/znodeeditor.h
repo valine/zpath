@@ -34,11 +34,9 @@ public:
     // Background evaluation
     queue<ZNodeView*> mEvalQueue;
     set<ZNodeView*> mEvalSet;
+    bool mRunEvaluation = true;
     static void startEvaluation(ZNodeEditor* editor);
 private:
-
-
-
 
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;

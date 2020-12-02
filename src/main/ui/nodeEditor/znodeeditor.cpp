@@ -53,7 +53,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mMagnitudePicker = new ZMagnitudePicker(mNodeContainer);
     mMagnitudePicker->setVisibility(false);
 
-
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
 }
@@ -64,13 +63,13 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
  */
 void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
-    while(true) {
+    while(editor->mRunEvaluation) {
         if (!editor->mEvalQueue.empty()) {
             ZNodeView *node = editor->mEvalQueue.front();
             node->updateChart();
             editor->mEvalSet.erase(node);
             editor->mEvalQueue.pop();
-            cout << "evaluating" << endl;
+            glfwPostEmptyEvent();
         }
     }
 }
@@ -118,8 +117,9 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     });
 
     node->setInvalidateListener([this](ZNodeView* node){
-        if (mEvalSet.insert(node).second) {
+        if (mEvalSet.count(node) == 0) {
             mEvalQueue.push(node);
+            mEvalSet.insert(node);
         }
     });
 }
@@ -132,12 +132,13 @@ void ZNodeEditor::updateLines() {
     int lineIndex = 0;
     for (ZNodeView* node : mNodeViews) {
         int outputIndex = 0;
-        for (vector<pair<ZNodeView*, int>> nextNode : node->mOutputIndices) {
+        vector<ZView*> outSockets = node->getSocketsOut();
+        for (const vector<pair<ZNodeView*, int>>& nextNode : node->mOutputIndices) {
             if (!nextNode.empty()) {
 
                 for (pair<ZNodeView*, int> inputIndex : node->mOutputIndices.at(outputIndex)) {
                     ZLineView* line = getLine(lineIndex++);
-                    line->setPoints(node->getSocketsOut().at(outputIndex)->getCenter(),
+                    line->setPoints(outSockets.at(outputIndex)->getCenter(),
                                     inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter());
                     line->setVisibility(true);
                 }
@@ -145,7 +146,6 @@ void ZNodeEditor::updateLines() {
             outputIndex++;
         }
     }
-
     getParentView()->invalidate();
 }
 

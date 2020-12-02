@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 //
 // Created by lukas on 10/4/20.
 //
@@ -124,7 +126,6 @@ void ZNodeView::updateChart() {
 
     if (mInvalid) {
         mChartRes = (int) (getWidth() / 2.0);
-
         vector<float> points;
         for (int i = 0; i < mChartRes; i++) {
             float factor = (float) i / (float) mChartRes;
@@ -134,7 +135,6 @@ void ZNodeView::updateChart() {
                 mChart->setVisibility(false);
                 return;
             }
-
             points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
         }
 
@@ -216,7 +216,7 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
 }
 
 void ZNodeView::clearInvalidateNode() {
-    setBackgroundColor(white);
+    //setBackgroundColor(white);  // Turn this to another color to debug invalidation logic.
     mInvalid = false;
 }
 
@@ -224,7 +224,7 @@ void ZNodeView::clearInvalidateNode() {
  * Only invalidate this node, don't update children.
  */
 void ZNodeView::invalidateSingleNode() {
-    setBackgroundColor(blue);
+    //setBackgroundColor(white); // Turn this to another color to debug invalidation logic.
     mInvalid = true;
 
     if (mInvalidateListener != nullptr) {
@@ -258,5 +258,5 @@ void ZNodeView::invalidateNode() {
 }
 
 void ZNodeView::setInvalidateListener(function<void(ZNodeView *node)> listener) {
-    mInvalidateListener = listener;
+    mInvalidateListener = std::move(listener);
 }
