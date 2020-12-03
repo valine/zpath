@@ -43,7 +43,7 @@ void ZSlider::setThumbBackground(ZTexture* tex) {
 }
 
 ZSlider::ZSlider(string label, float min, float max, float value, ZView *parent) :
-ZView(ZView::fillParent, 40){
+ZView(ZView::fillParent, 40, parent){
     setBackgroundColor(parent->getBackgroundColor());
     float lineHeight = SLIDER_THUMB_SIZE;
     mLine = new ZView(getWidth(), lineHeight);
@@ -128,8 +128,6 @@ void ZSlider::onKeyPress(int key, int scancode, int action, int mods) {
 	
 void ZSlider::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
-
-
 
 	float scale = getScale().x;
 	float lastX = getLastX() * scale;

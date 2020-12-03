@@ -84,6 +84,8 @@ void ZChartRenderer::onDraw() {
 
     }
 
+    mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0));
+
     // draw grid
     glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
     glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));

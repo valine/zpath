@@ -7,13 +7,16 @@
 
 ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(300, 70, parent) {
 
-    setBackgroundColor(faded);
+    setBackgroundColor(white);
 
+    setDrawWire(WireType::outline);
+    setOutlineColor(black);
 
     // Slider example
     float min = -1.0;
     float max = 1.0;
-    mSlider = new ZSlider("Slider name", min, max, 0.0, this);
+    mSlider = new ZSlider("", min, max, 0.0, this);
+    mSlider->setLineColor(grey);
     mSlider->setOnSlide([this](ZView* view, float v, bool b){
         if (mListener != nullptr) {
             mListener(v);

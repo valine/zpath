@@ -67,6 +67,9 @@ void ZLabel::draw() {
 	if (needsRender()) {
         ZView::draw();
 
+        if (!getVisibility()) {
+            return;
+        }
         vec2 viewScale = getScale();
 
         int yv = getWindowHeight() - (getBottom() * viewScale.x);

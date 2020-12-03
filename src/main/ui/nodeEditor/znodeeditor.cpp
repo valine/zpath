@@ -50,7 +50,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     });
 
     // Magnitude picker work
-    mMagnitudePicker = new ZMagnitudePicker(mNodeContainer);
+    mMagnitudePicker = new ZMagnitudePicker(this);
     mMagnitudePicker->setVisibility(false);
 
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
@@ -110,15 +110,21 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     node->updateChart();
 
     node->setOnValueSelect([this](ZLabel* label, ZNodeView* nodeView){
-        vec2 offset = nodeView->getOffset() + label->getOffset();
+        vec2 mouse = getMouse();
+        float difference = (mMagnitudePicker->getWidth()) / 2.0;
 
-        float difference = (mMagnitudePicker->getWidth() - label->getWidth()) / 2.0;
-        mMagnitudePicker->setOffset(vec2(
-                offset.x - difference,
-                nodeView->getOffsetY() - mMagnitudePicker->getHeight()));
+        double xpos = std::min(std::max(0.0, (double) (mouse.x - difference)),
+                               (double) getWidth() - mMagnitudePicker->getMaxWidth());
+        double ypos;
+        if (mouse.y - mMagnitudePicker->getMaxHeight() > 0) {
+            ypos = mouse.y - mMagnitudePicker->getMaxHeight();
+        } else {
+            ypos = mouse.y + label->getHeight();
+        }
+
+        mMagnitudePicker->setOffset(vec2(xpos,ypos));
         mMagnitudePicker->setVisibility(true);
         mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
-
         mMagnitudePicker->setValueChangedListener([nodeView](float value){
             nodeView->setConstantValue({value});
         });
@@ -428,6 +434,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     mNodeContainer->setYOffset(margin);
     mNodeContainer->setInnerTranslation(delta);
     mNodeContainer->onWindowChange(getWidth(), getHeight());
+
 
     updateLines();
     mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
