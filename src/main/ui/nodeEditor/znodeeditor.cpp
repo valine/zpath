@@ -230,7 +230,7 @@ void ZNodeEditor::onMouseDown() {
                                mDragSocket = prevNode.second;
                                mDragNode = prevNode.first->getIndexTag();
                                mTmpLine->setVisibility(true);
-                               mTmpLine->setPoints(getMouse(), mInitialOffset);
+                               mTmpLine->setPoints(node->getSocketsIn().at(j)->getCenter(), mInitialOffset);
                                break;
                            }
                            k++;
