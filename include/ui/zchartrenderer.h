@@ -34,12 +34,12 @@ public:
     void resetZoom(vector<float> &points);
 
 private:
-    unsigned int mFBO;
-    unsigned int mFinalFBO;
-    unsigned int mTexBuffer;
-    unsigned int mFinalTexBuffer;
-    unsigned int mRBO;
-    unsigned int mFinalRBO;
+    unsigned int mFBO = -1;
+    unsigned int mFinalFBO = -1;
+    unsigned int mTexBuffer = -1;
+    unsigned int mFinalTexBuffer = -1;
+    unsigned int mRBO = -1;
+    unsigned int mFinalRBO = -1;
     float mLineWidth = 2.0f;
 
     vector<unsigned int> mPoints;
