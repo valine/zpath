@@ -3,41 +3,18 @@
 #include "ui/zscrollview.h"
 
 
-ZScrollView::ZScrollView(float maxWidth, float maxHeight):
-ZView(maxWidth, maxHeight) {
-	init();
-}
-
 ZScrollView::ZScrollView(float maxWidth, float maxHeight, ZView* parent):
-        ZView(maxWidth, maxHeight) {
+        ZView(maxWidth, maxHeight, parent) {
     init();
-    parent->addSubView(this);
-}
-
-ZScrollView::ZScrollView(Bounds maxWidth, float maxHeight):
-ZView(maxWidth, maxHeight) {
-	init();
-}
-
-ZScrollView::ZScrollView(float maxWidth, Bounds maxHeight):
-ZView(maxWidth, maxHeight) {
-	init();
-}
-
-ZScrollView::ZScrollView(Bounds maxWidth, Bounds maxHeight):
-ZView(maxWidth, maxHeight) {
-	init();
 }
 
 void ZScrollView::init() {
-	mScrollBar = new ZView(7,100);
+	mScrollBar = new ZView(7,100, this);
 	mScrollBar->setOffset(3,0);
 	mScrollBar->setBackgroundColor(vec4(0.5,0.5,0.5,1));
 	mScrollBar->setGravity(ZView::topRight);
-	addSubView(mScrollBar);
 
-	mInnerView = new ZLinearLayout(getWidth(), getHeight());
-	addSubView(mInnerView);
+	mInnerView = new ZLinearLayout(getWidth(), getHeight(), this);
 	mInnerView->setMargin(0,0,7,0);
 
 	setGravity(ZView::topRight);
@@ -48,7 +25,8 @@ void ZScrollView::init() {
 
 void ZScrollView::addSubView(ZView* view) {
 	if (view == mInnerView ||
-		view == mScrollBar) {
+		view == mScrollBar ||
+		mInnerView == nullptr) {
 		ZView::addSubView(view);
 	} else {
 		mInnerView->addSubView(view);

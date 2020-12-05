@@ -15,7 +15,7 @@ class ZLinearLayout : public ZView {
 
 
 public:
-	ZLinearLayout(float maxWidth, float maxHeight);
+	ZLinearLayout(float maxWidth, float maxHeight, ZView *parent);
 	void addSubView(ZView* view);
 	
 

@@ -32,7 +32,7 @@ public:
     void updateLine(int index, vector<float> points);
 
     void resetZoom(vector<float> &points);
-
+    void setZPosition(float zPosition);
 private:
     unsigned int mFBO = -1;
     unsigned int mFinalFBO = -1;
@@ -49,6 +49,8 @@ private:
 
     int mWidth = 600;
     int mHeight = 400;
+
+    float mZPosition = 0.0;
 
     float mMin = INT_MAX;
     float mMax = INT_MIN;
@@ -69,6 +71,8 @@ private:
     void updateBuffers();
 
     void addGrid();
+
+
 };
 
 

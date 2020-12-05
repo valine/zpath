@@ -6,6 +6,7 @@
 ZViewController::ZViewController(string resourcePath) : ZView(ZView::fillParent, ZView::fillParent) {
     mResourcePath = std::move(resourcePath);
     setDrawingEnabled(false);
+    setRootView(this);
 }
 
 
@@ -25,6 +26,7 @@ ZViewController::ZViewController(const char **argv) : ZView(ZView::fillParent, Z
     std::string path = aux.substr(0,pos+1);
     std::string name = aux.substr(pos+1);
     mResourcePath = path;
+    setRootView(this);
 }
 
 ZViewController::ZViewController(char **argv) : ZView(ZView::fillParent, ZView::fillParent) {
@@ -42,6 +44,7 @@ ZViewController::ZViewController(char **argv) : ZView(ZView::fillParent, ZView::
     std::string path = aux.substr(0,pos+1);
     std::string name = aux.substr(pos+1);
     mResourcePath = path;
+    setRootView(this);
 }
 
 
@@ -131,7 +134,7 @@ void ZViewController::draw() {
 
         mUIShader->use();
         GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
-        mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -10.0f, 100.0f);
+        mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -1.0f, 1.0f);
         glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(projection));
 
         mImageViewShader->use();

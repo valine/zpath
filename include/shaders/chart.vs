@@ -5,6 +5,6 @@ attribute vec4 vPosUi;
 
 
 void main() {
-    gl_Position = uVPMatrix * vec4(vPosUi.xy, 0.0, 1.0);
+    gl_Position = uVPMatrix * vec4(vPosUi.xyz, 1.0);
 }
 )"

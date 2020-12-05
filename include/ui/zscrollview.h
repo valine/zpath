@@ -14,11 +14,6 @@ using namespace ZPathConstants;
 class ZScrollView : public ZView {
 
 public:
-
-	ZScrollView(float maxWidth, float maxHeight);
-	ZScrollView(Bounds maxWidth, float maxHeight);
-	ZScrollView(float maxWidth, Bounds maxHeight);
-	ZScrollView(Bounds maxWidth, Bounds maxHeight);
     ZScrollView(float maxWidth, float maxHeight, ZView *parent);
 
     void onKeyPress(int key, int scancode, int action, int mods);

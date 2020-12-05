@@ -8,7 +8,7 @@ attribute vec2 aTexCoords;
 varying vec3 color;
 varying vec2 TexCoords;
 void main() {
-    gl_Position = uVPMatrix * vec4(vPosUi.xy, 0.0, 1.0);
+    gl_Position = uVPMatrix * vec4(vPosUi.xyz, 1.0);
     color = vCol;
     TexCoords = vPosUi.zw;
 }

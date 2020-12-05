@@ -86,6 +86,12 @@ class ZView {
         void setParentView(ZView *parentView);
         ZView* getParentView();
         vector<ZView*> getSubViews();
+        ZView* getRootView();
+        void setRootView(ZView* rootView);
+        void incrementZCursor();
+        float getZPosition();
+        void setZPosition(float z);
+        float getZCursorPosition();
 
         // Margin
         void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
@@ -111,7 +117,6 @@ class ZView {
         double getOffsetX();
         double getOffsetY();
         vec2 getOffset();
-
 
         void setInitialPosition(vec2 position);
         void resetInitialPosition();
@@ -218,13 +223,19 @@ class ZView {
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
         vec4 yellow = vec4(1,1,0,1);
 	private:
-
 		void init(int width, int height);
-
 		bool mNeedsRender = true;
 
 		Gravity mGravity;
 		ZView *mParentView;
+		ZView *mRootView;
+
+		/**
+		 * The z cursor position gets incremented on the root view every
+		 * time a view is added to the hierarchy
+		 */
+		float mZCursorPosition = 0;
+		float mZPosition = 0;
 
 		ZShader *mShader = nullptr;
 		ZShader *mTextShader;
@@ -310,12 +321,8 @@ class ZView {
         int mTop = 0;
         int mBottom = 0;
 
-
         WireType mDrawWire = none;
-
         vec2 mInitialPosition;
-
-
 };
 
 #endif

@@ -17,7 +17,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     mTitle->setTextColor(vec3(1));
     addSubView(mTitle);
 
-    mDrawer = new ZScrollView(400, 0);
+    mDrawer = new ZScrollView(400, 0, this);
     mDrawer->setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
     mDrawer->setOffset(0,30);
     mDrawer->setVisibility(false);

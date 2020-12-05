@@ -39,15 +39,15 @@ using std::string;
 class ZViewController : public ZView {
 
 public:
-	ZViewController(string resourcePath);
-    ZViewController(char* argv[]);
-    ZViewController(const char* argv[]);
+	explicit ZViewController(string resourcePath);
+    explicit ZViewController(char* argv[]);
+    explicit ZViewController(const char* argv[]);
 
     string getResourcePath();
 
     // Life cycle events driven by application
-	virtual void onCreate();
-    virtual void draw();
+	void onCreate() override;
+    void draw() override;
     virtual void onTerminate();
 
 	// Glfw window events
@@ -63,7 +63,6 @@ public:
 	string getName();
 
 private:
-	ZView *mRootView = nullptr;
 	int mParentWidth = 0;
 	int mParentHeight = 0;
 

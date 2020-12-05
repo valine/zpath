@@ -23,8 +23,8 @@ void ZPathViewController::onCreate() {
 	ZViewController::onCreate();
 	mScene = new BasicScene(getResourcePath());
 
-    auto* tab1 = new ZScrollView(300, fillParent);
-    auto* tab2 = new ZScrollView(300, fillParent);
+    auto* tab1 = new ZScrollView(300, fillParent, this);
+    auto* tab2 = new ZScrollView(300, fillParent, this);
 
     auto tabView = new ZTabView<ZView>(300, fillParent, "", {"Tab 1", "Tab2"});
     tabView->setGravity(ZView::topRight);

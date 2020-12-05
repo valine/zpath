@@ -1,7 +1,7 @@
 #include "ui/zlinearlayout.h"
 
-ZLinearLayout::ZLinearLayout(float maxWidth, float maxHeight) : 
-ZView(maxWidth, maxHeight) {
+ZLinearLayout::ZLinearLayout(float maxWidth, float maxHeight, ZView *parent) :
+ZView(maxWidth, maxHeight, parent) {
 	addSubView(new ZView(0,0));
 }
 

@@ -77,7 +77,6 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
         mShiftKeyPressed = false;
     }
 
-
     if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_PRESS) {
         mAltKeyPressed = true;
     } else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_RELEASE) {
@@ -92,7 +91,6 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
             mView->onKeyPress(key, scancode, action, mods);
         }
     }
-
 }
 
 void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -183,7 +181,6 @@ void ZView::setMouseDown(bool isDown) {
 }
 
 bool ZView::isMouseInBounds(ZView *view) const {
-
     vec2 inner = view->getInnerTranslation();
     bool isInViewX = view->getLeft() - inner.x < view->getMouse().x  && view->getRight() - inner.x > view->getMouse().x ;
     bool isInViewY = view->getTop() - inner.y < view->getMouse().y && view->getBottom() - inner.x > view->getMouse().y;
@@ -236,7 +233,7 @@ void ZView::draw() {
 
             // Update scale, useful for zooming a view out
             GLint vp_location = glGetUniformLocation(shader->mID, "uVPMatrix");
-            mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -10.0f, 100.0f);
+            mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -1.0f, 10.0f);
 
             vec2 absoluteScale = getScale();
             mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
@@ -416,12 +413,10 @@ void ZView::setOffset(vec2 pos) {
     setOffset(pos.x, pos.y);
 }
 
-
 void ZView::setXOffset(int x) {
     mOffsetX = x;
     invalidate();
 }
-
 
 void ZView::setYOffset(int y) {
     mOffsetY = y;
@@ -526,15 +521,19 @@ void ZView::computeBounds() {
 
     mVertices[0] = getLeft();
     mVertices[1] = getTop();
+    mVertices[2] = getZPosition();
 
     mVertices[4] = getRight();
     mVertices[5] = getTop();
+    mVertices[6] = 1 + getZPosition();
 
     mVertices[8] = getLeft();
     mVertices[9] = getBottom();
+    mVertices[10] = 0 + getZPosition();
 
     mVertices[12] = getRight();
     mVertices[13] = getBottom();
+    mVertices[14] = 1 + getZPosition();
 
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
@@ -546,6 +545,10 @@ void ZView::computeBounds() {
 void ZView::addSubView(ZView *view) {
     mViews.push_back(view);
     view->setParentView(this);
+    view->setRootView(mRootView);
+
+    setZPosition(getRootView()->getZCursorPosition());
+    getRootView()->incrementZCursor();
 
     if (mShader != nullptr) {
         view->setShader(mShader);
@@ -925,4 +928,28 @@ vec2 ZView::getRelativeScale() {
 
 vec2 ZView::getOffset() {
     return vec2(getOffsetX(), getOffsetY());
+}
+
+ZView* ZView::getRootView() {
+    return mRootView;
+}
+
+void ZView::setRootView(ZView* rootView) {
+    mRootView = rootView;
+}
+
+void ZView::incrementZCursor(){
+    mZCursorPosition += 0.05;
+}
+
+float ZView::getZPosition(){
+    return mZPosition;
+}
+
+void ZView::setZPosition(float z){
+    mZPosition = z;
+}
+
+float ZView::getZCursorPosition(){
+    return mZCursorPosition;
 }
