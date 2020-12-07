@@ -67,7 +67,9 @@ bool ZNodeEditor::needsEval() {
  */
 void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
+    // Todo: end loop when window closes
     bool shouldRun = true;
+
     while(shouldRun) {
         while (!editor->mEvalQueue.empty()) {
             ZNodeView *node = editor->mEvalQueue.front();
@@ -92,10 +94,10 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     node->setIndexTag(mNodeViews.size() - 1);
 
     vec2 scale = mNodeContainer->getScale();
-    vec2 tranlsation = mNodeContainer->getInnerTranslation();
+    vec2 translation = mNodeContainer->getInnerTranslation();
 
-    node->setOffset(mAddNodePosition - tranlsation);
-    node->setInitialPosition((mAddNodePosition - tranlsation) - getMouseDragDelta());
+    node->setOffset(mAddNodePosition - translation);
+    node->setInitialPosition((mAddNodePosition - translation) - getMouseDragDelta());
     
     if (mAddNodePosition.x + NODE_WIDTH > getWidth() / scale.x) {
         mAddNodePosition.x = DEFAULT_NODE_X;
@@ -435,12 +437,9 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     mNodeContainer->setInnerTranslation(delta);
     mNodeContainer->onWindowChange(getWidth(), getHeight());
 
-
     updateLines();
     mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
     getParentView()->getParentView()->getParentView()->invalidate();
-
-
 }
 
 template <typename T>
