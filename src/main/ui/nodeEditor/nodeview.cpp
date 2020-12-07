@@ -1,7 +1,5 @@
 #include <utility>
 
-#include <utility>
-
 //
 // Created by lukas on 10/4/20.
 //
@@ -70,8 +68,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
     mChart->setBackgroundColor(grey);
     mChart->setOffset(vec2(0,10));
-
-    //mChart->addLine({0,1,2,3,4,0,1,2,3,4});
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
@@ -89,6 +85,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsOut.at(i)->setVisibility(false);
         }
     }
+
     mNameLabel->setText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
     setBackgroundColor(getNodeColor(mType));
@@ -123,12 +120,11 @@ vector<ZView *> ZNodeView::getSocketsOut() {
 void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
+    // Todo: logic needed to reject click events during graph translation
     if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel)) {
         if (mListener != nullptr) {
             mListener(mOutputLabel, this);
-            cout << "node label clicked" << endl;
         }
-
     }
 }
 
@@ -147,7 +143,6 @@ void ZNodeView::setConstantValue(vector<float> value) {
 }
 
 void ZNodeView::updateChart() {
-
     if (mInvalid) {
         mChartRes = (int) (getWidth() / 2.0);
         vector<float> points;
@@ -256,7 +251,7 @@ void ZNodeView::invalidateSingleNode() {
     }  else {
 
         cout << "Node evaluation happening on main ui thread. "
-                "Set the node invalidate listener to fix this." << endl;
+                "Set the node invalidate listener if the UI is hanging." << endl;
         updateChart();
     }
 }
@@ -266,7 +261,7 @@ bool ZNodeView::isInvalid() {
 }
 
 /**
- * Ivalidate this node and all child nodes
+ * Invalidate this node and all child nodes
  */
 void ZNodeView::invalidateNode() {
     ZView::invalidate();
