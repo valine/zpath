@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by lukas on 12/5/20.
 //
@@ -7,14 +9,73 @@
 
 
 #include "zview.h"
+#include <regex>
 
 class ZLineChart : public ZView {
 
 public:
     ZLineChart(float width, float height, ZView* parent);
+    void draw() override;
+
+    void setChartListener(function<vector<float>(vector<float>, int index)> listener){
+        mListener = move(listener);
+    }
+
+    void setChartBounds(vec2 x, vec2 y) {
+        mXBound = x;
+        mYBound = y;
+        updateLineBuffers();
+    }
+    void setLineCount(int count) {
+        mLineCount = count;
+        updateLineBuffers();
+    }
+
+    void onWindowChange(int width, int height) override;
 
 private:
 
+    function<vector<float>(vector<float>, int index)> mListener;
+
+    // X is min, Y is max
+    vec2 mXBound = vec2(0, 3);
+    vec2 mYBound = vec2(0, 3);
+
+    // OpenGL buffers
+    unsigned int mFBO = -1;
+    unsigned int mFinalFBO = -1;
+    unsigned int mTexBuffer = -1;
+    unsigned int mFinalTexBuffer = -1;
+    unsigned int mRBO = -1;
+    unsigned int mFinalRBO = -1;
+
+    unsigned int mGridVertBuffer = -1;
+    unsigned int mGridEdgeBuffer = -1;
+
+    vector<unsigned int> mPoints;
+    vector<unsigned int> mEdges;
+    vector<unsigned int> mPointCount;
+    ZShader* mShader;
+
+    ZTexture* mBackground;
+    int mLineCount = 1;
+
+    float mLineWidth = 2;
+
+    // Shader code
+    const string ui_vs =
+        #include "shaders/chart.vs"
+    ;
+
+    const string ui_fs =
+        #include "shaders/chart.fs"
+    ;
+
+    void updateFBOSize();
+
+    void updateLineBuffers();
+
+    void addGrid();
 };
 
 

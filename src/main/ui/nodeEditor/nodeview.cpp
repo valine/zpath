@@ -66,11 +66,12 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     parent->invalidate();
 
-    mChart = new ZChart(fillParent, fillParent, this);
+    mChart = new ZLineChart(fillParent, fillParent, this);
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
     mChart->setBackgroundColor(grey);
     mChart->setOffset(vec2(0,10));
-    mChart->addLine({0,1,2,3,4,0,1,2,3,4});
+
+    //mChart->addLine({0,1,2,3,4,0,1,2,3,4});
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
@@ -161,7 +162,6 @@ void ZNodeView::updateChart() {
             points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
         }
 
-        mChart->updateLine(0, points);
         mChart->setVisibility(true);
         clearInvalidateNode();
         mChart->invalidate();
