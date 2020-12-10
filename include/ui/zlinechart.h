@@ -17,7 +17,9 @@ public:
     ZLineChart(float width, float height, ZView* parent);
     void draw() override;
 
-    void setChartListener(function<vector<float>(vector<float>, int index)> listener){
+
+    // This might not be needed
+    void setChartListener(function<vector<float>(vector<int>, int index)> listener){
         mListener = move(listener);
     }
 
@@ -26,20 +28,35 @@ public:
         mYBound = y;
         updateLineBuffers();
     }
+
     void setLineCount(int count) {
         mLineCount = count;
         updateLineBuffers();
+    }
+
+    void updateChart() {
+
+        if (mListener != nullptr) {
+            for (int i = 0; i < mResolution; i++) {
+                int lineIndex = 0;
+                vector<float> y = mListener({i}, lineIndex); //  todo: replace 0 with line index
+            }
+        }
     }
 
     void onWindowChange(int width, int height) override;
 
 private:
 
-    function<vector<float>(vector<float>, int index)> mListener;
+    function<vector<float>(vector<int>, int index)> mListener;
 
     // X is min, Y is max
     vec2 mXBound = vec2(0, 3);
     vec2 mYBound = vec2(0, 3);
+
+    // Temp bound is set on ui thread, the real bounds get updated after evaluation
+    vec2 mTempXBound = vec2(0);
+    vec2 mTempYBound = vec2(0);
 
     // OpenGL buffers
     unsigned int mFBO = -1;
@@ -61,6 +78,9 @@ private:
     int mLineCount = 1;
 
     float mLineWidth = 2;
+
+    // This will be set by view width
+    int mResolution = 30;
 
     // Shader code
     const string ui_vs =
