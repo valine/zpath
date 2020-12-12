@@ -163,7 +163,7 @@ public:
     void setConstantValue(vector<float> value);
 
     void invalidateSingleNode();
-    void invalidateNode();
+    void invalidateNodeRecursive();
 private:
     bool mInvalid = true;
 

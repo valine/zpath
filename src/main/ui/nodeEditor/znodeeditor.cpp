@@ -108,11 +108,23 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
 
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
-    node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
-    node->updateChart();
+    //node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
+
+    node->setInvalidateListener([this](ZNodeView* node){
+        std::unique_lock<std::mutex> lck(mEvalMutex);
+
+        if (mEvalSet.count(node) == 0) {
+            mEvalQueue.push(node);
+            mEvalSet.insert(node);
+        }
+
+        mEvalConVar.notify_one();
+    });
 
     node->setOnValueSelect([this](ZLabel* label, ZNodeView* nodeView){
         vec2 mouse = getMouse();
+
+        // This logic shows the popup slider window
         float difference = (mMagnitudePicker->getWidth()) / 2.0;
 
         double xpos = std::min(std::max(0.0, (double) (mouse.x - difference)),
@@ -132,16 +144,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
         });
     });
 
-    node->setInvalidateListener([this](ZNodeView* node){
-        std::unique_lock<std::mutex> lck(mEvalMutex);
-
-        if (mEvalSet.count(node) == 0) {
-            mEvalQueue.push(node);
-            mEvalSet.insert(node);
-        }
-
-        mEvalConVar.notify_one();
-    });
+    node->invalidateSingleNode();
 }
 
 void ZNodeEditor::updateLines() {
@@ -239,7 +242,7 @@ void ZNodeEditor::onMouseDown() {
                        }
                        node->mInputIndices.at(j).pop_back();
 
-                       node->invalidateNode();
+                        node->invalidateNodeRecursive();
                        node->invalidate();
                     }
                 }
@@ -330,7 +333,7 @@ void ZNodeEditor::onMouseUp() {
                     activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
                     targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 
-                    activeNode->invalidateNode();
+                    activeNode->invalidateNodeRecursive();
                 }
                 break;
             case SOCKET_DRAG_OUT:
@@ -341,7 +344,7 @@ void ZNodeEditor::onMouseUp() {
                     activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
                     targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 
-                    targetNode->invalidateNode();
+                    targetNode->invalidateNodeRecursive();
                 }
 
                 break;

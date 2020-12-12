@@ -59,7 +59,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     evaluateBtn->setOnClick([this](){
         // todo: change input to something reasonable. Maybe zero, maybe pull from somewhere
         //evaluate({0.0});
-        updateChart();
+        // updateChart();
     });
 
     parent->invalidate();
@@ -138,7 +138,7 @@ void ZNodeView::setConstantValue(vector<float> value) {
     } else {
         mOutputLabel->setText(to_string(value.at(0)));
         mConstantValue = value;
-        invalidateNode();
+        invalidateNodeRecursive();
     }
 }
 
@@ -252,7 +252,23 @@ void ZNodeView::invalidateSingleNode() {
 
         cout << "Node evaluation happening on main ui thread. "
                 "Set the node invalidate listener if the UI is hanging." << endl;
-        updateChart();
+        //updateChart(); // Todo: review if this udate chart is needed
+    }
+}
+
+/**
+ * Invalidate this node and all child nodes
+ */
+void ZNodeView::invalidateNodeRecursive() {
+    ZView::invalidate();
+    invalidateSingleNode();
+
+    for (const vector<pair<ZNodeView*, int>>& outputSocket : mOutputIndices) {
+        for (pair<ZNodeView*, int> child : outputSocket) {
+            if (!child.first->isInvalid()) {
+                child.first->invalidateNodeRecursive();
+            }
+        }
     }
 }
 
@@ -260,21 +276,7 @@ bool ZNodeView::isInvalid() {
     return mInvalid;
 }
 
-/**
- * Invalidate this node and all child nodes
- */
-void ZNodeView::invalidateNode() {
-    ZView::invalidate();
-    invalidateSingleNode();
 
-    for (const vector<pair<ZNodeView*, int>>& outputSocket : mOutputIndices) {
-        for (pair<ZNodeView*, int> child : outputSocket) {
-            if (!child.first->isInvalid()) {
-                child.first->invalidateNode();
-            }
-        }
-    }
-}
 
 void ZNodeView::setInvalidateListener(function<void(ZNodeView *node)> listener) {
     mInvalidateListener = std::move(listener);
