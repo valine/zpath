@@ -29,9 +29,21 @@ public:
         updateLineBuffers();
     }
 
+    vec2 getXBounds() {
+        return mXBound;
+    }
+
+    vec2 getYBounds() {
+        return mYBound;
+    }
+
     void setLineCount(int count) {
         mLineCount = count;
         updateLineBuffers();
+    }
+
+    void setResolution(int resolution) {
+        mResolution = resolution;
     }
 
     void updateChart() {
