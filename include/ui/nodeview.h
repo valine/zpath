@@ -178,10 +178,10 @@ private:
     /**
      * Number of line segments on the chart
      */
-    int mChartRes = 10;
-    vec2 mChartMin = vec2(0);
-    vec2 mChartMax = vec2(5);
+
+    // Todo: remove  these
     ZLineChart* mChart;
+    vector<float> mPointCache;
 
     vector<float> mConstantValue = {0.0};
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);

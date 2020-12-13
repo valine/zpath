@@ -28,6 +28,7 @@ void ZLineChart::onWindowChange(int width, int height) {
     ZView::onWindowChange(width, height);
 
     updateFBOSize();
+    updateLineBuffers();
     draw();
 }
 
@@ -72,12 +73,12 @@ void ZLineChart::updateLineBuffers() {
     vector<float> verts;
     vector<int> edges;
 
-    int resolution = 20;
+    int resolution = mResolution;
 
-    for (int index = 0; index < mLineCount; index++) {
+    for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
         for (uint i = 0; i < resolution; i++) {
             float x = mix(mXBound.x, mXBound.y, (float) i / resolution);
-            vector<float> y = mListener({x}, index);
+            vector<float> y = mListener({(int) i}, lineIndex);
             verts.push_back(((float) i / (float) (resolution - 1)));
             verts.push_back(y.at(0));
             verts.push_back(0);
@@ -90,7 +91,7 @@ void ZLineChart::updateLineBuffers() {
         }
 
         // Initialize buffers
-        if (mPoints.size() < index) {
+        if (mPoints.size() <= lineIndex) {
             mPointCount.push_back(edges.size());
             unsigned int lineBuffer;
             glGenBuffers(1, &lineBuffer);
@@ -101,10 +102,10 @@ void ZLineChart::updateLineBuffers() {
             mEdges.push_back(edgeBuffer);
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(index));
+        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
         glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(index));
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
     }
 }

@@ -46,6 +46,9 @@ public:
         mResolution = resolution;
     }
 
+    int getResolution() {
+        return mResolution;
+    }
     void updateChart() {
 
         if (mListener != nullptr) {
@@ -57,7 +60,7 @@ public:
     }
 
     void onWindowChange(int width, int height) override;
-
+    void updateLineBuffers();
 private:
 
     function<vector<float>(vector<int>, int index)> mListener;
@@ -105,7 +108,7 @@ private:
 
     void updateFBOSize();
 
-    void updateLineBuffers();
+
 
     void addGrid();
 };

@@ -68,6 +68,16 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
     mChart->setBackgroundColor(grey);
     mChart->setOffset(vec2(0,10));
+    mChart->setChartListener([this](vector<int> x, int lineIndex){
+        // Can safely ignore line index for now
+
+        if (mPointCache.empty()) {
+            return vector<float>(mChart->getResolution(), 0);
+        }
+        vector<float> line;
+        line.push_back(mPointCache.at(x.at(0)));
+        return line;
+    });
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
@@ -143,12 +153,15 @@ void ZNodeView::setConstantValue(vector<float> value) {
 }
 
 void ZNodeView::updateChart() {
+    // This is usually run from background thread
     if (mInvalid) {
-        mChartRes = (int) (getWidth() / 2.0);
+        int chartRes = mChart->getResolution();
+        vec2 xBounds = mChart->getXBounds();
+
         vector<float> points;
-        for (int i = 0; i < mChartRes; i++) {
-            float factor = (float) i / (float) mChartRes;
-            float x = mix(mChartMin, mChartMax, factor).x;
+        for (int i = 0; i < mChart->getResolution(); i++) {
+            float factor = (float) i / (float) chartRes;
+            float x = mix(xBounds.x, xBounds.y, factor);
             vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
             if (fx.empty()) {
                 mChart->setVisibility(false);
@@ -157,9 +170,10 @@ void ZNodeView::updateChart() {
             points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
         }
 
-        mChart->setVisibility(true);
+        mPointCache = points;
+      //  mChart->setVisibility(true);
         clearInvalidateNode();
-        mChart->invalidate();
+      //  mChart->invalidate();
     }
 }
 
@@ -226,12 +240,13 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
 void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
-    int newRes = (int) (getWidth() / 2.0);
-    if (abs(newRes - mChartRes) > CHART_RES_THRESHOLD) {
-       invalidateSingleNode();
-    } else {
-        clearInvalidateNode();
-    }
+    // Todo: update this logic for new line chart
+//    int newRes = (int) (getWidth() / 2.0);
+//    if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
+//       invalidateSingleNode();
+//    } else {
+//        clearInvalidateNode();
+//    }
 }
 
 void ZNodeView::clearInvalidateNode() {
