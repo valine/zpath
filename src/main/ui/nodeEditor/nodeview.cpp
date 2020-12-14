@@ -80,6 +80,32 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     });
 }
 
+
+void ZNodeView::updateChart() {
+    // This is usually run from background thread
+    if (mInvalid) {
+        int chartRes = mChart->getResolution();
+        vec2 xBounds = mChart->getXBounds();
+
+        vector<float> points;
+        for (int i = 0; i < mChart->getResolution(); i++) {
+            float factor = (float) i / (float) chartRes;
+            float x = mix(xBounds.x, xBounds.y, factor);
+            vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
+            if (fx.empty()) {
+                mChart->setVisibility(false);
+                return;
+            }
+            points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
+        }
+
+        mPointCache = points;
+        clearInvalidateNode();
+        mChart->requestLineUpdate();
+        mChart->invalidate();
+    }
+}
+
 void ZNodeView::setType(ZNodeView::Type type) {
     mType = type;
     vec2 socketCount = getSocketCount();
@@ -152,30 +178,6 @@ void ZNodeView::setConstantValue(vector<float> value) {
     }
 }
 
-void ZNodeView::updateChart() {
-    // This is usually run from background thread
-    if (mInvalid) {
-        int chartRes = mChart->getResolution();
-        vec2 xBounds = mChart->getXBounds();
-
-        vector<float> points;
-        for (int i = 0; i < mChart->getResolution(); i++) {
-            float factor = (float) i / (float) chartRes;
-            float x = mix(xBounds.x, xBounds.y, factor);
-            vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
-            if (fx.empty()) {
-                mChart->setVisibility(false);
-                return;
-            }
-            points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
-        }
-
-        mPointCache = points;
-      //  mChart->setVisibility(true);
-        clearInvalidateNode();
-      //  mChart->invalidate();
-    }
-}
 
 vector<float> ZNodeView::evaluate(vector<float> x) {
     ivec2 size = getSocketCount();
@@ -268,6 +270,7 @@ void ZNodeView::invalidateSingleNode() {
         cout << "Node evaluation happening on main ui thread. "
                 "Set the node invalidate listener if the UI is hanging." << endl;
         //updateChart(); // Todo: review if this udate chart is needed
+        //mChart->requestLineUpdate();
     }
 }
 

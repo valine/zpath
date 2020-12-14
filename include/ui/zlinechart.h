@@ -60,7 +60,11 @@ public:
     }
 
     void onWindowChange(int width, int height) override;
-    void updateLineBuffers();
+
+    void requestLineUpdate() {
+        mLineUpdatedNeeded = true;
+    }
+
 private:
 
     function<vector<float>(vector<int>, int index)> mListener;
@@ -91,6 +95,7 @@ private:
 
     ZTexture* mBackground;
     int mLineCount = 1;
+    bool mLineUpdatedNeeded = false;
 
     float mLineWidth = 2;
 
@@ -107,9 +112,7 @@ private:
     ;
 
     void updateFBOSize();
-
-
-
+    void updateLineBuffers();
     void addGrid();
 };
 

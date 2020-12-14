@@ -28,7 +28,6 @@ void ZLineChart::onWindowChange(int width, int height) {
     ZView::onWindowChange(width, height);
 
     updateFBOSize();
-    updateLineBuffers();
     draw();
 }
 
@@ -126,7 +125,11 @@ void ZLineChart::addGrid() {
 }
 
 void ZLineChart::draw() {
-    ZView::draw();
+    
+    if (mLineUpdatedNeeded) {
+        mLineUpdatedNeeded = false;
+        updateLineBuffers();
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     mShader->use();
@@ -170,4 +173,5 @@ void ZLineChart::draw() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    ZView::draw();
 }
