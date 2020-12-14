@@ -49,15 +49,6 @@ public:
     int getResolution() {
         return mResolution;
     }
-    void updateChart() {
-
-        if (mListener != nullptr) {
-            for (int i = 0; i < mResolution; i++) {
-                int lineIndex = 0;
-                vector<float> y = mListener({i}, lineIndex); //  todo: replace 0 with line index
-            }
-        }
-    }
 
     void onWindowChange(int width, int height) override;
 

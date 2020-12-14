@@ -72,18 +72,16 @@ void ZLineChart::updateLineBuffers() {
     vector<float> verts;
     vector<int> edges;
 
-    int resolution = mResolution;
-
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
-        for (uint i = 0; i < resolution; i++) {
-            float x = mix(mXBound.x, mXBound.y, (float) i / resolution);
+        for (uint i = 0; i < mResolution; i++) {
+            float x = mix(mXBound.x, mXBound.y, (float) i / mResolution);
             vector<float> y = mListener({(int) i}, lineIndex);
-            verts.push_back(((float) i / (float) (resolution - 1)));
+            verts.push_back(((float) i / (float) (mResolution - 1)));
             verts.push_back(y.at(0));
             verts.push_back(0);
             verts.push_back(0);
 
-            if (i != resolution - 1) {
+            if (i != mResolution - 1) {
                 edges.push_back(i);
                 edges.push_back(i + 1);
             }
@@ -99,6 +97,8 @@ void ZLineChart::updateLineBuffers() {
             unsigned int edgeBuffer;
             glGenBuffers(1, &edgeBuffer);
             mEdges.push_back(edgeBuffer);
+        } else {
+            mPointCount.at(lineIndex) = edges.size();
         }
 
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
@@ -125,7 +125,7 @@ void ZLineChart::addGrid() {
 }
 
 void ZLineChart::draw() {
-    
+
     if (mLineUpdatedNeeded) {
         mLineUpdatedNeeded = false;
         updateLineBuffers();

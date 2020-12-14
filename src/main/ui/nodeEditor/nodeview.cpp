@@ -243,12 +243,13 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
     // Todo: update this logic for new line chart
-//    int newRes = (int) (getWidth() / 2.0);
-//    if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
-//       invalidateSingleNode();
-//    } else {
-//        clearInvalidateNode();
-//    }
+    int newRes = (int) (getWidth() / 7.0);
+    if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
+        mChart->setResolution(newRes);
+        invalidateSingleNode();
+    } else {
+        //clearInvalidateNode();
+    }
 }
 
 void ZNodeView::clearInvalidateNode() {
