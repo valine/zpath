@@ -67,8 +67,8 @@ private:
     vec2 mYBound = vec2(0, 3);
 
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
-    vec2 mTempXBound = vec2(0);
-    vec2 mTempYBound = vec2(0);
+    vec2 mInitialTmpOffset = vec2(0);
+    vec2 mTmpOffset = vec2(0);
 
     // OpenGL buffers
     unsigned int mFBO = -1;

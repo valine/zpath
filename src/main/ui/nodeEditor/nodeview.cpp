@@ -156,9 +156,6 @@ vector<ZView *> ZNodeView::getSocketsOut() {
 bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
-    // Todo: logic needed to reject click events during graph translation
-
-
     if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel)) {
         if (mListener != nullptr) {
             mListener(mOutputLabel, this);

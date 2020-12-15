@@ -134,7 +134,8 @@ void ZLineChart::draw() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     mShader->use();
 
-    mat4 projection = ortho(0.0f, (float) 1.0, (float) mYBound.y, mYBound.x, -1.0f, 10.0f);
+    mat4 projection = ortho(mTmpOffset.x, (float) mTmpOffset.x + 1.0f, mYBound.y + mTmpOffset.y,
+            (float) mYBound.x + mTmpOffset.y, -1.0f, 10.0f);
     mShader->setMat4("uVPMatrix", projection);
 
     glViewport(0, 0, getWidth(), getHeight());
@@ -177,5 +178,21 @@ void ZLineChart::draw() {
 }
 
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
-    ZView::onMouseDrag(absolute, start, delta, state);
+    ZView::onMouseDrag(absolute,start, delta, state);
+
+    if (middleMouseIsDown()) {
+
+        if (state == mouseDown) {
+            mInitialTmpOffset = mTmpOffset;
+        }
+
+        float ySpan = mXBound.y - mXBound.x;
+        if (state == mouseDrag) {
+            float deltaX = -(delta.x / getWidth());
+            float deltaY = (delta.y / getHeight()) * ySpan;
+            mTmpOffset = mInitialTmpOffset + vec2(deltaX, deltaY);
+        }
+
+        invalidate();
+    }
 }
