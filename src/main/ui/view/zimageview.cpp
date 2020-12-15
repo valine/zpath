@@ -11,8 +11,8 @@ void ZImageView::draw() {
 
 }
 
-void ZImageView::onMouseEvent(int button, int action, int mods, int x, int y) {
-	ZView::onMouseEvent(button, action, mods, x, y);
+bool ZImageView::onMouseEvent(int button, int action, int mods, int x, int y) {
+	return ZView::onMouseEvent(button, action, mods, x, y);
 }
 
 void ZImageView::onKeyPress(int key, int scancode, int action, int mods) {

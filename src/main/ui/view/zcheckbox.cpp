@@ -120,7 +120,7 @@ void ZCheckbox::setText(string text) {
 	mLabel->setText(text);
 }
 
-void ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
+bool ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 	vec4 highlight = vec4(0.2, 0.2, 0.2, 0.2);
 

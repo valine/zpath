@@ -27,7 +27,7 @@ public:
 
     void draw();
 	void onKeyPress(int key, int scancode, int action, int mods);
-	void onMouseEvent(int button, int action, int mods, int x, int y);
+	bool onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void setText(string text);
 	void setListener(ZCheckboxListener* listener);

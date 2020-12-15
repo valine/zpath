@@ -20,7 +20,7 @@ public:
 private:
     void onGlobalMouseUp() override;
 
-    void onMouseEvent(int button, int action, int mods, int sx, int sy);
+    bool onMouseEvent(int button, int action, int mods, int sx, int sy);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
     void onCursorPosChange(double x, double y) override;
     bool mSliderActivated = false;

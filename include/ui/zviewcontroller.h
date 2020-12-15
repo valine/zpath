@@ -53,7 +53,7 @@ public:
 	// Glfw window events
     virtual void onWindowChange(int width, int height);
     virtual void onKeyPress(int key, int scancode, int action, int mods);
-    virtual void onMouseEvent(int button, int action, int mods, int x, int y);
+    virtual bool onMouseEvent(int button, int action, int mods, int x, int y);
     virtual void onCursorPosChange(double x, double y);
     virtual void onScrollChange(double x, double y);
 	virtual void onFileDrop(int count, const char** paths);

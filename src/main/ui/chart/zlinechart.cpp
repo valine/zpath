@@ -175,3 +175,7 @@ void ZLineChart::draw() {
 
     ZView::draw();
 }
+
+void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
+    ZView::onMouseDrag(absolute, start, delta, state);
+}

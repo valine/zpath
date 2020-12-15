@@ -153,14 +153,20 @@ vector<ZView *> ZNodeView::getSocketsOut() {
     return mSocketsOut;
 }
 
-void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
     // Todo: logic needed to reject click events during graph translation
+
+
     if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel)) {
         if (mListener != nullptr) {
             mListener(mOutputLabel, this);
         }
+    }
+
+    if (isMouseInBounds(mChart) && middleMouseIsDown()) {
+        return true;
     }
 }
 
@@ -177,7 +183,6 @@ void ZNodeView::setConstantValue(vector<float> value) {
         invalidateNodeRecursive();
     }
 }
-
 
 vector<float> ZNodeView::evaluate(vector<float> x) {
     ivec2 size = getSocketCount();

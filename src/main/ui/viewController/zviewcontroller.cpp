@@ -100,9 +100,10 @@ void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
     }
 }
 	
-void ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
+bool ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
+    bool clickConsumed = false;
     if (getVisibility()) {
-        ZView::onMouseEvent(button, action, mods, x, y);
+        clickConsumed = ZView::onMouseEvent(button, action, mods, x, y);
     }
 
     for (ZView* view : getSubViews()) {
@@ -110,6 +111,8 @@ void ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
             view->onGlobalMouseUp();
         }
     }
+
+    return clickConsumed;
 }
 
 void ZViewController::onCursorPosChange(double x, double y) {

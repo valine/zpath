@@ -189,7 +189,7 @@ private:
     function<void(ZLabel* sender, ZNodeView* node)> mListener;
     function<void(ZNodeView* node)> mInvalidateListener;
 
-    virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
+    bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     void clearInvalidateNode();
     bool isInvalid();

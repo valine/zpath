@@ -32,7 +32,7 @@ void Z2DSlider::setTextColor(vec3 color) {
     mLabel->setTextColor(color);
 }
 
-void Z2DSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
+bool Z2DSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
  	if (action == GLFW_RELEASE) {
 

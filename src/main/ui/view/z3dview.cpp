@@ -20,13 +20,15 @@ Z3DView::Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer)
     mSpinRig->setRotation(vec3(0,1,0));
 }
 
-void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
+bool Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
  	if ((button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2) && action == GLFW_RELEASE && !altKeyPressed()) {
  		int index = mRenderer->getObjectIndexAtLocation(x - getLeft(), getTop() + getHeight() - 1 - y);
  		mRenderer->getScene()->setActiveObjectIndex(index);
  		invalidate();
- 	} 
+ 	}
+
+ 	return true;
 }
 
 void Z3DView::setTilt(float angle) {

@@ -34,7 +34,7 @@ void ZMagnitudePicker::onGlobalMouseUp() {
     mSlider->setMouseDown(false);
 }
 
-void ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+bool ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
     if (action == GLFW_RELEASE ) {
@@ -42,6 +42,8 @@ void ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, in
     }
 
     mSlider->setMouseDown(false);
+
+    return false;
 }
 
 void ZMagnitudePicker::setValueChangedListener(function<void(float value)> l) {
