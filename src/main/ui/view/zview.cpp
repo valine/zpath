@@ -122,26 +122,6 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
 
         if (!clickConsumed) {
 
-
-            if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
-                mMouseDown = false;
-            } else if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-                mMouseDown = true;
-            }
-
-            if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE) {
-                mMiddleMouseDown = false;
-            } else if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
-                mMiddleMouseDown = true;
-            }
-
-            if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
-                mRightMouseDown = false;
-            } else if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
-                mRightMouseDown = true;
-            }
-
-
             if (action == GLFW_PRESS) {
                 onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
                             vec2(sx - mMouseDownX, sy - mMouseDownY), mouseDown);
@@ -149,10 +129,33 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                 mMouseDownY = sy;
             }
 
-            if (action == GLFW_RELEASE) {
-                onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-                            vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
+            if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
+                mMouseDown = true;
             }
+
+            if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
+                mMiddleMouseDown = true;
+            }
+
+            if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
+                mRightMouseDown = true;
+            }
+        }
+
+        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
+            mMouseDown = false;
+        }
+
+        if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE) {
+            mMiddleMouseDown = false;
+        }
+        if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
+            mRightMouseDown = false;
+        }
+
+        if (action == GLFW_RELEASE) {
+            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
+                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
         }
     }
 

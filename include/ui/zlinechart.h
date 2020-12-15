@@ -67,8 +67,12 @@ private:
     vec2 mYBound = vec2(0, 3);
 
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
-    vec2 mInitialTmpOffset = vec2(0);
-    vec2 mTmpOffset = vec2(0);
+    vec2 mLastMouse = vec2(0);
+    vec2 mLastDistance = vec2(0);
+    vec2 mTmpTranslate = vec2(0);
+    vec2 mTmpScale = vec2(1);
+
+    mat4 mTmpTransform;
 
     // OpenGL buffers
     unsigned int mFBO = -1;
@@ -107,6 +111,8 @@ private:
     void updateFBOSize();
     void updateLineBuffers();
     void addGrid();
+
+    mat<4, 4, float> getMatrix() const;
 };
 
 

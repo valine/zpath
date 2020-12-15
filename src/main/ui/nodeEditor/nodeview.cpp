@@ -156,13 +156,13 @@ vector<ZView *> ZNodeView::getSocketsOut() {
 bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
-    if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel)) {
+    if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel) && mOutputLabel->getVisibility()) {
         if (mListener != nullptr) {
             mListener(mOutputLabel, this);
         }
     }
 
-    if (isMouseInBounds(mChart) && middleMouseIsDown()) {
+    if (isMouseInBounds(mChart) && (middleMouseIsDown() | rightMouseIsDown())) {
         return true;
     }
 }

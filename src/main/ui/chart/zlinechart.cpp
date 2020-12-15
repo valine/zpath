@@ -20,6 +20,8 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
 
+    mTmpTransform = mat4(1);
+
     updateFBOSize();
     addGrid();
 }
@@ -134,8 +136,7 @@ void ZLineChart::draw() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     mShader->use();
 
-    mat4 projection = ortho(mTmpOffset.x, (float) mTmpOffset.x + 1.0f, mYBound.y + mTmpOffset.y,
-            (float) mYBound.x + mTmpOffset.y, -1.0f, 10.0f);
+    mat4 projection = ortho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 10.0f) * mTmpTransform;
     mShader->setMat4("uVPMatrix", projection);
 
     glViewport(0, 0, getWidth(), getHeight());
@@ -174,25 +175,52 @@ void ZLineChart::draw() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+
     ZView::draw();
+}
+
+mat<4, 4, float> ZLineChart::getMatrix() const {
+    return mTmpTransform;
 }
 
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute,start, delta, state);
 
-    if (middleMouseIsDown()) {
+    vec4 p1 = vec4(0,0,0,1);
+    vec4 p2 = vec4(0.5,0.5,0,1);
+    vec4 aScale = ((mTmpTransform * p2) - (mTmpTransform * p1)) / vec4(1,-1,0,0);
+    vec4 aTranslation = (mTmpTransform * p1);
 
-        if (state == mouseDown) {
-            mInitialTmpOffset = mTmpOffset;
-        }
-
-        float ySpan = mXBound.y - mXBound.x;
-        if (state == mouseDrag) {
-            float deltaX = -(delta.x / getWidth());
-            float deltaY = (delta.y / getHeight()) * ySpan;
-            mTmpOffset = mInitialTmpOffset + vec2(deltaX, deltaY);
-        }
-
-        invalidate();
+    cout << aTranslation.x << " " << aTranslation.y << " scale:" << aScale.x << " " << aScale.y << endl;
+    if (state == mouseDown) {
+        mLastDistance = absolute - getCenter();
+        mLastMouse = absolute;
     }
+
+    if (middleMouseIsDown()) {
+        if (state == mouseDrag) {
+            vec2 d = mLastMouse - absolute;
+            mTmpTransform = translate(mat4(1), vec3(2.0) * vec3((d.x / -getWidth()), (d.y / getHeight()), 0)) * mTmpTransform;
+        }
+
+        mLastMouse = absolute;
+    } else if (rightMouseIsDown()) {
+        if (state == mouseDrag) {
+            vec3 origin = vec3(0,0, 0);
+
+            vec2 pos = (absolute - getCenter());
+            //cout << d.x << " " << d.y << endl;
+
+            vec2 percent = pos / mLastDistance;
+            //mTmpTransform = scale(mat4(1), vec3(percent.x, percent.y, 1)) * mTmpTransform;
+            mTmpTransform = (translate(mat4(1), origin) * (scale(mat4(1), vec3(percent.x, percent.y, 1)) * mTmpTransform) * translate(mat4(1), -origin));
+            mLastDistance = pos;
+
+        }
+
+
+    }
+
+
+    invalidate();
 }
