@@ -22,7 +22,7 @@ void NodeViewController::onCreate() {
         // Do stuff here
     });
 
-    ZNodeEditor* nodeView = new ZNodeEditor(fillParent, fillParent, this);
+    auto* nodeView = new ZNodeEditor(fillParent, fillParent, this);
 
 //    ZDropDown* dropDown = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5"}, this);
 //    dropDown->setOffset(500, 0);
