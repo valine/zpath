@@ -9,14 +9,12 @@ ZScrollView::ZScrollView(float maxWidth, float maxHeight, ZView* parent):
 }
 
 void ZScrollView::init() {
-	mScrollBar = new ZView(7,100);
-	addSubView(mScrollBar);
+	mScrollBar = new ZView(7,100, this);
 	mScrollBar->setOffset(3,0);
 	mScrollBar->setBackgroundColor(vec4(0.5,0.5,0.5,1));
 	mScrollBar->setGravity(ZView::topRight);
 
-	mInnerView = new ZLinearLayout(getWidth(), getHeight());
-	addSubView(mInnerView);
+	mInnerView = new ZLinearLayout(getWidth(), getHeight(), this);
 	mInnerView->setMargin(0,0,7,0);
 
 	setGravity(ZView::topRight);
