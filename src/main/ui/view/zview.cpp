@@ -562,9 +562,6 @@ void ZView::addSubView(ZView *view) {
     view->setParentView(this);
     view->setRootView(mRootView);
 
-    setZPosition(getRootView()->getZCursorPosition());
-    getRootView()->incrementZCursor();
-
     if (mShader != nullptr) {
         view->setShader(mShader);
         view->setTextShader(mTextShader);
