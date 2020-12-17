@@ -162,7 +162,7 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
         }
     }
 
-    if (isMouseInBounds(mChart) && (middleMouseIsDown() | rightMouseIsDown())) {
+    if (isMouseInBounds(mChart) && (middleMouseIsDown() | (rightMouseIsDown() && shiftKeyPressed()))) {
         return true;
     }
 }

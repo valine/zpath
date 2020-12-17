@@ -204,7 +204,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
         }
 
         mLastMouse = absolute;
-    } else if (rightMouseIsDown()) {
+    } else if (rightMouseIsDown() && shiftKeyPressed()) {
         if (state == mouseDrag) {
             vec3 origin = vec3(0,0, 0);
 
@@ -217,8 +217,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
             mLastDistance = pos;
 
         }
-
-
     }
 
 
