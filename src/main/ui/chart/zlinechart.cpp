@@ -246,6 +246,7 @@ mat<4, 4, float> ZLineChart::getMatrix() const {
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute,start, delta, state);
 
+    vec3 origin = vec3(-1,-1,0);
 
     vec4 p1 = vec4(0,0,0,1);
     vec4 p2 = vec4(0.5,0.5,0,1);
@@ -254,7 +255,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
 
     cout << aTranslation.x << " " << aTranslation.y << " scale:" << aScale.x << " " << aScale.y << endl;
     if (state == mouseDown) {
-        mLastDistance = absolute - getCenter();
+        mLastDistance = absolute - vec2(origin.x, origin.y);
         mLastMouse = absolute;
     }
 
@@ -269,9 +270,9 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
 
         // Handle zoom
         if (state == mouseDrag) {
-            vec3 origin = vec3(0,0,0);
 
-            vec2 pos = (absolute - getCenter());
+
+            vec2 pos = (absolute - vec2(origin.x, origin.y));
 
             vec2 percent = pos / mLastDistance;
 
