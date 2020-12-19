@@ -96,7 +96,7 @@ void ZDropDown::onScrollChange(double x, double y) {
     mTitle->invalidate();
 }
 
-void ZDropDown::onGlobalMouseUp() {
+void ZDropDown::onGlobalMouseUp(int key) {
     if (!isMouseInBounds(mTitle)) {
         mDrawer->setVisibility(false);
         getParentView()->invalidate();

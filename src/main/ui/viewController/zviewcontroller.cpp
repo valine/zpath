@@ -108,7 +108,7 @@ bool ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
 
     for (ZView* view : getSubViews()) {
         if (action == GLFW_RELEASE) {
-            view->onGlobalMouseUp();
+            view->onGlobalMouseUp(button);
         }
     }
 

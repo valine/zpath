@@ -165,6 +165,8 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     if (isMouseInBounds(mChart) && (middleMouseIsDown() | (rightMouseIsDown() && shiftKeyPressed()))) {
         return true;
     }
+
+    return ZView::onMouseEvent(button, action, mods, sx, sy);;
 }
 
 void ZNodeView::setOnValueSelect(function<void(ZLabel *sender, ZNodeView *node)> onValueSelect) {

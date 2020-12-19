@@ -110,16 +110,32 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                 }
 
                 if (action == GLFW_RELEASE && view->anyMouseDown()) {
-                    clickConsumed |= view->onMouseEvent(button, action, mods, x, y);
+                    view->onMouseEvent(button, action, mods, x, y);
                 }
 
-                if (action == GLFW_RELEASE && anyMouseDown()) {
+                if (action == GLFW_RELEASE) {
                     view->onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
                                 vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
                 }
             }
         }
 
+        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
+            mMouseDown = false;
+        }
+
+        if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE) {
+            mMiddleMouseDown = false;
+        }
+
+        if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
+            mRightMouseDown = false;
+        }
+
+        if (action == GLFW_RELEASE) {
+            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
+                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
+        }
         if (!clickConsumed) {
 
             if (action == GLFW_PRESS) {
@@ -142,24 +158,18 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             }
         }
 
-        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
-            mMouseDown = false;
-        }
 
-        if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE) {
-            mMiddleMouseDown = false;
-        }
-        if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE) {
-            mRightMouseDown = false;
-        }
-
-        if (action == GLFW_RELEASE) {
-            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
-        }
     }
 
     return clickConsumed;
+}
+
+void ZView::setMiddleMouseDown(bool mouseDown) {
+    mMiddleMouseDown = mouseDown;
+}
+
+void ZView::setRightMouseDown(bool mouseDown) {
+    mRightMouseDown = mouseDown;
 }
 
 void ZView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
@@ -862,9 +872,21 @@ vec4 ZView::getMargin() {
     return vec4(mMarginLeft, mMarginTop, mMarginRight, mMarginBottom);
 }
 
-void ZView::onGlobalMouseUp() {
+void ZView::onGlobalMouseUp(int key) {
     for (auto view : mViews) {
-        view->onGlobalMouseUp();
+        view->onGlobalMouseUp(key);
+    }
+
+    if (key == GLFW_MOUSE_BUTTON_1) {
+        mMouseDown = false;
+    }
+
+    if (key == GLFW_MOUSE_BUTTON_2) {
+        mRightMouseDown = false;
+    }
+
+    if (key == GLFW_MOUSE_BUTTON_3) {
+        mMiddleMouseDown = false;
     }
 }
 

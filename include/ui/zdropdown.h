@@ -22,7 +22,7 @@ public:
 	void onCursorPosChange(double x, double y);
  	int getMaxHeight();
     void onScrollChange(double x, double y) override;
-    void onGlobalMouseUp() override;
+    void onGlobalMouseUp(int key) override;
 
 
     void setOnItemChange(std::function<void(int item)> onClick);

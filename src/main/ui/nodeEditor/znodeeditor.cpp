@@ -288,7 +288,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
                         (int) mInitialOffset.y + delta.y);
 
 
-            } else if (rightMouseIsDown()) {
+            } else if (rightMouseIsDown() && !shiftKeyPressed()) {
                 mNodeViews.at(mDragNode)->setMaxWidth(
                         mInitialSize.x + delta.x);
                 mNodeViews.at(mDragNode)->setMaxHeight(
@@ -301,7 +301,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
         }
     }
 
-    if (middleMouseIsDown()) {
+    if (middleMouseIsDown() && !shiftKeyPressed()) {
         for (ZNodeView* node : mNodeViews) {
             node->setOffset(
                     (int) node->getInitialPosition().x + delta.x,

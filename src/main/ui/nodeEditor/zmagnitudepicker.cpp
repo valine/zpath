@@ -24,8 +24,8 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(300, 70, parent) {
     });
 }
 
-void ZMagnitudePicker::onGlobalMouseUp() {
-    ZView::onGlobalMouseUp();
+void ZMagnitudePicker::onGlobalMouseUp(int key) {
+    ZView::onGlobalMouseUp(0);
 
     if (!isMouseInBounds(this)) {
         setVisibility(false);

@@ -182,6 +182,8 @@ class ZView {
 		bool anyMouseDown();
 
 		void setMouseDown(bool isDown);
+        void setMiddleMouseDown(bool mouseDown);
+        void setRightMouseDown(bool mouseDown);
 		int getMouseDownX();
 		int getMouseDownY();
 
@@ -206,7 +208,7 @@ class ZView {
 		/**
 		 * Called when mouse up anywhere on the screen
 		 */
-		virtual void onGlobalMouseUp();
+		virtual void onGlobalMouseUp(int key);
         bool isMouseInBounds(ZView *view) const;
 
         /**
