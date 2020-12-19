@@ -28,10 +28,16 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
 }
 
 void ZLineChart::onWindowChange(int width, int height) {
+    bool needsUpdate = false;
+    if (width != getWidth() || height != getHeight()) {
+        needsUpdate = true;
+    }
     ZView::onWindowChange(width, height);
 
-    updateFBOSize();
-    draw();
+    if (needsUpdate) {
+        updateFBOSize();
+       // draw();
+    }
 }
 
 void ZLineChart::updateFBOSize() {
