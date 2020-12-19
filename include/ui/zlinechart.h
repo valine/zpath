@@ -85,6 +85,10 @@ private:
     unsigned int mGridVertBuffer = -1;
     unsigned int mGridEdgeBuffer = -1;
 
+    unsigned int mBGridVertBuffer = -1;
+    unsigned int mBGridEdgeBuffer = -1;
+    int mBGridVCount = 0;
+
     vector<unsigned int> mPoints;
     vector<unsigned int> mEdges;
     vector<unsigned int> mPointCount;
@@ -113,6 +117,8 @@ private:
     void addGrid();
 
     mat<4, 4, float> getMatrix() const;
+
+    void addBackgroundGrid();
 };
 
 

@@ -24,6 +24,7 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
 
     updateFBOSize();
     addGrid();
+    addBackgroundGrid();
 }
 
 void ZLineChart::onWindowChange(int width, int height) {
@@ -111,6 +112,55 @@ void ZLineChart::updateLineBuffers() {
     }
 }
 
+void ZLineChart::addBackgroundGrid() {
+    vector<float> verts;
+    vector<int> edges;
+
+    int index = 0;
+    for (float x = -10; x < 10; x += 0.1) {
+        verts.push_back(-1e7);
+        verts.push_back(x);
+        verts.push_back(0);
+        verts.push_back(0);
+
+        verts.push_back(1e7);
+        verts.push_back(x);
+        verts.push_back(0);
+        verts.push_back(0);
+
+        edges.push_back(index);
+        edges.push_back(index+1);
+        index+=2;
+    }
+
+    for (float y = -10; y < 10; y += 0.1) {
+        verts.push_back(y);
+        verts.push_back(-1e7);
+        verts.push_back(0);
+        verts.push_back(0);
+
+        verts.push_back(y);
+        verts.push_back(1e7);
+        verts.push_back(0);
+        verts.push_back(0);
+
+        edges.push_back(index);
+        edges.push_back(index+1);
+        index+=2;
+    }
+
+    mBGridVCount = verts.size() / 4;
+
+    glGenBuffers(1, &mBGridVertBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mBGridVertBuffer);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
+    glGenBuffers(1, &mBGridEdgeBuffer);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+}
+
+
 void ZLineChart::addGrid() {
     vector<float> verts = {-1e7, 0, 0, 0,
                            1e7, 0, 0, 0,
@@ -144,6 +194,33 @@ void ZLineChart::draw() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // draw background grid
+    mShader->setVec4("uColor", grey);
+    glLineWidth(1.0);
+    glBindBuffer(GL_ARRAY_BUFFER, mBGridVertBuffer);
+    glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+    glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                          sizeof(float) * 4, (void*) 0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
+    glDrawElements(GL_LINES, mBGridVCount, GL_UNSIGNED_INT, nullptr);
+
+
+    // draw grid
+    mShader->setVec4("uColor", red);
+    glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
+    glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+    glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                          sizeof(float) * 4, (void*) 0);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
+    glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFinalFBO);
+    glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+
+    // Draw graph lines
     glLineWidth(mLineWidth);
     glDepthMask(false);
     for (uint i = 0; i < mPoints.size(); i++) {
@@ -156,26 +233,9 @@ void ZLineChart::draw() {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(i));
         glDrawElements(GL_LINES, mPointCount.at(i), GL_UNSIGNED_INT, nullptr);
-
     }
 
-    mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0));
-
-    // draw grid
-    glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
-    glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
-    glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 4, (void*) 0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
-    glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);
-
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFinalFBO);
-    glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
     ZView::draw();
 }
 
@@ -209,7 +269,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
 
         // Handle zoom
         if (state == mouseDrag) {
-            vec3 origin = vec3(0,0, 0);
+            vec3 origin = vec3(-aTranslation.x,-aTranslation.y,0);
 
             vec2 pos = (absolute - getCenter());
 
