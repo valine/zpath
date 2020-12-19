@@ -83,10 +83,11 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
         mAltKeyPressed = false;
     }
 
-    for (auto & mView : mViews) {
-        if ((isMouseInBounds(mView)) || action == GLFW_RELEASE) {
+
+    for (auto & mView : mViews)
+       // if ((isMouseInBounds(mView)) || action == GLFW_RELEASE) {
             mView->onKeyPress(key, scancode, action, mods);
-        }
+       // }
     }
 }
 
