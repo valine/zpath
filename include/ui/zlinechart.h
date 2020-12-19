@@ -68,11 +68,9 @@ private:
 
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
     vec2 mLastMouse = vec2(0);
-    vec2 mLastDistance = vec2(0);
-    vec2 mTmpTranslate = vec2(0);
-    vec2 mTmpScale = vec2(1);
-
     mat4 mTmpTransform;
+
+    vec3 mScaleOrigin = vec3(0);
 
     // OpenGL buffers
     unsigned int mFBO = -1;

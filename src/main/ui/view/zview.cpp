@@ -137,14 +137,6 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                         vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
         }
         if (!clickConsumed) {
-
-            if (action == GLFW_PRESS) {
-                onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-                            vec2(sx - mMouseDownX, sy - mMouseDownY), mouseDown);
-                mMouseDownX = sx;
-                mMouseDownY = sy;
-            }
-
             if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
                 mMouseDown = true;
             }
@@ -156,6 +148,15 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
                 mRightMouseDown = true;
             }
+
+            if (action == GLFW_PRESS) {
+                onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
+                            vec2(sx - mMouseDownX, sy - mMouseDownY), mouseDown);
+                mMouseDownX = sx;
+                mMouseDownY = sy;
+            }
+
+
         }
 
 

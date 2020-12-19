@@ -246,47 +246,76 @@ mat<4, 4, float> ZLineChart::getMatrix() const {
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute,start, delta, state);
 
-    vec3 origin = vec3(-1,-1,0);
+    vec2 positionInView = absolute - vec2(getLeft(), getTop());
+    vec2 minPos = vec2(1,1);
 
     vec4 p1 = vec4(0,0,0,1);
     vec4 p2 = vec4(0.5,0.5,0,1);
-    vec4 aScale = ((mTmpTransform * p2) - (mTmpTransform * p1)) / vec4(1,-1,0,0);
-    vec4 aTranslation = (mTmpTransform * p1);
+    vec4 sampleScale = ((mTmpTransform * p2) - (mTmpTransform * p1)) / vec4(1,-1,0,0);
 
-    cout << aTranslation.x << " " << aTranslation.y << " scale:" << aScale.x << " " << aScale.y << endl;
-    if (state == mouseDown) {
-        mLastDistance = absolute - vec2(origin.x, origin.y);
-        mLastMouse = absolute;
-    }
-
-    if (middleMouseIsDown()) {
-        if (state == mouseDrag) {
-            vec2 d = mLastMouse - absolute;
-            mTmpTransform = translate(mat4(1), vec3(2.0) * vec3((d.x / -getWidth()), (d.y / -getHeight()), 0)) * mTmpTransform;
+    /**
+     * Origin is determined by the mouse down quadrant. The graph should scale to the opposite corner
+     */
+    if (state == mouseDown && rightMouseIsDown()) {
+        if (positionInView.x > getWidth() / 2.0) {
+            mScaleOrigin.x = -1;
+        } else {
+            mScaleOrigin.x = 1;
+            positionInView.x = getWidth() - positionInView.x;
         }
 
-        mLastMouse = absolute;
+        if (positionInView.y > getHeight() / 2.0) {
+            mScaleOrigin.y = -1;
+        } else {
+            mScaleOrigin.y = 1;
+            positionInView.y = getHeight() - positionInView.y;
+        }
+    }
+
+    if (state == mouseDown) {
+        mLastMouse = positionInView;
+    }
+
+    if (middleMouseIsDown() && shiftKeyPressed()) {
+        if (state == mouseDrag) {
+            vec2 d = (mLastMouse - positionInView) * vec2(2.0);
+            mTmpTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransform;
+        }
+
+        mLastMouse = positionInView;
     } else if (rightMouseIsDown() && shiftKeyPressed()) {
+
+        if (mScaleOrigin.x > 0) {
+            positionInView.x = getWidth() - positionInView.x;
+        }
+
+        if (mScaleOrigin.y > 0) {
+            positionInView.y = getHeight() - positionInView.y;
+        }
 
         // Handle zoom
         if (state == mouseDrag) {
+            vec2 percent = positionInView / mLastMouse;
+            if (positionInView.x < minPos.x) {
+                percent.x = 0.01 / sampleScale.x;
+            } else {
+                mLastMouse.x = positionInView.x;
+            }
 
+            if (positionInView.y < minPos.y) {
+                percent.y = 0.01 / sampleScale.y;
+            } else {
+                mLastMouse.y = positionInView.y;
+            }
 
-            vec2 pos = (absolute - vec2(origin.x, origin.y));
-
-            vec2 percent = pos / mLastDistance;
-
-            if (isnan(aScale.x) || isnan(aScale.y)) {
+            if (isnan(sampleScale.x) || isnan(sampleScale.y)) {
                 mTmpTransform = ortho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 10.0f);
             } else {
-                mTmpTransform = ((translate(mat4(1), origin)) *
-                                 (scale(mat4(1), vec3(percent.x, percent.y, 1))) *
-                                 (translate(mat4(1), -origin))) * mTmpTransform;
-                mLastDistance = pos;
+                mTmpTransform = (translate(mat4(1), mScaleOrigin) *
+                                 scale(mat4(1), vec3(percent.x, percent.y, 1)) *
+                                 translate(mat4(1), -mScaleOrigin)) * mTmpTransform;
             }
         }
     }
-
-
     invalidate();
 }
