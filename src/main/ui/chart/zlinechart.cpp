@@ -252,7 +252,10 @@ mat<4, 4, float> ZLineChart::getMatrix() const {
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute,start, delta, state);
 
-    vec2 positionInView = absolute - vec2(getLeft(), getTop());
+    vec2 corner = vec2(getLeft(), getTop());
+    //absolute /= getScale();
+    vec2 positionInView = absolute - corner;
+
     vec2 minPos = vec2(1,1);
 
     vec4 p1 = vec4(0,0,0,1);
