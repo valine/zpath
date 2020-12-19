@@ -20,7 +20,7 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
 
-    mTmpTransform = mat4(1);
+    mTmpTransform = ortho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 10.0f);
 
     updateFBOSize();
     addGrid();
@@ -186,8 +186,8 @@ void ZLineChart::draw() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     mShader->use();
 
-    mat4 projection = ortho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 10.0f) * mTmpTransform;
-    mShader->setMat4("uVPMatrix", projection);
+   // mat4 projection = mTmpTransform;
+    mShader->setMat4("uVPMatrix", mTmpTransform);
 
     glViewport(0, 0, getWidth(), getHeight());
 
@@ -261,7 +261,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     if (middleMouseIsDown()) {
         if (state == mouseDrag) {
             vec2 d = mLastMouse - absolute;
-            mTmpTransform = translate(mat4(1), vec3(2.0) * vec3((d.x / -getWidth()), (d.y / getHeight()), 0)) * mTmpTransform;
+            mTmpTransform = translate(mat4(1), vec3(2.0) * vec3((d.x / -getWidth()), (d.y / -getHeight()), 0)) * mTmpTransform;
         }
 
         mLastMouse = absolute;
@@ -269,25 +269,20 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
 
         // Handle zoom
         if (state == mouseDrag) {
-            vec3 origin = vec3(-aTranslation.x,-aTranslation.y,0);
+            vec3 origin = vec3(0,0,0);
 
             vec2 pos = (absolute - getCenter());
 
             vec2 percent = pos / mLastDistance;
 
-            if (aScale.x * percent.x < 0.01) {
-                percent.x = 1;
+            if (isnan(aScale.x) || isnan(aScale.y)) {
+                mTmpTransform = ortho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 10.0f);
+            } else {
+                mTmpTransform = ((translate(mat4(1), origin)) *
+                                 (scale(mat4(1), vec3(percent.x, percent.y, 1))) *
+                                 (translate(mat4(1), -origin))) * mTmpTransform;
+                mLastDistance = pos;
             }
-
-            if (aScale.y * percent.y > -0.01) {
-                percent.y = -1;
-            }
-
-            mTmpTransform = (translate(mat4(1), origin) *
-                             (scale(mat4(1), vec3(percent.x, percent.y, 1)) * mTmpTransform) *
-                             translate(mat4(1), -origin));
-            mLastDistance = pos;
-
         }
     }
 
