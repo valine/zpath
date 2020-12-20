@@ -20,7 +20,8 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
 
-    mTmpTransform = ortho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 10.0f);
+    mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+    mTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
 
     updateFBOSize();
     addGrid();
@@ -83,7 +84,6 @@ void ZLineChart::updateLineBuffers() {
 
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
         for (uint i = 0; i < mResolution; i++) {
-            float x = mix(mXBound.x, mXBound.y, (float) i / mResolution);
             vector<float> y = mListener({(int) i}, lineIndex);
             verts.push_back(((float) i / (float) (mResolution - 1)));
             verts.push_back(y.at(0));
@@ -110,12 +110,20 @@ void ZLineChart::updateLineBuffers() {
             mPointCount.at(lineIndex) = edges.size();
         }
 
+
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
         glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+
+        // Reset the tmp transform. The tmp transform is used while evaluation
+        // happens on a background thread. This ensures the ui will not lag
+        // when evaluating large graphs.
+        mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
     }
+
+    invalidate();
 }
 
 void ZLineChart::addBackgroundGrid() {
@@ -166,7 +174,6 @@ void ZLineChart::addBackgroundGrid() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 }
 
-
 void ZLineChart::addGrid() {
     vector<float> verts = {-1e7, 0, 0, 0,
                            1e7, 0, 0, 0,
@@ -193,7 +200,7 @@ void ZLineChart::draw() {
     mShader->use();
 
    // mat4 projection = mTmpTransform;
-    mShader->setMat4("uVPMatrix", mTmpTransform);
+    mShader->setMat4("uVPMatrix", mTransform);
 
     glViewport(0, 0, getWidth(), getHeight());
 
@@ -225,6 +232,8 @@ void ZLineChart::draw() {
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFinalFBO);
     glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
+    // mat4 projection = mTmpTransform;
+    mShader->setMat4("uVPMatrix", mTmpTransform);
 
     // Draw graph lines
     glLineWidth(mLineWidth);
@@ -255,6 +264,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     vec2 corner = vec2(getLeft(), getTop());
     vec2 positionInView = absolute - corner;
 
+    bool needsRefresh = false;
     /**
      * Origin is determined by the mouse down quadrant. The graph should scale to the opposite corner
      */
@@ -282,16 +292,18 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
         if (state == mouseDrag) {
             vec2 d = (mLastMouse - positionInView) * vec2(2.0);
             mTmpTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransform;
+            mTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTransform;
+            needsRefresh = true;
         }
 
         mLastMouse = positionInView;
     } else if (rightMouseIsDown() && shiftKeyPressed()) {
-
         vec2 minPos = vec2(1,1);
 
         vec4 p1 = vec4(0,0,0,1);
         vec4 p2 = vec4(0.5,0.5,0,1);
-        vec4 sampleScale = ((mTmpTransform * p2) - (mTmpTransform * p1)) / vec4(1,-1,0,0);
+        vec4 sampleScale = ((mTransform * p2) - (mTransform * p1)) / vec4(1,-1,0,0);
+        vec4 sampleTranslation = (mTransform * p1);
 
         if (mScaleOrigin.x > 0) {
             positionInView.x = getWidth() - positionInView.x;
@@ -318,15 +330,22 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
                 mLastMouse.y = positionInView.y;
             }
 
-            if (isnan(sampleScale.x) || isnan(sampleScale.y)) {
-                mTmpTransform = ortho(-1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 10.0f);
-            } else {
-                mTmpTransform = (translate(mat4(1), mScaleOrigin) *
-                                 scale(mat4(1), vec3(percent.x, percent.y, 1)) *
-                                 translate(mat4(1), -mScaleOrigin)) * mTmpTransform;
-            }
+            mTmpTransform = (translate(mat4(1), mScaleOrigin) *
+                             scale(mat4(1), vec3(percent.x, percent.y, 1)) *
+                             translate(mat4(1), -mScaleOrigin)) * mTmpTransform;
+
+            mTransform = (translate(mat4(1), mScaleOrigin) *
+                             scale(mat4(1), vec3(percent.x, percent.y, 1)) *
+                             translate(mat4(1), -mScaleOrigin)) * mTransform;
+            needsRefresh = true;
+
         }
     }
+
+    if (needsRefresh && mInvalidateListener != nullptr) {
+        mInvalidateListener();
+    }
+
     invalidate();
 }
 
@@ -347,7 +366,14 @@ void ZLineChart::onScrollChange(double x, double y) {
         mTmpTransform = (translate(mat4(1), origin) *
                          scale(mat4(1), vec3(percent.x, percent.y, 1)) *
                          translate(mat4(1), -origin)) * mTmpTransform;
+        mTransform = (translate(mat4(1), origin) *
+                         scale(mat4(1), vec3(percent.x, percent.y, 1)) *
+                         translate(mat4(1), -origin)) * mTransform;
+        if (mInvalidateListener != nullptr) {
+            mInvalidateListener();
+        }
     }
+
 
     invalidate();
 }

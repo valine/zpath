@@ -26,20 +26,27 @@ public:
     void setChartBounds(vec2 x, vec2 y) {
         mXBound = x;
         mYBound = y;
-        updateLineBuffers();
+        //updateLineBuffers();
     }
 
     vec2 getXBounds() {
-        return mXBound;
+        mat4 inverseMat = inverse(mTransform);
+        vec4 min = (inverseMat * vec4(-1,0,0,1));
+        vec4 max = (inverseMat * vec4(1,0,0,1));
+
+        return vec2(min.x, max.x);
     }
 
     vec2 getYBounds() {
-        return mYBound;
+        mat4 inverseMat = inverse(mTransform);
+        vec4 min = (inverseMat * vec4(0,1.0,0,1));
+        vec4 max = (inverseMat * vec4(0,-1.0,0,1));
+        return vec2(min.y, max.y);
     }
 
     void setLineCount(int count) {
         mLineCount = count;
-        updateLineBuffers();
+        //updateLineBuffers();
     }
 
     void setResolution(int resolution) {
@@ -58,17 +65,22 @@ public:
         mLineUpdatedNeeded = true;
     }
 
-private:
+    void setInvalidateListener(function<void()> l) {
+        mInvalidateListener = l;
+    }
 
+private:
+    function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener;
 
     // X is min, Y is max
-    vec2 mXBound = vec2(0, 3);
-    vec2 mYBound = vec2(0, 3);
+    vec2 mXBound = vec2(0, 1.0);
+    vec2 mYBound = vec2(0, 1.0);
 
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
     vec2 mLastMouse = vec2(0);
     mat4 mTmpTransform;
+    mat4 mTransform;
 
     vec3 mScaleOrigin = vec3(0);
 

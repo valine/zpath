@@ -78,6 +78,10 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
         line.push_back(mPointCache.at(x.at(0)));
         return line;
     });
+
+    mChart->setInvalidateListener([this](){
+        invalidateSingleNode();
+    });
 }
 
 
@@ -86,7 +90,7 @@ void ZNodeView::updateChart() {
     if (mInvalid) {
         int chartRes = mChart->getResolution();
         vec2 xBounds = mChart->getXBounds();
-
+        vec2 yBounds = mChart->getYBounds();
         vector<float> points;
         for (int i = 0; i < mChart->getResolution(); i++) {
             float factor = (float) i / (float) chartRes;
@@ -96,7 +100,12 @@ void ZNodeView::updateChart() {
                 mChart->setVisibility(false);
                 return;
             }
-            points.push_back(evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(0));
+
+            float ySpan = (yBounds.y - yBounds.x);
+
+            float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
+            points.push_back(yFactor);
+
         }
 
         mPointCache = points;
@@ -166,7 +175,7 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
         return true;
     }
 
-    return ZView::onMouseEvent(button, action, mods, sx, sy);;
+    return ZView::onMouseEvent(button, action, mods, sx, sy);
 }
 
 void ZNodeView::setOnValueSelect(function<void(ZLabel *sender, ZNodeView *node)> onValueSelect) {
@@ -247,7 +256,7 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
     // Todo: update this logic for new line chart
-    int newRes = (int) (getWidth() / 7.0);
+    int newRes = (int) (getWidth() / 4.0);
     if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
         mChart->setResolution(newRes);
         invalidateSingleNode();
@@ -270,12 +279,6 @@ void ZNodeView::invalidateSingleNode() {
 
     if (mInvalidateListener != nullptr) {
         mInvalidateListener(this);
-    }  else {
-
-        cout << "Node evaluation happening on main ui thread. "
-                "Set the node invalidate listener if the UI is hanging." << endl;
-        //updateChart(); // Todo: review if this udate chart is needed
-        //mChart->requestLineUpdate();
     }
 }
 
@@ -298,8 +301,6 @@ void ZNodeView::invalidateNodeRecursive() {
 bool ZNodeView::isInvalid() {
     return mInvalid;
 }
-
-
 
 void ZNodeView::setInvalidateListener(function<void(ZNodeView *node)> listener) {
     mInvalidateListener = std::move(listener);

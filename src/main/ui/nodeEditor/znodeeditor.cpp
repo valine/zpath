@@ -112,7 +112,6 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
 
     node->setInvalidateListener([this](ZNodeView* node){
         std::unique_lock<std::mutex> lck(mEvalMutex);
-
         if (mEvalSet.count(node) == 0) {
             mEvalQueue.push(node);
             mEvalSet.insert(node);
@@ -242,7 +241,7 @@ void ZNodeEditor::onMouseDown() {
                        }
                        node->mInputIndices.at(j).pop_back();
 
-                        node->invalidateNodeRecursive();
+                       node->invalidateNodeRecursive();
                        node->invalidate();
                     }
                 }
