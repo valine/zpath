@@ -342,10 +342,11 @@ void ZLineChart::onScrollChange(double x, double y) {
             factor -= speed;
         }
 
+        vec3 origin = vec3(0);
         vec2 percent = vec2(factor);
-        mTmpTransform = (translate(mat4(1), mScaleOrigin) *
+        mTmpTransform = (translate(mat4(1), origin) *
                          scale(mat4(1), vec3(percent.x, percent.y, 1)) *
-                         translate(mat4(1), -mScaleOrigin)) * mTmpTransform;
+                         translate(mat4(1), -origin)) * mTmpTransform;
     }
 
     invalidate();
