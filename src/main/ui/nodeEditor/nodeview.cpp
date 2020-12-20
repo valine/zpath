@@ -71,12 +71,22 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mChart->setChartListener([this](vector<int> x, int lineIndex){
         // Can safely ignore line index for now
 
-        if (mPointCache.empty()) {
-            return vector<float>(mChart->getResolution(), 0);
+        if (mChart->getInputCount() == 1) {
+            if (mPointCache.empty()) {
+                return vector<float>(2, 0);
+            }
+            vector<float> line;
+            line.push_back(mPointCache.at(x.at(0)).at(0));
+            return line;
+        } else {
+            if (mPointCache.empty()) {
+                return vector<float>(2, 0);
+            }
+            vector<float> line;
+            line.push_back(mPointCache.at(x.at(0)).at(0));
+            line.push_back(mPointCache.at(x.at(0)).at(1));
+            return line;
         }
-        vector<float> line;
-        line.push_back(mPointCache.at(x.at(0)).at(0));
-        return line;
     });
 
     mChart->setInvalidateListener([this](){
@@ -88,36 +98,82 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 void ZNodeView::updateChart() {
     // This is usually run from background thread
     if (mInvalid) {
-        int chartRes = mChart->getResolution();
-        vec2 xBounds = mChart->getXBounds();
-        vec2 yBounds = mChart->getYBounds();
-        vector<vector<float>> points;
-        for (int i = 0; i < mChart->getResolution(); i++) {
-            float factor = (float) i / (float) chartRes;
-            float x = mix(xBounds.x, xBounds.y, factor);
-            vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
-            if (fx.empty()) {
-                mChart->setVisibility(false);
-                return;
-            }
 
-            float ySpan = (yBounds.y - yBounds.x);
-
-            float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
-            points.push_back({yFactor});
-
+        if (mChart->getInputCount() == 1) {
+            updateChart1D();
+        } else {
+            updateChart2D();
         }
 
-        mPointCache = points;
-        clearInvalidateNode();
-        mChart->requestLineUpdate();
-        mChart->invalidate();
     }
+}
+
+void ZNodeView::updateChart2D() {
+    // Data doesn't necessarily go off screen after this number of points. Finding this optimal resolution is
+    // potentially complicated.
+    int chartRes = mChart->getResolution();
+    float increment = 0.1;
+
+    vec2 xBounds = mChart->getXBounds();
+    vec2 yBounds = mChart->getYBounds();
+
+    vector<vector<float>> points;
+    for (int i = 0; i < chartRes; i++) {
+        float input = (float) i * increment;
+
+        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, input));
+        if (fx.empty()) {
+            mChart->setVisibility(false);
+            return;
+        }
+
+        float ySpan = (yBounds.y - yBounds.x);
+        float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
+
+        float xSpan = (xBounds.y - xBounds.x);
+        float xFactor = (((fx.at(1)) - xBounds.x) / xSpan);
+
+        // xFactor and yFactor are the point coordinates in screen space
+        points.push_back({xFactor, yFactor});
+    }
+
+    mPointCache = points;
+    clearInvalidateNode();
+    mChart->requestLineUpdate();
+    mChart->invalidate();
+}
+
+void ZNodeView::updateChart1D() {
+    int chartRes = mChart->getResolution();
+    vec2 xBounds = mChart->getXBounds();
+    vec2 yBounds = mChart->getYBounds();
+
+    vector<vector<float>> points;
+    for (int i = 0; i < mChart->getResolution(); i++) {
+        float factor = (float) i / (float) chartRes;
+        float x = mix(xBounds.x, xBounds.y, factor);
+        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
+        if (fx.empty()) {
+            mChart->setVisibility(false);
+            return;
+        }
+
+        float ySpan = (yBounds.y - yBounds.x);
+
+        float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
+        points.push_back({yFactor});
+
+    }
+
+    mPointCache = points;
+    clearInvalidateNode();
+    mChart->requestLineUpdate();
+    mChart->invalidate();
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
     mType = type;
-    vec2 socketCount = getSocketCount();
+    ivec2 socketCount = getSocketCount();
 
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         if (i >= socketCount.x) {
@@ -131,7 +187,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
         }
     }
 
-    mChart->setInputCount(getSocketCount().y);
+    mChart->setInputCount(socketCount.y);
 
     mNameLabel->setText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
@@ -154,7 +210,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
         mChart->setMarginRight(CHART_SIDE_MARGIN_WIDE);
     }
 }
-
 
 vector<ZView *> ZNodeView::getSocketsIn() {
     return mSocketsIn;
@@ -257,14 +312,20 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
 void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
-    // Todo: update this logic for new line chart
-    int newRes = (int) (getWidth() / 4.0);
-    if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
-        mChart->setResolution(newRes);
-        invalidateSingleNode();
+
+    if (mChart->getInputCount() == 1) {
+        int newRes = (int) (getWidth() / 4.0);
+        if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
+            mChart->setResolution(newRes);
+            invalidateSingleNode();
+        }
     } else {
-        //clearInvalidateNode();
+        // Data doesn't necessarily go off screen after this number of points. Finding this optimal resolution is
+        // potentially complicated.
+        mChart->setResolution(100);
+        invalidateSingleNode();
     }
+
 }
 
 void ZNodeView::clearInvalidateNode() {

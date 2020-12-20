@@ -206,6 +206,9 @@ private:
 
     void clearInvalidateNode();
     bool isInvalid();
+
+    void updateChart1D();
+    void updateChart2D();
 };
 
 

@@ -50,7 +50,7 @@ public:
 
     void setInputCount(int input) {
         int maxInputCount = 2;
-        mInputCount = std::max(input, maxInputCount);
+        mInputCount = std::min(input, maxInputCount);
         if(input > maxInputCount) {
             cout << "Clamping chart input count to " << maxInputCount << endl;
         }
@@ -67,7 +67,9 @@ public:
     void onWindowChange(int width, int height) override;
 
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
+
     void onScrollChange(double x, double y) override;
+
     void requestLineUpdate() {
         mLineUpdatedNeeded = true;
     }
@@ -134,6 +136,9 @@ private:
     mat<4, 4, float> getMatrix() const;
 
     void addBackgroundGrid();
+
+    void updateChart2D();
+    void updateChart1D();
 };
 
 

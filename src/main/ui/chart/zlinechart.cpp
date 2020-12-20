@@ -79,6 +79,62 @@ void ZLineChart::updateLineBuffers() {
         return;
     }
 
+    if (mInputCount == 1) {
+        updateChart1D();
+    } else {
+        updateChart2D();
+    }
+
+    // Reset the tmp transform. The tmp transform is used while evaluation
+    // happens on a background thread. This ensures the ui will not lag
+    // when evaluating large graphs.
+    mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+
+    invalidate();
+}
+
+void ZLineChart::updateChart2D() {
+    vector<float> verts;
+    vector<int> edges;
+
+    for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
+        for (uint i = 0; i < mResolution; i++) {
+            vector<float> output = mListener({(int) i}, lineIndex);
+            verts.push_back(output.at(0));
+            verts.push_back(output.at(1));
+            verts.push_back(0);
+            verts.push_back(0);
+
+            if (i != mResolution - 1) {
+                edges.push_back(i);
+                edges.push_back(i + 1);
+            }
+        }
+
+        // Initialize buffers
+        if (mPoints.size() <= lineIndex) {
+            mPointCount.push_back(edges.size());
+            unsigned int lineBuffer;
+            glGenBuffers(1, &lineBuffer);
+            mPoints.push_back(lineBuffer);
+
+            unsigned int edgeBuffer;
+            glGenBuffers(1, &edgeBuffer);
+            mEdges.push_back(edgeBuffer);
+        } else {
+            mPointCount.at(lineIndex) = edges.size();
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+    }
+}
+
+
+void ZLineChart::updateChart1D() {
     vector<float> verts;
     vector<int> edges;
 
@@ -110,7 +166,6 @@ void ZLineChart::updateLineBuffers() {
             mPointCount.at(lineIndex) = edges.size();
         }
 
-
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
         glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
 
@@ -122,8 +177,6 @@ void ZLineChart::updateLineBuffers() {
         // when evaluating large graphs.
         mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
     }
-
-    invalidate();
 }
 
 void ZLineChart::addBackgroundGrid() {
