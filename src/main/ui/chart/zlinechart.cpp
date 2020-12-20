@@ -253,14 +253,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute,start, delta, state);
 
     vec2 corner = vec2(getLeft(), getTop());
-    //absolute /= getScale();
     vec2 positionInView = absolute - corner;
-
-    vec2 minPos = vec2(1,1);
-
-    vec4 p1 = vec4(0,0,0,1);
-    vec4 p2 = vec4(0.5,0.5,0,1);
-    vec4 sampleScale = ((mTmpTransform * p2) - (mTmpTransform * p1)) / vec4(1,-1,0,0);
 
     /**
      * Origin is determined by the mouse down quadrant. The graph should scale to the opposite corner
@@ -294,6 +287,12 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
         mLastMouse = positionInView;
     } else if (rightMouseIsDown() && shiftKeyPressed()) {
 
+        vec2 minPos = vec2(1,1);
+
+        vec4 p1 = vec4(0,0,0,1);
+        vec4 p2 = vec4(0.5,0.5,0,1);
+        vec4 sampleScale = ((mTmpTransform * p2) - (mTmpTransform * p1)) / vec4(1,-1,0,0);
+
         if (mScaleOrigin.x > 0) {
             positionInView.x = getWidth() - positionInView.x;
         }
@@ -302,9 +301,11 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
             positionInView.y = getHeight() - positionInView.y;
         }
 
+        vec2 percent = positionInView / mLastMouse;
+
         // Handle zoom
         if (state == mouseDrag) {
-            vec2 percent = positionInView / mLastMouse;
+
             if (positionInView.x < minPos.x) {
                 percent.x = 0.01 / sampleScale.x;
             } else {
@@ -326,5 +327,26 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
             }
         }
     }
+    invalidate();
+}
+
+void ZLineChart::onScrollChange(double x, double y) {
+    ZView::onScrollChange(x,y);
+
+    float speed = 0.1; // higher is faster
+    if (shiftKeyPressed()) {
+        float factor = 1.0;
+        if (y > 0) {
+            factor += speed;
+        } else {
+            factor -= speed;
+        }
+
+        vec2 percent = vec2(factor);
+        mTmpTransform = (translate(mat4(1), mScaleOrigin) *
+                         scale(mat4(1), vec3(percent.x, percent.y, 1)) *
+                         translate(mat4(1), -mScaleOrigin)) * mTmpTransform;
+    }
+
     invalidate();
 }

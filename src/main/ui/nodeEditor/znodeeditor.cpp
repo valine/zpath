@@ -418,31 +418,34 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
 void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
-    float scaleDelta = 1.0 + (y / 5.0);
-    vec2 originalScale = mNodeContainer->getRelativeScale();
-    vec2 newScale = max(vec2(0.3), min(vec2(1.0), originalScale * vec2(scaleDelta)));
+    // Scrolling with shift key is used for zooming charts
+    if (!shiftKeyPressed()) {
+        float scaleDelta = 1.0 + (y / 5.0);
+        vec2 originalScale = mNodeContainer->getRelativeScale();
+        vec2 newScale = max(vec2(0.3), min(vec2(1.0), originalScale * vec2(scaleDelta)));
 
-    vec2 initialPos = mNodeContainer->getInnerTranslation();
-    vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
+        vec2 initialPos = mNodeContainer->getInnerTranslation();
+        vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
 
-    vec2 scaled = ((initialPos - origin) * newScale) + origin;
-    vec2 scaledZero = (initialPos * newScale);
+        vec2 scaled = ((initialPos - origin) * newScale) + origin;
+        vec2 scaledZero = (initialPos * newScale);
 
-    vec2 offset = scaled - scaledZero;
+        vec2 offset = scaled - scaledZero;
 
-    mNodeContainer->setScale(newScale);
-    mLineContainer->setScale(newScale);
+        mNodeContainer->setScale(newScale);
+        mLineContainer->setScale(newScale);
 
-    vec2 delta = (offset) / newScale;
+        vec2 delta = (offset) / newScale;
 
-    int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
-    mNodeContainer->setYOffset(margin);
-    mNodeContainer->setInnerTranslation(delta);
-    mNodeContainer->onWindowChange(getWidth(), getHeight());
+        int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
+        mNodeContainer->setYOffset(margin);
+        mNodeContainer->setInnerTranslation(delta);
+        mNodeContainer->onWindowChange(getWidth(), getHeight());
 
-    updateLines();
-    mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
-    getParentView()->getParentView()->getParentView()->invalidate();
+        updateLines();
+        mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
+        getParentView()->getParentView()->getParentView()->invalidate();
+    }
 }
 
 template <typename T>

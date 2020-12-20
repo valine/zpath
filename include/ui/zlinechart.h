@@ -52,8 +52,8 @@ public:
 
     void onWindowChange(int width, int height) override;
 
-    void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state);
-
+    void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
+    void onScrollChange(double x, double y) override;
     void requestLineUpdate() {
         mLineUpdatedNeeded = true;
     }
