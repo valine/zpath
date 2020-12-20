@@ -40,7 +40,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         allTypes.push_back(ZNodeView::getName(type));
     }
 
-    ZDropDown* dropDown = new ZDropDown(100,500, allTypes, mHeader);
+    ZDropDown* dropDown = new ZDropDown(100,700, allTypes, mHeader);
     dropDown->setOffset(150, 0);
     dropDown->setTitle("Node Picker");
 

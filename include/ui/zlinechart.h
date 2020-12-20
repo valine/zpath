@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 //
 // Created by lukas on 12/5/20.
 //
@@ -17,16 +19,9 @@ public:
     ZLineChart(float width, float height, ZView* parent);
     void draw() override;
 
-
     // This might not be needed
     void setChartListener(function<vector<float>(vector<int>, int index)> listener){
         mListener = move(listener);
-    }
-
-    void setChartBounds(vec2 x, vec2 y) {
-        mXBound = x;
-        mYBound = y;
-        //updateLineBuffers();
     }
 
     vec2 getXBounds() {
@@ -53,6 +48,18 @@ public:
         mResolution = resolution;
     }
 
+    void setInputCount(int input) {
+        int maxInputCount = 2;
+        mInputCount = std::max(input, maxInputCount);
+        if(input > maxInputCount) {
+            cout << "Clamping chart input count to " << maxInputCount << endl;
+        }
+    }
+
+    int getInputCount() {
+        return mInputCount;
+    }
+
     int getResolution() {
         return mResolution;
     }
@@ -65,23 +72,18 @@ public:
         mLineUpdatedNeeded = true;
     }
 
-    void setInvalidateListener(function<void()> l) {
-        mInvalidateListener = l;
+    void setInvalidateListener(function<void()> listener) {
+        mInvalidateListener = std::move(listener);
     }
 
 private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener;
 
-    // X is min, Y is max
-    vec2 mXBound = vec2(0, 1.0);
-    vec2 mYBound = vec2(0, 1.0);
-
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
     vec2 mLastMouse = vec2(0);
     mat4 mTmpTransform;
     mat4 mTransform;
-
     vec3 mScaleOrigin = vec3(0);
 
     // OpenGL buffers
@@ -111,7 +113,10 @@ private:
     float mLineWidth = 2;
 
     // This will be set by view width
-    int mResolution = 30;
+    int mResolution = 2;
+
+    // Input dimensions, default should be 1
+    int mInputCount = 1;
 
     // Shader code
     const string ui_vs =

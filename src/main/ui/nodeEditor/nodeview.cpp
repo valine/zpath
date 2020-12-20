@@ -75,7 +75,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
             return vector<float>(mChart->getResolution(), 0);
         }
         vector<float> line;
-        line.push_back(mPointCache.at(x.at(0)));
+        line.push_back(mPointCache.at(x.at(0)).at(0));
         return line;
     });
 
@@ -91,7 +91,7 @@ void ZNodeView::updateChart() {
         int chartRes = mChart->getResolution();
         vec2 xBounds = mChart->getXBounds();
         vec2 yBounds = mChart->getYBounds();
-        vector<float> points;
+        vector<vector<float>> points;
         for (int i = 0; i < mChart->getResolution(); i++) {
             float factor = (float) i / (float) chartRes;
             float x = mix(xBounds.x, xBounds.y, factor);
@@ -104,7 +104,7 @@ void ZNodeView::updateChart() {
             float ySpan = (yBounds.y - yBounds.x);
 
             float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
-            points.push_back(yFactor);
+            points.push_back({yFactor});
 
         }
 
@@ -130,6 +130,8 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsOut.at(i)->setVisibility(false);
         }
     }
+
+    mChart->setInputCount(getSocketCount().y);
 
     mNameLabel->setText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
@@ -200,7 +202,7 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
     }
 
     if (size.x > 0) {
-        vector<float> summedInputs = vector<float>((int) size.x);
+        vector<float> summedInputs = vector<float>((int) MAX_INPUT_COUNT, 0);
 
         // Loop over input sockets
         for (int i = 0; i < size.x; i++) {

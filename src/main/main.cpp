@@ -26,5 +26,5 @@ int main(int argc, char* argv[]) {
 
 
     ZTabbedViewController* tabs = new ZTabbedViewController(argv, controller);
-    ZApplication(tabs, "ZPATH", false);
+    ZApplication(tabs, "ZPATH", false, 1200, 800);
 }

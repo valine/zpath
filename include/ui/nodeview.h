@@ -31,12 +31,14 @@ public:
         TAN,
         EXP,
         SQRT,
+        POW,
         ADD,
         SUBTRACT,
         MULTIPLY,
         DIVIDE,
         CONSTANT, // Constant value
-        RANGE, // Complex number range
+        X,
+        Y,
         FILE,
         FFT,
         LAPLACE,
@@ -44,6 +46,7 @@ public:
         SECOND_DIFF,
         DOT,
         CROSS,
+        CHART_2D,
         LAST // Fake enum to allow easy iteration
     };
 
@@ -56,12 +59,14 @@ public:
             case TAN:return {tan(in.at(0))};
             case EXP:return {exp(in.at(0))};
             case SQRT:return {sqrt(in.at(0))};
+            case POW:return {pow(in.at(0), in.at(1))};
             case ADD:return {in.at(0) + in.at(1)};
             case SUBTRACT:return {in.at(0) - in.at(1)};
             case MULTIPLY:return {in.at(0) * in.at(1)};
             case DIVIDE:return {in.at(0) / in.at(1)};
             case CONSTANT:return mConstantValue;
-            case RANGE:return {in.at(0)};
+            case X:return {in.at(0), 0};
+            case Y:return {0, in.at(1)};
             case FILE:break;
             case FFT:break;
             case LAPLACE:break;
@@ -69,6 +74,7 @@ public:
             case SECOND_DIFF:break;
             case DOT:break;
             case CROSS:break;
+            case CHART_2D: return {in.at(0), in.at(1)};
             case LAST:break;
         }
 
@@ -88,12 +94,14 @@ public:
             case TAN:return ivec2(1,1);
             case EXP:return ivec2(1,1);
             case SQRT:return ivec2(1,1);
+            case POW:return ivec2(2,1);
             case ADD:return ivec2(2,1);
             case SUBTRACT:return ivec2(2,1);
             case MULTIPLY:return ivec2(2,1);
             case DIVIDE:return ivec2(2,1);
             case CONSTANT:return ivec2(0,1);
-            case RANGE:return ivec2(0,1);
+            case X:return ivec2(0,1);
+            case Y:return ivec2(0,1);
             case FILE:return ivec2(0,1);
             case FFT:return ivec2(1,0);
             case LAPLACE:return ivec2(1,0);
@@ -101,6 +109,7 @@ public:
             case SECOND_DIFF:return ivec2(1,0);
             case DOT:return ivec2(4,1);
             case CROSS:return ivec2(4,2);
+            case CHART_2D: return ivec2(2,2);
             case LAST:return ivec2(0,0);
         }
     }
@@ -112,12 +121,14 @@ public:
             case TAN:return "tan";
             case EXP:return "exp";
             case SQRT:return "sqrt";
+            case POW:return "pow";
             case ADD:return "+";
             case SUBTRACT:return "-";
             case MULTIPLY:return "*";
             case DIVIDE:return "/";
             case CONSTANT:return "C";
-            case RANGE:return "x";
+            case X:return "x";
+            case Y:return "y";
             case FILE:return "file";
             case FFT:return "FFT";
             case LAPLACE:return "Laplace";
@@ -125,6 +136,7 @@ public:
             case SECOND_DIFF:return "2nd diff";
             case DOT:return "dot";
             case CROSS:return "cross";
+            case CHART_2D:return "2D Chart";
             case LAST:return "none";
         }
     }
@@ -133,7 +145,8 @@ public:
         switch (type) {
             case CONSTANT:
                 return vec4(1, 0.437324, 0.419652, 1);
-            case RANGE:
+            case X:
+            case Y:
                 return mVariableColor;
             default:
                 return vec4(1);
@@ -181,7 +194,7 @@ private:
 
     // Todo: remove  these
     ZLineChart* mChart;
-    vector<float> mPointCache;
+    vector<vector<float>> mPointCache;
 
     vector<float> mConstantValue = {0.0};
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
