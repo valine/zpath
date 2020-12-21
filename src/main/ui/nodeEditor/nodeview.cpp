@@ -263,7 +263,6 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
             if (!inputs.empty()) {
                 // Summing all inputs is useful for dot products.
                 float sum = 0;
-
                 // Loop over all inputs on a single socket
                 for (pair<ZNodeView *, int> input : inputs) {
 
@@ -276,7 +275,7 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
                         mOutputLabel->setTextColor(red);
                         return vector<float>();
                     } else {
-                        sum += input.first->evaluate(x).at(input.second);
+                        sum += recurOutput.at(input.second);
                     }
                 }
                 summedInputs.at(i) = sum;
@@ -317,14 +316,14 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     } else {
         // Data doesn't necessarily go off screen after this number of points. Finding this optimal resolution is
         // potentially complicated.
-        mChart->setResolution(100);
-        invalidateSingleNode();
+         mChart->setResolution(100);
+        //invalidateSingleNode();
     }
 
 }
 
 void ZNodeView::clearInvalidateNode() {
-    setBackgroundColor(white);  // Turn this to another color to debug invalidation logic.
+    //setBackgroundColor(white);  // Turn this to another color to debug invalidation logic.
     mInvalid = false;
 }
 
@@ -332,14 +331,12 @@ void ZNodeView::clearInvalidateNode() {
  * Only invalidate this node, don't update children.
  */
 void ZNodeView::invalidateSingleNode() {
-    setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
+    //setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
     mInvalid = true;
 
     if (mInvalidateListener != nullptr) {
         mInvalidateListener(this);
     }
-
-    invalidate();
 }
 
 /**

@@ -21,7 +21,7 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     setBackgroundImage(mBackground);
 
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
-    mTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+    mTransform = mDefaultMat;
 
     updateFBOSize();
     addGrid();
@@ -395,6 +395,8 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     if (needsRefresh && mInvalidateListener != nullptr) {
         mInvalidateListener();
     }
+
+    invalidate();
 }
 
 void ZLineChart::onScrollChange(double x, double y) {

@@ -65,9 +65,6 @@ void ZNodeEditor::addTestNodes() {
     ZNodeView *s = addNode(ZNodeView::SIN);
     ZNodeView *co = addNode(ZNodeView::COS);
     ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
-    ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
-    ZNodeView *chart2 = addNode(ZNodeView::CHART_2D);
-    ZNodeView *chart3 = addNode(ZNodeView::CHART_2D);
 
     connectNodes(0, 0, c, s);
     connectNodes(0, 0, x, s);
@@ -77,14 +74,15 @@ void ZNodeEditor::addTestNodes() {
     connectNodes(0, 0, s, chart0);
     connectNodes(0, 1, co, chart0);
 
-    connectNodes(0, 0, chart0, chart1);
-    connectNodes(1, 1, chart0, chart1);
+    ZNodeView *lastChart = chart0;
+    for (int i = 0; i < 5; i++) {
+        ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
+        connectNodes(0, 0, lastChart, chart1);
+        connectNodes(1, 1, lastChart, chart1);
+        lastChart = chart1;
+    }
 
-    connectNodes(0, 0, chart1, chart2);
-    connectNodes(1, 1, chart1, chart2);
-
-    connectNodes(0, 0, chart2, chart3);
-    connectNodes(1, 1, chart2, chart3);
+    updateLines();
 }
 
 bool ZNodeEditor::needsEval() {
@@ -103,9 +101,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
     while(shouldRun) {
         while (!editor->mEvalQueue.empty()) {
             ZNodeView *node = editor->mEvalQueue.front();
-            editor->mEvalSet.erase(node);
-            editor->mEvalQueue.pop();
             node->updateChart();
+            editor->mEvalQueue.pop();
+            editor->mEvalSet.erase(node);
             glfwPostEmptyEvent();
         }
 
@@ -141,12 +139,12 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     //node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 
     node->setInvalidateListener([this](ZNodeView* node){
-        //std::unique_lock<std::mutex> lck(mEvalMutex);
+
         if (mEvalSet.count(node) == 0) {
             mEvalSet.insert(node);
             mEvalQueue.push(node);
         }
-
+        std::unique_lock<std::mutex> lck(mEvalMutex);
         mEvalConVar.notify_one();
     });
 
