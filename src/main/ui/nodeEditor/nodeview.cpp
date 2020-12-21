@@ -74,10 +74,10 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
         if (mChart->getInputCount() == 1) {
             if (mPointCache.empty()) {
                 return vector<float>(2, 0);
+            } else if (mPointCache.size() - 1 < x.at(0) || mPointCache.at(x.at(0)).empty()) {
+                return vector<float>(2, 0);
             }
-            vector<float> line;
-            line.push_back(mPointCache.at(x.at(0)).at(0));
-            return line;
+            return vector<float>(2, mPointCache.at(x.at(0)).at(0));
         } else {
             if (mPointCache.empty()) {
                 return vector<float>(2, 0);
