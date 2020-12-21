@@ -97,7 +97,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
 void ZNodeView::updateChart() {
     // This is usually run from background thread
-    if (mInvalid) {
+   // if (mInvalid) {
 
         if (mChart->getInputCount() == 1) {
             updateChart1D();
@@ -105,7 +105,7 @@ void ZNodeView::updateChart() {
             updateChart2D();
         }
 
-    }
+    //}
 }
 
 void ZNodeView::updateChart2D() {
@@ -138,7 +138,7 @@ void ZNodeView::updateChart2D() {
     }
 
     mPointCache = points;
-    clearInvalidateNode();
+
     mChart->requestLineUpdate();
     mChart->invalidate();
 }
@@ -166,7 +166,7 @@ void ZNodeView::updateChart1D() {
     }
 
     mPointCache = points;
-    clearInvalidateNode();
+
     mChart->requestLineUpdate();
     mChart->invalidate();
 }

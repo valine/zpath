@@ -12,6 +12,7 @@
 #include <ui/zcheckbox.h>
 #include <ui/zmagnitudepicker.h>
 #include <thread>
+#include <zconf.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -73,9 +74,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
     while(shouldRun) {
         while (!editor->mEvalQueue.empty()) {
             ZNodeView *node = editor->mEvalQueue.front();
-            node->updateChart();
             editor->mEvalSet.erase(node);
             editor->mEvalQueue.pop();
+            node->updateChart();
             glfwPostEmptyEvent();
         }
 
@@ -111,7 +112,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     //node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 
     node->setInvalidateListener([this](ZNodeView* node){
-        std::unique_lock<std::mutex> lck(mEvalMutex);
+     //   std::unique_lock<std::mutex> lck(mEvalMutex);
         if (mEvalSet.count(node) == 0) {
             mEvalQueue.push(node);
             mEvalSet.insert(node);

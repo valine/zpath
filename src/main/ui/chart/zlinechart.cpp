@@ -395,6 +395,10 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
         }
     }
 
+    if (state == mouseUp) {
+        needsRefresh = true;
+    }
+
     if (needsRefresh && mInvalidateListener != nullptr) {
         mInvalidateListener();
     }
