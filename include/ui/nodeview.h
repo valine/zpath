@@ -6,8 +6,8 @@
 #define ZPATH_NODEVIEW_H
 
 static const int SOCKET_SIZE = 15;
-static const int MAX_INPUT_COUNT = 5;
-static const int MAX_OUTPUT_COUNT = 5;
+static const int MAX_INPUT_COUNT = 4;
+static const int MAX_OUTPUT_COUNT = 4;
 static const int CHART_RES_THRESHOLD = 4;
 static const int CHART_SIDE_MARGIN_WIDE = 20;
 static const int MIN_MARGIN = 3;

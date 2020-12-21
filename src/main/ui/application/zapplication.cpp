@@ -59,14 +59,7 @@ ZApplication::init(vector<ZViewController *> controllers, string windowName, boo
 
     int index = 0;
     for (ZViewController* controller : mViewControllers) {
-        thread t2(startUiThread, controller, mShouldPoll, this, windowName, width, height);
-
-        if (index < mViewControllers.size() - 1) {
-            t2.detach();
-        } else {
-            t2.join();
-        }
-
+        startUiThread(controller, mShouldPoll, this, windowName, width, height);
         index++;
     }
 

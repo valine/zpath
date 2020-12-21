@@ -343,6 +343,8 @@ void ZNodeView::invalidateSingleNode() {
     if (mInvalidateListener != nullptr) {
         mInvalidateListener(this);
     }
+
+    invalidate();
 }
 
 /**
