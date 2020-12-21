@@ -28,7 +28,13 @@ void ZMagnitudePicker::onGlobalMouseUp(int key) {
     ZView::onGlobalMouseUp(0);
 
     if (!isMouseInBounds(this)) {
+        if (getVisibility()) {
+            if (mListener != nullptr) {
+                mListener(mSlider->getValue());
+            }
+        }
         setVisibility(false);
+
     }
 
     mSlider->setMouseDown(false);
@@ -38,11 +44,9 @@ bool ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, in
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
     if (action == GLFW_RELEASE ) {
-       setVisibility(false);
+        setVisibility(false);
     }
-
     mSlider->setMouseDown(false);
-
     return false;
 }
 

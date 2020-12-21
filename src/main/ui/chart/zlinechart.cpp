@@ -89,8 +89,6 @@ void ZLineChart::updateLineBuffers() {
     // happens on a background thread. This ensures the ui will not lag
     // when evaluating large graphs.
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
-
-    invalidate();
 }
 
 void ZLineChart::updateChart2D() {
@@ -171,11 +169,6 @@ void ZLineChart::updateChart1D() {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
-
-        // Reset the tmp transform. The tmp transform is used while evaluation
-        // happens on a background thread. This ensures the ui will not lag
-        // when evaluating large graphs.
-        mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
     }
 }
 
@@ -402,8 +395,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     if (needsRefresh && mInvalidateListener != nullptr) {
         mInvalidateListener();
     }
-
-    invalidate();
 }
 
 void ZLineChart::onScrollChange(double x, double y) {

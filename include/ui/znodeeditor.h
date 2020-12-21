@@ -30,7 +30,7 @@ static const int NODE_CONTAINER_OFFSET = 30;
 class ZNodeEditor : public ZView {
 public:
     ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
-    void addNode(ZNodeView::Type type);
+    ZNodeView * addNode(ZNodeView::Type type);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
 
     // Background evaluation
@@ -82,6 +82,10 @@ private:
     void remove(vector<T> &vec, size_t pos);
 
     bool needsEval();
+
+    void connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const;
+
+    void addTestNodes();
 };
 
 

@@ -56,6 +56,35 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
+    addTestNodes();
+}
+
+void ZNodeEditor::addTestNodes() {
+    ZNodeView *x = addNode(ZNodeView::X);
+    ZNodeView *c = addNode(ZNodeView::CONSTANT);
+    ZNodeView *s = addNode(ZNodeView::SIN);
+    ZNodeView *co = addNode(ZNodeView::COS);
+    ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
+    ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
+    ZNodeView *chart2 = addNode(ZNodeView::CHART_2D);
+    ZNodeView *chart3 = addNode(ZNodeView::CHART_2D);
+
+    connectNodes(0, 0, c, s);
+    connectNodes(0, 0, x, s);
+
+    connectNodes(0, 0, x, co);
+
+    connectNodes(0, 0, s, chart0);
+    connectNodes(0, 1, co, chart0);
+
+    connectNodes(0, 0, chart0, chart1);
+    connectNodes(1, 1, chart0, chart1);
+
+    connectNodes(0, 0, chart1, chart2);
+    connectNodes(1, 1, chart1, chart2);
+
+    connectNodes(0, 0, chart2, chart3);
+    connectNodes(1, 1, chart2, chart3);
 }
 
 bool ZNodeEditor::needsEval() {
@@ -86,7 +115,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 }
 
 
-void ZNodeEditor::addNode(ZNodeView::Type type) {
+ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
 
     auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, mNodeContainer);
@@ -112,10 +141,10 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     //node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 
     node->setInvalidateListener([this](ZNodeView* node){
-     //   std::unique_lock<std::mutex> lck(mEvalMutex);
+        //std::unique_lock<std::mutex> lck(mEvalMutex);
         if (mEvalSet.count(node) == 0) {
-            mEvalQueue.push(node);
             mEvalSet.insert(node);
+            mEvalQueue.push(node);
         }
 
         mEvalConVar.notify_one();
@@ -145,6 +174,7 @@ void ZNodeEditor::addNode(ZNodeView::Type type) {
     });
 
     node->invalidateSingleNode();
+    return node;
 }
 
 void ZNodeEditor::updateLines() {
@@ -327,34 +357,20 @@ void ZNodeEditor::onMouseUp() {
         switch (mDragType) {
             case SOCKET_DRAG_IN:
                 if (socketOutIndex != NO_SELECTION) {
-                    targetNode->mOutputIndices.at(socketOutIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
-                    activeNode->mInputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketOutIndex));
-
-                    activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
-                    targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
-
-                    activeNode->invalidateNodeRecursive();
+                    int drag = mDragSocket;
+                    connectNodes(socketOutIndex, drag, targetNode, activeNode);
                 }
                 break;
             case SOCKET_DRAG_OUT:
                 if (socketInIndex != NO_SELECTION) {
-                    targetNode->mInputIndices.at(socketInIndex).push_back(pair<ZNodeView*, int>(activeNode, mDragSocket));
-                    activeNode->mOutputIndices.at(mDragSocket).push_back(pair<ZNodeView*, int>(targetNode, socketInIndex));
-
-                    activeNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
-                    targetNode->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
-
-                    targetNode->invalidateNodeRecursive();
+                    connectNodes(mDragSocket, socketInIndex, activeNode, targetNode);
                 }
-
                 break;
             case NO_SELECTION:
                 break;
             default:
                 break;
         }
-
-
     }
 
     for (ZNodeView* node : mNodeViews) {
@@ -365,6 +381,12 @@ void ZNodeEditor::onMouseUp() {
     mDragType = NO_SELECTION;
     mDragSocket = NO_SELECTION;
     mTmpLine->setVisibility(false);
+}
+
+void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const {
+    firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
+    secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
+    secondNode->invalidateNodeRecursive();
 }
 
 int ZNodeEditor::getMouseOverOutSocket(ZNodeView* node) {

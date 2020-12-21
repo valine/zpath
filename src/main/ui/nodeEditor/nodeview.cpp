@@ -97,15 +97,16 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
 void ZNodeView::updateChart() {
     // This is usually run from background thread
-   // if (mInvalid) {
-
+    if (mInvalid) {
         if (mChart->getInputCount() == 1) {
             updateChart1D();
         } else {
             updateChart2D();
         }
-
-    //}
+    }
+    clearInvalidateNode();
+    mChart->requestLineUpdate();
+    mChart->invalidate();
 }
 
 void ZNodeView::updateChart2D() {
@@ -138,9 +139,6 @@ void ZNodeView::updateChart2D() {
     }
 
     mPointCache = points;
-
-    mChart->requestLineUpdate();
-    mChart->invalidate();
 }
 
 void ZNodeView::updateChart1D() {
@@ -167,8 +165,6 @@ void ZNodeView::updateChart1D() {
 
     mPointCache = points;
 
-    mChart->requestLineUpdate();
-    mChart->invalidate();
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
@@ -301,7 +297,6 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
         }
         output = compute(summedInputs, mType);
     }
-
     //mOutputLabel->setText(to_string(output.at(0)));
 //    mOutputLabel->setTextColor(black);
 //    mOutputLabel->setBackgroundColor(white);
@@ -329,7 +324,7 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
 }
 
 void ZNodeView::clearInvalidateNode() {
-    //setBackgroundColor(white);  // Turn this to another color to debug invalidation logic.
+    setBackgroundColor(white);  // Turn this to another color to debug invalidation logic.
     mInvalid = false;
 }
 
@@ -337,7 +332,7 @@ void ZNodeView::clearInvalidateNode() {
  * Only invalidate this node, don't update children.
  */
 void ZNodeView::invalidateSingleNode() {
-    //setBackgroundColor(white); // Turn this to another color to debug invalidation logic.
+    setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
     mInvalid = true;
 
     if (mInvalidateListener != nullptr) {
