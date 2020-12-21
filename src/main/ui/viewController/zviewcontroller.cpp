@@ -1,10 +1,12 @@
 #include <utility>
+#include <utils/zsettingsstore.h>
 
 #include "ui/zviewcontroller.h"
 
 
 ZViewController::ZViewController(string resourcePath) : ZView(ZView::fillParent, ZView::fillParent) {
     mResourcePath = std::move(resourcePath);
+    setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
     setDrawingEnabled(false);
     setRootView(this);
 }
@@ -151,12 +153,4 @@ void ZViewController::draw() {
 
 string ZViewController::getResourcePath() {
     return mResourcePath;
-}
-
-void ZViewController::setName(string name) {
-    mName = name;
-}
-
-string ZViewController::getName() {
-    return mName;
 }

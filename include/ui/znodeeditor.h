@@ -11,8 +11,7 @@ static const int SOCKET_DRAG_IN = -2;
 static const int SOCKET_DRAG_OUT = -3;
 static const int NODE_DRAG = -4;
 
-static const int NODE_WIDTH = 80;
-static const int NODE_HEIGHT = 100;
+
 static const int DEFAULT_NODE_X = 10;
 static const int DEFAULT_NODE_Y = 10;
 static const int NODE_MARGIN = 10;
@@ -41,6 +40,8 @@ public:
     condition_variable mEvalConVar;
 
     static void startEvaluation(ZNodeEditor* editor);
+
+    void onLayoutFinished() override;
 private:
 
     vector<ZNodeView*> mNodeViews;
@@ -86,6 +87,7 @@ private:
     void connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const;
 
     void addTestNodes();
+
 };
 
 

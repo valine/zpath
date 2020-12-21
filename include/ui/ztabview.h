@@ -8,15 +8,12 @@ using namespace std;
 
 #include "zview.h"
 #include "ui/zbutton.h"
-template<typename V>
-class ZTabView : public ZView, public ZOnClickListener {
+
+class ZTabView : public ZView {
 public:
-    ZTabView<V>(float maxWidth1, float maxHeight1,string resourcePath, vector<string> tabs);
-    void onClick(ZButton* sender);
-    void addToTab(ZView* view, int tabIndex);
+    ZTabView(float maxWidth1, float maxHeight1, const vector<ZView*>& tabs, ZView* parent);
 private:
     vector<ZView*> mViews;
-    map<ZButton*, ZView*> mTabMap;
 };
 
 

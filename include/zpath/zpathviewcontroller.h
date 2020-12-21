@@ -20,8 +20,9 @@ using namespace std;
 class ZPathViewController : public ZViewController {
 
 public:
- 	ZPathViewController(char* argv[]);
-    ZPathViewController(string path);
+    ZPathViewController(char* argv[]) : ZViewController(argv) {}
+    ZPathViewController(string path) : ZViewController(path) {}
+
  	void onCreate();
     void onFileDrop(int count, const char** paths);
 private:
@@ -29,7 +30,7 @@ private:
 
 	ZTiledView *mTileView = nullptr;
 	ZScene* mScene{};
-    ZChart* mChart;
+   // ZChart* mChart;
 
 	static int mGridSizeX;
 	static int mGridSizeY;

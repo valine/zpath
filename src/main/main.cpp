@@ -21,10 +21,11 @@ int main(int argc, char* argv[]) {
 
    // vector<ZViewController*> controller = {new ZPathViewController(argv), new ZPathViewController(argv)};
 
+    auto* view3d = new ZPathViewController(argv);
+    view3d->setName("3D Viewport");
+    auto* nodeView = new NodeViewController(argv);
+    nodeView->setName("Node Editor");
 
-    vector<ZViewController*> controller = {new NodeViewController(argv), new NodeViewController(argv)};
-
-
-    ZTabbedViewController* tabs = new ZTabbedViewController(argv, controller);
+    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, view3d});
     ZApplication(tabs, "ZPATH", false, 1200, 800);
 }

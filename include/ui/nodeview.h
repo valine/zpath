@@ -141,6 +141,26 @@ public:
         }
     }
 
+    static vec2 getNodeSize(Type type) {
+        switch(type) {
+            case CONSTANT:
+                return vec2(80, 20);
+            case CHART_2D:
+                return vec2(200, 200);
+            default:
+                return vec2(80, 100);
+        }
+    }
+
+    static bool isOutputLabelVisible(Type type) {
+        switch(type) {
+            case CONSTANT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     vec4 getNodeColor(Type type) {
         switch (type) {
             case CONSTANT:
@@ -150,15 +170,6 @@ public:
                 return mVariableColor;
             default:
                 return vec4(1);
-        }
-    }
-
-    bool isOutputLabelVisible(Type type) {
-        switch(type) {
-            case CONSTANT:
-                return true;
-            default:
-                return false;
         }
     }
 

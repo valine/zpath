@@ -15,7 +15,7 @@ class ZScrollView : public ZView {
 
 public:
     ZScrollView(float maxWidth, float maxHeight, ZView *parent);
-
+    ZScrollView(float maxWidth, float maxHeight);
     void onKeyPress(int key, int scancode, int action, int mods);
 	bool onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);

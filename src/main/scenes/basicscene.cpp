@@ -5,7 +5,7 @@
 BasicScene::BasicScene(string resourcePath) 
 : ZScene(resourcePath) {
 
-	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/dark-green.hdr");
+	ZTexture* environmentTexture = new ZTexture(resourcePath + "resources/textures/cream.hdr");
 	ZWorld* world = new ZWorld();
 	world->setColor(vec3(1,1,1));
 	world->setEnvironmentTexture(environmentTexture);
@@ -18,11 +18,10 @@ BasicScene::BasicScene(string resourcePath)
 	addLight(light);
 
 	ZObjLoader loader = ZObjLoader();
-	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/monkey.dae");
+	vector<ZObject*> objects = loader.loadObjects(resourcePath + "resources/meshes/torus.dae");
 
 	int i = 0;
-	for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-        ZObject *object = (*it);
+	for (auto object : objects) {
         //if (i % 3 ==0) {
         //object->setBillboard(true);
         //}
@@ -35,5 +34,5 @@ BasicScene::BasicScene(string resourcePath)
     }
 
 
-    ZMeshUtils::exportObj(ZUtil::getHomeFolder() + "/Desktop/file.obj", getObjects().at(0)->getMesh());
+   // ZMeshUtils::exportObj(ZUtil::getHomeFolder() + "/Desktop/file.obj", getObjects().at(0)->getMesh());
 }

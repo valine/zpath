@@ -7,46 +7,34 @@
 #include <ui/zlinearlayout.h>
 #include <ui/zscrollview.h>
 #include "ui/ztabview.h"
-template<typename V>
-ZTabView<V>::ZTabView(float maxWidth1, float maxHeight1, string resourcePath, vector<string> tabs) : ZView(maxWidth1, maxHeight1) {
-    setBackgroundColor(vec4(1,0,0,1));
-    ZRadioButton* tabBar = new ZRadioButton("", tabs, this);
+ZTabView::ZTabView(float maxWidth1, float maxHeight1, const vector<ZView*>& tabs, ZView* parent) : ZView(maxWidth1, maxHeight1, parent) {
+    vector<string> names;
+    for (ZView* tab : tabs) {
+        names.push_back(tab->getName());
+        tab->setBackgroundColor(grey);
+        tab->setVisibility(false);
+        tab->setMarginBottom(25);
+    }
+
+    tabs.at(0)->setVisibility(true);
+
+    for (ZView* view : tabs) {
+        addSubView(view);
+    }
+
+    auto* tabBar = new ZRadioButton("", names, this);
     tabBar->setGravity(ZView::bottomLeft);
     tabBar->setText("");
-    tabBar->setOnClickListener(this);
     tabBar->setMargin(0,0,0,0);
+    tabBar->setOnClick([this](ZView* sender, int index){
+        for (ZView* view : mViews) {
+            view->setVisibility(false);
+        }
+        mViews.at(index)->setVisibility(true);
+    });
 
-    ZView* tabHolder = new ZView(fillParent, fillParent, this);
-    tabHolder->setMargin(0,0,0,25);
 
-    for (uint i = 0; i < tabs.size(); i++) {
-        V *tab = new V(maxWidth1, maxHeight1, this);
-        auto fi = (double) i;
-        tab->setBackgroundColor(vec4(fi / 3.0,0.0,0.0,1.0));
-        tabHolder->addSubView(tab);
-        mViews.push_back(tab);
-        mTabMap.insert(make_pair(tabBar->getButton(i), tab));
-    }
+    mViews = tabs;
 
-    onClick(tabBar->getButton(0));
-    addSubView(tabBar);
+    invalidate();
 }
-
-template<typename V>
-void ZTabView<V>::onClick(ZButton *sender) {
-    ZOnClickListener::onClick(sender);
-    for(int i = 0; i < mViews.size(); i++) {
-        mViews.at(i)->setVisibility(false);
-    }
-    mTabMap.at(sender)->setVisibility(true);
-    mTabMap.at(sender)->invalidate();
-}
-
-template<typename V>
-void ZTabView<V>::addToTab(ZView *view, int tabIndex) {
-    mViews.at(tabIndex)->addSubView(view);
-}
-
-template class ZTabView<ZView>;
-template class ZTabView<ZLinearLayout>;
-template class ZTabView<ZScrollView>;

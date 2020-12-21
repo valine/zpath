@@ -90,9 +90,9 @@ void Z3DView::onWindowChange(int width, int height) {
 void Z3DView::onScrollChange(double x, double y) {
 	ZView::onScrollChange(x, y);
 	if (shiftKeyPressed()) {
-		mRenderer->getCamera()->translateBy(vec3(0,0,-y / 8));
+		mRenderer->getCamera()->translateBy(vec3(0,0, -y / 16));
 	} else {
-		mRenderer->getCamera()->translateBy(vec3(0,0,-y / 1));
+		mRenderer->getCamera()->translateBy(vec3(0,0,-y / 4));
 	}
 
 }
@@ -120,20 +120,16 @@ ZScene* Z3DView::getScene() {
 }
 
 void Z3DView::draw() {
+	ZView::draw();
 
-	//ZView::draw();
-
-	//glDisable(GL_DEPTH_TEST);
-
-	//glDepthMask(false);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(true);
 
 	//int yv = getWindowHeight() - getBottom();
 	//glViewport(getLeft(),yv,getWidth(),getHeight());
 	if (getVisibility()) {
-
     	mRenderer->draw();
 	}
     //glDepthMask(true);
-
     //glEnable(GL_DEPTH_TEST);
 }   

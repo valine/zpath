@@ -59,9 +59,6 @@ public:
 	virtual void onFileDrop(int count, const char** paths);
 
 	void setDrawingEnabled(bool);
-	void setName(string name);
-	string getName();
-
 private:
 	int mParentWidth = 0;
 	int mParentHeight = 0;
@@ -73,7 +70,6 @@ private:
 	bool mDrawingEnabled = true;
 
 	string mResourcePath;
-	string mName = "VC";
 
 	// Shader code 
 	const string ui_vs =

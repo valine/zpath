@@ -11,26 +11,18 @@
 int ZPathViewController::mGridSizeX = 3;
 int ZPathViewController::mGridSizeY = 2;
 
-ZPathViewController::ZPathViewController(char* argv[])
-: ZViewController(argv) {
-}
-
-ZPathViewController::ZPathViewController(string path)
-        : ZViewController(path) {
-}
 
 void ZPathViewController::onCreate() {
 	ZViewController::onCreate();
 	mScene = new BasicScene(getResourcePath());
 
-    auto* tab1 = new ZScrollView(300, fillParent, this);
-    auto* tab2 = new ZScrollView(300, fillParent, this);
+    auto* tab1 = new ZScrollView(300, fillParent);
+    tab1->setName("Viewport Controls");
+    auto* tab2 = new ZScrollView(300, fillParent);
+    tab2->setName("Other");
 
-    auto tabView = new ZTabView<ZView>(300, fillParent, "", {"Tab 1", "Tab2"});
+    auto tabView = new ZTabView(300, fillParent, {tab1, tab2}, this);
     tabView->setGravity(ZView::topRight);
-    tabView->addToTab(tab1, 0);
-    tabView->addToTab(tab2, 1);
-    addSubView(tabView);
 
     auto* label = new ZLabel("Panel", tab1);
 
@@ -51,25 +43,10 @@ void ZPathViewController::onCreate() {
         ZUtil::saveView(mTileView->getTiles().at(0));
     });
 
-    mChart = new ZChart(200, 200, tab1);
-    auto* points = (float*) malloc(sizeof(float) * 6);
-    for (int i = 0; i < 6; i++) {
-        points[i] = i % 2;
-    }
-    mChart->updateLine(0, points, 6);
-
-
     // Slider example
     auto* slider2 = new ZSlider("Exposure", 0, 20, mScene->getExposure(), tab1);
-    slider2->setOnSlide([this](ZView* view, float v, bool actionUp){
-        if (actionUp) {
-            mScene->setExposure(v);
-            auto *newpoints = (float *) malloc(sizeof(float) * 6);
-            for (int i = 0; i < 6; i++) {
-                newpoints[i] = i % (int) (v + 1);
-            }
-            mChart->updateLine(0, newpoints, 6);
-        }
+    slider2->setOnSlide([this](ZView* view, float v, bool actionUp) {
+        mScene->setExposure(v);
     });
 
     mTileView = new ZTiledView(mScene, ZView::fillParent,  ZView::fillParent, 1, 1, getResourcePath());
@@ -78,10 +55,8 @@ void ZPathViewController::onCreate() {
     mTileView->setGravity(ZView::topRight);
     addSubView(mTileView);
 
-
     ZViewController* subViewController = new ZViewController(getResourcePath());
     tab2->addSubView(subViewController);
-    subViewController->setBackgroundColor(vec4(1,0,0,1));
 
     auto* slider2d = new Z2DSlider(200, 200, vec2(0,0), vec2(5), subViewController);
     slider2d->setIncrement(1);

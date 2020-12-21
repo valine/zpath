@@ -60,6 +60,7 @@ class ZView {
         virtual void draw();
         void invalidate();
         bool needsRender();
+        virtual void onLayoutFinished();
         virtual void onCreate();
         virtual void onExit();
 
@@ -224,8 +225,12 @@ class ZView {
 
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
         vec4 yellow = vec4(1,1,0,1);
+
+        void setName(string name);
+        string getName();
+        void init();
 	private:
-		void init(int width, int height);
+
 		bool mNeedsRender = true;
 
 		Gravity mGravity;
@@ -325,6 +330,9 @@ class ZView {
 
         WireType mDrawWire = none;
         vec2 mInitialPosition;
+        string mName;
+
+
 };
 
 #endif

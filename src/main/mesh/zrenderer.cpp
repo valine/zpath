@@ -155,8 +155,7 @@ void ZRenderer::sortObjects() {
     vector<int> transparentIndicies;
 
     int count = 0;
-    for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-        ZObject *object = (*it);
+    for (auto object : objects) {
         ZMaterial* material = object->getMaterial();
         if (material->getColor().a < 0.5) {
             transparentObjects.push_back(object);
@@ -174,12 +173,9 @@ void ZRenderer::sortObjects() {
 
 void ZRenderer::updateAnimations() {
     vector<ZObject*> objects = mScene->getObjects();
-    for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-        ZObject *object = (*it);
+    for (auto object : objects) {
         vector<ZAnimator*> animators = object->getAnimators();
-        for (vector<ZAnimator*>::iterator it2 = animators.begin() ; it2 != animators.end(); ++it2) {
-            ZAnimator* animator = (*it2);
-
+        for (auto animator : animators) {
             vec4 currentValue;
             vec4 desiredValue = animator->getDesiredValue();
             vec3 newTranslation;
@@ -420,9 +416,9 @@ void ZRenderer::renderMain() {
     shader->setMat4("uModelMatrix", identityMatrix);
 
     int objectIndex = 0;
-    for (vector<ZObject*>::iterator it = mSortedObjects.begin() ; it != mSortedObjects.end(); ++it) {
-        ZObject *object = (*it);
-        ZMesh *mesh = (*it)->getMesh();
+    for (auto & mSortedObject : mSortedObjects) {
+        ZObject *object = mSortedObject;
+        ZMesh *mesh = mSortedObject->getMesh();
         ZMaterial* material = object->getMaterial();
 
         shader->setMat4("uModelMatrix", ZRenderUtils::getModelMatrix(object, mCamera));
@@ -483,11 +479,10 @@ void ZRenderer::renderMain() {
             } else {
              shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr, vec3(0,0,50)) * vec4(0,0,0,1));
             }
-       
         }
 
         if (object->getVisible()) {
-            if (material->getColor().a < 0.5) {
+            if (material->getColor().a < 0.2) {
                 glDepthMask(false);
             }
             glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
@@ -523,8 +518,7 @@ void ZRenderer::renderSelection() {
         vector<ZObject*> transparentObjects;
         vector<ZObject*> solidObjects;
         int count = 0;
-        for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
-            ZObject *object = (*it);
+        for (auto object : objects) {
             ZMaterial* material = object->getMaterial();
             if (material->getColor().a < 0.5) {
                 transparentObjects.push_back(object);
@@ -535,11 +529,11 @@ void ZRenderer::renderSelection() {
         }
 
         int objectIndex = 0;
-        for (vector<ZObject*>::iterator it = objects.begin() ; it != objects.end(); ++it) {
+        for (auto & object : objects) {
 
-            ZMesh *mesh = (*it)->getMesh();
+            ZMesh *mesh = object->getMesh();
 
-            mSelectionShader->setMat4("uModelMatrix", ZRenderUtils::getModelMatrix((*it), mCamera));
+            mSelectionShader->setMat4("uModelMatrix", ZRenderUtils::getModelMatrix(object, mCamera));
 
             glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
@@ -555,7 +549,7 @@ void ZRenderer::renderSelection() {
             vec4 color = vec4((float) objectIndex / 256,0,0,1.0);
             mSelectionShader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
-            if ((*it)->getSelectable() && (*it)->getVisible()) {
+            if (object->getSelectable() && object->getVisible()) {
                 glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
             }
 

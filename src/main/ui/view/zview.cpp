@@ -227,9 +227,7 @@ void ZView::onScrollChange(double x, double y) {
 }
 
 void ZView::onCreate() {
-    init((int) mMaxWidth, (int) mMaxHeight);
-
-    computeBounds();
+    init();
 }
 
 string ZView::getTag() {
@@ -319,7 +317,7 @@ void ZView::draw() {
     }
 }
 
-void ZView::init(int maxWidth, int maxHeight) {
+void ZView::init() {
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float),  &mVertices, GL_STATIC_DRAW);
@@ -342,6 +340,7 @@ void ZView::init(int maxWidth, int maxHeight) {
     glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), mTexCoords, GL_STATIC_DRAW);
 
+    computeBounds();
 }
 
 void ZView::setShader(ZShader *shader) {
@@ -403,6 +402,13 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
     }
 
     invalidate();
+}
+
+// Called once before first draw
+void ZView::onLayoutFinished(){
+    for (ZView* view : mViews) {
+        view->onLayoutFinished();
+    }
 }
 
 void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom) {
@@ -545,19 +551,15 @@ void ZView::computeBounds() {
 
     mVertices[0] = getLeft();
     mVertices[1] = getTop();
-    mVertices[2] = getZPosition();
 
     mVertices[4] = getRight();
     mVertices[5] = getTop();
-    mVertices[6] = 1 + getZPosition();
 
     mVertices[8] = getLeft();
     mVertices[9] = getBottom();
-    mVertices[10] = 0 + getZPosition();
 
     mVertices[12] = getRight();
     mVertices[13] = getBottom();
-    mVertices[14] = 1 + getZPosition();
 
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
@@ -985,4 +987,12 @@ void ZView::setZPosition(float z){
 
 float ZView::getZCursorPosition(){
     return mZCursorPosition;
+}
+
+void ZView::setName(string name) {
+    mName = name;
+}
+
+string ZView::getName() {
+    return mName;
 }

@@ -8,6 +8,11 @@ ZScrollView::ZScrollView(float maxWidth, float maxHeight, ZView* parent):
     init();
 }
 
+ZScrollView::ZScrollView(float maxWidth, float maxHeight):
+        ZView(maxWidth, maxHeight) {
+    init();
+}
+
 void ZScrollView::init() {
 	mScrollBar = new ZView(7,100);
 	addSubView(mScrollBar);

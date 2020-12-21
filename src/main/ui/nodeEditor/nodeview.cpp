@@ -164,7 +164,6 @@ void ZNodeView::updateChart1D() {
     }
 
     mPointCache = points;
-
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {

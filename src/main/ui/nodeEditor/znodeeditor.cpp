@@ -56,6 +56,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
+
+}
+
+void ZNodeEditor::onLayoutFinished() {
+    ZView::onLayoutFinished();
     addTestNodes();
 }
 
@@ -89,7 +94,6 @@ bool ZNodeEditor::needsEval() {
     return !mEvalSet.empty();
 }
 
-
 /**
  * Starts the evaluation background thread
  */
@@ -116,7 +120,8 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
 
-    auto* node = new ZNodeView(NODE_WIDTH, NODE_HEIGHT, mNodeContainer);
+    vec2 nodeSize = ZNodeView::getNodeSize(type);
+    auto* node = new ZNodeView(nodeSize.x, nodeSize.y, mNodeContainer);
     mNodeViews.push_back(node);
 
     node->setIndexTag(mNodeViews.size() - 1);
@@ -124,15 +129,17 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     vec2 scale = mNodeContainer->getScale();
     vec2 translation = mNodeContainer->getInnerTranslation();
 
+
+    
+    if (mAddNodePosition.x + NODE_MARGIN + nodeSize.x >= getWidth() / scale.x) {
+        mAddNodePosition.x = DEFAULT_NODE_X;
+        mAddNodePosition.y += nodeSize.y + NODE_MARGIN;
+    } else {
+        mAddNodePosition.x += nodeSize.x + NODE_MARGIN;
+    }
+
     node->setOffset(mAddNodePosition - translation);
     node->setInitialPosition((mAddNodePosition - translation) - getMouseDragDelta());
-    
-    if (mAddNodePosition.x + NODE_WIDTH > getWidth() / scale.x) {
-        mAddNodePosition.x = DEFAULT_NODE_X;
-        mAddNodePosition.y += NODE_HEIGHT + NODE_MARGIN;
-    } else {
-        mAddNodePosition.x += NODE_WIDTH + NODE_MARGIN;
-    }
 
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
