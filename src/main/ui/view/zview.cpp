@@ -153,11 +153,7 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                 mMouseDownX = sx;
                 mMouseDownY = sy;
             }
-
-
         }
-
-
     }
 
     return clickConsumed;

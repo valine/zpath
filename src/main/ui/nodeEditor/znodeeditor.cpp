@@ -129,18 +129,16 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     vec2 scale = mNodeContainer->getScale();
     vec2 translation = mNodeContainer->getInnerTranslation();
 
+    node->setOffset(mAddNodePosition - translation);
+    node->setInitialPosition((mAddNodePosition - translation) - getMouseDragDelta());
 
-    
     if (mAddNodePosition.x + NODE_MARGIN + nodeSize.x >= getWidth() / scale.x) {
         mAddNodePosition.x = DEFAULT_NODE_X;
         mAddNodePosition.y += nodeSize.y + NODE_MARGIN;
     } else {
         mAddNodePosition.x += nodeSize.x + NODE_MARGIN;
     }
-
-    node->setOffset(mAddNodePosition - translation);
-    node->setInitialPosition((mAddNodePosition - translation) - getMouseDragDelta());
-
+    
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
     //node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
