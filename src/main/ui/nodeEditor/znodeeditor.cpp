@@ -99,10 +99,6 @@ void ZNodeEditor::addTestNodes() {
     updateLines();
 }
 
-bool ZNodeEditor::needsEval() {
-    return !mEvalSet.empty();
-}
-
 /**
  * Starts the evaluation background thread
  */
@@ -124,7 +120,6 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
         editor->mEvalConVar.wait(lck);
     }
 }
-
 
 ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
@@ -150,7 +145,6 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
-    //node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));
 
     node->setInvalidateListener([this](ZNodeView* node){
 
@@ -188,6 +182,13 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     node->invalidateSingleNode();
     return node;
 }
+
+void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const {
+    firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
+    secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
+    secondNode->invalidateNodeRecursive();
+}
+
 
 void ZNodeEditor::updateLines() {
     for (ZLineView* lineView : mLineBucket) {
@@ -408,13 +409,6 @@ void ZNodeEditor::onMouseUp() {
     exitBoxSelectMode();
 }
 
-void ZNodeEditor::updateBoxSelect() const { cout << "handle box select" << endl; }
-
-void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const {
-    firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
-    secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
-    secondNode->invalidateNodeRecursive();
-}
 
 int ZNodeEditor::getMouseOverOutSocket(ZNodeView* node) {
     int socketIndex = 0;
@@ -472,48 +466,6 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     }
 }
 
-void ZNodeEditor::enterBoxSelectMode() {
-    mBoxMode = BOX_SELECT;
-    mCursorView->setVisibility(true);
-    mBoxSelect->setVisibility(false);
-    mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
-}
-
-void ZNodeEditor::exitBoxSelectMode() {
-    mBoxMode = NO_BOX_SELECT;
-    mBoxSelect->setVisibility(false);
-    mCursorView->setVisibility(false);
-    invalidate();
-}
-
-void ZNodeEditor::enterBoxSelect2nd() {
-    mBoxMode = BOX_SELECT_2;
-    mCursorView->setVisibility(false);
-    mBoxSelect->setVisibility(true);
-    mBoxSelect->setOffset(getMouse() / mNodeContainer->getScale());
-    mBoxSelect->setMaxWidth(0);
-    mBoxSelect->setMaxHeight(0);
-}
-
-
-void ZNodeEditor::onCursorPosChange(double x, double y) {
-    ZView::onCursorPosChange(x, y);
-    // Draw giant giant cursor around mouse for box select mode
-    if (mBoxMode == BOX_SELECT)  {
-        mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
-        mCursorView->onWindowChange(getWidth(), getHeight());
-        mCursorView->getParentView()->invalidate();
-        invalidate();
-    } else if (mBoxMode == BOX_SELECT_2) {
-
-        vec2 mouse = getMouse() / mNodeContainer->getScale();
-        int mouseX = (int) mouse.x;
-        int mouseY = (int) mouse.y;
-        mBoxSelect->setMaxWidth(mouseX - (int) mBoxSelect->getOffsetX());
-        mBoxSelect->setMaxHeight(mouseY - (int) mBoxSelect->getOffsetY());
-    }
-}
-
 void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
@@ -546,6 +498,53 @@ void ZNodeEditor::onScrollChange(double x, double y) {
         getParentView()->getParentView()->getParentView()->invalidate();
     }
 }
+
+/**
+ * Box select mode
+ */
+void ZNodeEditor::enterBoxSelectMode() {
+    mBoxMode = BOX_SELECT;
+    mCursorView->setVisibility(true);
+    mBoxSelect->setVisibility(false);
+    mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
+}
+
+void ZNodeEditor::exitBoxSelectMode() {
+    mBoxMode = NO_BOX_SELECT;
+    mBoxSelect->setVisibility(false);
+    mCursorView->setVisibility(false);
+    invalidate();
+}
+
+void ZNodeEditor::enterBoxSelect2nd() {
+    mBoxMode = BOX_SELECT_2;
+    mCursorView->setVisibility(false);
+    mBoxSelect->setVisibility(true);
+    mBoxSelect->setOffset(getMouse() / mNodeContainer->getScale());
+    mBoxSelect->setMaxWidth(0);
+    mBoxSelect->setMaxHeight(0);
+}
+
+void ZNodeEditor::updateBoxSelect() const { cout << "handle box select" << endl; }
+
+void ZNodeEditor::onCursorPosChange(double x, double y) {
+    ZView::onCursorPosChange(x, y);
+    // Draw giant giant cursor around mouse for box select mode
+    if (mBoxMode == BOX_SELECT)  {
+        mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
+        mCursorView->onWindowChange(getWidth(), getHeight());
+        mCursorView->getParentView()->invalidate();
+        invalidate();
+    } else if (mBoxMode == BOX_SELECT_2) {
+
+        vec2 mouse = getMouse() / mNodeContainer->getScale();
+        int mouseX = (int) mouse.x;
+        int mouseY = (int) mouse.y;
+        mBoxSelect->setMaxWidth(mouseX - (int) mBoxSelect->getOffsetX());
+        mBoxSelect->setMaxHeight(mouseY - (int) mBoxSelect->getOffsetY());
+    }
+}
+
 
 template <typename T>
 void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){

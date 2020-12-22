@@ -91,8 +91,6 @@ private:
     template<typename T>
     void remove(vector<T> &vec, size_t pos);
 
-    bool needsEval();
-
     void connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const;
 
     void addTestNodes();
