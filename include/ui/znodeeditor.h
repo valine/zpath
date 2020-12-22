@@ -11,6 +11,10 @@ static const int SOCKET_DRAG_IN = -2;
 static const int SOCKET_DRAG_OUT = -3;
 static const int NODE_DRAG = -4;
 
+static const int NO_BOX_SELECT = 0;
+static const int BOX_SELECT = 1;
+static const int BOX_SELECT_2 = 2;
+
 
 static const int DEFAULT_NODE_X = 10;
 static const int DEFAULT_NODE_Y = 10;
@@ -21,6 +25,7 @@ static const int NODE_CONTAINER_OFFSET = 30;
 #include <ui/zview.h>
 #include "nodeview.h"
 #include "zmagnitudepicker.h"
+#include "zcursorview.h"
 #include <queue>
 #include <set>
 #include <mutex>
@@ -35,18 +40,23 @@ public:
     // Background evaluation
     queue<ZNodeView*> mEvalQueue;
     set<ZNodeView*> mEvalSet;
-    bool mRunEvaluation = true;
+
     mutex mEvalMutex;
     condition_variable mEvalConVar;
 
     static void startEvaluation(ZNodeEditor* editor);
-
+    void onCursorPosChange(double x, double y) override;
     void onLayoutFinished() override;
+    void onKeyPress(int key, int scancode, int action, int mods) override;
 private:
 
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
     ZMagnitudePicker* mMagnitudePicker;
+
+    ZView* mBoxSelect;
+    ZCursorView* mCursorView;
+    int mBoxMode = NO_BOX_SELECT;
 
     ZView* mHeader;
     ZView* mLineContainer;
@@ -54,7 +64,7 @@ private:
 
     vec2 mInitialOffset{};
     vec2 mInitialSize{};
-    int mDragNode = 0;
+    int mDragNode = NO_SELECTION;
     int mDragType = NO_SELECTION;
     int mDragSocket = NO_SELECTION;
     vector<ZLineView*> mLineBucket;
@@ -77,7 +87,6 @@ private:
 
     void onMouseDown();
     void onScrollChange(double x, double y) override;
-    void onKeyPress(int key, int scancode, int action, int mods) override;
 
     template<typename T>
     void remove(vector<T> &vec, size_t pos);
@@ -88,6 +97,13 @@ private:
 
     void addTestNodes();
 
+    void enterBoxSelectMode();
+
+    void exitBoxSelectMode();
+
+    void enterBoxSelect2nd();
+
+    void updateBoxSelect() const;
 };
 
 

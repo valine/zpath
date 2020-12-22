@@ -13,6 +13,7 @@
 #include <ui/zmagnitudepicker.h>
 #include <thread>
 #include <zconf.h>
+#include <utils/zsettingsstore.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -26,6 +27,14 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mTmpLine = new ZLineView(vec2(20, 20), vec2(200, 200), mLineContainer);
     mTmpLine->setVisibility(false);
+
+    mBoxSelect = new ZView(100, 100, mLineContainer);
+    mBoxSelect->setDrawWire(WireType::outline);
+    mBoxSelect->setOutlineColor(ZSettingsStore::get().getHighlightColor());
+    mBoxSelect->setVisibility(false);
+    mBoxSelect->setAllowNegativeSize(true);
+
+    mCursorView = new ZCursorView(mLineContainer);
 
     ZLineView* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
@@ -238,10 +247,17 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
     }
     updateLines();
 
+
+
 }
 
 void ZNodeEditor::onMouseDown() {
     int i = 0;
+
+    if (mBoxMode == BOX_SELECT) {
+        enterBoxSelect2nd();
+    }
+
     for (ZNodeView *node : mNodeViews) {
         if (isMouseInBounds(node)) {
             mDragNode = i;
@@ -384,7 +400,15 @@ void ZNodeEditor::onMouseUp() {
     mDragType = NO_SELECTION;
     mDragSocket = NO_SELECTION;
     mTmpLine->setVisibility(false);
+
+    if (mBoxMode == BOX_SELECT_2) {
+        updateBoxSelect();
+    }
+
+    exitBoxSelectMode();
 }
+
+void ZNodeEditor::updateBoxSelect() const { cout << "handle box select" << endl; }
 
 void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const {
     firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
@@ -435,8 +459,58 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
         addNode(mLastType);
     }
 
-    if (key == GLFW_KEY_E && shiftKeyPressed()) {
+    else if (key == GLFW_KEY_E && shiftKeyPressed()) {
         addNode(mLastType);
+    }
+
+    else if (key == GLFW_KEY_B) {
+        enterBoxSelectMode();
+    }
+
+    else if (key == GLFW_KEY_ESCAPE) {
+        exitBoxSelectMode();
+    }
+}
+
+void ZNodeEditor::enterBoxSelectMode() {
+    mBoxMode = BOX_SELECT;
+    mCursorView->setVisibility(true);
+    mBoxSelect->setVisibility(false);
+    mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
+}
+
+void ZNodeEditor::exitBoxSelectMode() {
+    mBoxMode = NO_BOX_SELECT;
+    mBoxSelect->setVisibility(false);
+    mCursorView->setVisibility(false);
+    invalidate();
+}
+
+void ZNodeEditor::enterBoxSelect2nd() {
+    mBoxMode = BOX_SELECT_2;
+    mCursorView->setVisibility(false);
+    mBoxSelect->setVisibility(true);
+    mBoxSelect->setOffset(getMouse() / mNodeContainer->getScale());
+    mBoxSelect->setMaxWidth(0);
+    mBoxSelect->setMaxHeight(0);
+}
+
+
+void ZNodeEditor::onCursorPosChange(double x, double y) {
+    ZView::onCursorPosChange(x, y);
+    // Draw giant giant cursor around mouse for box select mode
+    if (mBoxMode == BOX_SELECT)  {
+        mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
+        mCursorView->onWindowChange(getWidth(), getHeight());
+        mCursorView->getParentView()->invalidate();
+        invalidate();
+    } else if (mBoxMode == BOX_SELECT_2) {
+
+        vec2 mouse = getMouse() / mNodeContainer->getScale();
+        int mouseX = (int) mouse.x;
+        int mouseY = (int) mouse.y;
+        mBoxSelect->setMaxWidth(mouseX - (int) mBoxSelect->getOffsetX());
+        mBoxSelect->setMaxHeight(mouseY - (int) mBoxSelect->getOffsetY());
     }
 }
 

@@ -101,8 +101,9 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glfwSetKeyCallback(window,
                        [](GLFWwindow *window, int key, int scancode, int action, int mods) {
                            auto thiz = reinterpret_cast<ZApplication *>(glfwGetWindowUserPointer(window));
-                           if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-                               glfwSetWindowShouldClose(window, true);
+                           if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+                             //  glfwSetWindowShouldClose(window, true);
+                           }
                            thiz->onKeyPress(key, scancode, action, mods, thiz->mWindows.at(window));
                        });
 

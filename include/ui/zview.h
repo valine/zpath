@@ -229,6 +229,10 @@ class ZView {
         void setName(string name);
         string getName();
         void init();
+
+        void setAllowNegativeSize(bool allow) {
+            mAllowNegativeSize = allow;
+        }
 	private:
 
 		bool mNeedsRender = true;
@@ -318,6 +322,7 @@ class ZView {
 		bool mVisible = true;
 		bool mClickable = true;
 
+		bool mAllowNegativeSize = false;
 		ZTexture* mBackgroundImage = nullptr;
 		vector<ZView*> mViews;
 		string mTag;

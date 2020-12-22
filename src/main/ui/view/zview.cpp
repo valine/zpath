@@ -722,9 +722,11 @@ int ZView::calculateLeft() {
             mLeft = thisLeft;
             return mLeft;
         } else {
-            if (thisLeft + parentLeft > parentRight) {
-                mLeft = parentRight;
-                return mLeft;
+            if (!mAllowNegativeSize) {
+                if (thisLeft + parentLeft > parentRight) {
+                    mLeft = parentRight;
+                    return mLeft;
+                }
             }
             mLeft = parentLeft + thisLeft;
             return mLeft;
@@ -751,8 +753,10 @@ int ZView::calculateRight() {
         if (mGravity == topRight || mGravity == bottomRight) {
             thisRight = parentRight - mMarginRight - mOffsetX;
 
-            if (thisRight < parentLeft + mMarginLeft) {
-                thisRight = parentLeft + mMarginLeft;
+            if (!mAllowNegativeSize) {
+                if (thisRight < parentLeft + mMarginLeft) {
+                    thisRight = parentLeft + mMarginLeft;
+                }
             }
             mRight = thisRight;
             return mRight;
@@ -764,8 +768,10 @@ int ZView::calculateRight() {
             thisRight = parentRight - mMarginRight;
         }
 
-        if (thisRight < getLeft()) {
-            thisRight = getLeft();
+        if (!mAllowNegativeSize) {
+            if (thisRight < getLeft()) {
+                thisRight = getLeft();
+            }
         }
 
         mRight = thisRight;
@@ -799,9 +805,12 @@ int ZView::calculateTop() {
             mTop = thisTop;
             return mTop;
         } else {
-            if (thisTop + parentTop > parentBottom) {
-                mTop = (int) parentBottom;
-                return mTop;
+
+            if (!mAllowNegativeSize) {
+                if (thisTop + parentTop > parentBottom) {
+                    mTop = (int) parentBottom;
+                    return mTop;
+                }
             }
             mTop = (int) parentTop + thisTop;
             return mTop;
@@ -840,8 +849,10 @@ int ZView::calculateBottom() {
             thisBottom = parentBottom - mMarginBottom;
         }
 
-        if (thisBottom < getTop()) {
-            thisBottom = getTop();
+        if (!mAllowNegativeSize) {
+            if (thisBottom < getTop()) {
+                thisBottom = getTop();
+            }
         }
 
         mBottom = thisBottom;
