@@ -38,9 +38,7 @@ public:
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
 
     // Background evaluation
-    queue<ZNodeView*> mEvalQueue;
     set<ZNodeView*> mEvalSet;
-
     mutex mEvalMutex;
     condition_variable mEvalConVar;
 
@@ -112,8 +110,6 @@ private:
     void deselectNode(ZNodeView *node);
 
     void deselectAllNodes();
-
-    void shiftSelectNode(ZNodeView *node);
 };
 
 

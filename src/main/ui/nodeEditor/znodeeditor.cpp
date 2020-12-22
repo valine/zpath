@@ -108,10 +108,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
     bool shouldRun = true;
 
     while(shouldRun) {
-        while (!editor->mEvalQueue.empty()) {
-            ZNodeView *node = editor->mEvalQueue.front();
+        while (!editor->mEvalSet.empty()) {
+            ZNodeView *node = *editor->mEvalSet.begin();
             node->updateChart();
-            editor->mEvalQueue.pop();
             editor->mEvalSet.erase(node);
             glfwPostEmptyEvent();
         }
@@ -147,11 +146,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     node->onWindowChange(getWidth(), getHeight());
 
     node->setInvalidateListener([this](ZNodeView* node){
-
-        if (mEvalSet.count(node) == 0) {
-            mEvalSet.insert(node);
-            mEvalQueue.push(node);
-        }
+        mEvalSet.insert(node);
         std::unique_lock<std::mutex> lck(mEvalMutex);
         mEvalConVar.notify_one();
     });
@@ -283,10 +278,12 @@ void ZNodeEditor::onMouseDown() {
             mouseOverNode = true;
             mDragNode = i;
 
-            if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
-                deselectAllNodes();
+            if (mBoxMode == NO_BOX_SELECT) {
+                if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
+                    deselectAllNodes();
+                }
+                selectNode(node);
             }
-            selectNode(node);
 
             int j = 0;
             for (ZView *socket : node->getSocketsIn()) {
@@ -571,19 +568,20 @@ void ZNodeEditor::updateBoxSelect() {
     vec2 p1 = mBoxSelect->getOffset();
     vec2 p2 = p1 + mBoxSelect->getSize();
 
-    vec2 min = vec2(std::min(p1.x, p2.x), std::min(p1.y, p2.y));
-    vec2 max = vec2(std::max(p1.x, p2.x), std::max(p1.y, p2.y));
-
-    cout << "min " << min.x << " " << min.y << endl;
-    cout << "max " << max.x << " " << max.y << endl;
+    vec2 min1 = vec2(std::min(p1.x, p2.x), std::min(p1.y, p2.y));
+    vec2 max1 = vec2(std::max(p1.x, p2.x), std::max(p1.y, p2.y));
 
     for (ZNodeView* node : mNodeViews) {
-        bool topCorner = node->getLeft() > min.x && node->getLeft() < max.x &&
-                         node->getTop() > min.y && node->getTop() < max.y;
+        vec2 p3 = node->getOffset();
+        vec2 p4 = p3 + node->getSize();
 
-        bool bottomCorner = node->getRight() > min.x && node->getRight() < max.x &&
-                            node->getBottom() > min.y && node->getBottom() < max.y;
-        if (topCorner || bottomCorner) {
+        vec2 min2  = vec2(std::min(p3.x, p4.x), std::min(p3.y, p4.y)) + mNodeContainer->getInnerTranslation();
+        vec2 max2  = vec2(std::max(p3.x, p4.x), std::max(p3.y, p4.y)) + mNodeContainer->getInnerTranslation();
+
+        bool xOverlap = max1.x >= min2.x && max2.x >= min1.x;
+        bool yOverlap = max1.y >= min2.y && max2.y >= min1.y;
+
+        if (xOverlap && yOverlap) {
             selectNode(node);
         }
     }
