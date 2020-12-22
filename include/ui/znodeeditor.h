@@ -41,6 +41,8 @@ public:
     queue<ZNodeView*> mEvalQueue;
     set<ZNodeView*> mEvalSet;
 
+    set<ZNodeView*> mSelectedNodes;
+
     mutex mEvalMutex;
     condition_variable mEvalConVar;
 
@@ -102,6 +104,12 @@ private:
     void enterBoxSelect2nd();
 
     void updateBoxSelect() const;
+
+    void selectNode(ZNodeView *node);
+
+    void deselectNode(ZNodeView *node);
+
+    void deselectAllNodes();
 };
 
 

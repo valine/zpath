@@ -183,6 +183,27 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     return node;
 }
 
+void ZNodeEditor::selectNode(ZNodeView* node) {
+    for (ZNodeView* oldNode : mSelectedNodes) {
+        deselectNode(oldNode);
+    }
+    node->setOutlineColor(yellow);
+    mSelectedNodes.insert(node);
+}
+
+void ZNodeEditor::deselectNode(ZNodeView* node) {
+    node->setOutlineColor(grey);
+    if (mSelectedNodes.count(node) == 0) {
+        mSelectedNodes.erase(node);
+    }
+}
+
+void ZNodeEditor::deselectAllNodes() {
+    for (ZNodeView* oldNode : mSelectedNodes) {
+        deselectNode(oldNode);
+    }
+}
+
 void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const {
     firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
     secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
@@ -259,9 +280,12 @@ void ZNodeEditor::onMouseDown() {
         enterBoxSelect2nd();
     }
 
+    bool mouseOverNode = false;
     for (ZNodeView *node : mNodeViews) {
         if (isMouseInBounds(node)) {
+            mouseOverNode = true;
             mDragNode = i;
+            selectNode(node);
             int j = 0;
             for (ZView *socket : node->getSocketsIn()) {
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
@@ -319,6 +343,10 @@ void ZNodeEditor::onMouseDown() {
 
         node->resetInitialPosition();
         i++;
+    }
+
+    if (!mouseOverNode) {
+        deselectAllNodes();
     }
 
     updateLines();
@@ -408,7 +436,6 @@ void ZNodeEditor::onMouseUp() {
 
     exitBoxSelectMode();
 }
-
 
 int ZNodeEditor::getMouseOverOutSocket(ZNodeView* node) {
     int socketIndex = 0;
