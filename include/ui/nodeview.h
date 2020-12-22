@@ -206,6 +206,7 @@ private:
     // Todo: remove  these
     ZLineChart* mChart;
     vector<vector<float>> mPointCache;
+    mat4 mBoundCache;
 
     vector<float> mConstantValue = {0.0};
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);

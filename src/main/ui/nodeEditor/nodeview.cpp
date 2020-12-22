@@ -82,11 +82,17 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
             if (mPointCache.empty()) {
                 return vector<float>(2, 0);
             }
-            vector<float> line;
-            line.push_back(mPointCache.at(x.at(0)).at(0));
-            line.push_back(mPointCache.at(x.at(0)).at(1));
-            return line;
+            vector<float> point;
+            point.push_back(mPointCache.at(x.at(0)).at(0));
+            point.push_back(mPointCache.at(x.at(0)).at(1));
+
+
+            return point;
         }
+    });
+
+    mChart->setMatListener([this](){
+        return mBoundCache;
     });
 
     mChart->setInvalidateListener([this](){
@@ -139,6 +145,7 @@ void ZNodeView::updateChart2D() {
     }
 
     mPointCache = points;
+    mBoundCache = mChart->getTmpTransform();
 }
 
 void ZNodeView::updateChart1D() {
@@ -164,6 +171,7 @@ void ZNodeView::updateChart1D() {
     }
 
     mPointCache = points;
+    mBoundCache = mChart->getTmpTransform();
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {

@@ -80,7 +80,7 @@ void ZNodeEditor::addTestNodes() {
     connectNodes(0, 1, co, chart0);
 
     ZNodeView *lastChart = chart0;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 7; i++) {
         ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
         connectNodes(0, 0, lastChart, chart1);
         connectNodes(1, 1, lastChart, chart1);
@@ -138,7 +138,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     } else {
         mAddNodePosition.x += nodeSize.x + NODE_MARGIN;
     }
-    
+
     node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
     //node->evaluate(vector<float>(MAX_INPUT_COUNT, 3.0));

@@ -39,6 +39,10 @@ public:
         return vec2(min.y, max.y);
     }
 
+    mat4 getTmpTransform() {
+        return mTmpTransformIdentity;
+    }
+
     void setLineCount(int count) {
         mLineCount = count;
         //updateLineBuffers();
@@ -78,16 +82,21 @@ public:
         mInvalidateListener = std::move(listener);
     }
 
+    void setMatListener( function<mat4()> l) {
+        mMatListener = l;
+    }
+
 private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener;
-
+    function<mat4()> mMatListener;
 
     mat4 mDefaultMat = ortho(-1.5f, 1.5f, 1.5f, -1.5f, -1.0f, 10.0f);
 
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
     vec2 mLastMouse = vec2(0);
     mat4 mTmpTransform;
+    mat4 mTmpTransformIdentity = mat4(1);
     mat4 mTransform;
     vec3 mScaleOrigin = vec3(0);
 
