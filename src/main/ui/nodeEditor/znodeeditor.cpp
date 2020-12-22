@@ -184,9 +184,6 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 }
 
 void ZNodeEditor::selectNode(ZNodeView* node) {
-    if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
-        deselectAllNodes();
-    }
     node->setOutlineColor(yellow);
     node->setLineWidth(3.0);
     mSelectedNodes.insert(node);
@@ -211,7 +208,6 @@ void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, 
     secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
     secondNode->invalidateNodeRecursive();
 }
-
 
 void ZNodeEditor::updateLines() {
     for (ZLineView* lineView : mLineBucket) {
@@ -286,7 +282,12 @@ void ZNodeEditor::onMouseDown() {
         if (isMouseInBounds(node)) {
             mouseOverNode = true;
             mDragNode = i;
+
+            if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
+                deselectAllNodes();
+            }
             selectNode(node);
+
             int j = 0;
             for (ZView *socket : node->getSocketsIn()) {
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
@@ -355,7 +356,7 @@ void ZNodeEditor::onMouseDown() {
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
-    if (!mNodeViews.empty() && mDragNode != NO_SELECTION) {
+    if (!mNodeViews.empty() && mDragNode != NO_SELECTION && mBoxMode == NO_BOX_SELECT) {
         if (isSocketDrag()) {
             mTmpLine->setVisibility(true);
             mTmpLine->setPoints(absolute, mInitialOffset);
@@ -566,7 +567,27 @@ void ZNodeEditor::enterBoxSelect2nd() {
     mBoxSelect->setMaxHeight(0);
 }
 
-void ZNodeEditor::updateBoxSelect() const { cout << "handle box select" << endl; }
+void ZNodeEditor::updateBoxSelect() {
+    vec2 p1 = mBoxSelect->getOffset();
+    vec2 p2 = p1 + mBoxSelect->getSize();
+
+    vec2 min = vec2(std::min(p1.x, p2.x), std::min(p1.y, p2.y));
+    vec2 max = vec2(std::max(p1.x, p2.x), std::max(p1.y, p2.y));
+
+    cout << "min " << min.x << " " << min.y << endl;
+    cout << "max " << max.x << " " << max.y << endl;
+
+    for (ZNodeView* node : mNodeViews) {
+        bool topCorner = node->getLeft() > min.x && node->getLeft() < max.x &&
+                         node->getTop() > min.y && node->getTop() < max.y;
+
+        bool bottomCorner = node->getRight() > min.x && node->getRight() < max.x &&
+                            node->getBottom() > min.y && node->getBottom() < max.y;
+        if (topCorner || bottomCorner) {
+            selectNode(node);
+        }
+    }
+}
 
 void ZNodeEditor::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);

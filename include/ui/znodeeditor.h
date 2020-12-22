@@ -105,7 +105,7 @@ private:
 
     void enterBoxSelect2nd();
 
-    void updateBoxSelect() const;
+    void updateBoxSelect();
 
     void selectNode(ZNodeView *node);
 

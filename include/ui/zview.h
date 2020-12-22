@@ -137,6 +137,8 @@ class ZView {
         virtual int getMaxWidth();
         virtual int getMaxHeight();
 
+        vec2 getSize();
+
         int getWidth();
         int getHeight();
 

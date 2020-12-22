@@ -1011,3 +1011,7 @@ void ZView::setLineWidth(float width) {
 void ZView::setAllowNegativeSize(bool allow) {
     mAllowNegativeSize = allow;
 }
+
+vec2 ZView::getSize() {
+    return vec2(getMaxWidth(), getMaxHeight());
+}
