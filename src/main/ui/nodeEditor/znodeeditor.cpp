@@ -346,7 +346,7 @@ void ZNodeEditor::onMouseDown() {
         i++;
     }
 
-    if (!mouseOverNode) {
+    if (!mouseOverNode && mouseIsDown()) {
         deselectAllNodes();
     }
 
@@ -384,7 +384,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
         }
     }
 
-    if (middleMouseIsDown() && !shiftKeyPressed()) {
+    if (middleMouseIsDown() && (!shiftKeyPressed() || mDragNode == NO_SELECTION)) {
         for (ZNodeView* node : mNodeViews) {
             node->setOffset(
                     (int) node->getInitialPosition().x + delta.x,
