@@ -212,6 +212,8 @@ class ZView {
 		virtual void onGlobalMouseUp(int key);
         bool isMouseInBounds(ZView *view) const;
 
+        void setLineWidth(float width);
+
         /**
          * Color library. Useful for quickly setting a color to a view for testing
          *
@@ -230,9 +232,7 @@ class ZView {
         string getName();
         void init();
 
-        void setAllowNegativeSize(bool allow) {
-            mAllowNegativeSize = allow;
-        }
+        void setAllowNegativeSize(bool allow);
 	private:
 
 		bool mNeedsRender = true;
@@ -336,6 +336,8 @@ class ZView {
         WireType mDrawWire = none;
         vec2 mInitialPosition;
         string mName;
+
+        float mLineWidth = 2.0;
 
 
 };

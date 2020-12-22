@@ -184,16 +184,18 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 }
 
 void ZNodeEditor::selectNode(ZNodeView* node) {
-    for (ZNodeView* oldNode : mSelectedNodes) {
-        deselectNode(oldNode);
+    if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
+        deselectAllNodes();
     }
     node->setOutlineColor(yellow);
+    node->setLineWidth(3.0);
     mSelectedNodes.insert(node);
 }
 
 void ZNodeEditor::deselectNode(ZNodeView* node) {
     node->setOutlineColor(grey);
-    if (mSelectedNodes.count(node) == 0) {
+    node->setLineWidth(2.0);
+    if (mSelectedNodes.count(node) != 0) {
         mSelectedNodes.erase(node);
     }
 }
@@ -249,6 +251,8 @@ ZLineView* ZNodeEditor::getLine(int index) {
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
     ZView::onMouseDrag(absolute, start, delta, state);
 
+    mMouseDragDelta = absolute - start;
+
     if (middleMouseIsDown()) {
         mMagnitudePicker->setVisibility(false);
     }
@@ -268,9 +272,6 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
         onMouseUp();
     }
     updateLines();
-
-
-
 }
 
 void ZNodeEditor::onMouseDown() {
@@ -361,20 +362,24 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
         } else {
 
             if (mouseIsDown()) {
-                mNodeViews.at(mDragNode)->setOffset(
-                        (int) mInitialOffset.x + delta.x,
-                        (int) mInitialOffset.y + delta.y);
-
+                for (ZNodeView* selected : mSelectedNodes) {
+                    selected->setOffset(
+                            (int) selected->getInitialPosition().x + delta.x,
+                            (int) selected->getInitialPosition().y + delta.y);
+                    selected->onWindowChange(getWidth(), getHeight());
+                    selected->invalidate();
+                }
 
             } else if (rightMouseIsDown() && !shiftKeyPressed()) {
                 mNodeViews.at(mDragNode)->setMaxWidth(
                         mInitialSize.x + delta.x);
                 mNodeViews.at(mDragNode)->setMaxHeight(
                         mInitialSize.y + delta.y);
+                mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
+                mNodeViews.at(mDragNode)->invalidate();
 
             }
-            mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
-            mNodeViews.at(mDragNode)->invalidate();
+
             mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
         }
     }
@@ -425,6 +430,14 @@ void ZNodeEditor::onMouseUp() {
         node->resetInitialPosition();
     }
 
+    // If not shift select and user did not drag,
+    // select the single drag node on mouse up.
+    vec2 mouseDelta = abs(mMouseDragDelta);
+    if (mouseDelta.x < 3 && mouseDelta.y < 3 && !shiftKeyPressed() && nodeIndex != -1) {
+        deselectAllNodes();
+        selectNode(mNodeViews.at(nodeIndex));
+    }
+
     mDragNode = NO_SELECTION;
     mDragType = NO_SELECTION;
     mDragSocket = NO_SELECTION;
@@ -434,6 +447,7 @@ void ZNodeEditor::onMouseUp() {
         updateBoxSelect();
     }
 
+    mMouseDragDelta = vec2(0);
     exitBoxSelectMode();
 }
 

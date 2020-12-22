@@ -274,7 +274,7 @@ void ZView::draw() {
             glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
                                   sizeof(float) * 2, (void *) 0);
 
-            glLineWidth(2.0);
+            glLineWidth(mLineWidth);
             if (mDrawWire == full) {
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
                 if (getVisibility()) {
@@ -1002,4 +1002,12 @@ void ZView::setName(string name) {
 
 string ZView::getName() {
     return mName;
+}
+
+void ZView::setLineWidth(float width) {
+    mLineWidth = width;
+}
+
+void ZView::setAllowNegativeSize(bool allow) {
+    mAllowNegativeSize = allow;
 }

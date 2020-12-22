@@ -41,8 +41,6 @@ public:
     queue<ZNodeView*> mEvalQueue;
     set<ZNodeView*> mEvalSet;
 
-    set<ZNodeView*> mSelectedNodes;
-
     mutex mEvalMutex;
     condition_variable mEvalConVar;
 
@@ -59,6 +57,10 @@ private:
     ZView* mBoxSelect;
     ZCursorView* mCursorView;
     int mBoxMode = NO_BOX_SELECT;
+
+
+    set<ZNodeView*> mSelectedNodes;
+    vec2 mMouseDragDelta = vec2(0);
 
     ZView* mHeader;
     ZView* mLineContainer;
@@ -110,6 +112,8 @@ private:
     void deselectNode(ZNodeView *node);
 
     void deselectAllNodes();
+
+    void shiftSelectNode(ZNodeView *node);
 };
 
 

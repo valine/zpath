@@ -23,6 +23,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mOutputLabel->setGravity(Gravity::topRight);
 
     setDrawWire(WireType::outline);
+    setLineWidth(2.0);
+
 
     float yOffset = 3;
     float margin = 10;
