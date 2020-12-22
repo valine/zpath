@@ -110,7 +110,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
     while(shouldRun) {
         while (!editor->mEvalSet.empty()) {
             ZNodeView *node = *editor->mEvalSet.begin();
-            node->updateChart();
+            if (node->getVisibility()) {
+                node->updateChart();
+            }
             editor->mEvalSet.erase(node);
             glfwPostEmptyEvent();
         }
@@ -178,10 +180,54 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     return node;
 }
 
+void ZNodeEditor::deleteSelectedNodes() {
+    for (ZNodeView* node : mSelectedNodes) {
+        deleteNode(node);
+    }
+    mSelectedNodes.clear();
+}
+
+void ZNodeEditor::deleteNode(ZNodeView * node) {
+    node->setVisibility(false);
+    // Otherwise remove the last added connection
+    for (const vector<pair<ZNodeView*, int>>& inputs : node->mInputIndices) {
+        for (pair<ZNodeView*, int> input : inputs) {
+            ZNodeView* prevNode = input.first;
+            int index = 0;
+            for (pair<ZNodeView*, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
+                if (outputNode.first == node) {
+                    remove(prevNode->mOutputIndices.at(input.second),index);
+                }
+
+                index++;
+            }
+        }
+    }
+
+    for (const vector<pair<ZNodeView*, int>>& outputs : node->mOutputIndices) {
+        int pairIndex = 0;
+        for (pair<ZNodeView*, int> output : outputs) {
+            ZNodeView* nextNode = output.first;
+            remove(nextNode->mInputIndices.at(output.second), pairIndex);
+            nextNode->invalidateNodeRecursive();
+            pairIndex++;
+        }
+    }
+
+    node->mOutputIndices.clear();
+    node->mInputIndices.clear();
+
+
+    updateLines();
+    invalidate();
+}
+
 void ZNodeEditor::selectNode(ZNodeView* node) {
-    node->setOutlineColor(yellow);
-    node->setLineWidth(3.0);
-    mSelectedNodes.insert(node);
+    if (node->getVisibility()) {
+        node->setOutlineColor(yellow);
+        node->setLineWidth(3.0);
+        mSelectedNodes.insert(node);
+    }
 }
 
 void ZNodeEditor::deselectNode(ZNodeView* node) {
@@ -274,7 +320,7 @@ void ZNodeEditor::onMouseDown() {
 
     bool mouseOverNode = false;
     for (ZNodeView *node : mNodeViews) {
-        if (isMouseInBounds(node)) {
+        if (isMouseInBounds(node) && node->getVisibility()) {
             mouseOverNode = true;
             mDragNode = i;
 
@@ -296,7 +342,9 @@ void ZNodeEditor::onMouseDown() {
                         mDragSocket = j;
                     } else {
                         // Otherwise remove the last added connection
-                        pair<ZNodeView*, int> prevNode = node->mInputIndices.at(j).at(node->mInputIndices.at(j).size() - 1);
+                        //
+                        //
+                       pair<ZNodeView*, int> prevNode = node->mInputIndices.at(j).at(node->mInputIndices.at(j).size() - 1);
                        int k = 0;
                        for (pair<ZNodeView*, int> outputNode : prevNode.first->mOutputIndices.at(prevNode.second)) {
                            if (outputNode.first == node && outputNode.second == j) {
@@ -503,6 +551,10 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     else if (key == GLFW_KEY_ESCAPE) {
         exitBoxSelectMode();
     }
+
+    else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
+        deleteSelectedNodes();
+    }
 }
 
 void ZNodeEditor::onScrollChange(double x, double y) {
@@ -575,8 +627,10 @@ void ZNodeEditor::updateBoxSelect() {
         vec2 p3 = node->getOffset();
         vec2 p4 = p3 + node->getSize();
 
-        vec2 min2  = vec2(std::min(p3.x, p4.x), std::min(p3.y, p4.y)) + mNodeContainer->getInnerTranslation();
-        vec2 max2  = vec2(std::max(p3.x, p4.x), std::max(p3.y, p4.y)) + mNodeContainer->getInnerTranslation();
+        vec2 min2  = vec2(std::min(p3.x, p4.x), std::min(p3.y, p4.y)) +
+                mNodeContainer->getInnerTranslation();
+        vec2 max2  = vec2(std::max(p3.x, p4.x), std::max(p3.y, p4.y)) +
+                mNodeContainer->getInnerTranslation();
 
         bool xOverlap = max1.x >= min2.x && max2.x >= min1.x;
         bool yOverlap = max1.y >= min2.y && max2.y >= min1.y;

@@ -266,6 +266,10 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
 
         // Loop over input sockets
         for (int i = 0; i < size.x; i++) {
+            if (mInputIndices.empty()) {
+                return output;
+            }
+
             const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
 
             // If inputs are connected evaluate recursively, otherwise use the specified input.

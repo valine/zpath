@@ -110,6 +110,10 @@ private:
     void deselectNode(ZNodeView *node);
 
     void deselectAllNodes();
+
+    void deleteSelectedNodes();
+
+    void deleteNode(ZNodeView *);
 };
 
 
