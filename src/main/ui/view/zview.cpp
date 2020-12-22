@@ -1015,3 +1015,32 @@ void ZView::setAllowNegativeSize(bool allow) {
 vec2 ZView::getSize() {
     return vec2(getMaxWidth(), getMaxHeight());
 }
+
+void ZView::removeView() {
+    for (ZView* child : mViews) {
+        child->removeView();
+    }
+
+    ZView* parent = getParentView();
+
+    if (parent != nullptr) {
+        int index = 0;
+        for (ZView *view : parent->getSubViews()) {
+            if (view == this) {
+                break;
+            }
+            index++;
+        }
+        parent->removeSubView(index);
+        mParentView = nullptr;
+        delete this;
+    }
+}
+
+void ZView::removeSubView(int index) {
+    auto it = mViews.begin();
+    std::advance(it, index);
+    mViews.erase(it);
+}
+
+ZView::~ZView(){}

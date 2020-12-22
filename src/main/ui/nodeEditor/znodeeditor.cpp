@@ -112,6 +112,8 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
             ZNodeView *node = *editor->mEvalSet.begin();
             if (node->getVisibility()) {
                 node->updateChart();
+            } else {
+                node->removeView();
             }
             editor->mEvalSet.erase(node);
             glfwPostEmptyEvent();
@@ -177,6 +179,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     });
 
     node->invalidateSingleNode();
+    mNodeCount++;
     return node;
 }
 
@@ -217,7 +220,17 @@ void ZNodeEditor::deleteNode(ZNodeView * node) {
     node->mOutputIndices.clear();
     node->mInputIndices.clear();
 
+    mNodeCount--;
 
+    remove(mNodeViews, node->getIndexTag());
+
+    mEvalSet.insert(node);
+    // Reindex node views
+    int index = 0;
+    for (ZNodeView* nv : mNodeViews) {
+        nv->setIndexTag(index);
+        index++;
+    }
     updateLines();
     invalidate();
 }
@@ -241,6 +254,14 @@ void ZNodeEditor::deselectNode(ZNodeView* node) {
 void ZNodeEditor::deselectAllNodes() {
     for (ZNodeView* oldNode : mSelectedNodes) {
         deselectNode(oldNode);
+    }
+}
+
+void ZNodeEditor::selectAllNodes() {
+    for (ZNodeView* node : mNodeViews) {
+        if(node->getVisibility()) {
+            selectNode(node);
+        }
     }
 }
 
@@ -432,10 +453,12 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
 
     if (middleMouseIsDown() && (!shiftKeyPressed() || mDragNode == NO_SELECTION)) {
         for (ZNodeView* node : mNodeViews) {
-            node->setOffset(
-                    (int) node->getInitialPosition().x + delta.x,
-                    (int)  node->getInitialPosition().y + delta.y);
-            node->onWindowChange(getWidth(), getHeight());
+            if (node->getVisibility()) {
+                node->setOffset(
+                        (int) node->getInitialPosition().x + delta.x,
+                        (int) node->getInitialPosition().y + delta.y);
+                node->onWindowChange(getWidth(), getHeight());
+            }
         }
 
         mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
@@ -522,7 +545,7 @@ int ZNodeEditor::getMouseOverInSocket(ZNodeView* node) {
 int ZNodeEditor::getMouseOverNode() {
     int i = 0;
     for(ZNodeView* node : mNodeViews) {
-        if (isMouseInBounds(node)) {
+        if (isMouseInBounds(node) && node->getVisibility()) {
             return i;
         }
         i++;
@@ -554,6 +577,15 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
 
     else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
         deleteSelectedNodes();
+    }
+
+    else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+        if (mSelectedNodes.size() != mNodeCount) {
+            selectAllNodes();
+        } else {
+            deselectAllNodes();
+        }
+        invalidate();
     }
 }
 
@@ -658,7 +690,6 @@ void ZNodeEditor::onCursorPosChange(double x, double y) {
         mBoxSelect->setMaxHeight(mouseY - (int) mBoxSelect->getOffsetY());
     }
 }
-
 
 template <typename T>
 void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){

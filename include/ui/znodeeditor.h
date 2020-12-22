@@ -51,11 +51,11 @@ private:
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
     ZMagnitudePicker* mMagnitudePicker;
+    int mNodeCount = 0;
 
     ZView* mBoxSelect;
     ZCursorView* mCursorView;
     int mBoxMode = NO_BOX_SELECT;
-
 
     set<ZNodeView*> mSelectedNodes;
     vec2 mMouseDragDelta = vec2(0);
@@ -114,6 +114,8 @@ private:
     void deleteSelectedNodes();
 
     void deleteNode(ZNodeView *);
+
+    void selectAllNodes();
 };
 
 

@@ -207,6 +207,8 @@ class ZView {
         void setClickable(bool);
         bool isClickable();
 
+        void removeView();
+
         vec2 getMouse();
 		/**
 		 * Called when mouse up anywhere on the screen
@@ -235,6 +237,9 @@ class ZView {
         void init();
 
         void setAllowNegativeSize(bool allow);
+
+        virtual ~ZView();
+
 	private:
 
 		bool mNeedsRender = true;
@@ -342,6 +347,7 @@ class ZView {
         float mLineWidth = 2.0;
 
 
+    void removeSubView(int index);
 };
 
 #endif
