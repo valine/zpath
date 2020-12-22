@@ -89,6 +89,7 @@ void ZLineChart::updateLineBuffers() {
     // happens on a background thread. This ensures the ui will not lag
     // when evaluating large graphs.
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+    invalidate();
 }
 
 void ZLineChart::updateChart2D() {
