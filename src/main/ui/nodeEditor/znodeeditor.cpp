@@ -112,10 +112,14 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
             ZNodeView *node = *editor->mEvalSet.begin();
             if (node->getVisibility()) {
                 node->updateChart();
+                editor->mEvalSet.erase(node);
             } else {
+                editor->removeNodeAsync(node);
+                editor->mEvalSet.erase(node);
                 node->removeView();
+                editor->updateLines();
             }
-            editor->mEvalSet.erase(node);
+
             glfwPostEmptyEvent();
         }
 
@@ -183,6 +187,34 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     return node;
 }
 
+void ZNodeEditor::duplicateSelectedNodes(){
+    vector<ZNodeView*> originals;
+    vector<ZNodeView*> duplicates;
+    enterGrabMode();
+    for (ZNodeView* node : mSelectedNodes) {
+        ZNodeView* dupNode = addNode(node->getType());
+        dupNode->setOffset(node->getOffset());
+        dupNode->setMaxWidth(node->getMaxWidth());
+        dupNode->setMaxHeight(node->getMaxHeight());
+        dupNode->onWindowChange(getWidth(), getHeight());
+        dupNode->resetInitialPosition();
+        dupNode->invalidate();
+
+        originals.push_back(node);
+        duplicates.push_back(dupNode);
+    }
+
+    deselectAllNodes();
+
+    for (ZNodeView* duplicate : duplicates) {
+        selectNode(duplicate);
+    }
+
+    mDragNode = 1;
+
+    invalidate();
+}
+
 void ZNodeEditor::deleteSelectedNodes() {
     for (ZNodeView* node : mSelectedNodes) {
         deleteNode(node);
@@ -192,14 +224,18 @@ void ZNodeEditor::deleteSelectedNodes() {
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
     node->setVisibility(false);
-    // Otherwise remove the last added connection
-    for (const vector<pair<ZNodeView*, int>>& inputs : node->mInputIndices) {
-        for (pair<ZNodeView*, int> input : inputs) {
-            ZNodeView* prevNode = input.first;
+    node->invalidateSingleNode();
+    updateLines();
+}
+
+void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
+    for (const vector<pair<ZNodeView *, int>> &inputs : node->mInputIndices) {
+        for (pair<ZNodeView *, int> input : inputs) {
+            ZNodeView *prevNode = input.first;
             int index = 0;
-            for (pair<ZNodeView*, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
+            for (pair<ZNodeView *, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
                 if (outputNode.first == node) {
-                    remove(prevNode->mOutputIndices.at(input.second),index);
+                    remove(prevNode->mOutputIndices.at(input.second), index);
                 }
 
                 index++;
@@ -207,10 +243,10 @@ void ZNodeEditor::deleteNode(ZNodeView * node) {
         }
     }
 
-    for (const vector<pair<ZNodeView*, int>>& outputs : node->mOutputIndices) {
+    for (const vector<pair<ZNodeView *, int>> &outputs : node->mOutputIndices) {
         int pairIndex = 0;
-        for (pair<ZNodeView*, int> output : outputs) {
-            ZNodeView* nextNode = output.first;
+        for (pair<ZNodeView *, int> output : outputs) {
+            ZNodeView *nextNode = output.first;
             remove(nextNode->mInputIndices.at(output.second), pairIndex);
             nextNode->invalidateNodeRecursive();
             pairIndex++;
@@ -224,14 +260,14 @@ void ZNodeEditor::deleteNode(ZNodeView * node) {
 
     remove(mNodeViews, node->getIndexTag());
 
-    mEvalSet.insert(node);
+
     // Reindex node views
     int index = 0;
-    for (ZNodeView* nv : mNodeViews) {
+    for (ZNodeView *nv : mNodeViews) {
         nv->setIndexTag(index);
         index++;
     }
-    updateLines();
+
     invalidate();
 }
 
@@ -278,19 +314,21 @@ void ZNodeEditor::updateLines() {
 
     int lineIndex = 0;
     for (ZNodeView* node : mNodeViews) {
-        int outputIndex = 0;
-        vector<ZView*> outSockets = node->getSocketsOut();
-        for (const vector<pair<ZNodeView*, int>>& nextNode : node->mOutputIndices) {
-            if (!nextNode.empty()) {
+        if (node->getVisibility()) {
+            int outputIndex = 0;
+            vector<ZView *> outSockets = node->getSocketsOut();
+            for (const vector<pair<ZNodeView *, int>> &nextNode : node->mOutputIndices) {
+                if (!nextNode.empty()) {
 
-                for (pair<ZNodeView*, int> inputIndex : node->mOutputIndices.at(outputIndex)) {
-                    ZLineView* line = getLine(lineIndex++);
-                    line->setPoints(outSockets.at(outputIndex)->getCenter(),
-                                    inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter());
-                    line->setVisibility(true);
+                    for (pair<ZNodeView *, int> inputIndex : node->mOutputIndices.at(outputIndex)) {
+                        ZLineView *line = getLine(lineIndex++);
+                        line->setPoints(outSockets.at(outputIndex)->getCenter(),
+                                        inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter());
+                        line->setVisibility(true);
+                    }
                 }
+                outputIndex++;
             }
-            outputIndex++;
         }
     }
     getParentView()->invalidate();
@@ -337,6 +375,14 @@ void ZNodeEditor::onMouseDown() {
 
     if (mBoxMode == BOX_SELECT) {
         enterBoxSelect2nd();
+    }
+
+    if (mouseIsDown()) {
+        if (mGrab) {
+            return;
+        } else {
+            enterGrabMode();
+        }
     }
 
     bool mouseOverNode = false;
@@ -427,8 +473,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
             mTmpLine->setVisibility(true);
             mTmpLine->setPoints(absolute, mInitialOffset);
         } else {
-
-            if (mouseIsDown()) {
+            if (mGrab) {
                 for (ZNodeView* selected : mSelectedNodes) {
                     selected->setOffset(
                             (int) selected->getInitialPosition().x + delta.x,
@@ -512,12 +557,23 @@ void ZNodeEditor::onMouseUp() {
     mDragSocket = NO_SELECTION;
     mTmpLine->setVisibility(false);
 
+    exitGrabMode();
     if (mBoxMode == BOX_SELECT_2) {
         updateBoxSelect();
     }
 
     mMouseDragDelta = vec2(0);
     exitBoxSelectMode();
+}
+
+void ZNodeEditor::enterGrabMode() {
+    mGrab = true;
+    mInitialOffset = getMouse();
+
+}
+
+void ZNodeEditor::exitGrabMode() {
+    mGrab = false;
 }
 
 int ZNodeEditor::getMouseOverOutSocket(ZNodeView* node) {
@@ -586,6 +642,10 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
             deselectAllNodes();
         }
         invalidate();
+    }
+
+    else if (key == GLFW_KEY_D && shiftKeyPressed() && action == GLFW_PRESS) {
+        duplicateSelectedNodes();
     }
 }
 
@@ -675,6 +735,14 @@ void ZNodeEditor::updateBoxSelect() {
 
 void ZNodeEditor::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
+
+    if (mGrab && !anyMouseDown()) {
+        if (!mMagnitudePicker->getVisibility()) {
+            onMouseMove(vec2(x, y),
+                    vec2(x - mInitialOffset.x, y - mInitialOffset.y) / mNodeContainer->getScale());
+        }
+    }
+
     // Draw giant giant cursor around mouse for box select mode
     if (mBoxMode == BOX_SELECT)  {
         mCursorView->setPosition(getMouse() / mNodeContainer->getScale());

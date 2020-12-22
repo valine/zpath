@@ -236,6 +236,16 @@ void ZView::setTag(string tag) {
 
 void ZView::draw() {
     ZShader* shader;
+
+    if (mVertsInvalid) {
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
+
+        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
+        mVertsInvalid = false;
+    }
+
     if (mVisible) {
         if (mNeedsRender) {
             if (mBackgroundImage != nullptr) {
@@ -557,11 +567,7 @@ void ZView::computeBounds() {
     mVertices[12] = getRight();
     mVertices[13] = getBottom();
 
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
-
-    glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
+    mVertsInvalid = true;
 }
 
 void ZView::addSubView(ZView *view) {
@@ -1033,7 +1039,7 @@ void ZView::removeView() {
         }
         parent->removeSubView(index);
         mParentView = nullptr;
-        delete this;
+       // delete this;
     }
 }
 

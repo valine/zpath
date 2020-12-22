@@ -176,6 +176,10 @@ public:
 
     void setType(Type type);
 
+    Type getType() {
+        return mType;
+    }
+
     vector<vector<pair<ZNodeView*, int>>> mInputIndices;
     vector<vector<pair<ZNodeView*, int>>> mOutputIndices;
 

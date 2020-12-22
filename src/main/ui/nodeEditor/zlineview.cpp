@@ -44,8 +44,5 @@ void ZLineView::computeBounds() {
     vertices[12] = vertices[4];
     vertices[13] =  vertices[5];
 
-    glBindBuffer(GL_ARRAY_BUFFER, getVertexBuffer());
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), vertices);
-
     invalidate();
 }

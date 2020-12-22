@@ -57,6 +57,8 @@ private:
     ZCursorView* mCursorView;
     int mBoxMode = NO_BOX_SELECT;
 
+    bool mGrab = false;
+
     set<ZNodeView*> mSelectedNodes;
     vec2 mMouseDragDelta = vec2(0);
 
@@ -116,6 +118,14 @@ private:
     void deleteNode(ZNodeView *);
 
     void selectAllNodes();
+
+    void duplicateSelectedNodes();
+
+    void enterGrabMode();
+
+    void exitGrabMode();
+
+    void removeNodeAsync(ZNodeView *node);
 };
 
 

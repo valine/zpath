@@ -243,6 +243,7 @@ class ZView {
 	private:
 
 		bool mNeedsRender = true;
+		bool mVertsInvalid = false;
 
 		Gravity mGravity;
 		ZView *mParentView;
