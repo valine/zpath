@@ -36,6 +36,7 @@ public:
     ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
     ZNodeView * addNode(ZNodeView::Type type);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
+    bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     // Background evaluation
     set<ZNodeView*> mEvalSet;
@@ -59,6 +60,8 @@ private:
     bool mGrab = false;
 
     set<ZNodeView*> mSelectedNodes;
+    ZNodeView* mLastSelected;
+    ZNodeView* mSecondLastSelected;
     vec2 mMouseDragDelta = vec2(0);
 
     ZView* mHeader;
@@ -129,6 +132,10 @@ private:
     void deleteConnections(ZNodeView *node);
 
     void deleteSelectedConnections();
+
+    void quickConnectNodes(ZNodeView *firstNode, ZNodeView *secondNode);
+
+    bool wasMouseDrag();
 };
 
 

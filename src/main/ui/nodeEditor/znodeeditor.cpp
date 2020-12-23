@@ -305,7 +305,11 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
     if (node->getVisibility()) {
         node->setOutlineColor(yellow);
         node->setLineWidth(3.0);
+
+        mSecondLastSelected = mLastSelected;
+        mLastSelected = node;
         mSelectedNodes.insert(node);
+
     }
 }
 
@@ -328,6 +332,29 @@ void ZNodeEditor::selectAllNodes() {
         if(node->getVisibility()) {
             selectNode(node);
         }
+    }
+}
+
+void ZNodeEditor::quickConnectNodes(ZNodeView* firstNode, ZNodeView* secondNode) {
+    // Shortcut for linking two nodes. This works well when
+    // the first node has the same number of outputs as the
+    // second node has inputs.
+
+    if (firstNode == secondNode || firstNode == nullptr || secondNode == nullptr) {
+        return;
+    }
+
+    for (int i = 0; i < firstNode->getSocketCount().y; i++) {
+        for (int j = 0; j < secondNode->getSocketCount().x; j++) {
+            if (secondNode->mInputIndices.at(j).empty() && firstNode->mOutputIndices.at(i).empty()) {
+                connectNodes(i, j, firstNode, secondNode);
+                return;
+            }
+        }
+    }
+
+    if (firstNode->getSocketCount().y > 0 && secondNode->getSocketCount().x > 0) {
+        connectNodes(0, 0, firstNode, secondNode);
     }
 }
 
@@ -387,6 +414,7 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
     absolute /= scale;
     start /= scale;
     delta /= scale;
+
 
     if (state == mouseDown) {
         onMouseDown();
@@ -573,7 +601,7 @@ void ZNodeEditor::onMouseUp() {
     // If not shift select and user did not drag,
     // select the single drag node on mouse up.
     vec2 mouseDelta = abs(mInitialOffset - getMouse());
-    if (mouseDelta.x < 3 && mouseDelta.y < 3 && !shiftKeyPressed() && nodeIndex != -1) {
+    if (!wasMouseDrag() && !shiftKeyPressed() && nodeIndex != -1) {
         deselectAllNodes();
         selectNode(mNodeViews.at(nodeIndex));
     }
@@ -590,6 +618,11 @@ void ZNodeEditor::onMouseUp() {
 
     mMouseDragDelta = vec2(0);
     exitBoxSelectMode();
+}
+
+bool ZNodeEditor::wasMouseDrag() {
+    vec2 mouseDelta = abs(mInitialOffset - getMouse());
+    return mouseDelta.x > 3 || mouseDelta.y > 3;
 }
 
 void ZNodeEditor::enterGrabMode() {
@@ -797,4 +830,19 @@ void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){
     auto it = vec.begin();
     std::advance(it, pos);
     vec.erase(it);
+}
+
+bool ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+    bool mouseEvent = ZView::onMouseEvent(button, action, mods, sx, sy);
+
+    // Quick connect nodes
+    int nodeIndex = getMouseOverNode();
+    if (!wasMouseDrag() && button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE && nodeIndex != -1) {
+        if (mSecondLastSelected != nullptr) {
+            quickConnectNodes(mSecondLastSelected, mNodeViews.at(nodeIndex));
+        }
+    }
+
+    return mouseEvent;
+
 }
