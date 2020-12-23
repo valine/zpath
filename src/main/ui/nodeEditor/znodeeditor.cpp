@@ -188,6 +188,8 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
+
+    map<ZNodeView*, ZNodeView*> tmpMap;
     vector<ZNodeView*> originals;
     vector<ZNodeView*> duplicates;
     enterGrabMode();
@@ -202,6 +204,27 @@ void ZNodeEditor::duplicateSelectedNodes(){
 
         originals.push_back(node);
         duplicates.push_back(dupNode);
+
+        tmpMap.insert(pair<ZNodeView*, ZNodeView*>(node, dupNode));
+    }
+
+    for (ZNodeView* original : originals) {
+        ZNodeView* duplicate = tmpMap.at(original);
+
+        int outputIndex = 0;
+        // Looping over sockets
+        for (vector<pair<ZNodeView*, int>> edges : original->mOutputIndices) {
+            // Looping over individual edges
+            for(pair<ZNodeView*, int> edge : edges) {
+                ZNodeView* nextNode = edge.first;
+                int inputIndex = edge.second;
+
+                if (tmpMap.find(nextNode) != tmpMap.end()) {
+                    connectNodes(outputIndex, inputIndex, duplicate, tmpMap.at(nextNode));
+                }
+            }
+            outputIndex++;
+        }
     }
 
     deselectAllNodes();
