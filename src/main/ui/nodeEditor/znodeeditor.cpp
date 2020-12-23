@@ -360,10 +360,6 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
 
     if (state == mouseDown) {
         onMouseDown();
-    } else if (state == mouseDrag) {
-        if (!mMagnitudePicker->getVisibility()) {
-            onMouseMove(absolute, delta);
-        }
     } else if (state == mouseUp) {
         onMouseUp();
     }
@@ -372,7 +368,6 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
 
 void ZNodeEditor::onMouseDown() {
     int i = 0;
-
     if (mBoxMode == BOX_SELECT) {
         enterBoxSelect2nd();
     }
@@ -383,6 +378,8 @@ void ZNodeEditor::onMouseDown() {
         } else {
             enterGrabMode();
         }
+    } else {
+        mInitialOffset = getMouse();
     }
 
     bool mouseOverNode = false;
@@ -449,7 +446,6 @@ void ZNodeEditor::onMouseDown() {
 
             if (!isSocketDrag()) {
                 mDragType = NODE_DRAG;
-                mInitialOffset = vec2(node->getOffsetX(), node->getOffsetY());
                 mInitialSize = vec2(node->getWidth(), node->getHeight());
             }
             break;
@@ -546,7 +542,7 @@ void ZNodeEditor::onMouseUp() {
 
     // If not shift select and user did not drag,
     // select the single drag node on mouse up.
-    vec2 mouseDelta = abs(mMouseDragDelta);
+    vec2 mouseDelta = abs(mInitialOffset - getMouse());
     if (mouseDelta.x < 3 && mouseDelta.y < 3 && !shiftKeyPressed() && nodeIndex != -1) {
         deselectAllNodes();
         selectNode(mNodeViews.at(nodeIndex));
@@ -569,7 +565,6 @@ void ZNodeEditor::onMouseUp() {
 void ZNodeEditor::enterGrabMode() {
     mGrab = true;
     mInitialOffset = getMouse();
-
 }
 
 void ZNodeEditor::exitGrabMode() {
@@ -736,7 +731,7 @@ void ZNodeEditor::updateBoxSelect() {
 void ZNodeEditor::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
 
-    if (mGrab && !anyMouseDown()) {
+    if (mGrab || anyMouseDown()) {
         if (!mMagnitudePicker->getVisibility()) {
             onMouseMove(vec2(x, y),
                     vec2(x - mInitialOffset.x, y - mInitialOffset.y) / mNodeContainer->getScale());

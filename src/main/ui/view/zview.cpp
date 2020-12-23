@@ -130,10 +130,10 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             mRightMouseDown = false;
         }
 
-        if (action == GLFW_RELEASE) {
-            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
-        }
+//        if (action == GLFW_RELEASE) {
+//            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
+//                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
+//        }
         if (!clickConsumed) {
             if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
                 mMouseDown = true;
@@ -245,7 +245,6 @@ void ZView::draw() {
         glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
         mVertsInvalid = false;
     }
-
     if (mVisible) {
         if (mNeedsRender) {
             if (mBackgroundImage != nullptr) {
