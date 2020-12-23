@@ -183,7 +183,6 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     });
 
     node->invalidateSingleNode();
-    mNodeCount++;
     return node;
 }
 
@@ -245,14 +244,22 @@ void ZNodeEditor::deleteSelectedNodes() {
     mSelectedNodes.clear();
 }
 
+void ZNodeEditor::deleteSelectedConnections() {
+    for (ZNodeView* node : mSelectedNodes) {
+        deleteConnections(node);
+    }
+
+    updateLines();
+}
+
 void ZNodeEditor::deleteNode(ZNodeView * node) {
     node->setVisibility(false);
     node->invalidateSingleNode();
     updateLines();
 }
 
-void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
-    for (const vector<pair<ZNodeView *, int>> &inputs : node->mInputIndices) {
+void ZNodeEditor::deleteConnections(ZNodeView* node) {
+    for (vector<pair<ZNodeView *, int>> inputs : node->mInputIndices) {
         for (pair<ZNodeView *, int> input : inputs) {
             ZNodeView *prevNode = input.first;
             int index = 0;
@@ -266,7 +273,7 @@ void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last
         }
     }
 
-    for (const vector<pair<ZNodeView *, int>> &outputs : node->mOutputIndices) {
+    for (vector<pair<ZNodeView *, int>> outputs : node->mOutputIndices) {
         int pairIndex = 0;
         for (pair<ZNodeView *, int> output : outputs) {
             ZNodeView *nextNode = output.first;
@@ -276,13 +283,13 @@ void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last
         }
     }
 
-    node->mOutputIndices.clear();
-    node->mInputIndices.clear();
+    node->initializeEdges();
+    node->invalidateSingleNode();
+}
 
-    mNodeCount--;
-
+void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
+    deleteConnections(node);
     remove(mNodeViews, node->getIndexTag());
-
 
     // Reindex node views
     int index = 0;
@@ -649,12 +656,16 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
         exitBoxSelectMode();
     }
 
-    else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
+    else if (key == GLFW_KEY_X && !shiftKeyPressed() && action == GLFW_RELEASE) {
         deleteSelectedNodes();
     }
 
+    else if (key == GLFW_KEY_X && shiftKeyPressed() && action == GLFW_RELEASE) {
+        deleteSelectedConnections();
+    }
+
     else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-        if (mSelectedNodes.size() != mNodeCount) {
+        if (mSelectedNodes.empty()) {
             selectAllNodes();
         } else {
             deselectAllNodes();

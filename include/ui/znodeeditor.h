@@ -51,7 +51,6 @@ private:
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
     ZMagnitudePicker* mMagnitudePicker;
-    int mNodeCount = 0;
 
     ZView* mBoxSelect;
     ZCursorView* mCursorView;
@@ -126,6 +125,10 @@ private:
     void exitGrabMode();
 
     void removeNodeAsync(ZNodeView *node);
+
+    void deleteConnections(ZNodeView *node);
+
+    void deleteSelectedConnections();
 };
 
 

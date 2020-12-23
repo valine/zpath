@@ -47,8 +47,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
         mSocketsOut.push_back(socket);
     }
 
-    mInputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_INPUT_COUNT, vector<pair<ZNodeView*, int>>());
-    mOutputIndices = vector<vector<pair<ZNodeView*, int>>>(MAX_OUTPUT_COUNT,  vector<pair<ZNodeView*, int>>());
+    initializeEdges();
 
 
     // Manually trigger evaluation. This was needed before the async eval was working.
@@ -102,6 +101,10 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     });
 }
 
+void ZNodeView::initializeEdges() {
+    mInputIndices = vector<vector<pair<ZNodeView *, int>>>(MAX_INPUT_COUNT, vector<pair<ZNodeView *, int>>());
+    mOutputIndices = vector<vector<pair<ZNodeView *, int>>>(MAX_OUTPUT_COUNT, vector<pair<ZNodeView *, int>>());
+}
 
 void ZNodeView::updateChart() {
     // This is usually run from background thread

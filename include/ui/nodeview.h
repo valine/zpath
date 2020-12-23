@@ -192,6 +192,8 @@ public:
 
     void invalidateSingleNode();
     void invalidateNodeRecursive();
+
+    void initializeEdges();
 private:
     bool mInvalid = true;
 
@@ -225,6 +227,7 @@ private:
 
     void updateChart1D();
     void updateChart2D();
+
 };
 
 
