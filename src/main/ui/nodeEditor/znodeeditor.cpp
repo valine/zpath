@@ -758,6 +758,10 @@ void ZNodeEditor::onCursorPosChange(double x, double y) {
         if (!mMagnitudePicker->getVisibility()) {
             onMouseMove(vec2(x, y) / mNodeContainer->getScale(),
                     vec2(x - mInitialOffset.x, y - mInitialOffset.y) / mNodeContainer->getScale());
+
+            if (!anyMouseDown()) {
+                updateLines();
+            }
         }
     }
 
