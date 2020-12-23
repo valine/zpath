@@ -54,8 +54,8 @@ void ZMagnitudePicker::setValueChangedListener(function<void(float value)> l) {
     mListener = l;
 }
 
-void ZMagnitudePicker::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
-    ZView::onMouseDrag(absolute, start, delta, state);
+void ZMagnitudePicker::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
+    ZView::onMouseDrag(absolute, start, delta, state, 0);
 
 }
 

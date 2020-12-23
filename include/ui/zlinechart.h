@@ -70,7 +70,7 @@ public:
 
     void onWindowChange(int width, int height) override;
 
-    void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
+    void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
 
     void onScrollChange(double x, double y) override;
 

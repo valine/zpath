@@ -317,8 +317,8 @@ mat<4, 4, float> ZLineChart::getMatrix() const {
     return mTmpTransform;
 }
 
-void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
-    ZView::onMouseDrag(absolute,start, delta, state);
+void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
+    ZView::onMouseDrag(absolute, start, delta, state, 0);
 
     vec2 corner = vec2(getLeft(), getTop());
     vec2 positionInView = absolute - corner;

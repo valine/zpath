@@ -37,7 +37,7 @@ class ZNodeEditor : public ZView {
 public:
     ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
     ZNodeView * addNode(ZNodeView::Type type);
-    void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) override;
+    void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
     bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     // Background evaluation
@@ -90,7 +90,7 @@ private:
 
     ZLineView * getLine(int index);
 
-    void onMouseUp();
+    void onMouseUp(int button);
     void onMouseMove(const vec2 &absolute, const vec2 &delta);
 
     void onMouseDown();

@@ -412,8 +412,8 @@ ZLineView* ZNodeEditor::getLine(int index) {
     }
 }
 
-void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) {
-    ZView::onMouseDrag(absolute, start, delta, state);
+void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
+    ZView::onMouseDrag(absolute, start, delta, state, 0);
 
     mMouseDragDelta = absolute - start;
 
@@ -430,7 +430,7 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state) 
     if (state == mouseDown) {
         onMouseDown();
     } else if (state == mouseUp) {
-        onMouseUp();
+        onMouseUp(button);
     }
     updateLines();
 }
@@ -457,7 +457,10 @@ void ZNodeEditor::onMouseDown() {
             mouseOverNode = true;
             mDragNode = i;
 
-            if (mBoxMode == NO_BOX_SELECT) {
+            // The check for right mouse down is to enable
+            // the quick select feature to connect a single
+            // node to multiple nodes easily.
+            if (mBoxMode == NO_BOX_SELECT && !rightMouseIsDown()) {
                 if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
                     deselectAllNodes();
                 }
@@ -579,7 +582,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
 
 void ZNodeEditor::resetCursor() { mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y); }
 
-void ZNodeEditor::onMouseUp() {
+void ZNodeEditor::onMouseUp(int button) {
     int nodeIndex = getMouseOverNode();
 
     if (isSocketDrag() && nodeIndex != NO_SELECTION) {
@@ -614,7 +617,7 @@ void ZNodeEditor::onMouseUp() {
     // If not shift select and user did not drag,
     // select the single drag node on mouse up.
     vec2 mouseDelta = abs(mInitialOffset - getMouse());
-    if (!wasMouseDrag() && !shiftKeyPressed() && nodeIndex != -1) {
+    if (!wasMouseDrag() && !shiftKeyPressed() && nodeIndex != -1 && button != GLFW_MOUSE_BUTTON_2) {
         deselectAllNodes();
         selectNode(mNodeViews.at(nodeIndex));
     }
@@ -850,9 +853,10 @@ bool ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy)
 
     // Quick connect nodes
     int nodeIndex = getMouseOverNode();
-    if (!wasMouseDrag() && button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE && nodeIndex != -1) {
+    if (!wasMouseDrag() && (button == GLFW_MOUSE_BUTTON_2 || button == GLFW_MOUSE_BUTTON_3) && action == GLFW_RELEASE && nodeIndex != -1) {
         if (mSecondLastSelected != nullptr) {
             quickConnectNodes(mSecondLastSelected, mNodeViews.at(nodeIndex));
+
         }
     }
 

@@ -71,7 +71,7 @@ class ZView {
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
 
-        virtual void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state);
+        virtual void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button);
 
         // OpenGL shader
         virtual void setShader(ZShader *shader);
