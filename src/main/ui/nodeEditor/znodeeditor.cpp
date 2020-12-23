@@ -19,6 +19,7 @@
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     setBackgroundColor(vec4(0.005130, 0.013321, 0.025381, 1.000000));
 
+
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
@@ -29,7 +30,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mTmpLine->setVisibility(false);
 
     mBoxSelect = new ZView(100, 100, mLineContainer);
-    mBoxSelect->setDrawWire(WireType::outline);
+    mBoxSelect->setOutlineType(WireType::outline);
     mBoxSelect->setOutlineColor(ZSettingsStore::get().getHighlightColor());
     mBoxSelect->setVisibility(false);
     mBoxSelect->setAllowNegativeSize(true);
@@ -59,13 +60,12 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
-    // Magnitude picker work
-    mMagnitudePicker = new ZMagnitudePicker(this);
-    mMagnitudePicker->setVisibility(false);
-
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
 
+    // Magnitude picker work
+    mMagnitudePicker = new ZMagnitudePicker(this);
+    mMagnitudePicker->setVisibility(false);
 }
 
 void ZNodeEditor::onLayoutFinished() {
@@ -109,20 +109,26 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
     while(shouldRun) {
         while (!editor->mEvalSet.empty()) {
+
             ZNodeView *node = *editor->mEvalSet.begin();
             if (node->getVisibility()) {
                 node->updateChart();
+
+                std::lock_guard<std::mutex> guard(editor->mEvalMutex);
                 editor->mEvalSet.erase(node);
             } else {
                 editor->removeNodeAsync(node);
+
+                std::lock_guard<std::mutex> guard(editor->mEvalMutex);
                 editor->mEvalSet.erase(node);
                 node->removeView();
                 editor->updateLines();
             }
 
-            glfwPostEmptyEvent();
+            editor->mLineContainer->invalidate();
+            editor->mMagnitudePicker->invalidate();
         }
-
+        glfwPostEmptyEvent();
         std::unique_lock<std::mutex> lck(editor->mEvalMutex);
         editor->mEvalConVar.wait(lck);
     }
@@ -154,8 +160,8 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     node->onWindowChange(getWidth(), getHeight());
 
     node->setInvalidateListener([this](ZNodeView* node){
+        std::lock_guard<std::mutex> guard(mEvalMutex);
         mEvalSet.insert(node);
-        std::unique_lock<std::mutex> lck(mEvalMutex);
         mEvalConVar.notify_one();
     });
 
@@ -168,16 +174,25 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         double xpos = std::min(std::max(0.0, (double) (mouse.x - difference)),
                                (double) getWidth() - mMagnitudePicker->getMaxWidth());
         double ypos;
+
+        double margin = 10;
         if (mouse.y - mMagnitudePicker->getMaxHeight() > 0) {
-            ypos = mouse.y - mMagnitudePicker->getMaxHeight();
+            // Show above
+            cout << "above" << endl;
+            ypos = mouse.y - (mMagnitudePicker->getMaxHeight() + margin);
+            mMagnitudePicker->setShowAbove(true);
         } else {
-            ypos = mouse.y + label->getHeight();
+            // Show below
+
+            cout << "above" << endl;
+            ypos = mouse.y + (label->getHeight() + margin);
+            mMagnitudePicker->setShowAbove(false);
         }
 
         mMagnitudePicker->setOffset(vec2(xpos,ypos));
         mMagnitudePicker->setVisibility(true);
         mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
-        mMagnitudePicker->setValueChangedListener([nodeView](float value){
+        mMagnitudePicker->setValueChangedListener([this, nodeView](float value){
             nodeView->setConstantValue({value});
         });
     });
@@ -616,7 +631,6 @@ void ZNodeEditor::onMouseUp(int button) {
 
     // If not shift select and user did not drag,
     // select the single drag node on mouse up.
-    vec2 mouseDelta = abs(mInitialOffset - getMouse());
     if (!wasMouseDrag() && !shiftKeyPressed() && nodeIndex != -1 && button != GLFW_MOUSE_BUTTON_2) {
         deselectAllNodes();
         selectNode(mNodeViews.at(nodeIndex));

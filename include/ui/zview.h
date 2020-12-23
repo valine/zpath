@@ -195,7 +195,7 @@ class ZView {
 		double getLastX();
 		double getLastY();
 
-		void setDrawWire(WireType wire);
+		void setOutlineType(WireType wire);
 
 		float* getVertices();
 

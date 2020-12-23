@@ -40,6 +40,7 @@ public:
 	void setTextColor(vec3 color);
 	void setFillColor(vec4 color);
 
+	void setShowLabel(bool showLabel);
 	void setHighlightBackground(ZTexture* tex);
 	
 	void setThumbBackground(ZTexture* tex);
@@ -62,6 +63,8 @@ private:
 	ZLabel* mLabel;
 	float mIncrement = 0.01;
 	float mValue = 0.0;
+
+	bool mShowLabel = true;
 
 	void valueChanged(float offset);
 };

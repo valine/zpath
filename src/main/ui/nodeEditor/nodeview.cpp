@@ -24,7 +24,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mOutputLabel->setMaxWidth(40);
     mOutputLabel->setGravity(Gravity::topRight);
 
-    setDrawWire(WireType::outline);
+    setOutlineType(WireType::outline);
     setLineWidth(2.0);
 
 
@@ -119,7 +119,7 @@ void ZNodeView::updateChart() {
     }
     clearInvalidateNode();
     mChart->requestLineUpdate();
-    mChart->invalidate();
+   // mChart->invalidate();
 }
 
 void ZNodeView::updateChart2D() {

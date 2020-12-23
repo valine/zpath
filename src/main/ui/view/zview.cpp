@@ -913,7 +913,7 @@ void ZView::onGlobalMouseUp(int key) {
     }
 }
 
-void ZView::setDrawWire(WireType wire) {
+void ZView::setOutlineType(WireType wire) {
     mDrawWire = wire;
 }
 

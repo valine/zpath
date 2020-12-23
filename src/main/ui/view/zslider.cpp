@@ -235,7 +235,7 @@ void ZSlider::valueChanged(float offset) {
 	std::sprintf(&output[0], format, incValue);
 
 	mValue = incValue;
-	if (mLabel != nullptr) {
+	if (mLabel != nullptr && mShowLabel) {
         mLabel->setText(mTitle + " " + output);
     }
 	if (mListener != nullptr && !altKeyPressed()) {
@@ -293,6 +293,11 @@ void ZSlider::setFillColor(vec4 color) {
 
 void ZSlider::setOnSlide(std::function<void(ZView*, float, bool)> onSlide) {
     mSlideListener = onSlide;
+}
+
+void ZSlider::setShowLabel(bool showLabel) {
+    mShowLabel = showLabel;
+    mLabel->setVisibility(showLabel);
 }
 
 
