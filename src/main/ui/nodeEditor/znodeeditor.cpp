@@ -241,6 +241,8 @@ void ZNodeEditor::deleteSelectedNodes() {
     for (ZNodeView* node : mSelectedNodes) {
         deleteNode(node);
     }
+
+    resetCursor();
     mSelectedNodes.clear();
 }
 
@@ -359,7 +361,7 @@ void ZNodeEditor::quickConnectNodes(ZNodeView* firstNode, ZNodeView* secondNode)
 
     for (int i = 0; i < secondNode->getSocketCount().x; i++) {
         if (secondNode->mInputIndices.at(i).size() < minInputCount) {
-            minInputCount = firstNode->mOutputIndices.at(i).size();
+            minInputCount = secondNode->mInputIndices.at(i).size();
             minInputIndex = i;
         }
     }
@@ -555,7 +557,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
 
             }
 
-            mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
+            resetCursor();
         }
     }
 
@@ -569,11 +571,13 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
             }
         }
 
-        mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
+        resetCursor();
     }
 
     getParentView()->getParentView()->getParentView()->invalidate();
 }
+
+void ZNodeEditor::resetCursor() { mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y); }
 
 void ZNodeEditor::onMouseUp() {
     int nodeIndex = getMouseOverNode();

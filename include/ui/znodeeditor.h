@@ -138,6 +138,8 @@ private:
     void quickConnectNodes(ZNodeView *firstNode, ZNodeView *secondNode);
 
     bool wasMouseDrag();
+
+    void resetCursor();
 };
 
 
