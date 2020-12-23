@@ -22,6 +22,8 @@ static const int NODE_MARGIN = 10;
 
 static const int NODE_CONTAINER_OFFSET = 30;
 
+static const int DRAG_THRESHOLD = 5;
+
 #include <ui/zview.h>
 #include "nodeview.h"
 #include "zmagnitudepicker.h"

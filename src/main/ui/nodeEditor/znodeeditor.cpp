@@ -344,18 +344,27 @@ void ZNodeEditor::quickConnectNodes(ZNodeView* firstNode, ZNodeView* secondNode)
         return;
     }
 
+    int minInputCount = 1e6;
+    int minOutputCount = 1e6;
+
+    int minInputIndex = 0;
+    int minOutputIndex = 0;
+
     for (int i = 0; i < firstNode->getSocketCount().y; i++) {
-        for (int j = 0; j < secondNode->getSocketCount().x; j++) {
-            if (secondNode->mInputIndices.at(j).empty() && firstNode->mOutputIndices.at(i).empty()) {
-                connectNodes(i, j, firstNode, secondNode);
-                return;
-            }
+        if (firstNode->mOutputIndices.at(i).size() < minOutputCount) {
+            minOutputCount = firstNode->mOutputIndices.at(i).size();
+            minOutputIndex = i;
         }
     }
 
-    if (firstNode->getSocketCount().y > 0 && secondNode->getSocketCount().x > 0) {
-        connectNodes(0, 0, firstNode, secondNode);
+    for (int i = 0; i < secondNode->getSocketCount().x; i++) {
+        if (secondNode->mInputIndices.at(i).size() < minInputCount) {
+            minInputCount = firstNode->mOutputIndices.at(i).size();
+            minInputIndex = i;
+        }
     }
+
+    connectNodes(minOutputIndex, minInputIndex, firstNode, secondNode);
 }
 
 void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const {
@@ -622,7 +631,7 @@ void ZNodeEditor::onMouseUp() {
 
 bool ZNodeEditor::wasMouseDrag() {
     vec2 mouseDelta = abs(mInitialOffset - getMouse());
-    return mouseDelta.x > 3 || mouseDelta.y > 3;
+    return mouseDelta.x > DRAG_THRESHOLD || mouseDelta.y > DRAG_THRESHOLD;
 }
 
 void ZNodeEditor::enterGrabMode() {
@@ -837,7 +846,7 @@ bool ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy)
 
     // Quick connect nodes
     int nodeIndex = getMouseOverNode();
-    if (!wasMouseDrag() && button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE && nodeIndex != -1) {
+    if (!wasMouseDrag() && button == GLFW_MOUSE_BUTTON_2 && action == GLFW_RELEASE && nodeIndex != -1) {
         if (mSecondLastSelected != nullptr) {
             quickConnectNodes(mSecondLastSelected, mNodeViews.at(nodeIndex));
         }

@@ -51,6 +51,7 @@ public:
     };
 
     vector<float> evaluate(vector<float> x);
+    vector<float> evaluate(vector<float> x, ZNodeView* root);
 
     vector<float> compute(const vector<float>& in, Type type) {
         switch (type) {

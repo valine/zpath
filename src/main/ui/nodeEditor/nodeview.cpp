@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 //
 // Created by lukas on 10/4/20.
 //
@@ -258,6 +260,10 @@ void ZNodeView::setConstantValue(vector<float> value) {
 }
 
 vector<float> ZNodeView::evaluate(vector<float> x) {
+    return evaluate(std::move(x), nullptr);
+}
+
+vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
     ivec2 size = getSocketCount();
     vector<float> output;
     if (x.size() >= size.x) {
@@ -282,9 +288,21 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
                 // Loop over all inputs on a single socket
                 for (pair<ZNodeView *, int> input : inputs) {
 
+                    // Detect case where the output node is connected to the input node
+                    if (root == this) {
+                        mOutputLabel->setText("Infinite Loop");
+                        return vector<float>((int) MAX_INPUT_COUNT, 0);
+                    }
+
+                    vector<float> recurOutput;
+                    if (root == nullptr) {
+                        recurOutput = input.first->evaluate(x, this);
+                    } else {
+                        recurOutput = input.first->evaluate(x, root);
+                    }
+
                     // It's possible a previous node on the stack has too few inputs.
                     // When that happens display an error message.
-                    vector<float> recurOutput = input.first->evaluate(x);
                     if (recurOutput.empty()) {
                         mOutputLabel->setText("Bad input");
                         //mOutputLabel->setBackgroundColor(red);
