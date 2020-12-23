@@ -232,7 +232,8 @@ vector<ZView *> ZNodeView::getSocketsOut() {
 bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
-    if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel) && mOutputLabel->getVisibility()) {
+    if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel) &&
+            mOutputLabel->getVisibility() && button == GLFW_MOUSE_BUTTON_1) {
         if (mListener != nullptr) {
             mListener(mOutputLabel, this);
         }

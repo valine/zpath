@@ -268,6 +268,10 @@ void ZView::draw() {
                 shader = mShader;
             }
 
+            mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
+            mColorLocation = glGetUniformLocation(shader->mID, "uColor");
+            mTexCoordLocation = glGetUniformLocation(shader->mID, "aTexCoords");
+
             // Update scale, useful for zooming a view out
             GLint vp_location = glGetUniformLocation(shader->mID, "uVPMatrix");
             mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -1.0f, 10.0f);
@@ -361,9 +365,7 @@ void ZView::init() {
 void ZView::setShader(ZShader *shader) {
     mShader = shader;
 
-    mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
-    mColorLocation = glGetUniformLocation(shader->mID, "uColor");
-    mTexCoordLocation = glGetUniformLocation(shader->mID, "aTexCoords");
+
     for (auto & mView : mViews) {
         mView->setShader(shader);
     }

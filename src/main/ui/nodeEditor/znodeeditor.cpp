@@ -178,13 +178,10 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         double margin = 10;
         if (mouse.y - mMagnitudePicker->getMaxHeight() > 0) {
             // Show above
-            cout << "above" << endl;
             ypos = mouse.y - (mMagnitudePicker->getMaxHeight() + margin);
             mMagnitudePicker->setShowAbove(true);
         } else {
             // Show below
-
-            cout << "above" << endl;
             ypos = mouse.y + (label->getHeight() + margin);
             mMagnitudePicker->setShowAbove(false);
         }
@@ -415,6 +412,7 @@ void ZNodeEditor::updateLines() {
         }
     }
     getParentView()->invalidate();
+    mMagnitudePicker->invalidate();
 }
 
 ZLineView* ZNodeEditor::getLine(int index) {
