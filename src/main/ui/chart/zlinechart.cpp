@@ -130,16 +130,6 @@ void ZLineChart::updateChart2D() {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
-
-
-        //mat4 tmpMat = mMatListener();
-        // Reset the tmp transform. The tmp transform is used while evaluation
-        // happens on a background thread. This ensures the ui will not lag
-        // when evaluating large graphs.
-
-
-       // mTmpTransform = (inverse(tmpMat) * mTmpTransform);
-       // mTmpTransformIdentity = mat4(1);
     }
 
 }
@@ -389,9 +379,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
             } else {
                 mLastMouse.y = positionInView.y;
             }
-            mTmpTransformIdentity = (translate(mat4(1), mScaleOrigin) *
-                             scale(mat4(1), vec3(percent.x, percent.y, 1)) *
-                             translate(mat4(1), -mScaleOrigin)) * mTmpTransformIdentity;
             mTmpTransform = (translate(mat4(1), mScaleOrigin) *
                              scale(mat4(1), vec3(percent.x, percent.y, 1)) *
                              translate(mat4(1), -mScaleOrigin)) * mTmpTransform;
@@ -427,9 +414,6 @@ void ZLineChart::onScrollChange(double x, double y) {
 
         vec3 origin = vec3(0);
         vec2 percent = vec2(factor);
-        mTmpTransformIdentity = (translate(mat4(1), origin) *
-                         scale(mat4(1), vec3(percent.x, percent.y, 1)) *
-                         translate(mat4(1), -origin)) * mTmpTransformIdentity;
         mTmpTransform = (translate(mat4(1), origin) *
                          scale(mat4(1), vec3(percent.x, percent.y, 1)) *
                          translate(mat4(1), -origin)) * mTmpTransform;

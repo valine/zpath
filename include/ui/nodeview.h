@@ -59,20 +59,22 @@ public:
     vector<float> evaluate(vector<float> x, ZNodeView* root);
 
     vector<float> compute(const vector<float>& in, Type type) {
+        vec2 chartBound = mChart->getXBounds();
         switch (type) {
-            case SIN:return {sin(in.at(0))};
-            case COS:return {cos(in.at(0))};
-            case TAN:return {tan(in.at(0))};
-            case EXP:return {exp(in.at(0))};
-            case SQRT:return {sqrt(in.at(0))};
-            case POW:return {pow(in.at(0), in.at(1))};
-            case ADD:return {in.at(0) + in.at(1)};
-            case SUBTRACT:return {in.at(0) - in.at(1)};
-            case MULTIPLY:return {in.at(0) * in.at(1)};
-            case DIVIDE:return {in.at(0) / in.at(1)};
+            case SIN:
+                return {sin(in.at(0)), chartBound.x, chartBound.y};
+            case COS:return {cos(in.at(0)), chartBound.x, chartBound.y};
+            case TAN:return {tan(in.at(0)), chartBound.x, chartBound.y};
+            case EXP:return {exp(in.at(0)), chartBound.x, chartBound.y};
+            case SQRT:return {sqrt(in.at(0)), chartBound.x, chartBound.y};
+            case POW:return {pow(in.at(0), in.at(1)), chartBound.x, chartBound.y};
+            case ADD:return {in.at(0) + in.at(1), chartBound.x, chartBound.y};
+            case SUBTRACT:return {in.at(0) - in.at(1), chartBound.x, chartBound.y};
+            case MULTIPLY:return {in.at(0) * in.at(1), chartBound.x, chartBound.y};
+            case DIVIDE:return {in.at(0) / in.at(1), chartBound.x, chartBound.y};
             case C:return mConstantValue;
-            case X:return {in.at(0), 0};
-            case Y:return {0, in.at(1)};
+            case X:return {in.at(0), chartBound.x, chartBound.y};
+            case Y:return {in.at(1), chartBound.x, chartBound.y};
             case FILE:break;
             case FFT:break;
             case LAPLACE:break;
@@ -80,7 +82,7 @@ public:
             case SECOND_DIFF:break;
             case DOT:break;
             case CROSS:break;
-            case CHART_2D: return {in.at(0), in.at(1)};
+            case CHART_2D: return {in.at(0), in.at(1), chartBound.x, chartBound.y};
             case LAST:break;
         }
 
@@ -246,7 +248,6 @@ private:
     // Todo: remove  these
     ZLineChart* mChart;
     vector<vector<float>> mPointCache;
-    mat4 mBoundCache;
 
     vector<float> mConstantValue = {0.0};
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
@@ -262,7 +263,6 @@ private:
 
     void updateChart1D();
     void updateChart2D();
-
 };
 
 

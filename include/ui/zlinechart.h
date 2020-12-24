@@ -24,23 +24,23 @@ public:
         mListener = move(listener);
     }
 
-    vec2 getXBounds() {
+    void computeChartBounds() {
         mat4 inverseMat = inverse(mTransform);
         vec4 min = (inverseMat * vec4(-1,0,0,1));
         vec4 max = (inverseMat * vec4(1,0,0,1));
+        mXBound = vec2(min.x, max.x);
 
-        return vec2(min.x, max.x);
+        vec4 minY = (inverseMat * vec4(0,1.0,0,1));
+        vec4 maxY = (inverseMat * vec4(0,-1.0,0,1));
+        mYBound = vec2(minY.y, maxY.y);
+    }
+
+    vec2 getXBounds() {
+        return mXBound;
     }
 
     vec2 getYBounds() {
-        mat4 inverseMat = inverse(mTransform);
-        vec4 min = (inverseMat * vec4(0,1.0,0,1));
-        vec4 max = (inverseMat * vec4(0,-1.0,0,1));
-        return vec2(min.y, max.y);
-    }
-
-    mat4 getTmpTransform() {
-        return mTmpTransformIdentity;
+        return mYBound;
     }
 
     void setLineCount(int count) {
@@ -82,14 +82,9 @@ public:
         mInvalidateListener = std::move(listener);
     }
 
-    void setMatListener( function<mat4()> l) {
-        mMatListener = l;
-    }
-
 private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener;
-    function<mat4()> mMatListener;
 
     mat4 mDefaultMat = ortho(-1.5f, 1.5f, 1.5f, -1.5f, -1.0f, 10.0f);
 
@@ -99,6 +94,8 @@ private:
     mat4 mTmpTransformIdentity = mat4(1);
     mat4 mTransform;
     vec3 mScaleOrigin = vec3(0);
+    vec2 mXBound = vec2(0);
+    vec2 mYBound = vec2(0);
 
     // OpenGL buffers
     unsigned int mFBO = -1;

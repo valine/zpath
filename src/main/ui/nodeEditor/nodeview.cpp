@@ -95,12 +95,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
         }
     });
 
-    mChart->setMatListener([this](){
-        return mBoundCache;
-    });
-
     mChart->setInvalidateListener([this](){
-        invalidateSingleNode();
+        invalidateNodeRecursive();
     });
 }
 
@@ -129,6 +125,7 @@ void ZNodeView::updateChart2D() {
     int chartRes = mChart->getResolution();
     float increment = 0.1;
 
+    mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
 
@@ -153,11 +150,12 @@ void ZNodeView::updateChart2D() {
     }
 
     mPointCache = points;
-    mBoundCache = mChart->getTmpTransform();
 }
 
 void ZNodeView::updateChart1D() {
     int chartRes = mChart->getResolution();
+
+    mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
 
@@ -179,7 +177,6 @@ void ZNodeView::updateChart1D() {
     }
 
     mPointCache = points;
-    mBoundCache = mChart->getTmpTransform();
 }
 
 void ZNodeView::setType(ZNodeView::Type type) {
