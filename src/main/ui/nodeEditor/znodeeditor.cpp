@@ -19,7 +19,6 @@
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     setBackgroundColor(vec4(0.005130, 0.013321, 0.025381, 1.000000));
 
-
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
@@ -194,6 +193,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         });
     });
 
+    node->resetInitialPosition();
     node->invalidateSingleNode();
     return node;
 }

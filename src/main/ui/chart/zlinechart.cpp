@@ -37,7 +37,6 @@ void ZLineChart::onWindowChange(int width, int height) {
 
     if (needsUpdate) {
         updateFBOSize();
-       // draw();
     }
 }
 
@@ -89,6 +88,7 @@ void ZLineChart::updateLineBuffers() {
     // happens on a background thread. This ensures the ui will not lag
     // when evaluating large graphs.
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+
     invalidate();
 }
 
@@ -411,8 +411,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
     if (needsRefresh && mInvalidateListener != nullptr) {
         mInvalidateListener();
     }
-
-    invalidate();
 }
 
 void ZLineChart::onScrollChange(double x, double y) {
@@ -442,7 +440,4 @@ void ZLineChart::onScrollChange(double x, double y) {
             mInvalidateListener();
         }
     }
-
-
-    invalidate();
 }

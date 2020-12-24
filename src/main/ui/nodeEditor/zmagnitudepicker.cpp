@@ -6,7 +6,7 @@
 #include <utils/zsettingsstore.h>
 #include "ui/zmagnitudepicker.h"
 
-ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 50, parent) {
+ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent) {
 
     setBackgroundColor(white);
 
@@ -58,7 +58,7 @@ void ZMagnitudePicker::setShowAbove(bool above) {
         mRangeContainer->setYOffset(0);
         mSlider->setGravity(bottomLeft);
     } else {
-        mRangeContainer->setYOffset(30);
+        mRangeContainer->setYOffset(getHeight() - 20);
         mSlider->setGravity(topLeft);
     }
 }
