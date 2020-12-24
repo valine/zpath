@@ -31,9 +31,11 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     float yOffset = 3;
     float margin = 10;
     // Add input sockets
+
+    auto socketType = getSocketType();
+
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-        socket->setBackgroundColor(mVariableColor);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
         mSocketsIn.push_back(socket);
@@ -42,7 +44,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     // Add output sockets
     for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-        socket->setBackgroundColor(vec4(0.429225, 0.213118, 0.021705, 1));
         socket->setGravity(Gravity::topRight);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
@@ -185,19 +186,43 @@ void ZNodeView::setType(ZNodeView::Type type) {
     mType = type;
     ivec2 socketCount = getSocketCount();
 
+    auto socketType = getSocketType();
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         if (i >= socketCount.x) {
             mSocketsIn.at(i)->setVisibility(false);
+        } else {
+            if (i < socketCount.x) {
+                if (socketType.first.at(i) == VAR) {
+                    mSocketsIn.at(i)->setBackgroundColor(mVariableColor);
+                } else {
+                    mSocketsIn.at(i)->setBackgroundColor(mConstantColor);
+                }
+            }
         }
     }
-
+    vec4 darkenVec = vec4(0.5,0.4,0.4,0.0);
     for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
         if (i >= socketCount.y) {
             mSocketsOut.at(i)->setVisibility(false);
+        } else {
+            if (i < socketCount.y) {
+                if (socketType.second.at(i) == VAR) {
+                    mSocketsOut.at(i)->setBackgroundColor(mVariableColor - darkenVec);
+                } else {
+                    mSocketsOut.at(i)->setBackgroundColor(mConstantColor - darkenVec);
+                }
+            }
         }
     }
 
-    mChart->setInputCount(socketCount.y);
+
+    int varCount = 0;
+    for (auto inputType : socketType.second) {
+        if (inputType == VAR) {
+            varCount++;
+        }
+    }
+    mChart->setInputCount(std::max(varCount, 1));
 
     mNameLabel->setText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));

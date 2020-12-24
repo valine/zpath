@@ -36,7 +36,7 @@ public:
         SUBTRACT,
         MULTIPLY,
         DIVIDE,
-        CONSTANT, // Constant value
+        C, // Constant value
         X,
         Y,
         FILE,
@@ -48,6 +48,11 @@ public:
         CROSS,
         CHART_2D,
         LAST // Fake enum to allow easy iteration
+    };
+
+    enum SocketType {
+        CON,
+        VAR
     };
 
     vector<float> evaluate(vector<float> x);
@@ -65,7 +70,7 @@ public:
             case SUBTRACT:return {in.at(0) - in.at(1)};
             case MULTIPLY:return {in.at(0) * in.at(1)};
             case DIVIDE:return {in.at(0) / in.at(1)};
-            case CONSTANT:return mConstantValue;
+            case C:return mConstantValue;
             case X:return {in.at(0), 0};
             case Y:return {0, in.at(1)};
             case FILE:break;
@@ -90,28 +95,56 @@ public:
      */
     ivec2 getSocketCount() {
         switch (mType) {
-            case SIN:return ivec2(1,1);
-            case COS:return ivec2(1,1);
-            case TAN:return ivec2(1,1);
-            case EXP:return ivec2(1,1);
-            case SQRT:return ivec2(1,1);
-            case POW:return ivec2(2,1);
-            case ADD:return ivec2(2,1);
-            case SUBTRACT:return ivec2(2,1);
-            case MULTIPLY:return ivec2(2,1);
-            case DIVIDE:return ivec2(2,1);
-            case CONSTANT:return ivec2(0,1);
-            case X:return ivec2(0,1);
-            case Y:return ivec2(0,1);
+
+            case SIN:return ivec2(1,3);
+            case COS:return ivec2(1,3);
+            case TAN:return ivec2(1,3);
+            case EXP:return ivec2(1,3);
+            case SQRT:return ivec2(1,3);
+            case POW:return ivec2(2,3);
+            case ADD:return ivec2(2,3);
+            case SUBTRACT:return ivec2(2,3);
+            case MULTIPLY:return ivec2(2,3);
+            case DIVIDE:return ivec2(2,3);
+            case C:return ivec2(0,1);
+            case X:return ivec2(0,3);
+            case Y:return ivec2(0,3);
             case FILE:return ivec2(0,1);
-            case FFT:return ivec2(1,0);
-            case LAPLACE:return ivec2(1,0);
-            case FIRST_DIFF:return ivec2(1,0);
-            case SECOND_DIFF:return ivec2(1,0);
-            case DOT:return ivec2(4,1);
-            case CROSS:return ivec2(4,2);
-            case CHART_2D: return ivec2(2,2);
+            case FFT:return ivec2(3,3);
+            case LAPLACE:return ivec2(3,3);
+            case FIRST_DIFF:return ivec2(3,3);
+            case SECOND_DIFF:return ivec2(3,3);
+            case DOT:return ivec2(4,3);
+            case CROSS:return ivec2(4,4);
+            case CHART_2D: return ivec2(2,4);
             case LAST:return ivec2(0,0);
+        }
+    }
+
+    pair<vector<SocketType>,vector<SocketType>>  getSocketType() {
+        switch (mType) {
+            case SIN:
+            case COS:
+            case TAN:
+            case EXP:
+            case SQRT:
+            case POW:return {{VAR}, {VAR, CON, CON}};
+            case ADD:
+            case SUBTRACT:
+            case MULTIPLY:
+            case DIVIDE:return {{VAR, VAR}, {VAR, CON, CON}};
+            case C:return {{}, {CON}};
+            case X:
+            case Y:return {{}, {VAR, CON, CON}};
+            case FILE:return {{}, {VAR, CON, CON}};
+            case FFT:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case FIRST_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case DOT:return {{VAR, VAR, VAR, VAR}, {VAR, CON, CON}};
+            case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
+            case CHART_2D: return {{VAR, VAR}, {VAR, VAR, CON, CON}};
+            case LAST:return {};
         }
     }
 
@@ -127,7 +160,7 @@ public:
             case SUBTRACT:return "-";
             case MULTIPLY:return "*";
             case DIVIDE:return "/";
-            case CONSTANT:return "C";
+            case C:return "C";
             case X:return "x";
             case Y:return "y";
             case FILE:return "file";
@@ -144,7 +177,7 @@ public:
 
     static vec2 getNodeSize(Type type) {
         switch(type) {
-            case CONSTANT:
+            case C:
                 return vec2(80, 20);
             case CHART_2D:
                 return vec2(200, 200);
@@ -155,7 +188,7 @@ public:
 
     static bool isOutputLabelVisible(Type type) {
         switch(type) {
-            case CONSTANT:
+            case C:
                 return true;
             default:
                 return false;
@@ -164,8 +197,8 @@ public:
 
     vec4 getNodeColor(Type type) {
         switch (type) {
-            case CONSTANT:
-                return vec4(1, 0.437324, 0.419652, 1);
+            case C:
+                return mConstantColor;
             case X:
             case Y:
                 return mVariableColor;
@@ -217,6 +250,7 @@ private:
 
     vector<float> mConstantValue = {0.0};
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
+    vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
 
     function<void(ZLabel* sender, ZNodeView* node)> mListener;
     function<void(ZNodeView* node)> mInvalidateListener;

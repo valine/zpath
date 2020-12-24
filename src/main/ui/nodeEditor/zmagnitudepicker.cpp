@@ -113,7 +113,6 @@ void ZMagnitudePicker::onCursorPosChange(double x, double y) {
                 mSlider->setMaxValue(mRanges.at(index));
                 mSlider->setMinValue(-mRanges.at(index));
                 mSlider->setIncrement(mRanges.at(index) / 1000.0);
-                mSlider->invalidate();
             } else {
                 label->setBackgroundColor(getBackgroundColor());
             }

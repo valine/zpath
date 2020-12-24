@@ -19,6 +19,7 @@ public:
 
     void setValueChangedListener(function<void(float value)> l);
     void setShowAbove(bool above);
+
 private:
     void onGlobalMouseUp(int key) override;
 

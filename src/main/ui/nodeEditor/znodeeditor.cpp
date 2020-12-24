@@ -74,7 +74,7 @@ void ZNodeEditor::onLayoutFinished() {
 
 void ZNodeEditor::addTestNodes() {
     ZNodeView *x = addNode(ZNodeView::X);
-    ZNodeView *c = addNode(ZNodeView::CONSTANT);
+    ZNodeView *c = addNode(ZNodeView::C);
     ZNodeView *s = addNode(ZNodeView::SIN);
     ZNodeView *co = addNode(ZNodeView::COS);
     ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
