@@ -84,11 +84,18 @@ public:
         int xIndex = 0;
 
         if (span > 0) {
-            xIndex = std::max(0, std::min((int) (((in - thisChartBounds.x) / span) * res),
+            xIndex = std::max(0, std::min((int) in,
                     (int) mFftCache.size() - 1));
         }
-        complex<float> y = mFftCache.at(xIndex);
-        return {y.real(), y.imag()};
+
+        if (mFftCache.empty()) {
+            return {0, 0};
+        } else {
+            complex<float> y = mFftCache.at(xIndex);
+            return {y.real(), y.imag()};
+        }
+
+
     }
 
     vector<float> evaluate(vector<float> x);
@@ -119,7 +126,6 @@ public:
             case Y:return {in.at(1), chartBound.x, chartBound.y};
             case FILE:break;
             case FFT: {
-                cout << in.at(1) << endl;
                 auto fft = computeFft(in.at(1), vec2(in.at(2), in.at(3)));
                 return {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartBound.y};
             }
