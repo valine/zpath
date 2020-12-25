@@ -164,7 +164,8 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         mEvalConVar.notify_one();
     });
 
-    node->setOnValueSelect([this](ZView* label, ZNodeView* nodeView, int index, bool isInput){
+    node->setShowMagPickerListener([this, node](ZView *view, ZNodeView *nodeView,
+            int index, bool isInput, float initialValue, string name) {
         vec2 mouse = getMouse();
 
         // This logic shows the popup slider window
@@ -181,22 +182,31 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
             mMagnitudePicker->setShowAbove(true);
         } else {
             // Show below
-            ypos = mouse.y + (label->getHeight() + margin);
+            ypos = mouse.y + (view->getHeight() + margin);
             mMagnitudePicker->setShowAbove(false);
         }
 
         mMagnitudePicker->setInputType(index, isInput);
-        mMagnitudePicker->setOffset(vec2(xpos,ypos));
+        mMagnitudePicker->setOffset(vec2(xpos, ypos));
         mMagnitudePicker->setVisibility(true);
         mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
-        mMagnitudePicker->setValueChangedListener([this, nodeView](int index, float value, bool isInput){
+        mMagnitudePicker->setTitle(name);
+
+        if (isInput) {
+            mMagnitudePicker->selectMagnitude(node->getInputMagnitude(index));
+        } else {
+            mMagnitudePicker->selectMagnitude(node->getOutputMagnitude(index));
+        }
+
+        mMagnitudePicker->setValueChangedListener([this, nodeView](int index, float value, bool isInput, int magIndex) {
             if (!isInput) {
-                nodeView->setConstantValue(index, value);
+                nodeView->setConstantValue(index, value, magIndex);
             } else {
-                nodeView->setConstantValueInput(index, value);
+                nodeView->setConstantValueInput(index, value, magIndex);
             }
 
         });
+        mMagnitudePicker->setValue(initialValue);
     });
 
     node->resetInitialPosition();
@@ -489,15 +499,17 @@ void ZNodeEditor::onMouseDown() {
 
             for (int j = 0; j < node->getSocketCount().x; j++) {
                 ZView *socket = node->getSocketsIn().at(j);
-                bool noMagPicker = (shiftKeyPressed() || node->getSocketType().first.at(j) == ZNodeView::SocketType::VAR);
+                bool magPicker = (shiftKeyPressed() || node->getSocketType().first.at(j) == ZNodeView::SocketType::CON);
 
-                if (isMouseInBounds(socket) && socket->getVisibility() && noMagPicker) {
+                if (isMouseInBounds(socket) && socket->getVisibility()) {
 
                     // If nothing connected show input line
                     if (node->mInputIndices.at(j).empty()) {
-                        mDragType = SOCKET_DRAG_IN;
-                        mInitialOffset = socket->getCenter();
-                        mDragSocket = j;
+                        if (!magPicker) {
+                            mDragType = SOCKET_DRAG_IN;
+                            mInitialOffset = socket->getCenter();
+                            mDragSocket = j;
+                        }
                     } else {
                         // Otherwise remove the last added connection
                         //

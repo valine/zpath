@@ -266,14 +266,15 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
         if (isMouseInBounds(mOutputLabel) &&
             mOutputLabel->getVisibility()) {
             if (mShowMagnitudeView != nullptr) {
-                mShowMagnitudeView(mOutputLabel, this, 0, false);
+                mShowMagnitudeView(mOutputLabel, this, 0, false, mConstantValueOutput.at(0), "");
             }
         } else {
             int socketIndex = 0;
             for (ZView* inputSocket : mSocketsIn) {
-                if (isMouseInBounds(inputSocket) && !shiftKeyPressed() &&
+                if (isMouseInBounds(inputSocket) && mInputIndices.at(socketIndex).empty() &&
                         inputSocket->getVisibility() && getSocketType().first.at(socketIndex) == CON) {
-                    mShowMagnitudeView(mOutputLabel, this, socketIndex, true);
+                    mShowMagnitudeView(mOutputLabel, this, socketIndex, true,
+                            mConstantValueInput.at(socketIndex), getSocketName().at(socketIndex));
                 }
                 socketIndex++;
             }
@@ -288,25 +289,28 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     return ZView::onMouseEvent(button, action, mods, sx, sy);
 }
 
-void ZNodeView::setOnValueSelect(function<void(ZView *sender, ZNodeView *node, int index, bool isInput)> onValueSelect) {
+void ZNodeView::setShowMagPickerListener(
+        function<void(ZView *sender, ZNodeView *node, int index, bool isInput, float initialValue, string name)> onValueSelect) {
     mShowMagnitudeView = std::move(onValueSelect);
 }
 
-void ZNodeView::setConstantValue(int index, float value) {
+void ZNodeView::setConstantValue(int index, float value, int magnitudeIndex) {
     if (index >= mConstantValueOutput.size()) {
         mOutputLabel->setText("Bad input");
     } else {
         mConstantValueOutput.at(index) = value;
+        mConstantMagnitudeOutput.at(index) = magnitudeIndex;
         mOutputLabel->setText(to_string(mConstantValueOutput.at(0)));
         invalidateNodeRecursive();
     }
 }
 
-void ZNodeView::setConstantValueInput(int index, float value) {
-    if (index >= mConstantValueOutput.size()) {
+void ZNodeView::setConstantValueInput(int index, float value, int magnitudeIndex) {
+    if (index >= mConstantValueInput.size()) {
         mOutputLabel->setText("Bad input");
     } else {
         mConstantValueInput.at(index) = value;
+        mConstantMagnitudeInput.at(index) = magnitudeIndex;
         invalidateNodeRecursive();
     }
 }

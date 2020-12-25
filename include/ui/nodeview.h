@@ -6,12 +6,13 @@
 #define ZPATH_NODEVIEW_H
 
 static const int SOCKET_SIZE = 15;
-static const int MAX_INPUT_COUNT = 5;
+static const int MAX_INPUT_COUNT = 6;
 static const int MAX_OUTPUT_COUNT = 4;
 static const int CHART_RES_THRESHOLD = 4;
 static const int CHART_SIDE_MARGIN_WIDE = 20;
 static const int MIN_MARGIN = 3;
 static const int CHART_TOP_MARGIN = 15;
+static const int DEFAULT_MAGNITUDE = 6;
 using namespace std;
 #include <vector>
 #include "zview.h"
@@ -22,7 +23,9 @@ class ZNodeView : public ZView {
 public:
 
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
-    void setOnValueSelect(function<void(ZView* sender, ZNodeView* node, int socketIndex, bool isInput)>  onValueSelect);
+    void setShowMagPickerListener(
+            function<void(ZView *sender, ZNodeView *node, int socketIndex,
+                    bool isInput, float initialValue, string name)> onValueSelect);
     void setInvalidateListener(function<void(ZNodeView* node)> listener);
 
     enum Type {
@@ -73,7 +76,7 @@ public:
             case GAUSSIAN:return {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
                                   chartBound.x, chartBound.y};
             case MORLET:return {(float) (
-                        cos(in.at(0)) * // sinusoid
+                        cos(in.at(0) * in.at(4)) * // sinusoid
                         (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
                         chartBound.x, chartBound.y}; // Chart
             case ADD:return {in.at(0) + in.at(1), chartBound.x, chartBound.y};
@@ -112,7 +115,7 @@ public:
             case SQRT:return ivec2(1,3);
             case POW:return ivec2(2,3);
             case GAUSSIAN:return ivec2(3,3);
-            case MORLET:return ivec2(4,3);
+            case MORLET:return ivec2(5,3);
             case ADD:return ivec2(2,3);
             case SUBTRACT:return ivec2(2,3);
             case MULTIPLY:return ivec2(2,3);
@@ -141,7 +144,7 @@ public:
             case SQRT:
             case POW:return {{VAR}, {VAR, CON, CON}};
             case GAUSSIAN:return {{VAR, CON, CON}, {VAR, CON, CON}};
-            case MORLET:return {{VAR, CON, CON, CON}, {VAR, CON, CON}};
+            case MORLET:return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
@@ -207,7 +210,7 @@ public:
                 // X, width, height
                 return {0.0, 1.0, 1.0};
             case MORLET:
-                return {0.0, 1.0, 1.0, 0.0};
+                return {0.0, 1.0, 1.0, 0.0, 1.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -219,6 +222,14 @@ public:
                 return true;
             default:
                 return false;
+        }
+    }
+
+    vector<string> getSocketName() {
+        switch (mType) {
+            case GAUSSIAN: return {"", "Width", "Height"};
+            case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
+            default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
 
@@ -234,7 +245,6 @@ public:
         }
     }
 
-
     void setType(Type type);
 
     Type getType() {
@@ -249,8 +259,16 @@ public:
 
     void updateChart();
     void onWindowChange(int windowWidth, int windowHeight) override;
-    void setConstantValue(int index, float value);
-    void setConstantValueInput(int index, float valie);
+    void setConstantValue(int index, float value, int magnitudeIndex);
+    void setConstantValueInput(int index, float value, int magnitudeIndex);
+
+    int getInputMagnitude(int index) {
+       return mConstantMagnitudeInput.at(index);
+    }
+
+    int getOutputMagnitude(int index) {
+        return mConstantMagnitudeOutput.at(index);
+    }
 
     void invalidateSingleNode();
     void invalidateNodeRecursive();
@@ -278,10 +296,15 @@ private:
     vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
     vector<float> mConstantValueInput = vector<float>(MAX_INPUT_COUNT, 0.0);
 
+    // Center magnitude is at index 6
+    vector<float> mConstantMagnitudeOutput = vector<float>(MAX_OUTPUT_COUNT, DEFAULT_MAGNITUDE);
+    vector<int> mConstantMagnitudeInput = vector<int>(MAX_INPUT_COUNT, DEFAULT_MAGNITUDE);
+
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
     vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
 
-    function<void(ZView* sender, ZNodeView* node, int socketIndex, bool isInput)> mShowMagnitudeView;
+    function<void(ZView* sender, ZNodeView* node, int socketIndex,
+            bool isInput, float initialValue, string name)> mShowMagnitudeView;
     function<void(ZNodeView* node)> mInvalidateListener;
 
     bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;

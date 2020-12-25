@@ -23,12 +23,15 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mSlider->setMaxHeight(20);
     mSlider->setGravity(bottomLeft);
     mSlider->setLineColor(grey);
-    mSlider->setOnSlide([this](ZView* view, float v, bool b){
+    mSlider->setOnSlide([this](ZView* view, float v, bool mouseUp){
         if (mListener != nullptr) {
-            mListener(mSocketIndex, v, mIsInput);
+            mListener(mSocketIndex, v, mIsInput, mSelectedMagnitude);
             view->invalidate();
         }
     });
+
+    mName = new ZLabel("", this);
+    mName->setYOffset(25);
 
     mRangeContainer = new ZView(fillParent, 30, this);
     mRangeContainer->setGravity(topLeft);
@@ -44,13 +47,18 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
         label->setMargin(vec4(0));
         mRangeLabels.push_back(label);
 
-        if (mRanges.at(index) == 1) {
+        if (index == mSelectedMagnitude) {
             label->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
         } else {
             label->setBackgroundColor(getBackgroundColor());
         }
         index++;
     }
+}
+
+void ZMagnitudePicker::setValue(float value) {
+    mSlider->setValue(value);
+    invalidate();
 }
 
 void ZMagnitudePicker::setShowAbove(bool above) {
@@ -69,7 +77,7 @@ void ZMagnitudePicker::onGlobalMouseUp(int key) {
     if (!isMouseInBounds(this)) {
         if (getVisibility()) {
             if (mListener != nullptr) {
-                mListener(mSocketIndex, mSlider->getValue(), mIsInput);
+                mListener(mSocketIndex, mSlider->getValue(), mIsInput, mSelectedMagnitude);
             }
         }
         setVisibility(false);
@@ -89,7 +97,7 @@ bool ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, in
     return false;
 }
 
-void ZMagnitudePicker::setValueChangedListener(function<void(int index, float value, bool isInput)> l) {
+void ZMagnitudePicker::setValueChangedListener(function<void(int index, float value, bool isInput, int magIndex)> l) {
     mListener = l;
 }
 
@@ -109,17 +117,25 @@ void ZMagnitudePicker::onCursorPosChange(double x, double y) {
         int index = 0;
         for (ZLabel *label : mRangeLabels) {
             if (isMouseInBounds(label)) {
-                label->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
-                mSlider->setMaxValue(mRanges.at(index));
-                mSlider->setMinValue(-mRanges.at(index));
-                mSlider->setIncrement(mRanges.at(index) / 1000.0);
-            } else {
-                label->setBackgroundColor(getBackgroundColor());
+                selectMagnitude(index);
             }
-
             index++;
         }
     }
+}
 
+void ZMagnitudePicker::setTitle(string name) {
+    mName->setText(name);
+}
 
+void ZMagnitudePicker::selectMagnitude(int index) {
+    for (ZLabel *label : mRangeLabels) {
+        label->setBackgroundColor(getBackgroundColor());
+    }
+
+    mRangeLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
+    mSlider->setMaxValue(mRanges.at(index));
+    mSlider->setMinValue(-mRanges.at(index));
+    mSlider->setIncrement(mRanges.at(index) / 1000.0);
+    mSelectedMagnitude = index;
 }

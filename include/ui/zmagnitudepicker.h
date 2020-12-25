@@ -17,14 +17,16 @@ public:
 
     ZMagnitudePicker(ZView *parent);
 
-    void setValueChangedListener(function<void(int index, float value, bool isInput)> l);
+    void setValueChangedListener(function<void(int index, float value, bool isInput, int magIndex)> l);
     void setShowAbove(bool above);
-
+    void setValue(float value);
+    void setTitle(string name);
     void setInputType(int index, bool isInput) {
         mIsInput = isInput;
         mSocketIndex = index;
     }
 
+    void selectMagnitude(int index);
 private:
     void onGlobalMouseUp(int key) override;
 
@@ -32,7 +34,7 @@ private:
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
     void onCursorPosChange(double x, double y) override;
     bool mSliderActivated = false;
-    function<void(int index, float value, bool isInput)> mListener;
+    function<void(int index, float value, bool isInput, int magIndex)> mListener;
     ZSlider* mSlider;
 
     vector<string> mRangeStrings = {"e-6", "e-5", "e-4", "e-3", "0.01", "0.1", "1", "10", "100", "e3", "e4", "e5", "e6"};
@@ -40,9 +42,12 @@ private:
 
     ZView* mRangeContainer;
     vector<ZLabel*> mRangeLabels;
+    ZLabel* mName;
 
     bool mIsInput = false;
     int mSocketIndex = 0;
+    int mSelectedMagnitude = 6;
+
 };
 
 
