@@ -105,8 +105,8 @@ public:
         vec2 chartBound = mChart->getXBounds();
         switch (type) {
             case SIN:
-                return {sin(in.at(0)), chartBound.x, chartBound.y};
-            case COS:return {cos(in.at(0)), chartBound.x, chartBound.y};
+                return {sin(in.at(0) * in.at(1)), chartBound.x, chartBound.y};
+            case COS:return {cos(in.at(0) * in.at(1)), chartBound.x, chartBound.y};
             case TAN:return {tan(in.at(0)), chartBound.x, chartBound.y};
             case EXP:return {exp(in.at(0)), chartBound.x, chartBound.y};
             case SQRT:return {sqrt(in.at(0)), chartBound.x, chartBound.y};
@@ -149,8 +149,8 @@ public:
      */
     ivec2 getSocketCount() {
         switch (mType) {
-            case SIN:return ivec2(1,3);
-            case COS:return ivec2(1,3);
+            case SIN:return ivec2(2,3);
+            case COS:return ivec2(2,3);
             case TAN:return ivec2(1,3);
             case EXP:return ivec2(1,3);
             case SQRT:return ivec2(1,3);
@@ -180,6 +180,7 @@ public:
         switch (mType) {
             case SIN:
             case COS:
+                return {{VAR, CON}, {VAR, CON, CON}};
             case TAN:
             case EXP:
             case SQRT:
@@ -247,6 +248,9 @@ public:
 
     static vector<float> getDefaultInput(Type type) {
         switch(type) {
+            case SIN:
+            case COS:
+                return {0.0, 1.0};
             case GAUSSIAN:
                 // X, width, height
                 return {0.0, 1.0, 1.0};
@@ -270,6 +274,8 @@ public:
 
     vector<string> getSocketName() {
         switch (mType) {
+            case SIN:
+            case COS:return {"", "Frequency"};
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
             case FFT: return {"", "Window Start", "Window End"};
