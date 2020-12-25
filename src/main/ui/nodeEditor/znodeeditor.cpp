@@ -164,7 +164,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         mEvalConVar.notify_one();
     });
 
-    node->setOnValueSelect([this](ZLabel* label, ZNodeView* nodeView){
+    node->setOnValueSelect([this](ZView* label, ZNodeView* nodeView, int index, bool isInput){
         vec2 mouse = getMouse();
 
         // This logic shows the popup slider window
@@ -185,11 +185,17 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
             mMagnitudePicker->setShowAbove(false);
         }
 
+        mMagnitudePicker->setInputType(index, isInput);
         mMagnitudePicker->setOffset(vec2(xpos,ypos));
         mMagnitudePicker->setVisibility(true);
         mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
-        mMagnitudePicker->setValueChangedListener([this, nodeView](float value){
-            nodeView->setConstantValue({value});
+        mMagnitudePicker->setValueChangedListener([this, nodeView](int index, float value, bool isInput){
+            if (!isInput) {
+                nodeView->setConstantValue(index, value);
+            } else {
+                nodeView->setConstantValueInput(index, value);
+            }
+
         });
     });
 
@@ -480,9 +486,12 @@ void ZNodeEditor::onMouseDown() {
                 selectNode(node);
             }
 
-            int j = 0;
-            for (ZView *socket : node->getSocketsIn()) {
-                if (isMouseInBounds(socket) && socket->getVisibility()) {
+
+            for (int j = 0; j < node->getSocketCount().x; j++) {
+                ZView *socket = node->getSocketsIn().at(j);
+                bool noMagPicker = (shiftKeyPressed() || node->getSocketType().first.at(j) == ZNodeView::SocketType::VAR);
+
+                if (isMouseInBounds(socket) && socket->getVisibility() && noMagPicker) {
 
                     // If nothing connected show input line
                     if (node->mInputIndices.at(j).empty()) {
@@ -516,10 +525,10 @@ void ZNodeEditor::onMouseDown() {
                        node->invalidate();
                     }
                 }
-                j++;
+
             }
 
-            j = 0;
+            int j = 0;
             for (ZView *socket : node->getSocketsOut()) {
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
                     mDragType = SOCKET_DRAG_OUT;

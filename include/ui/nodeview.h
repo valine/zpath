@@ -6,7 +6,7 @@
 #define ZPATH_NODEVIEW_H
 
 static const int SOCKET_SIZE = 15;
-static const int MAX_INPUT_COUNT = 4;
+static const int MAX_INPUT_COUNT = 5;
 static const int MAX_OUTPUT_COUNT = 4;
 static const int CHART_RES_THRESHOLD = 4;
 static const int CHART_SIDE_MARGIN_WIDE = 20;
@@ -22,7 +22,7 @@ class ZNodeView : public ZView {
 public:
 
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
-    void setOnValueSelect(function<void(ZLabel* sender, ZNodeView* node)> onValueSelect);
+    void setOnValueSelect(function<void(ZView* sender, ZNodeView* node, int socketIndex, bool isInput)>  onValueSelect);
     void setInvalidateListener(function<void(ZNodeView* node)> listener);
 
     enum Type {
@@ -33,6 +33,7 @@ public:
         SQRT,
         POW,
         GAUSSIAN,
+        MORLET,
         ADD,
         SUBTRACT,
         MULTIPLY,
@@ -69,12 +70,17 @@ public:
             case EXP:return {exp(in.at(0)), chartBound.x, chartBound.y};
             case SQRT:return {sqrt(in.at(0)), chartBound.x, chartBound.y};
             case POW:return {pow(in.at(0), in.at(1)), chartBound.x, chartBound.y};
-            case GAUSSIAN:return {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))), chartBound.x, chartBound.y};
+            case GAUSSIAN:return {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
+                                  chartBound.x, chartBound.y};
+            case MORLET:return {(float) (
+                        cos(in.at(0)) * // sinusoid
+                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
+                        chartBound.x, chartBound.y}; // Chart
             case ADD:return {in.at(0) + in.at(1), chartBound.x, chartBound.y};
             case SUBTRACT:return {in.at(0) - in.at(1), chartBound.x, chartBound.y};
             case MULTIPLY:return {in.at(0) * in.at(1), chartBound.x, chartBound.y};
             case DIVIDE:return {in.at(0) / in.at(1), chartBound.x, chartBound.y};
-            case C:return mConstantValue;
+            case C:return mConstantValueOutput;
             case X:return {in.at(0), chartBound.x, chartBound.y};
             case Y:return {in.at(1), chartBound.x, chartBound.y};
             case FILE:break;
@@ -99,7 +105,6 @@ public:
      */
     ivec2 getSocketCount() {
         switch (mType) {
-
             case SIN:return ivec2(1,3);
             case COS:return ivec2(1,3);
             case TAN:return ivec2(1,3);
@@ -107,6 +112,7 @@ public:
             case SQRT:return ivec2(1,3);
             case POW:return ivec2(2,3);
             case GAUSSIAN:return ivec2(3,3);
+            case MORLET:return ivec2(4,3);
             case ADD:return ivec2(2,3);
             case SUBTRACT:return ivec2(2,3);
             case MULTIPLY:return ivec2(2,3);
@@ -135,6 +141,7 @@ public:
             case SQRT:
             case POW:return {{VAR}, {VAR, CON, CON}};
             case GAUSSIAN:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case MORLET:return {{VAR, CON, CON, CON}, {VAR, CON, CON}};
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
@@ -163,6 +170,7 @@ public:
             case SQRT:return "sqrt";
             case POW:return "pow";
             case GAUSSIAN:return "gaussian";
+            case MORLET:return "wavelet";
             case ADD:return "+";
             case SUBTRACT:return "-";
             case MULTIPLY:return "*";
@@ -198,6 +206,8 @@ public:
             case GAUSSIAN:
                 // X, width, height
                 return {0.0, 1.0, 1.0};
+            case MORLET:
+                return {0.0, 1.0, 1.0, 0.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -239,7 +249,8 @@ public:
 
     void updateChart();
     void onWindowChange(int windowWidth, int windowHeight) override;
-    void setConstantValue(vector<float> value);
+    void setConstantValue(int index, float value);
+    void setConstantValueInput(int index, float valie);
 
     void invalidateSingleNode();
     void invalidateNodeRecursive();
@@ -264,11 +275,13 @@ private:
     ZLineChart* mChart;
     vector<vector<float>> mPointCache;
 
-    vector<float> mConstantValue = {0.0};
+    vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
+    vector<float> mConstantValueInput = vector<float>(MAX_INPUT_COUNT, 0.0);
+
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
     vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
 
-    function<void(ZLabel* sender, ZNodeView* node)> mListener;
+    function<void(ZView* sender, ZNodeView* node, int socketIndex, bool isInput)> mShowMagnitudeView;
     function<void(ZNodeView* node)> mInvalidateListener;
 
     bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;

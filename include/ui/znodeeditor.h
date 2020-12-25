@@ -62,8 +62,8 @@ private:
     bool mGrab = false;
 
     set<ZNodeView*> mSelectedNodes;
-    ZNodeView* mLastSelected;
-    ZNodeView* mSecondLastSelected;
+    ZNodeView* mLastSelected = nullptr;
+    ZNodeView* mSecondLastSelected = nullptr;
     vec2 mMouseDragDelta = vec2(0);
 
     ZView* mHeader;

@@ -17,7 +17,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     float min = -1.0;
     float max = 1.0;
     mSlider = new ZSlider("", min, max, 0.0, this);
-    mSlider->setShowLabel(false);
+    //mSlider->setShowLabel(false);
     mSlider->setMargin(vec4(0));
     mSlider->setYOffset(0);
     mSlider->setMaxHeight(20);
@@ -25,7 +25,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mSlider->setLineColor(grey);
     mSlider->setOnSlide([this](ZView* view, float v, bool b){
         if (mListener != nullptr) {
-            mListener(v);
+            mListener(mSocketIndex, v, mIsInput);
             view->invalidate();
         }
     });
@@ -69,7 +69,7 @@ void ZMagnitudePicker::onGlobalMouseUp(int key) {
     if (!isMouseInBounds(this)) {
         if (getVisibility()) {
             if (mListener != nullptr) {
-                mListener(mSlider->getValue());
+                mListener(mSocketIndex, mSlider->getValue(), mIsInput);
             }
         }
         setVisibility(false);
@@ -89,7 +89,7 @@ bool ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, in
     return false;
 }
 
-void ZMagnitudePicker::setValueChangedListener(function<void(float value)> l) {
+void ZMagnitudePicker::setValueChangedListener(function<void(int index, float value, bool isInput)> l) {
     mListener = l;
 }
 

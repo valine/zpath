@@ -226,7 +226,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
     setBackgroundColor(getNodeColor(mType));
 
     if (isOutputLabelVisible(mType)) {
-        mOutputLabel->setText(to_string(mConstantValue.at(0)));
+        mOutputLabel->setText(to_string(mConstantValueOutput.at(0)));
         mOutputLabel->setBackgroundColor(getNodeColor(mType));
     }
 
@@ -241,6 +241,14 @@ void ZNodeView::setType(ZNodeView::Type type) {
     if (getSocketCount().y > 1) {
         mChart->setMarginRight(CHART_SIDE_MARGIN_WIDE);
     }
+
+    int i = 0;
+    for (float cValue : getDefaultInput(mType)) {
+        mConstantValueInput.at(i) = cValue;
+        i++;
+    }
+
+
 }
 
 vector<ZView *> ZNodeView::getSocketsIn() {
@@ -254,10 +262,22 @@ vector<ZView *> ZNodeView::getSocketsOut() {
 bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
-    if (action == GLFW_PRESS && isMouseInBounds(mOutputLabel) &&
-            mOutputLabel->getVisibility() && button == GLFW_MOUSE_BUTTON_1) {
-        if (mListener != nullptr) {
-            mListener(mOutputLabel, this);
+    if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_1) {
+        if (isMouseInBounds(mOutputLabel) &&
+            mOutputLabel->getVisibility()) {
+            if (mShowMagnitudeView != nullptr) {
+                mShowMagnitudeView(mOutputLabel, this, 0, false);
+            }
+        } else {
+            int socketIndex = 0;
+            for (ZView* inputSocket : mSocketsIn) {
+                if (isMouseInBounds(inputSocket) && !shiftKeyPressed() &&
+                        inputSocket->getVisibility() && getSocketType().first.at(socketIndex) == CON) {
+                    mShowMagnitudeView(mOutputLabel, this, socketIndex, true);
+                }
+                socketIndex++;
+            }
+
         }
     }
 
@@ -268,19 +288,29 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     return ZView::onMouseEvent(button, action, mods, sx, sy);
 }
 
-void ZNodeView::setOnValueSelect(function<void(ZLabel *sender, ZNodeView *node)> onValueSelect) {
-    mListener = std::move(onValueSelect);
+void ZNodeView::setOnValueSelect(function<void(ZView *sender, ZNodeView *node, int index, bool isInput)> onValueSelect) {
+    mShowMagnitudeView = std::move(onValueSelect);
 }
 
-void ZNodeView::setConstantValue(vector<float> value) {
-    if (value.empty()) {
+void ZNodeView::setConstantValue(int index, float value) {
+    if (index >= mConstantValueOutput.size()) {
         mOutputLabel->setText("Bad input");
     } else {
-        mOutputLabel->setText(to_string(value.at(0)));
-        mConstantValue = value;
+        mConstantValueOutput.at(index) = value;
+        mOutputLabel->setText(to_string(mConstantValueOutput.at(0)));
         invalidateNodeRecursive();
     }
 }
+
+void ZNodeView::setConstantValueInput(int index, float value) {
+    if (index >= mConstantValueOutput.size()) {
+        mOutputLabel->setText("Bad input");
+    } else {
+        mConstantValueInput.at(index) = value;
+        invalidateNodeRecursive();
+    }
+}
+
 
 vector<float> ZNodeView::evaluate(vector<float> x) {
     return evaluate(std::move(x), nullptr);
@@ -353,7 +383,7 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                     if (getSocketType().first.at(i) == VAR) {
                         summedInputs.at(i) = x.at(i);
                     } else {
-                        summedInputs.at(i) = getDefaultInput(mType).at(i);
+                        summedInputs.at(i) = mConstantValueInput.at(i);
                     }
 
                 }
