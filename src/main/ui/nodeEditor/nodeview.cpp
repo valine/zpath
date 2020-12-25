@@ -106,7 +106,7 @@ void ZNodeView::initializeEdges() {
 }
 
 void ZNodeView::updateChart() {
-    // This is usually run from background thread
+    // This is run from background thread
     if (mInvalid) {
         if (mChart->getInputCount() == 1) {
             updateChart1D();
@@ -163,6 +163,8 @@ void ZNodeView::updateChart1D() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float factor = (float) i / (float) chartRes;
         float x = mix(xBounds.x, xBounds.y, factor);
+        vector<float> inVec = vector<float>(MAX_INPUT_COUNT, x);
+        inVec.at(inVec.size() - 1) = i;
         vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
         if (fx.empty()) {
             mChart->setVisibility(false);
@@ -323,7 +325,7 @@ vector<float> ZNodeView::evaluate(vector<float> x) {
 vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
     ivec2 size = getSocketCount();
     vector<float> output;
-    if (x.size() >= size.x) {
+    if (size.x == 0) {
         output = compute(x, mType);
     }
 
@@ -433,6 +435,7 @@ void ZNodeView::invalidateSingleNode() {
     //setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
     mInvalid = true;
 
+    mFftCache.clear();
     if (mInvalidateListener != nullptr) {
         mInvalidateListener(this);
     }

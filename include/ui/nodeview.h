@@ -18,6 +18,8 @@ using namespace std;
 #include "zview.h"
 #include "zchart.h"
 #include "zlinechart.h"
+#include <complex.h>
+#include <utils/zfft.h>
 
 class ZNodeView : public ZView {
 public:
@@ -60,6 +62,35 @@ public:
         VAR
     };
 
+    pair<float, float> computeFft(float in, vec2 chartBound) {
+
+        int res = mChart->getResolution();
+        if (mFftCache.empty()) {
+            for (int i = 0; i < res; i++) {
+                float summedInput = 0.0;
+                float x = mix(chartBound.x, chartBound.y, (float) i / (float) res);
+                auto inputSocket = mInputIndices.at(0);
+                for (auto singleInput : inputSocket) {
+                    summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
+                            singleInput.second);
+                }
+                mFftCache.emplace_back(summedInput, 0);
+            }
+            ZFFt::transform(mFftCache);
+        }
+
+        vec2 thisChartBounds = mChart->getXBounds();
+        float span = thisChartBounds.y - thisChartBounds.x;
+        int xIndex = 0;
+
+        if (span > 0) {
+            xIndex = std::max(0, std::min((int) (((in - thisChartBounds.x) / span) * res),
+                    (int) mFftCache.size() - 1));
+        }
+        complex<float> y = mFftCache.at(xIndex);
+        return {y.real(), y.imag()};
+    }
+
     vector<float> evaluate(vector<float> x);
     vector<float> evaluate(vector<float> x, ZNodeView* root);
 
@@ -87,7 +118,11 @@ public:
             case X:return {in.at(0), chartBound.x, chartBound.y};
             case Y:return {in.at(1), chartBound.x, chartBound.y};
             case FILE:break;
-            case FFT:return {in.at(0), in.at(1)};
+            case FFT: {
+                cout << in.at(1) << endl;
+                auto fft = computeFft(in.at(1), vec2(in.at(2), in.at(3)));
+                return {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartBound.y};
+            }
             case LAPLACE:break;
             case FIRST_DIFF:break;
             case SECOND_DIFF:break;
@@ -124,7 +159,7 @@ public:
             case X:return ivec2(0,3);
             case Y:return ivec2(0,3);
             case FILE:return ivec2(0,1);
-            case FFT:return ivec2(3,4);
+            case FFT:return ivec2(4,3);
             case LAPLACE:return ivec2(3,3);
             case FIRST_DIFF:return ivec2(3,3);
             case SECOND_DIFF:return ivec2(3,3);
@@ -153,7 +188,7 @@ public:
             case X:
             case Y:return {{}, {VAR, CON, CON}};
             case FILE:return {{}, {VAR, CON, CON}};
-            case FFT:return {{VAR, CON, CON}, {VAR, VAR, CON, CON}};
+            case FFT:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
@@ -212,7 +247,7 @@ public:
             case MORLET:
                 return {0.0, 1.0, 1.0, 0.0, 1.0};
             case FFT:
-                return {0.0, 0.0, 1.0};
+                return {0.0, 0.0, 0.0, 1.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -309,6 +344,8 @@ private:
     function<void(ZView* sender, ZNodeView* node, int socketIndex,
             bool isInput, float initialValue, string name)> mShowMagnitudeView;
     function<void(ZNodeView* node)> mInvalidateListener;
+
+    vector<complex<float>> mFftCache;
 
     bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 

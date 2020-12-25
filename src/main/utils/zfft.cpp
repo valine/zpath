@@ -10,7 +10,7 @@ using std::vector;
 static size_t reverseBits(size_t x, int n);
 
 
-void ZFFt::transform(vector<complex<double> > &vec) {
+void ZFFt::transform(vector<complex<float> > &vec) {
     size_t n = vec.size();
     if (n == 0)
         return;
@@ -21,16 +21,16 @@ void ZFFt::transform(vector<complex<double> > &vec) {
 }
 
 
-void ZFFt::inverseTransform(vector<complex<double> > &vec) {
+void ZFFt::inverseTransform(vector<complex<float> > &vec) {
     std::transform(vec.cbegin(), vec.cend(), vec.begin(),
-                   static_cast<complex<double> (*)(const complex<double> &)>(std::conj));
+                   static_cast<complex<float> (*)(const complex<float> &)>(std::conj));
     transform(vec);
     std::transform(vec.cbegin(), vec.cend(), vec.begin(),
-                   static_cast<complex<double> (*)(const complex<double> &)>(std::conj));
+                   static_cast<complex<float> (*)(const complex<float> &)>(std::conj));
 }
 
 
-void ZFFt::transformRadix2(vector<complex<double> > &vec) {
+void ZFFt::transformRadix2(vector<complex<float> > &vec) {
     // Length variables
     size_t n = vec.size();
     int levels = 0;  // Compute levels = floor(log2(n))
@@ -40,7 +40,7 @@ void ZFFt::transformRadix2(vector<complex<double> > &vec) {
         throw std::domain_error("Length is not a power of 2");
 
     // Trignometric table
-    vector<complex<double> > expTable(n / 2);
+    vector<complex<float> > expTable(n / 2);
     for (size_t i = 0; i < n / 2; i++)
         expTable[i] = std::polar(1.0, -2 * M_PI * i / n);
 
@@ -57,7 +57,7 @@ void ZFFt::transformRadix2(vector<complex<double> > &vec) {
         size_t tablestep = n / size;
         for (size_t i = 0; i < n; i += size) {
             for (size_t j = i, k = 0; j < i + halfsize; j++, k += tablestep) {
-                complex<double> temp = vec[j + halfsize] * expTable[k];
+                complex<float> temp = vec[j + halfsize] * expTable[k];
                 vec[j + halfsize] = vec[j] - temp;
                 vec[j] += temp;
             }
@@ -68,7 +68,7 @@ void ZFFt::transformRadix2(vector<complex<double> > &vec) {
 }
 
 
-void ZFFt::transformBluestein(vector<complex<double> > &vec) {
+void ZFFt::transformBluestein(vector<complex<float> > &vec) {
     // Find a power-of-2 convolution length m such that m >= n * 2 + 1
     size_t n = vec.size();
     size_t m = 1;
@@ -79,25 +79,25 @@ void ZFFt::transformBluestein(vector<complex<double> > &vec) {
     }
 
     // Trignometric table
-    vector<complex<double> > expTable(n);
+    vector<complex<float> > expTable(n);
     for (size_t i = 0; i < n; i++) {
         unsigned long long temp = static_cast<unsigned long long>(i) * i;
         temp %= static_cast<unsigned long long>(n) * 2;
-        double angle = M_PI * temp / n;
-        expTable[i] = std::polar(1.0, -angle);
+        float angle = M_PI * temp / n;
+        expTable[i] = std::polar(1.0, (double) -angle);
     }
 
     // Temporary vectors and preprocessing
-    vector<complex<double> > av(m);
+    vector<complex<float> > av(m);
     for (size_t i = 0; i < n; i++)
         av[i] = vec[i] * expTable[i];
-    vector<complex<double> > bv(m);
+    vector<complex<float> > bv(m);
     bv[0] = expTable[0];
     for (size_t i = 1; i < n; i++)
         bv[i] = bv[m - i] = std::conj(expTable[i]);
 
     // Convolution
-    vector<complex<double> > cv(m);
+    vector<complex<float> > cv(m);
     convolve(av, bv, cv);
 
     // Postprocessing
@@ -107,22 +107,22 @@ void ZFFt::transformBluestein(vector<complex<double> > &vec) {
 
 
 void ZFFt::convolve(
-        const vector<complex<double> > &xvec,
-        const vector<complex<double> > &yvec,
-        vector<complex<double> > &outvec) {
+        const vector<complex<float> > &xvec,
+        const vector<complex<float> > &yvec,
+        vector<complex<float> > &outvec) {
 
     size_t n = xvec.size();
     if (n != yvec.size() || n != outvec.size())
         throw std::domain_error("Mismatched lengths");
-    vector<complex<double> > xv = xvec;
-    vector<complex<double> > yv = yvec;
+    vector<complex<float> > xv = xvec;
+    vector<complex<float> > yv = yvec;
     transform(xv);
     transform(yv);
     for (size_t i = 0; i < n; i++)
         xv[i] *= yv[i];
     inverseTransform(xv);
     for (size_t i = 0; i < n; i++)  // Scaling (because this FFT implementation omits it)
-        outvec[i] = xv[i] / static_cast<double>(n);
+        outvec[i] = xv[i] / static_cast<float>(n);
 }
 
 

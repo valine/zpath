@@ -10,18 +10,18 @@ using namespace std;
 class ZFFt {
 
 public:
-    static void calculate(double* data, unsigned long nn);
+    static void calculate(float* data, unsigned long nn);
 
-    static void convolve(const vector<std::complex<double>> &xvec, const vector<std::complex<double>> &yvec,
-                  vector<std::complex<double>> &outvec);
+    static void convolve(const vector<std::complex<float>> &xvec, const vector<std::complex<float>> &yvec,
+                  vector<std::complex<float>> &outvec);
 
-    static void transformBluestein(vector<std::complex<double>> &vec);
+    static void transformBluestein(vector<std::complex<float>> &vec);
 
-    static void transformRadix2(vector<std::complex<double>> &vec);
+    static void transformRadix2(vector<std::complex<float>> &vec);
 
-    static void inverseTransform(vector<std::complex<double>> &vec);
+    static void inverseTransform(vector<std::complex<float>> &vec);
 
-    static void transform(vector<std::complex<double>> &vec);
+    static void transform(vector<std::complex<float>> &vec);
 };
 
 
