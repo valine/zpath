@@ -329,6 +329,7 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                     if (recurOutput.empty()) {
                         mOutputLabel->setText("Bad input");
                         //mOutputLabel->setBackgroundColor(red);
+
                         mOutputLabel->setTextColor(red);
                         return vector<float>();
                     } else {
@@ -347,7 +348,14 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                     mOutputLabel->setTextColor(white);
                     return vector<float>();
                 } else {
-                    summedInputs.at(i) = x.at(i);
+
+                    // Use the default input when nothing is connected to a constant socket
+                    if (getSocketType().first.at(i) == VAR) {
+                        summedInputs.at(i) = x.at(i);
+                    } else {
+                        summedInputs.at(i) = getDefaultInput(mType).at(i);
+                    }
+
                 }
             }
         }

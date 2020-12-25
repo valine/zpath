@@ -32,6 +32,7 @@ public:
         EXP,
         SQRT,
         POW,
+        GAUSSIAN,
         ADD,
         SUBTRACT,
         MULTIPLY,
@@ -68,6 +69,7 @@ public:
             case EXP:return {exp(in.at(0)), chartBound.x, chartBound.y};
             case SQRT:return {sqrt(in.at(0)), chartBound.x, chartBound.y};
             case POW:return {pow(in.at(0), in.at(1)), chartBound.x, chartBound.y};
+            case GAUSSIAN:return {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))), chartBound.x, chartBound.y};
             case ADD:return {in.at(0) + in.at(1), chartBound.x, chartBound.y};
             case SUBTRACT:return {in.at(0) - in.at(1), chartBound.x, chartBound.y};
             case MULTIPLY:return {in.at(0) * in.at(1), chartBound.x, chartBound.y};
@@ -104,6 +106,7 @@ public:
             case EXP:return ivec2(1,3);
             case SQRT:return ivec2(1,3);
             case POW:return ivec2(2,3);
+            case GAUSSIAN:return ivec2(3,3);
             case ADD:return ivec2(2,3);
             case SUBTRACT:return ivec2(2,3);
             case MULTIPLY:return ivec2(2,3);
@@ -131,6 +134,7 @@ public:
             case EXP:
             case SQRT:
             case POW:return {{VAR}, {VAR, CON, CON}};
+            case GAUSSIAN:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
@@ -158,6 +162,7 @@ public:
             case EXP:return "exp";
             case SQRT:return "sqrt";
             case POW:return "pow";
+            case GAUSSIAN:return "gaussian";
             case ADD:return "+";
             case SUBTRACT:return "-";
             case MULTIPLY:return "*";
@@ -185,6 +190,16 @@ public:
                 return vec2(200, 200);
             default:
                 return vec2(80, 100);
+        }
+    }
+
+    static vector<float> getDefaultInput(Type type) {
+        switch(type) {
+            case GAUSSIAN:
+                // X, width, height
+                return {0.0, 1.0, 1.0};
+            default:
+                return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
     }
 
