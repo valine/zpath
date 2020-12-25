@@ -87,7 +87,7 @@ public:
             case X:return {in.at(0), chartBound.x, chartBound.y};
             case Y:return {in.at(1), chartBound.x, chartBound.y};
             case FILE:break;
-            case FFT:break;
+            case FFT:return {in.at(0), in.at(1)};
             case LAPLACE:break;
             case FIRST_DIFF:break;
             case SECOND_DIFF:break;
@@ -124,7 +124,7 @@ public:
             case X:return ivec2(0,3);
             case Y:return ivec2(0,3);
             case FILE:return ivec2(0,1);
-            case FFT:return ivec2(3,3);
+            case FFT:return ivec2(3,4);
             case LAPLACE:return ivec2(3,3);
             case FIRST_DIFF:return ivec2(3,3);
             case SECOND_DIFF:return ivec2(3,3);
@@ -153,7 +153,7 @@ public:
             case X:
             case Y:return {{}, {VAR, CON, CON}};
             case FILE:return {{}, {VAR, CON, CON}};
-            case FFT:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case FFT:return {{VAR, CON, CON}, {VAR, VAR, CON, CON}};
             case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
@@ -211,6 +211,8 @@ public:
                 return {0.0, 1.0, 1.0};
             case MORLET:
                 return {0.0, 1.0, 1.0, 0.0, 1.0};
+            case FFT:
+                return {0.0, 0.0, 1.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -229,6 +231,7 @@ public:
         switch (mType) {
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
+            case FFT: return {"", "Window Start", "Window End"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
@@ -297,7 +300,7 @@ private:
     vector<float> mConstantValueInput = vector<float>(MAX_INPUT_COUNT, 0.0);
 
     // Center magnitude is at index 6
-    vector<float> mConstantMagnitudeOutput = vector<float>(MAX_OUTPUT_COUNT, DEFAULT_MAGNITUDE);
+    vector<int> mConstantMagnitudeOutput = vector<int>(MAX_OUTPUT_COUNT, DEFAULT_MAGNITUDE);
     vector<int> mConstantMagnitudeInput = vector<int>(MAX_INPUT_COUNT, DEFAULT_MAGNITUDE);
 
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
