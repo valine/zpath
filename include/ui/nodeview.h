@@ -64,13 +64,21 @@ public:
         VAR
     };
 
+    enum ChartResMode {
+        ADAPTIVE,
+        STATIC
+    };
+
     pair<float, float> computeFft(float in, vec2 chartBound) {
 
-        int res = mChart->getResolution();
+
+        int res = std::max((int) mChart->getXBounds().y, 1);
+        cout << res << endl;
+        mChart->setResolution(res);
         if (mFftCache.empty()) {
-            for (int i = 0; i < res; i++) {
+            for (int i = 0; i < res * 2; i++) {
                 float summedInput = 0.0;
-                float x = mix(chartBound.x, chartBound.y, (float) i / (float) res);
+                float x = mix(chartBound.x, chartBound.y, (float) i / (float) (res * 2));
                 auto inputSocket = mInputIndices.at(0);
                 for (auto singleInput : inputSocket) {
                     summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
@@ -83,21 +91,19 @@ public:
 
         vec2 thisChartBounds = mChart->getXBounds();
         float span = thisChartBounds.y - thisChartBounds.x;
-        int xIndex = 0;
 
+        pair<float, float> returnValue = {NAN, NAN};
         if (span > 0) {
-            xIndex = std::max(0, std::min((int) (in * (float) res),
-                    (int) mFftCache.size() - 1));
+            int xIndex = 0;
+            if (in >= 0 && (in) < mFftCache.size() && !mFftCache.empty()) {
+                xIndex = (int)  (in);
+                complex<float> y = mFftCache.at(xIndex);
+                returnValue = {y.real() / res, y.imag() / res};
+            }
         }
 
-        if (mFftCache.empty()) {
-            return {0, 0};
-        } else {
-            complex<float> y = mFftCache.at(xIndex);
-            return {y.real(), y.imag()};
-        }
-
-
+        mChart->invalidate();
+        return returnValue;
     }
 
     vector<float> evaluate(vector<float> x);
@@ -294,6 +300,13 @@ public:
                 return mVariableColor;
             default:
                 return vec4(1);
+        }
+    }
+
+    ChartResMode getChartResolutionMode(Type type) {
+        switch (type) {
+            default: return ADAPTIVE;
+            case FFT: return STATIC;
         }
     }
 

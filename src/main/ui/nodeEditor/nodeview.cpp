@@ -13,6 +13,7 @@
 #include "ui/nodeview.h"
 #include <sstream>
 #include <iomanip>
+#include <mutex>
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
@@ -88,7 +89,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mXMinLabel = new ZLabel("xmin", mChart);
     mXMinLabel->setMaxWidth(boundLabelWidth);
     mXMinLabel->setGravity(bottomLeft);
-    mXMinLabel->setXOffset(40);
     mXMinLabel->setBackgroundColor(vec4(0));
     mXMinLabel->setTextColor(boundColor);
 
@@ -124,6 +124,7 @@ void ZNodeView::initializeEdges() {
 void ZNodeView::updateChart() {
     // This is run from background thread
     if (mInvalid) {
+        mFftCache.clear();
         if (mChart->getInputCount() == 1) {
             updateChart1D();
         } else {
@@ -432,9 +433,11 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
     if (mChart->getInputCount() == 1) {
-        int newRes = (int) (getWidth() / 4.0);
+        int newRes = (int) (getWidth() / 1.0);
         if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
-            mChart->setResolution(newRes);
+            if (getChartResolutionMode(getType()) == ADAPTIVE) {
+                mChart->setResolution(newRes);
+            }
             invalidateSingleNode();
         }
     } else {
@@ -457,8 +460,6 @@ void ZNodeView::clearInvalidateNode() {
 void ZNodeView::invalidateSingleNode() {
     //setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
     mInvalid = true;
-
-    mFftCache.clear();
     if (mInvalidateListener != nullptr) {
         mInvalidateListener(this);
     }
