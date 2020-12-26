@@ -113,10 +113,10 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
             ZNodeView *node = *editor->mEvalSet.begin();
             if (node->getVisibility()) {
-                node->updateChart();
-
                 std::lock_guard<std::mutex> guard(editor->mEvalMutex);
                 editor->mEvalSet.erase(node);
+
+                node->updateChart();
             } else {
                 editor->removeNodeAsync(node);
 

@@ -123,7 +123,12 @@ void ZNodeView::initializeEdges() {
 
 void ZNodeView::updateChart() {
     // This is run from background thread
+
+    if (getType() == FFT) {
+        cout << mInvalid << endl;
+    }
     if (mInvalid) {
+        clearInvalidateNode();
         mFftCache.clear();
         if (mChart->getInputCount() == 1) {
             updateChart1D();
@@ -131,7 +136,6 @@ void ZNodeView::updateChart() {
             updateChart2D();
         }
     }
-    clearInvalidateNode();
     mChart->requestLineUpdate();
     vec2 xBound = mChart->getXBounds();
     vec2 yBound = mChart->getYBounds();

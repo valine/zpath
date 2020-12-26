@@ -70,15 +70,12 @@ public:
     };
 
     pair<float, float> computeFft(float in, vec2 chartBound) {
-
-
         int res = std::max((int) mChart->getXBounds().y, 1);
-        cout << res << endl;
         mChart->setResolution(res);
         if (mFftCache.empty()) {
             for (int i = 0; i < res * 2; i++) {
                 float summedInput = 0.0;
-                float x = mix(chartBound.x, chartBound.y, (float) i / (float) (res * 2));
+                float x = mix(chartBound.x, chartBound.x + chartBound.y, (float) i / (float) (res * 2));
                 auto inputSocket = mInputIndices.at(0);
                 for (auto singleInput : inputSocket) {
                     summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
@@ -111,38 +108,39 @@ public:
 
     vector<float> compute(const vector<float>& in, Type type) {
         vec2 chartBound = mChart->getXBounds();
+        float chartWidth = chartBound.y - chartBound.x;
         switch (type) {
             case SIN:
-                return {sin(in.at(0) * in.at(1)), chartBound.x, chartBound.y};
-            case COS:return {cos(in.at(0) * in.at(1)), chartBound.x, chartBound.y};
-            case TAN:return {tan(in.at(0)), chartBound.x, chartBound.y};
-            case EXP:return {exp(in.at(0)), chartBound.x, chartBound.y};
-            case SQRT:return {sqrt(in.at(0)), chartBound.x, chartBound.y};
-            case POW:return {pow(in.at(0), in.at(1)), chartBound.x, chartBound.y};
+                return {sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+            case COS:return {cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+            case TAN:return {tan(in.at(0)), chartBound.x, chartWidth};
+            case EXP:return {exp(in.at(0)), chartBound.x, chartWidth};
+            case SQRT:return {sqrt(in.at(0)), chartBound.x, chartWidth};
+            case POW:return {pow(in.at(0), in.at(1)), chartBound.x, chartWidth};
             case GAUSSIAN:return {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
-                                  chartBound.x, chartBound.y};
+                                  chartBound.x, chartWidth};
             case MORLET:return {(float) (
                         cos(in.at(0) * in.at(4)) * // sinusoid
                         (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
-                        chartBound.x, chartBound.y}; // Chart
-            case ADD:return {in.at(0) + in.at(1), chartBound.x, chartBound.y};
-            case SUBTRACT:return {in.at(0) - in.at(1), chartBound.x, chartBound.y};
-            case MULTIPLY:return {in.at(0) * in.at(1), chartBound.x, chartBound.y};
-            case DIVIDE:return {in.at(0) / in.at(1), chartBound.x, chartBound.y};
+                        chartBound.x, chartWidth}; // Chart
+            case ADD:return {in.at(0) + in.at(1), chartBound.x, chartWidth};
+            case SUBTRACT:return {in.at(0) - in.at(1), chartBound.x, chartWidth};
+            case MULTIPLY:return {in.at(0) * in.at(1), chartBound.x, chartWidth};
+            case DIVIDE:return {in.at(0) / in.at(1), chartBound.x, chartWidth};
             case C:return mConstantValueOutput;
-            case X:return {in.at(0), chartBound.x, chartBound.y};
-            case Y:return {in.at(1), chartBound.x, chartBound.y};
+            case X:return {in.at(0), chartBound.x, chartWidth};
+            case Y:return {in.at(1), chartBound.x, chartWidth};
             case FILE:break;
             case FFT: {
                 auto fft = computeFft(in.at(1), vec2(in.at(2), in.at(3)));
-                return {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartBound.y};
+                return {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
             }
             case LAPLACE:break;
             case FIRST_DIFF:break;
             case SECOND_DIFF:break;
             case DOT:break;
             case CROSS:break;
-            case CHART_2D: return {in.at(0), in.at(1), chartBound.x, chartBound.y};
+            case CHART_2D: return {in.at(0), in.at(1), chartBound.x, chartWidth};
             case LAST:break;
         }
 
@@ -286,7 +284,7 @@ public:
             case COS:return {"", "Frequency"};
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
-            case FFT: return {"", "", "Window Start", "Window End"};
+            case FFT: return {"", "", "Window Start", "Window Size"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
