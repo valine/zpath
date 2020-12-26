@@ -156,8 +156,8 @@ class ZView {
         int getWindowHeight();
         int getWindowWidth();
 
-        void setMaxWidth(int width);
-        void setMaxHeight(int height);
+        virtual void setMaxWidth(int width);
+        virtual void setMaxHeight(int height);
 
         virtual void computeBounds();
 

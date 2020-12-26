@@ -11,6 +11,8 @@
 #include <ui/zcheckbox.h>
 #include <utils/zsettingsstore.h>
 #include "ui/nodeview.h"
+#include <sstream>
+#include <iomanip>
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
@@ -27,11 +29,10 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     setOutlineType(WireType::outline);
     setLineWidth(2.0);
 
-
     float yOffset = 3;
     float margin = 10;
-    // Add input sockets
 
+    // Add input sockets
     auto socketType = getSocketType();
 
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
@@ -51,21 +52,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     }
 
     initializeEdges();
-
-
-    // Manually trigger evaluation. This was needed before the async eval was working.
-    // May be useful for debugging in the future. If so set visibility to true.
-    ZButton* evaluateBtn = new ZButton("->", this);
-    evaluateBtn->setGravity(Gravity::bottomRight);
-    evaluateBtn->setMaxWidth(15);
-    evaluateBtn->setMaxHeight(15);
-    evaluateBtn->setVisibility(false);
-    evaluateBtn->setOnClick([this](){
-        // todo: change input to something reasonable. Maybe zero, maybe pull from somewhere
-        //evaluate({0.0});
-        // updateChart();
-    });
-
     parent->invalidate();
 
     mChart = new ZLineChart(fillParent, fillParent, this);
@@ -74,7 +60,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mChart->setOffset(vec2(0,10));
     mChart->setChartListener([this](vector<int> x, int lineIndex){
         // Can safely ignore line index for now
-
         if (mChart->getInputCount() == 1) {
             if (mPointCache.empty()) {
                 return vector<float>(2, 0);
@@ -89,8 +74,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
             vector<float> point;
             point.push_back(mPointCache.at(x.at(0)).at(0));
             point.push_back(mPointCache.at(x.at(0)).at(1));
-
-
             return point;
         }
     });
@@ -98,6 +81,39 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mChart->setInvalidateListener([this](){
         invalidateNodeRecursive();
     });
+
+    // Bound labels
+    vec4 boundColor = vec4(0.4,0.4,0.4,1.0);
+    int boundLabelWidth = 50;
+    mXMinLabel = new ZLabel("xmin", mChart);
+    mXMinLabel->setMaxWidth(boundLabelWidth);
+    mXMinLabel->setGravity(bottomLeft);
+    mXMinLabel->setXOffset(40);
+    mXMinLabel->setBackgroundColor(vec4(0));
+    mXMinLabel->setTextColor(boundColor);
+
+    mXMaxLabel = new ZLabel("xmax", mChart);
+    mXMaxLabel->setMaxWidth(boundLabelWidth);
+    mXMaxLabel->setGravity(bottomRight);
+    mXMaxLabel->setMargin(vec4(0));
+    mXMaxLabel->setBackgroundColor(vec4(0));
+    mXMaxLabel->setXOffset(-20);
+    mXMaxLabel->setTextColor(boundColor);
+
+    mYMinLabel = new ZLabel("ymin", mChart);
+    mYMinLabel->setMaxWidth(boundLabelWidth);
+    mYMinLabel->setGravity(bottomLeft);
+    mYMinLabel->setYOffset(20);
+    mYMinLabel->setBackgroundColor(vec4(0));
+    mYMinLabel->setTextColor(boundColor);
+
+    mYMaxLabel = new ZLabel("ymax", mChart);
+    mYMaxLabel->setMaxWidth(boundLabelWidth);
+    mYMaxLabel->setGravity(topLeft);
+    mYMaxLabel->setBackgroundColor(vec4(0));
+    mYMaxLabel->setTextColor(boundColor);
+
+    updateLabelVisibility();
 }
 
 void ZNodeView::initializeEdges() {
@@ -116,12 +132,27 @@ void ZNodeView::updateChart() {
     }
     clearInvalidateNode();
     mChart->requestLineUpdate();
-   // mChart->invalidate();
+    vec2 xBound = mChart->getXBounds();
+    vec2 yBound = mChart->getYBounds();
+
+    std::stringstream xmin;
+    xmin << std::fixed << std::setprecision(2) << xBound.x;
+    std::stringstream xmax;
+    xmax << std::fixed << std::setprecision(2) << xBound.y;
+
+    std::stringstream ymin;
+    ymin << std::fixed << std::setprecision(2) << yBound.x;
+    std::stringstream ymax;
+    ymax << std::fixed << std::setprecision(2) << yBound.y;
+    mXMinLabel->setText(xmin.str());
+    mXMaxLabel->setText(xmax.str());
+    mYMinLabel->setText(ymin.str());
+    mYMaxLabel->setText(ymax.str());
 }
 
 void ZNodeView::updateChart2D() {
-    // Data doesn't necessarily go off screen after this number of points. Finding this optimal resolution is
-    // potentially complicated.
+    // Data doesn't necessarily go off screen after this number of points.
+    // Finding this optimal resolution is potentially complicated.
     int chartRes = mChart->getResolution();
     float increment = 0.1;
 
@@ -249,8 +280,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
         mConstantValueInput.at(i) = cValue;
         i++;
     }
-
-
 }
 
 vector<ZView *> ZNodeView::getSocketsIn() {
@@ -284,7 +313,9 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
         }
     }
 
-    if (isMouseInBounds(mChart) && ((middleMouseIsDown() && shiftKeyPressed()) || (rightMouseIsDown() && shiftKeyPressed()))) {
+    if (isMouseInBounds(mChart) &&
+        ((middleMouseIsDown() && shiftKeyPressed()) ||
+        (rightMouseIsDown() && shiftKeyPressed()))) {
         return true;
     }
 
@@ -364,8 +395,6 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                     // When that happens display an error message.
                     if (recurOutput.empty()) {
                         mOutputLabel->setText("Bad input");
-                        //mOutputLabel->setBackgroundColor(red);
-
                         mOutputLabel->setTextColor(red);
                         return vector<float>();
                     } else {
@@ -380,7 +409,6 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                 // display an error message.
                 if (x.size() <= size.x) {
                     mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-                    //mOutputLabel->setBackgroundColor(red);
                     mOutputLabel->setTextColor(white);
                     return vector<float>();
                 } else {
@@ -391,22 +419,17 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                     } else {
                         summedInputs.at(i) = mConstantValueInput.at(i);
                     }
-
                 }
             }
         }
         output = compute(summedInputs, mType);
     }
-    //mOutputLabel->setText(to_string(output.at(0)));
-//    mOutputLabel->setTextColor(black);
-//    mOutputLabel->setBackgroundColor(white);
     return output;
 
 }
 
 void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
-
 
     if (mChart->getInputCount() == 1) {
         int newRes = (int) (getWidth() / 4.0);
@@ -463,4 +486,24 @@ bool ZNodeView::isInvalid() {
 
 void ZNodeView::setInvalidateListener(function<void(ZNodeView *node)> listener) {
     mInvalidateListener = std::move(listener);
+}
+
+void ZNodeView::setMaxWidth(int width) {
+    ZView::setMaxWidth(width);
+
+    updateLabelVisibility();
+}
+
+void ZNodeView::updateLabelVisibility() {
+    if (getMaxHeight() < LABEL_THRESHOLD || getMaxWidth() < LABEL_THRESHOLD_X) {
+        mXMinLabel->setVisibility(false);
+        mXMaxLabel->setVisibility(false);
+        mYMinLabel->setVisibility(false);
+        mYMaxLabel->setVisibility(false);
+    } else {
+        mXMinLabel->setVisibility(true);
+        mXMaxLabel->setVisibility(true);
+        mYMinLabel->setVisibility(true);
+        mYMaxLabel->setVisibility(true);
+    }
 }

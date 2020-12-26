@@ -13,6 +13,8 @@ static const int CHART_SIDE_MARGIN_WIDE = 20;
 static const int MIN_MARGIN = 3;
 static const int CHART_TOP_MARGIN = 15;
 static const int DEFAULT_MAGNITUDE = 6;
+static const int LABEL_THRESHOLD = 120;
+static const int LABEL_THRESHOLD_X = 160;
 using namespace std;
 #include <vector>
 #include "zview.h"
@@ -74,7 +76,7 @@ public:
                     summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
                             singleInput.second);
                 }
-                mFftCache.emplace_back(summedInput, 0);
+                mFftCache.emplace_back(summedInput, 0.0f);
             }
             ZFFt::transform(mFftCache);
         }
@@ -84,7 +86,7 @@ public:
         int xIndex = 0;
 
         if (span > 0) {
-            xIndex = std::max(0, std::min((int) in,
+            xIndex = std::max(0, std::min((int) (in * (float) res),
                     (int) mFftCache.size() - 1));
         }
 
@@ -278,7 +280,7 @@ public:
             case COS:return {"", "Frequency"};
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
-            case FFT: return {"", "Window Start", "Window End"};
+            case FFT: return {"", "", "Window Start", "Window End"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
@@ -324,6 +326,8 @@ public:
     void invalidateNodeRecursive();
 
     void initializeEdges();
+
+    void setMaxWidth(int width) override;
 private:
     bool mInvalid = true;
 
@@ -334,6 +338,11 @@ private:
 
     ZLabel* mOutputLabel;
     ZLabel* mNameLabel;
+
+    ZLabel* mXMinLabel;
+    ZLabel* mXMaxLabel;
+    ZLabel* mYMinLabel;
+    ZLabel* mYMaxLabel;
 
     /**
      * Number of line segments on the chart
@@ -366,6 +375,8 @@ private:
 
     void updateChart1D();
     void updateChart2D();
+
+    void updateLabelVisibility();
 };
 
 
