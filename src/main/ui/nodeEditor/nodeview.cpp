@@ -530,6 +530,18 @@ void ZNodeView::setMaxWidth(int width) {
     updateLabelVisibility();
 }
 
+void ZNodeView::copyParameters(ZNodeView* node) {
+   setOffset(node->getOffset());
+   setMaxWidth(node->getMaxWidth());
+   setMaxHeight(node->getMaxHeight());
+   onWindowChange(getWidth(), getHeight());
+   mConstantValueOutput = node->mConstantValueOutput;
+   mConstantValueInput = node->mConstantValueInput;
+   mConstantMagnitudeInput = node->mConstantMagnitudeInput;
+   mConstantMagnitudeOutput = node->mConstantMagnitudeOutput;
+   mOutputLabel->setText(to_string(mConstantValueOutput.at(0)));
+}
+
 void ZNodeView::updateLabelVisibility() {
     if (getMaxHeight() < LABEL_THRESHOLD || getMaxWidth() < LABEL_THRESHOLD_X) {
         mXMinLabel->setVisibility(false);

@@ -160,8 +160,8 @@ public:
 
         switch (type) {
             case SIN:
-                return {{sin(in.at(0) * in.at(1))}, {chartBound.x}, {chartWidth}};
-            case COS:return {{cos(in.at(0) * in.at(1))}, {chartBound.x}, {chartWidth}};
+                return {{sin(in.at(0) * in.at(1)) * in.at(2)}, {chartBound.x}, {chartWidth}};
+            case COS:return {{cos(in.at(0) * in.at(1)) * in.at(2)}, {chartBound.x}, {chartWidth}};
             case TAN:return {{tan(in.at(0))}, {chartBound.x}, {chartWidth}};
             case EXP:return {{exp(in.at(0))}, {chartBound.x}, {chartWidth}};
             case SQRT:return {{sqrt(in.at(0))}, {chartBound.x}, {chartWidth}};
@@ -215,8 +215,8 @@ public:
      */
     ivec2 getSocketCount() {
         switch (mType) {
-            case SIN:return ivec2(2,3);
-            case COS:return ivec2(2,3);
+            case SIN:return ivec2(3,3);
+            case COS:return ivec2(3,3);
             case TAN:return ivec2(1,3);
             case EXP:return ivec2(1,3);
             case SQRT:return ivec2(1,3);
@@ -248,7 +248,7 @@ public:
         switch (mType) {
             case SIN:
             case COS:
-                return {{VAR, CON}, {VAR, CON, CON}};
+                return {{VAR, CON, CON}, {VAR, CON, CON}};
             case TAN:
             case EXP:
             case SQRT:return {{VAR}, {VAR, CON, CON}};
@@ -258,7 +258,7 @@ public:
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
-            case DIVIDE:return {{VAR, VAR}, {VAR, CON, CON}};
+            case DIVIDE:return {{CON, CON}, {VAR, CON, CON}};
             case C:return {{}, {CON}};
             case X:
             case Y:return {{}, {VAR, CON, CON}};
@@ -324,9 +324,13 @@ public:
 
     static vector<float> getDefaultInput(Type type) {
         switch(type) {
+            case ADD:
+            case SUBTRACT: return {0.0, 0.0};
+            case MULTIPLY:
+            case DIVIDE: return {1.0, 1.0};
             case SIN:
             case COS:
-                return {0.0, 1.0};
+                return {0.0, 1.0, 1.0};
             case GAUSSIAN:
                 // X, width, height
                 return {0.0, 1.0, 1.0};
@@ -355,8 +359,12 @@ public:
 
     vector<string> getSocketName() {
         switch (mType) {
+            case ADD:
+            case SUBTRACT:
+            case MULTIPLY:
+            case DIVIDE: return {"", ""};
             case SIN:
-            case COS:return {"", "Frequency"};
+            case COS:return {"", "Frequency", "Height"};
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
             case IFFT:return {"", "","", "Window Start", "Window Size"};
@@ -429,6 +437,7 @@ public:
 
     void initializeEdges();
 
+    void copyParameters(ZNodeView *node);
     void setMaxWidth(int width) override;
 private:
     bool mInvalid = true;
@@ -481,6 +490,7 @@ private:
     void updateLabelVisibility();
 
     void updateChart1D2X();
+
 };
 
 
