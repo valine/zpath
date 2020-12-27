@@ -78,13 +78,13 @@ public:
 
     };
 
-    pair<float, float> computeFft(float in, vec2 chartBound) {
+    pair<float, float> computeFft(float in, float start, float width) {
         int res = std::max((int) mChart->getXBounds().y, 1);
         mChart->setResolution(res);
         if (mFftCache.empty()) {
             for (int i = 0; i < res * 2; i++) {
                 float summedInput = 0.0;
-                float x = mix(chartBound.x, chartBound.x + chartBound.y, (float) i / (float) (res * 2));
+                float x = mix(start, start + width, (float) i / (float) (res * 2));
                 auto inputSocket = mInputIndices.at(0);
                 for (auto singleInput : inputSocket) {
                     summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
@@ -112,23 +112,21 @@ public:
         return returnValue;
     }
 
-    pair<float, float> computeInverseFft(float in, vec2 chartBound) {
-        int res = std::max((int) mChart->getXBounds().y, 1);
-        mChart->setResolution(res * 2);
+    pair<float, float> computeInverseFft(float in, float fftRes, float windowSize) {
+        int res = std::max((int) fftRes, 1);
         if (mFftCache.empty()) {
             for (int i = 0; i < res * 2; i++) {
                 float summedInput = 0.0;
                 float summedInput2 = 0.0;
-                float x = mix(chartBound.x, chartBound.x + chartBound.y, (float) i / (float) (res * 2));
                 auto inputSocket = mInputIndices.at(0);
                 auto inputSocket2 = mInputIndices.at(1);
                 for (auto singleInput : inputSocket) {
-                    summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
+                    summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, i)).at(
                             singleInput.second);
                 }
 
                 for (auto singleInput : inputSocket2) {
-                    summedInput2 += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
+                    summedInput2 += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, i)).at(
                             singleInput.second);
                 }
                 mFftCache.emplace_back(summedInput, summedInput2);
@@ -136,17 +134,12 @@ public:
             ZFFt::inverseTransform(mFftCache);
         }
 
-        vec2 thisChartBounds = mChart->getXBounds();
-        float span = thisChartBounds.y - thisChartBounds.x;
-
         pair<float, float> returnValue = {NAN, NAN};
-        if (span > 0) {
-            int xIndex = 0;
-            if (in >= 0 && (in) < mFftCache.size() && !mFftCache.empty()) {
-                xIndex = (int)  (in);
-                complex<float> y = mFftCache.at(xIndex);
-                returnValue = {y.real() / res, y.imag() / res};
-            }
+        int xIndex =  (int) ((in * (mFftCache.size() - 1)) / windowSize);
+        if (xIndex >= 0 && !mFftCache.empty() && windowSize > 0 && xIndex < mFftCache.size()) {
+
+            complex<float> y = mFftCache.at(xIndex);
+            returnValue = {y.real(), y.imag()};
         }
 
         mChart->invalidate();
@@ -182,15 +175,15 @@ public:
             case Y:return {in.at(1), chartBound.x, chartWidth};
             case FILE:break;
             case FFT: {
-                auto fft = computeFft(in.at(1), vec2(in.at(2), in.at(3)));
-                return {fft.first, fft.second, chartBound.x, chartWidth};
+                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
+                return {fft.first, fft.second, chartWidth, in.at(3)};
             }
             case IFFT: {
-                auto fft = computeInverseFft(in.at(2), vec2(in.at(3), in.at(4)));
+                auto fft = computeInverseFft(in.at(2), in.at(3), in.at(4));
                 return {fft.first, fft.second, chartBound.x, chartWidth};
             }
             case HARTLEY: {
-                auto fft = computeFft(in.at(1), vec2(in.at(2), in.at(3)));
+                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
                 return {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
             }
             case LAPLACE:break;
@@ -329,7 +322,7 @@ public:
                 return {0.0, 1.0, 1.0};
             case MORLET:
                 return {0.0, 1.0, 1.0, 0.0, 1.0};
-            case IFFT:return {0.0, 0.0,0.0, 0.0, 1.0};
+            case IFFT:return {0.0, 0.0,0.0, 1.0, 1.0};
             case FFT:
             case HARTLEY:
                 return {0.0, 0.0, 0.0, 1.0};
@@ -379,9 +372,9 @@ public:
     static ChartResMode getChartResolutionMode(Type type) {
         switch (type) {
             default: return ADAPTIVE;
+            case IFFT: return ADAPTIVE;
             case CHART_2D:
             case FFT:
-            case IFFT:
             case HARTLEY:return STATIC;
         }
     }
