@@ -448,7 +448,6 @@ ZLineView* ZNodeEditor::getLine(int index) {
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
     ZView::onMouseDrag(absolute, start, delta, state, 0);
 
-    mMouseDragDelta = absolute - start;
 
     if (middleMouseIsDown()) {
         mMagnitudePicker->setVisibility(false);
@@ -469,7 +468,7 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, 
 }
 
 void ZNodeEditor::onMouseDown() {
-    int i = 0;
+
     if (mBoxMode == BOX_SELECT) {
         enterBoxSelect2nd();
     }
@@ -485,7 +484,9 @@ void ZNodeEditor::onMouseDown() {
     }
 
     bool mouseOverNode = false;
-    for (ZNodeView *node : mNodeViews) {
+    int i = mNodeViews.size() - 1;
+    for (auto it = mNodeViews.rbegin(); it != mNodeViews.rend(); ++it) {
+        ZNodeView* node = (*it);
         if (isMouseInBounds(node) && node->getVisibility()) {
             mouseOverNode = true;
             mDragNode = i;
@@ -497,7 +498,13 @@ void ZNodeEditor::onMouseDown() {
                 if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
                     deselectAllNodes();
                 }
-                selectNode(node);
+
+                if (mSelectedNodes.count(node) == 0) {
+                    selectNode(node);
+                } else if (shiftKeyPressed()){
+                    // Toggle node selection when shift clicking node
+                    mPendingDeselect = node;
+                }
             }
 
 
@@ -516,8 +523,6 @@ void ZNodeEditor::onMouseDown() {
                         }
                     } else {
                         // Otherwise remove the last added connection
-                        //
-                        //
                        pair<ZNodeView*, int> prevNode = node->mInputIndices.at(j).at(node->mInputIndices.at(j).size() - 1);
                        int k = 0;
                        for (pair<ZNodeView*, int> outputNode : prevNode.first->mOutputIndices.at(prevNode.second)) {
@@ -562,7 +567,7 @@ void ZNodeEditor::onMouseDown() {
         }
 
         node->resetInitialPosition();
-        i++;
+        i--;
     }
 
     if (!mouseOverNode && mouseIsDown()) {
@@ -659,6 +664,12 @@ void ZNodeEditor::onMouseUp(int button) {
         selectNode(mNodeViews.at(nodeIndex));
     }
 
+    // Toggle node selection when shift key pressed
+    if (mPendingDeselect != nullptr && !wasMouseDrag()) {
+        deselectNode(mPendingDeselect);
+    }
+    mPendingDeselect = nullptr;
+
     mDragNode = NO_SELECTION;
     mDragType = NO_SELECTION;
     mDragSocket = NO_SELECTION;
@@ -669,7 +680,6 @@ void ZNodeEditor::onMouseUp(int button) {
         updateBoxSelect();
     }
 
-    mMouseDragDelta = vec2(0);
     exitBoxSelectMode();
 }
 

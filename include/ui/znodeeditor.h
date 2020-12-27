@@ -64,7 +64,7 @@ private:
     set<ZNodeView*> mSelectedNodes;
     ZNodeView* mLastSelected = nullptr;
     ZNodeView* mSecondLastSelected = nullptr;
-    vec2 mMouseDragDelta = vec2(0);
+    ZNodeView* mPendingDeselect = nullptr;
 
     ZView* mHeader;
     ZView* mLineContainer;
