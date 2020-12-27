@@ -50,6 +50,7 @@ public:
         Y,
         FILE,
         FFT,
+        HARTLEY,
         LAPLACE,
         FIRST_DIFF,
         SECOND_DIFF,
@@ -67,6 +68,13 @@ public:
     enum ChartResMode {
         ADAPTIVE,
         STATIC
+    };
+
+    enum ChartType {
+        LINE_1D,
+        LINE_2D,
+        LINE_1D_2X
+
     };
 
     pair<float, float> computeFft(float in, vec2 chartBound) {
@@ -133,6 +141,10 @@ public:
             case FILE:break;
             case FFT: {
                 auto fft = computeFft(in.at(1), vec2(in.at(2), in.at(3)));
+                return {fft.first, fft.second, chartBound.x, chartWidth};
+            }
+            case HARTLEY: {
+                auto fft = computeFft(in.at(1), vec2(in.at(2), in.at(3)));
                 return {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
             }
             case LAPLACE:break;
@@ -171,7 +183,8 @@ public:
             case X:return ivec2(0,3);
             case Y:return ivec2(0,3);
             case FILE:return ivec2(0,1);
-            case FFT:return ivec2(4,3);
+            case FFT:return ivec2(4,4);
+            case HARTLEY:return ivec2(4,3);
             case LAPLACE:return ivec2(3,3);
             case FIRST_DIFF:return ivec2(3,3);
             case SECOND_DIFF:return ivec2(3,3);
@@ -201,7 +214,8 @@ public:
             case X:
             case Y:return {{}, {VAR, CON, CON}};
             case FILE:return {{}, {VAR, CON, CON}};
-            case FFT:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+            case FFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
+            case HARTLEY:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
@@ -231,6 +245,7 @@ public:
             case Y:return "y";
             case FILE:return "file";
             case FFT:return "FFT";
+            case HARTLEY:return "Hartley";
             case LAPLACE:return "Laplace";
             case FIRST_DIFF:return "1st diff";
             case SECOND_DIFF:return "2nd diff";
@@ -263,11 +278,13 @@ public:
             case MORLET:
                 return {0.0, 1.0, 1.0, 0.0, 1.0};
             case FFT:
+            case HARTLEY:
                 return {0.0, 0.0, 0.0, 1.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
     }
+
 
     static bool isOutputLabelVisible(Type type) {
         switch(type) {
@@ -284,6 +301,7 @@ public:
             case COS:return {"", "Frequency"};
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
+            case HARTLEY:
             case FFT: return {"", "", "Window Start", "Window Size"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
@@ -301,10 +319,20 @@ public:
         }
     }
 
-    ChartResMode getChartResolutionMode(Type type) {
+    static ChartResMode getChartResolutionMode(Type type) {
         switch (type) {
             default: return ADAPTIVE;
-            case FFT: return STATIC;
+            case FFT:
+            case HARTLEY:return STATIC;
+        }
+    }
+
+    static ChartType getChartType(Type type) {
+        switch (type) {
+            default: return LINE_1D;
+            case HARTLEY: return LINE_1D;
+            case FFT: return LINE_1D_2X;
+            case CHART_2D: return LINE_2D;
         }
     }
 
@@ -388,6 +416,8 @@ private:
     void updateChart2D();
 
     void updateLabelVisibility();
+
+    void updateChart1D2X();
 };
 
 

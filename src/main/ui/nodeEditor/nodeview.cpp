@@ -61,14 +61,15 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mChart->setOffset(vec2(0,10));
     mChart->setChartListener([this](vector<int> x, int lineIndex){
         // Can safely ignore line index for now
-        if (mChart->getInputCount() == 1) {
+
+        if (getChartType(getType()) == LINE_1D || getChartType(getType()) == LINE_1D_2X) {
             if (mPointCache.empty()) {
                 return vector<float>(2, 0);
             } else if (mPointCache.size() - 1 < x.at(0) || mPointCache.at(x.at(0)).empty()) {
                 return vector<float>(2, 0);
             }
-            return vector<float>(2, mPointCache.at(x.at(0)).at(0));
-        } else {
+            return vector<float>(2, mPointCache.at(x.at(0)).at(lineIndex));
+        } else if (getChartType(getType()) == LINE_2D) {
             if (mPointCache.empty()) {
                 return vector<float>(2, 0);
             }
@@ -123,19 +124,18 @@ void ZNodeView::initializeEdges() {
 
 void ZNodeView::updateChart() {
     // This is run from background thread
-
-    if (getType() == FFT) {
-        cout << mInvalid << endl;
-    }
     if (mInvalid) {
         clearInvalidateNode();
         mFftCache.clear();
-        if (mChart->getInputCount() == 1) {
+        if (getChartType(getType()) == LINE_1D) {
             updateChart1D();
-        } else {
+        } else if (getChartType(getType()) == LINE_2D) {
             updateChart2D();
+        } else if (getChartType(getType()) == LINE_1D_2X) {
+            updateChart1D2X();
         }
     }
+
     mChart->requestLineUpdate();
     vec2 xBound = mChart->getXBounds();
     vec2 yBound = mChart->getYBounds();
@@ -211,7 +211,35 @@ void ZNodeView::updateChart1D() {
 
         float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
         points.push_back({yFactor});
+    }
 
+    mPointCache = points;
+}
+
+void ZNodeView::updateChart1D2X() {
+    int chartRes = mChart->getResolution();
+
+    mChart->computeChartBounds();
+    vec2 xBounds = mChart->getXBounds();
+    vec2 yBounds = mChart->getYBounds();
+
+    vector<vector<float>> points;
+    for (int i = 0; i < mChart->getResolution(); i++) {
+        float factor = (float) i / (float) chartRes;
+        float x = mix(xBounds.x, xBounds.y, factor);
+        vector<float> inVec = vector<float>(MAX_INPUT_COUNT, x);
+        inVec.at(inVec.size() - 1) = i;
+        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
+        if (fx.empty()) {
+            mChart->setVisibility(false);
+            return;
+        }
+
+        float ySpan = (yBounds.y - yBounds.x);
+
+        float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
+        float yFactor2 = (((fx.at(1)) - yBounds.x) / ySpan);
+        points.push_back({yFactor, yFactor2});
     }
 
     mPointCache = points;
@@ -250,14 +278,11 @@ void ZNodeView::setType(ZNodeView::Type type) {
         }
     }
 
-
-    int varCount = 0;
-    for (auto inputType : socketType.second) {
-        if (inputType == VAR) {
-            varCount++;
-        }
+    if (getChartType(type) == LINE_2D) {
+        mChart->setInputCount(2);
+    } else {
+        mChart->setInputCount(1);
     }
-    mChart->setInputCount(std::max(varCount, 1));
 
     mNameLabel->setText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
@@ -278,6 +303,10 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     if (getSocketCount().y > 1) {
         mChart->setMarginRight(CHART_SIDE_MARGIN_WIDE);
+    }
+
+    if (getChartType(mType) == LINE_1D_2X) {
+        mChart->setLineCount(2);
     }
 
     int i = 0;
@@ -436,7 +465,7 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
 void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
-    if (mChart->getInputCount() == 1) {
+    if (getChartType(getType()) != LINE_2D) {
         int newRes = (int) (getWidth() / 1.0);
         if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
             if (getChartResolutionMode(getType()) == ADAPTIVE) {

@@ -136,10 +136,12 @@ void ZLineChart::updateChart2D() {
 
 
 void ZLineChart::updateChart1D() {
-    vector<float> verts;
-    vector<int> edges;
+
 
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
+        vector<float> verts;
+        vector<int> edges;
+        
         for (uint i = 0; i < mResolution; i++) {
             vector<float> y = mListener({(int) i}, lineIndex);
             verts.push_back(((float) i / (float) (mResolution - 1)));
