@@ -83,14 +83,12 @@ void ZNodeEditor::addTestNodes() {
 
     connectNodes(0, 0, c, s);
     connectNodes(0, 0, x, s);
-
     connectNodes(0, 0, x, co);
-
     connectNodes(0, 0, s, chart0);
     connectNodes(0, 1, co, chart0);
 
     ZNodeView *lastChart = chart0;
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 2; i++) {
         ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
         connectNodes(0, 0, lastChart, chart1);
         connectNodes(1, 1, lastChart, chart1);

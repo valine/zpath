@@ -27,6 +27,7 @@ public:
     }
 
     void selectMagnitude(int index);
+
 private:
     void onGlobalMouseUp(int key) override;
 

@@ -472,6 +472,7 @@ private:
 
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
     vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
+    vector<int> mMagPrecision = {8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0};
 
     function<void(ZView* sender, ZNodeView* node, int socketIndex,
             bool isInput, float initialValue, string name)> mShowMagnitudeView;
@@ -491,6 +492,7 @@ private:
 
     void updateChart1D2X();
 
+    void setOutputLabel(float output) const;
 };
 
 

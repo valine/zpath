@@ -290,7 +290,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
     setBackgroundColor(getNodeColor(mType));
 
     if (isOutputLabelVisible(mType)) {
-        mOutputLabel->setText(to_string(mConstantValueOutput.at(0)));
+        setOutputLabel(mConstantValueOutput.at(0));
         mOutputLabel->setBackgroundColor(getNodeColor(mType));
     }
 
@@ -368,7 +368,7 @@ void ZNodeView::setConstantValue(int index, float value, int magnitudeIndex) {
     } else {
         mConstantValueOutput.at(index) = value;
         mConstantMagnitudeOutput.at(index) = magnitudeIndex;
-        mOutputLabel->setText(to_string(mConstantValueOutput.at(0)));
+        setOutputLabel(mConstantValueOutput.at(0));
         invalidateNodeRecursive();
     }
 }
@@ -539,7 +539,13 @@ void ZNodeView::copyParameters(ZNodeView* node) {
    mConstantValueInput = node->mConstantValueInput;
    mConstantMagnitudeInput = node->mConstantMagnitudeInput;
    mConstantMagnitudeOutput = node->mConstantMagnitudeOutput;
-   mOutputLabel->setText(to_string(mConstantValueOutput.at(0)));
+   setOutputLabel(mConstantValueOutput.at(0));
+}
+
+void ZNodeView::setOutputLabel(float output) const {
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(mMagPrecision.at(mConstantMagnitudeOutput.at(0))) << output;
+    mOutputLabel->setText(ss.str());
 }
 
 void ZNodeView::updateLabelVisibility() {
