@@ -79,7 +79,7 @@ public:
     };
 
     pair<float, float> computeFft(float in, float start, float width) {
-        int res = std::max((int) mChart->getXBounds().y, 1);
+        int res = std::max((int) mChart->getXBounds().y, 5);
         mChart->setResolution(res);
         if (mFftCache.empty()) {
             for (int i = 0; i < res * 2; i++) {
@@ -87,8 +87,8 @@ public:
                 float x = mix(start, start + width, (float) i / (float) (res * 2));
                 auto inputSocket = mInputIndices.at(0);
                 for (auto singleInput : inputSocket) {
-                    summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, x)).at(
-                            singleInput.second);
+                    summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {x})).at(
+                            singleInput.second).at(0);
                 }
                 mFftCache.emplace_back(summedInput, 0.0f);
             }
@@ -102,7 +102,7 @@ public:
         if (span > 0) {
             int xIndex = 0;
             if (in >= 0 && (in) < mFftCache.size() && !mFftCache.empty()) {
-                xIndex = (int)  (in);
+                xIndex = (int) round(in);
                 complex<float> y = mFftCache.at(xIndex);
                 returnValue = {y.real() / res, y.imag() / res};
             }
@@ -121,13 +121,13 @@ public:
                 auto inputSocket = mInputIndices.at(0);
                 auto inputSocket2 = mInputIndices.at(1);
                 for (auto singleInput : inputSocket) {
-                    summedInput += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, i)).at(
-                            singleInput.second);
+                    summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
+                            singleInput.second).at(0);
                 }
 
                 for (auto singleInput : inputSocket2) {
-                    summedInput2 += singleInput.first->evaluate(vector<float>(MAX_INPUT_COUNT, i)).at(
-                            singleInput.second);
+                    summedInput2 += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
+                            singleInput.second).at(0);
                 }
                 mFftCache.emplace_back(summedInput, summedInput2);
             }
@@ -146,45 +146,51 @@ public:
         return returnValue;
     }
 
-    vector<float> evaluate(vector<float> x);
-    vector<float> evaluate(vector<float> x, ZNodeView* root);
+    vector<vector<float>> evaluate(vector<vector<float>> x);
+    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView* root);
 
-    vector<float> compute(const vector<float>& in, Type type) {
+    vector<vector<float>> compute(const vector<vector<float>>& x, Type type) {
         vec2 chartBound = mChart->getXBounds();
         float chartWidth = chartBound.y - chartBound.x;
+
+        vector<float> in;
+        for (vector<float> firstInput : x) {
+            in.push_back(firstInput.at(0));
+        }
+
         switch (type) {
             case SIN:
-                return {sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
-            case COS:return {cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
-            case TAN:return {tan(in.at(0)), chartBound.x, chartWidth};
-            case EXP:return {exp(in.at(0)), chartBound.x, chartWidth};
-            case SQRT:return {sqrt(in.at(0)), chartBound.x, chartWidth};
-            case POW:return {pow(in.at(0), in.at(1)), chartBound.x, chartWidth};
-            case GAUSSIAN:return {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
-                                  chartBound.x, chartWidth};
-            case MORLET:return {(float) (
+                return {{sin(in.at(0) * in.at(1))}, {chartBound.x}, {chartWidth}};
+            case COS:return {{cos(in.at(0) * in.at(1))}, {chartBound.x}, {chartWidth}};
+            case TAN:return {{tan(in.at(0))}, {chartBound.x}, {chartWidth}};
+            case EXP:return {{exp(in.at(0))}, {chartBound.x}, {chartWidth}};
+            case SQRT:return {{sqrt(in.at(0))}, {chartBound.x}, {chartWidth}};
+            case POW:return {{pow(in.at(0), in.at(1))}, {chartBound.x}, {chartWidth}};
+            case GAUSSIAN:return {{(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2)))},
+                                  {chartBound.x}, {chartWidth}};
+            case MORLET:return {{(float) (
                         cos(in.at(0) * in.at(4)) * // sinusoid
-                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
-                        chartBound.x, chartWidth}; // Chart
-            case ADD:return {in.at(0) + in.at(1), chartBound.x, chartWidth};
-            case SUBTRACT:return {in.at(0) - in.at(1), chartBound.x, chartWidth};
-            case MULTIPLY:return {in.at(0) * in.at(1), chartBound.x, chartWidth};
-            case DIVIDE:return {in.at(0) / in.at(1), chartBound.x, chartWidth};
-            case C:return mConstantValueOutput;
-            case X:return {in.at(0), chartBound.x, chartWidth};
-            case Y:return {in.at(1), chartBound.x, chartWidth};
+                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))))}, // gaussian
+                        {chartBound.x}, {chartWidth}}; // Chart
+            case ADD:return {{in.at(0) + in.at(1)}, {chartBound.x}, {chartWidth}};
+            case SUBTRACT:return {{in.at(0) - in.at(1)}, {chartBound.x}, {chartWidth}};
+            case MULTIPLY:return {{in.at(0) * in.at(1)}, {chartBound.x}, {chartWidth}};
+            case DIVIDE:return {{in.at(0) / in.at(1)}, {chartBound.x}, {chartWidth}};
+            case C:return {mConstantValueOutput};
+            case X:return {{in.at(0)}, {chartBound.x}, {chartWidth}};
+            case Y:return {{x.at(0).at(1)}, {chartBound.x}, {chartWidth}};
             case FILE:break;
             case FFT: {
                 auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                return {fft.first, fft.second, chartWidth, in.at(3)};
+                return {{fft.first}, {fft.second}, {chartWidth}, {in.at(3)}};
             }
             case IFFT: {
                 auto fft = computeInverseFft(in.at(2), in.at(3), in.at(4));
-                return {fft.first, fft.second, chartBound.x, chartWidth};
+                return {{fft.first}, {fft.second}, {chartBound.x}, {chartWidth}};
             }
             case HARTLEY: {
                 auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                return {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
+                return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f))}, {chartBound.x}, {chartWidth}};
             }
             case LAPLACE:break;
             case FIRST_DIFF:break;
@@ -193,12 +199,12 @@ public:
             case CROSS:break;
             case CHART_2D: {
                 mChart->setResolution(((int) in.at(2)));
-                return {in.at(0), in.at(1), chartBound.x, chartWidth};
+                return {{in.at(0)}, {in.at(1)}, {chartBound.x}, {chartWidth}};
             }
             case LAST:break;
         }
 
-        return vector<float>(3);
+        return vector<vector<float>>(3);
     }
 
     /**
@@ -306,7 +312,11 @@ public:
             case C:
                 return vec2(80, 20);
             case CHART_2D:
+            case FFT:
+            case HARTLEY:
+            case IFFT:
                 return vec2(200, 200);
+
             default:
                 return vec2(80, 100);
         }

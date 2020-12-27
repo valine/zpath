@@ -165,22 +165,22 @@ void ZNodeView::updateChart2D() {
     mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
-    evaluate(vector<float>(MAX_INPUT_COUNT, 0));
+    evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {0}));
     vector<vector<float>> points;
     for (int i = 0; i < mChart->getResolution(); i++) {
         float input = (float) i * increment;
 
-        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, input));
+        vector<vector<float>> fx = evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {input}));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
         }
 
         float ySpan = (yBounds.y - yBounds.x);
-        float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
+        float yFactor = (((fx.at(0).at(0)) - yBounds.x) / ySpan);
 
         float xSpan = (xBounds.y - xBounds.x);
-        float xFactor = (((fx.at(1)) - xBounds.x) / xSpan);
+        float xFactor = (((fx.at(1).at(0)) - xBounds.x) / xSpan);
 
         // xFactor and yFactor are the point coordinates in screen space
         points.push_back({xFactor, yFactor});
@@ -202,7 +202,7 @@ void ZNodeView::updateChart1D() {
         float x = mix(xBounds.x, xBounds.y, factor);
         vector<float> inVec = vector<float>(MAX_INPUT_COUNT, x);
         inVec.at(inVec.size() - 1) = i;
-        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
+        vector<vector<float>> fx = evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {x}));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -210,7 +210,7 @@ void ZNodeView::updateChart1D() {
 
         float ySpan = (yBounds.y - yBounds.x);
 
-        float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
+        float yFactor = (((fx.at(0).at(0)) - yBounds.x) / ySpan);
         points.push_back({yFactor});
     }
 
@@ -230,7 +230,7 @@ void ZNodeView::updateChart1D2X() {
         float x = mix(xBounds.x, xBounds.y, factor);
         vector<float> inVec = vector<float>(MAX_INPUT_COUNT, x);
         inVec.at(inVec.size() - 1) = i;
-        vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, x));
+        vector<vector<float>> fx = evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {x}));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -238,8 +238,8 @@ void ZNodeView::updateChart1D2X() {
 
         float ySpan = (yBounds.y - yBounds.x);
 
-        float yFactor = (((fx.at(0)) - yBounds.x) / ySpan);
-        float yFactor2 = (((fx.at(1)) - yBounds.x) / ySpan);
+        float yFactor = (((fx.at(0).at(0)) - yBounds.x) / ySpan);
+        float yFactor2 = (((fx.at(1).at(0)) - yBounds.x) / ySpan);
         points.push_back({yFactor, yFactor2});
     }
 
@@ -384,19 +384,19 @@ void ZNodeView::setConstantValueInput(int index, float value, int magnitudeIndex
 }
 
 
-vector<float> ZNodeView::evaluate(vector<float> x) {
+vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x) {
     return evaluate(std::move(x), nullptr);
 }
 
-vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
+vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* root) {
     ivec2 size = getSocketCount();
-    vector<float> output;
+    vector<vector<float>> output;
     if (size.x == 0) {
         output = compute(x, mType);
     }
 
     if (size.x > 0) {
-        vector<float> summedInputs = vector<float>((int) MAX_INPUT_COUNT, 0);
+        vector<vector<float>> summedInputs = vector<vector<float>>((int) MAX_INPUT_COUNT, {0});
 
         // Loop over input sockets
         for (int i = 0; i < size.x; i++) {
@@ -409,17 +409,17 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
             // If inputs are connected evaluate recursively, otherwise use the specified input.
             if (!inputs.empty()) {
                 // Summing all inputs is useful for dot products.
-                float sum = 0;
+                vector<float> sum;
                 // Loop over all inputs on a single socket
                 for (pair<ZNodeView *, int> input : inputs) {
 
                     // Detect case where the output node is connected to the input node
                     if (root == this) {
                         mOutputLabel->setText("Infinite Loop");
-                        return vector<float>((int) MAX_INPUT_COUNT, 0);
+                        return vector<vector<float>>((int) MAX_INPUT_COUNT, {0});
                     }
 
-                    vector<float> recurOutput;
+                    vector<vector<float>> recurOutput;
                     if (root == nullptr) {
                         recurOutput = input.first->evaluate(x, this);
                     } else {
@@ -431,9 +431,18 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                     if (recurOutput.empty()) {
                         mOutputLabel->setText("Bad input");
                         mOutputLabel->setTextColor(red);
-                        return vector<float>();
+                        return vector<vector<float>>();
                     } else {
-                        sum += recurOutput.at(input.second);
+                        int outI = 0;
+                        for (float out : recurOutput.at(input.second)) {
+                            if (sum.size() <= outI) {
+                                sum.push_back(out);
+                            } else {
+                                sum.at(outI) += out;
+                            }
+
+                            outI++;
+                        }
                     }
                 }
                 summedInputs.at(i) = sum;
@@ -445,19 +454,19 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
                 if (x.size() <= size.x) {
                     mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
                     mOutputLabel->setTextColor(white);
-                    return vector<float>();
+                    return vector<vector<float>>();
                 } else {
 
                     // Use the default input when nothing is connected to a constant socket
                     if (getSocketType().first.at(i) == VAR) {
                         summedInputs.at(i) = x.at(i);
                     } else {
-                        summedInputs.at(i) = mConstantValueInput.at(i);
+                        summedInputs.at(i) = {mConstantValueInput.at(i)};
                     }
                 }
             }
         }
-        output = compute(summedInputs, mType);
+        output = compute({summedInputs}, mType);
     }
     return output;
 
