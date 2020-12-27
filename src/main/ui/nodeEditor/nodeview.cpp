@@ -70,12 +70,14 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
             }
             return vector<float>(2, mPointCache.at(x.at(0)).at(lineIndex));
         } else if (getChartType(getType()) == LINE_2D) {
-            if (mPointCache.empty()) {
+            if (mPointCache.empty() || mPointCache.size() <= x.at(0)) {
                 return vector<float>(2, 0);
             }
             vector<float> point;
+
             point.push_back(mPointCache.at(x.at(0)).at(0));
             point.push_back(mPointCache.at(x.at(0)).at(1));
+
             return point;
         }
     });
@@ -158,15 +160,14 @@ void ZNodeView::updateChart() {
 void ZNodeView::updateChart2D() {
     // Data doesn't necessarily go off screen after this number of points.
     // Finding this optimal resolution is potentially complicated.
-    int chartRes = mChart->getResolution();
     float increment = 0.1;
 
     mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
-
+    evaluate(vector<float>(MAX_INPUT_COUNT, 0));
     vector<vector<float>> points;
-    for (int i = 0; i < chartRes; i++) {
+    for (int i = 0; i < mChart->getResolution(); i++) {
         float input = (float) i * increment;
 
         vector<float> fx = evaluate(vector<float>(MAX_INPUT_COUNT, input));
@@ -465,21 +466,13 @@ vector<float> ZNodeView::evaluate(vector<float> x, ZNodeView* root) {
 void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
-    if (getChartType(getType()) != LINE_2D) {
-        int newRes = (int) (getWidth() / 1.0);
-        if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
-            if (getChartResolutionMode(getType()) == ADAPTIVE) {
-                mChart->setResolution(newRes);
-            }
-            invalidateSingleNode();
+    int newRes = (int) (getWidth() / 1.0);
+    if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
+        if (getChartResolutionMode(getType()) == ADAPTIVE) {
+            mChart->setResolution(newRes);
         }
-    } else {
-        // Data doesn't necessarily go off screen after this number of points. Finding this optimal resolution is
-        // potentially complicated.
-         mChart->setResolution(100);
-        //invalidateSingleNode();
+        invalidateSingleNode();
     }
-
 }
 
 void ZNodeView::clearInvalidateNode() {

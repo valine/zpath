@@ -152,7 +152,10 @@ public:
             case SECOND_DIFF:break;
             case DOT:break;
             case CROSS:break;
-            case CHART_2D: return {in.at(0), in.at(1), chartBound.x, chartWidth};
+            case CHART_2D: {
+                mChart->setResolution(((int) in.at(2)));
+                return {in.at(0), in.at(1), chartBound.x, chartWidth};
+            }
             case LAST:break;
         }
 
@@ -190,7 +193,7 @@ public:
             case SECOND_DIFF:return ivec2(3,3);
             case DOT:return ivec2(4,3);
             case CROSS:return ivec2(4,4);
-            case CHART_2D: return ivec2(2,4);
+            case CHART_2D: return ivec2(3,4);
             case LAST:return ivec2(0,0);
         }
     }
@@ -221,7 +224,7 @@ public:
             case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case DOT:return {{VAR, VAR, VAR, VAR}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
-            case CHART_2D: return {{VAR, VAR}, {VAR, VAR, CON, CON}};
+            case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
             case LAST:return {};
         }
     }
@@ -280,6 +283,8 @@ public:
             case FFT:
             case HARTLEY:
                 return {0.0, 0.0, 0.0, 1.0};
+            case CHART_2D:
+                return {0.0,0.0,100};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -303,6 +308,7 @@ public:
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
             case HARTLEY:
             case FFT: return {"", "", "Window Start", "Window Size"};
+            case CHART_2D: return {"", "", "RESOLUTION"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
@@ -322,6 +328,7 @@ public:
     static ChartResMode getChartResolutionMode(Type type) {
         switch (type) {
             default: return ADAPTIVE;
+            case CHART_2D:
             case FFT:
             case HARTLEY:return STATIC;
         }

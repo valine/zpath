@@ -49,7 +49,7 @@ public:
     }
 
     void setResolution(int resolution) {
-        mResolution = resolution;
+        mResolution = std::max(2, std::min(3000, resolution));
     }
 
     void setInputCount(int input) {
