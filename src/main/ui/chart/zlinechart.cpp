@@ -78,11 +78,14 @@ void ZLineChart::updateLineBuffers() {
         return;
     }
 
-    if (mInputCount == 1) {
+    if (mInputType == 0 || mInputType == 1) {
         updateChart1D();
-    } else {
+    } else if (mInputType == 2) {
         updateChart2D();
+    } else if (mInputType == 3){
+        updateHeatMap();
     }
+
 
     // Reset the tmp transform. The tmp transform is used while evaluation
     // happens on a background thread. This ensures the ui will not lag
@@ -90,6 +93,10 @@ void ZLineChart::updateLineBuffers() {
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
 
     invalidate();
+}
+
+void ZLineChart::updateHeatMap() {
+
 }
 
 void ZLineChart::updateChart2D() {
@@ -133,7 +140,6 @@ void ZLineChart::updateChart2D() {
     }
 
 }
-
 
 void ZLineChart::updateChart1D() {
 

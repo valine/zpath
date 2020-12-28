@@ -45,23 +45,18 @@ public:
 
     void setLineCount(int count) {
         mLineCount = count;
-        //updateLineBuffers();
     }
 
     void setResolution(int resolution) {
         mResolution = std::max(2, std::min(3000, resolution));
     }
 
-    void setInputCount(int input) {
-        int maxInputCount = 2;
-        mInputCount = std::min(input, maxInputCount);
-        if(input > maxInputCount) {
-            cout << "Clamping chart input count to " << maxInputCount << endl;
-        }
+    void setInputType(int input) {
+        mInputType = input;
     }
 
     int getInputCount() {
-        return mInputCount;
+        return mInputType;
     }
 
     int getResolution() {
@@ -127,7 +122,7 @@ private:
     int mResolution = 2;
 
     // Input dimensions, default should be 1
-    int mInputCount = 1;
+    int mInputType = 1;
 
     // Shader code
     const string ui_vs =
@@ -148,6 +143,8 @@ private:
 
     void updateChart2D();
     void updateChart1D();
+
+    void updateHeatMap();
 };
 
 

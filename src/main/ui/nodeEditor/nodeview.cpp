@@ -280,9 +280,9 @@ void ZNodeView::setType(ZNodeView::Type type) {
     }
 
     if (getChartType(type) == LINE_2D) {
-        mChart->setInputCount(2);
+        mChart->setInputType(getChartType(getType()));
     } else {
-        mChart->setInputCount(1);
+        mChart->setInputType(getChartType(getType()));
     }
 
     mNameLabel->setText(getName(mType));

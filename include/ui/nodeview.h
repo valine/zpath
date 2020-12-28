@@ -58,6 +58,7 @@ public:
         DOT,
         CROSS,
         CHART_2D,
+        HEAT_MAP,
         LAST // Fake enum to allow easy iteration
     };
 
@@ -73,9 +74,9 @@ public:
 
     enum ChartType {
         LINE_1D,
+        LINE_1D_2X,
         LINE_2D,
-        LINE_1D_2X
-
+        IMAGE
     };
 
     pair<float, float> computeFft(float in, float start, float width) {
@@ -102,7 +103,7 @@ public:
         if (span > 0) {
             int xIndex = 0;
             if (in >= 0 && (in) < mFftCache.size() && !mFftCache.empty()) {
-                xIndex = (int) round(in);
+                xIndex = (int) in;
                 complex<float> y = mFftCache.at(xIndex);
                 returnValue = {y.real() / res, y.imag() / res};
             }
@@ -201,6 +202,10 @@ public:
                 mChart->setResolution(((int) in.at(2)));
                 return {{in.at(0)}, {in.at(1)}, {chartBound.x}, {chartWidth}};
             }
+
+            case HEAT_MAP: {
+                return {{x.at(0).at(0)}, {x.at(0).at(1)}, {chartBound.x}, {chartWidth}};
+            }
             case LAST:break;
         }
 
@@ -240,6 +245,7 @@ public:
             case DOT:return ivec2(4,3);
             case CROSS:return ivec2(4,4);
             case CHART_2D: return ivec2(3,4);
+            case HEAT_MAP: return ivec2(1,3);
             case LAST:return ivec2(0,0);
         }
     }
@@ -272,6 +278,7 @@ public:
             case DOT:return {{VAR, VAR, VAR, VAR}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
             case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
+            case HEAT_MAP: return {{VAR}, {VAR, CON, CON}};
             case LAST:return {};
         }
     }
@@ -303,6 +310,7 @@ public:
             case DOT:return "dot";
             case CROSS:return "cross";
             case CHART_2D:return "2D Chart";
+            case HEAT_MAP:return "Heat Map";
             case LAST:return "none";
         }
     }
@@ -312,6 +320,7 @@ public:
             case C:
                 return vec2(80, 20);
             case CHART_2D:
+            case HEAT_MAP:
             case FFT:
             case HARTLEY:
             case IFFT:
@@ -404,6 +413,7 @@ public:
             case FFT:
             case IFFT:return LINE_1D_2X;
             case CHART_2D: return LINE_2D;
+            case HEAT_MAP: return IMAGE;
         }
     }
 
