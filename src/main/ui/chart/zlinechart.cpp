@@ -331,7 +331,7 @@ void ZLineChart::draw() {
     // Draw graph lines
     glLineWidth(mLineWidth);
     glDepthMask(false);
-    for (uint i = 0; i < mPoints.size(); i++) {
+    for (int i = mPoints.size() - 1; i >= 0; i--) {
         mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
                                    vec4(vec3((float) i / mPoints.size()), 1.0));
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(i));

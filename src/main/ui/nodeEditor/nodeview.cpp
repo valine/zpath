@@ -230,16 +230,21 @@ void ZNodeView::updateChart1D2X() {
         float x = mix(xBounds.x, xBounds.y, factor);
         vector<float> inVec = vector<float>(MAX_INPUT_COUNT, x);
         inVec.at(inVec.size() - 1) = i;
-        vector<vector<float>> fx = evaluate(vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x)));
+        vector<vector<float>> fx = evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x)));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
         }
 
         float ySpan = (yBounds.y - yBounds.x);
-
         float yFactor = (((fx.at(0).at(0)) - yBounds.x) / ySpan);
-        float yFactor2 = (((fx.at(0).at(1)) - yBounds.x) / ySpan);
+        float yFactor2;
+
+        if (fx.size() > 1) {
+            yFactor2 = (((fx.at(1).at(0)) - yBounds.x) / ySpan);
+        } else {
+            yFactor2 = (((fx.at(0).at(1)) - yBounds.x) / ySpan);
+        }
         points.push_back({yFactor, yFactor2});
     }
 

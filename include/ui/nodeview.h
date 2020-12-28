@@ -83,89 +83,114 @@ public:
     vector<vector<float>> compute(const vector<vector<float>>& x, Type type) {
         vec2 chartBound = mChart->getXBounds();
         float chartWidth = chartBound.y - chartBound.x;
+        vector<vector<float>> output;
+        for (int d = 0; d < x.size(); d++) {
+            vector<float> in = x.at(d);
+            vector<float> out;
+            switch (type) {
+                case SIN:
+                    out = {sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+                    break;
+                case COS:
+                    out = {cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+                    break;
+                case TAN:
+                    out = {tan(in.at(0)), chartBound.x, chartWidth};
+                    break;
+                case EXP:
+                    out = {exp(in.at(0)), chartBound.x, chartWidth};
+                    break;
+                case SQRT:
+                    out = {sqrt(in.at(0)), chartBound.x, chartWidth};
+                    break;
+                case POW:
+                    out = {pow(in.at(0), in.at(1)), chartBound.x, chartWidth};
+                    break;
+                case GAUSSIAN:
+                    out = {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
+                           chartBound.x, chartWidth};
+                    break;
+                case MORLET:
+                    out = {(float) (
+                            cos(in.at(0) * in.at(4)) * // sinusoid
+                            (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
+                           chartBound.x, chartWidth}; // Chart
+                    break;
+                case ADD:
+                    out = {in.at(0) + in.at(1), chartBound.x, chartWidth};
+                    break;
+                case SUBTRACT:
+                    out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
+                    break;
+                case MULTIPLY:
+                    out = {in.at(0) * in.at(1), chartBound.x, chartWidth};
+                    break;
+                case DIVIDE:
+                    out = {in.at(0) / in.at(1), chartBound.x, chartWidth};
+                    break;
+                case C:
+                    out = mConstantValueOutput;
+                    break;
+                case X:
+                    return {{in.at(0), chartBound.x, chartWidth},
+                            {NAN,      chartBound.x, chartWidth}};
+                case Y:
+                    return {{NAN,      chartBound.x, chartWidth},
+                            {in.at(1), chartBound.x, chartWidth}};
+                case FILE:
+                    break;
+                case FFT: {
+                    auto fft = computeFft(in.at(1), in.at(2), in.at(3));
+                    out = {fft.first, fft.second, chartWidth, in.at(3)};
+                    break;
+                }
+                case IFFT: {
+                    auto fft = computeInverseFft(in.at(2), in.at(3), in.at(4));
+                    out = {fft.first, fft.second, chartBound.x, chartWidth};
+                    break;
+                }
+                case HARTLEY: {
+                    auto fft = computeFft(in.at(1), in.at(2), in.at(3));
+                    out = {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
+                    break;
+                }
+                case LAPLACE:
+                    break;
+                case FIRST_DIFF: {
+                    float diff = computeFirstDifference(in.at(0), in.at(1));
+                    out = {diff, chartBound.x, chartWidth};
+                    break;
+                };
+                case SECOND_DIFF:
+                    break;
+                case DOT:
+                    break;
+                case CROSS:
+                    break;
+                case CHART_2D: {
+                    mChart->setResolution(((int) in.at(2)));
+                    out = {in.at(0), in.at(1), chartBound.x, chartWidth};
+                    break;
+                }
 
-        vector<float> in = x.at(0);
+                case HEAT_MAP: {
+                    out = {x.at(0).at(0), x.at(0).at(1), chartBound.x, chartWidth};
+                    break;
+                }
+                case COMBINE: {
 
-        vector<float> out;
-        switch (type) {
-            case SIN:
-                out = {sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
-                break;
-            case COS:out = {cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
-                break;
-            case TAN:out = {tan(in.at(0)), chartBound.x, chartWidth};
-                break;
-            case EXP:out = {exp(in.at(0)), chartBound.x, chartWidth};
-                break;
-            case SQRT:out = {sqrt(in.at(0)), chartBound.x, chartWidth};
-                break;
-            case POW:out = {pow(in.at(0), in.at(1)), chartBound.x, chartWidth};
-                break;
-            case GAUSSIAN:out = {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
-                                  chartBound.x, chartWidth};
-                break;
-            case MORLET:out = {(float) (
-                        cos(in.at(0) * in.at(4)) * // sinusoid
-                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
-                        chartBound.x, chartWidth}; // Chart
-                break;
-            case ADD:out = {in.at(0) + in.at(1), chartBound.x, chartWidth};
-                break;
-            case SUBTRACT:out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
-                break;
-            case MULTIPLY:out = {in.at(0) * in.at(1), chartBound.x, chartWidth};
-                break;
-            case DIVIDE:out = {in.at(0) / in.at(1), chartBound.x, chartWidth};
-                break;
-            case C:out =  mConstantValueOutput;
-                break;
-            case X:out = {in.at(0), chartBound.x, chartWidth};
-                break;
-            case Y:out = {in.at(1), chartBound.x, chartWidth};
-                break;
-            case FILE: break;
-            case FFT: {
-                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                out = {fft.first, fft.second, chartWidth, in.at(3)};
-                break;
-            }
-            case IFFT: {
-                auto fft = computeInverseFft(in.at(2), in.at(3), in.at(4));
-                out = {fft.first, fft.second, chartBound.x, chartWidth};
-                break;
-            }
-            case HARTLEY: {
-                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                out = {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
-                break;
-            }
-            case LAPLACE:break;
-            case FIRST_DIFF:{
-                float diff = computeFirstDifference(in.at(0), in.at(1));
-                out = {diff, chartBound.x, chartWidth};
-                break;
-            };
-            case SECOND_DIFF:break;
-            case DOT:break;
-            case CROSS:break;
-            case CHART_2D: {
-                mChart->setResolution(((int) in.at(2)));
-                out = {in.at(0), in.at(1), chartBound.x, chartWidth};
-                break;
+                    return {{x.at(0).at(0)},
+                            {x.at(1).at(1)}};
+
+                }
+                case LAST:
+                    break;
             }
 
-            case HEAT_MAP: {
-                out = {x.at(0).at(0), x.at(0).at(1), chartBound.x, chartWidth};
-                break;
-            }
-            case COMBINE: {
-                out = {in.at(0), in.at(1)};
-                break;
-            }
-            case LAST:break;
+            output.push_back(out);
         }
 
-        return {out};
+        return output;
     }
 
     /**
@@ -366,7 +391,7 @@ public:
 
     static ChartType getChartType(Type type) {
         switch (type) {
-            default: return LINE_1D;
+            default: return LINE_1D_2X;
             case HARTLEY: return LINE_1D;
             case FFT:
             case IFFT:return LINE_1D_2X;
