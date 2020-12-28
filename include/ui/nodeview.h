@@ -79,18 +79,25 @@ public:
         IMAGE
     };
 
+    float computeFirstDifference(float fx, float x) {
+        vec2 bound = mChart->getXBounds();
+        int index = 0;
+        float h = ((bound.y - bound.x) / (float) mChart->getResolution());
+        float x2 = x + (h);
+        float fxh = sumInputs(x2, index);
+        float y = (fxh - fx) / h;
+        return y;
+    }
+
     pair<float, float> computeFft(float in, float start, float width) {
         int res = std::max((int) mChart->getXBounds().y, 5);
         mChart->setResolution(res);
         if (mFftCache.empty()) {
             for (int i = 0; i < res * 2; i++) {
-                float summedInput = 0.0;
+
                 float x = mix(start, start + width, (float) i / (float) (res * 2));
-                auto inputSocket = mInputIndices.at(0);
-                for (auto singleInput : inputSocket) {
-                    summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {x})).at(
-                            singleInput.second).at(0);
-                }
+                int index = 0;
+                float summedInput = sumInputs(x, index);
                 mFftCache.emplace_back(summedInput, 0.0f);
             }
             ZFFt::transform(mFftCache);
@@ -111,6 +118,16 @@ public:
 
         mChart->invalidate();
         return returnValue;
+    }
+
+    float sumInputs(float x, int index) const {
+        float summedInput = 0.0;
+        auto inputSocket = mInputIndices.at(index);
+        for (auto singleInput : inputSocket) {
+            summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {x})).at(
+                    singleInput.second).at(0);
+        }
+        return summedInput;
     }
 
     pair<float, float> computeInverseFft(float in, float fftRes, float windowSize) {
@@ -194,7 +211,10 @@ public:
                 return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f))}, {chartBound.x}, {chartWidth}};
             }
             case LAPLACE:break;
-            case FIRST_DIFF:break;
+            case FIRST_DIFF:{
+                float diff = computeFirstDifference(in.at(0), in.at(1));
+                return {{diff}, {chartBound.x}, {chartWidth}};
+            };
             case SECOND_DIFF:break;
             case DOT:break;
             case CROSS:break;
@@ -240,7 +260,7 @@ public:
             case IFFT:return ivec2(5,4);
             case HARTLEY:return ivec2(4,3);
             case LAPLACE:return ivec2(3,3);
-            case FIRST_DIFF:return ivec2(3,3);
+            case FIRST_DIFF:return ivec2(2,3);
             case SECOND_DIFF:return ivec2(3,3);
             case DOT:return ivec2(4,3);
             case CROSS:return ivec2(4,4);
@@ -273,7 +293,7 @@ public:
             case FFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
             case HARTLEY:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
-            case FIRST_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case FIRST_DIFF:return {{VAR, VAR}, {VAR, CON, CON}};
             case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case DOT:return {{VAR, VAR, VAR, VAR}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
