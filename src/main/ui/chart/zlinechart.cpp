@@ -17,75 +17,54 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     glGenFramebuffers(1, &mFinalFBO);
     glGenRenderbuffers(1, &mFinalRBO);
 
+    glGenBuffers(1, &mHeatVertBuffer);
+    glGenBuffers(1, &mHeatEdgeBuffer);
+
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
 
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
     mTransform = mDefaultMat;
 
+    computeChartBounds();
+
     updateFBOSize();
-    addGrid();
-    addBackgroundGrid();
+    initGrid();
+    initBackgroundGrid();
+    updateHeatMap();
+
 }
 
-void ZLineChart::onWindowChange(int width, int height) {
-    bool needsUpdate = false;
-    if (width != getWidth() || height != getHeight()) {
-        needsUpdate = true;
-    }
-    ZView::onWindowChange(width, height);
+void ZLineChart::updateHeatMap() {
 
-    if (needsUpdate) {
-        updateFBOSize();
-    }
+    glGenTextures(1, &mHeatTexBuffer);
+                        // pos,  texture
+    vector<float> verts = {mXBound.x, mYBound.x, 0, 0,
+                           mXBound.y, mYBound.x, 1, 0,
+                           mXBound.x, mYBound.y, 0, 1,
+                           mXBound.y, mYBound.y, 1, 1};
+    vector<int> edges = {0,2,1, 1,2,3};
+
+    glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHeatEdgeBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 }
 
-void ZLineChart::updateFBOSize() {
-    int width = getWidth();
-    int height = getHeight();
-    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer);
-
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, GL_RGBA, width, height, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, mRBO);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_DEPTH_COMPONENT, width, height);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mTexBuffer);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
-    glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, mFinalRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFinalTexBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mFinalTexBuffer);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void ZLineChart::updateLineBuffers() {
+void ZLineChart::updateLines() {
 
     if (mListener == nullptr) {
         return;
     }
 
-    if (mInputType == 0 || mInputType == 1) {
+    if (mInputType == LINE || mInputType == LINE_2X) {
         updateChart1D();
-    } else if (mInputType == 2) {
+    } else if (mInputType == LINE_2D) {
         updateChart2D();
-    } else if (mInputType == 3){
+    } else if (mInputType == HEAT_MAP){
         updateHeatMap();
     }
-
 
     // Reset the tmp transform. The tmp transform is used while evaluation
     // happens on a background thread. This ensures the ui will not lag
@@ -95,95 +74,7 @@ void ZLineChart::updateLineBuffers() {
     invalidate();
 }
 
-void ZLineChart::updateHeatMap() {
-
-}
-
-void ZLineChart::updateChart2D() {
-    vector<float> verts;
-    vector<int> edges;
-
-    for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
-        vector<float> output;
-        for (uint i = 0; i < mResolution; i++) {
-            output = mListener({(int) i}, lineIndex);
-            verts.push_back(output.at(0));
-            verts.push_back(output.at(1));
-            verts.push_back(0);
-            verts.push_back(0);
-
-            if (i != mResolution - 1) {
-                edges.push_back(i);
-                edges.push_back(i + 1);
-            }
-        }
-
-        // Initialize buffers
-        if (mPoints.size() <= lineIndex) {
-            mPointCount.push_back(edges.size());
-            unsigned int lineBuffer;
-            glGenBuffers(1, &lineBuffer);
-            mPoints.push_back(lineBuffer);
-
-            unsigned int edgeBuffer;
-            glGenBuffers(1, &edgeBuffer);
-            mEdges.push_back(edgeBuffer);
-        } else {
-            mPointCount.at(lineIndex) = edges.size();
-        }
-
-        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
-        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
-    }
-
-}
-
-void ZLineChart::updateChart1D() {
-
-
-    for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
-        vector<float> verts;
-        vector<int> edges;
-
-        for (uint i = 0; i < mResolution; i++) {
-            vector<float> y = mListener({(int) i}, lineIndex);
-            verts.push_back(((float) i / (float) (mResolution - 1)));
-            verts.push_back(y.at(0));
-            verts.push_back(0);
-            verts.push_back(0);
-
-            if (i != mResolution - 1) {
-                edges.push_back(i);
-                edges.push_back(i + 1);
-            }
-        }
-
-        // Initialize buffers
-        if (mPoints.size() <= lineIndex) {
-            mPointCount.push_back(edges.size());
-            unsigned int lineBuffer;
-            glGenBuffers(1, &lineBuffer);
-            mPoints.push_back(lineBuffer);
-
-            unsigned int edgeBuffer;
-            glGenBuffers(1, &edgeBuffer);
-            mEdges.push_back(edgeBuffer);
-        } else {
-            mPointCount.at(lineIndex) = edges.size();
-        }
-
-        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
-        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
-    }
-}
-
-void ZLineChart::addBackgroundGrid() {
+void ZLineChart::initBackgroundGrid() {
     vector<float> verts;
     vector<int> edges;
 
@@ -231,7 +122,7 @@ void ZLineChart::addBackgroundGrid() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 }
 
-void ZLineChart::addGrid() {
+void ZLineChart::initGrid() {
     vector<float> verts = {-1e7, 0, 0, 0,
                            1e7, 0, 0, 0,
                            0, -1e7, 0, 0,
@@ -246,11 +137,143 @@ void ZLineChart::addGrid() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 }
 
+void ZLineChart::onWindowChange(int width, int height) {
+    bool needsUpdate = false;
+    if (width != getWidth() || height != getHeight()) {
+        needsUpdate = true;
+    }
+    ZView::onWindowChange(width, height);
+
+    if (needsUpdate) {
+        updateFBOSize();
+    }
+}
+
+void ZLineChart::updateFBOSize() {
+    int width = getWidth();
+    int height = getHeight();
+    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer);
+
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, GL_RGBA, width, height, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, mRBO);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_DEPTH_COMPONENT, width, height);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mTexBuffer);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+    glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, mFinalRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFinalTexBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mFinalTexBuffer);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void ZLineChart::updateChart2D() {
+    vector<float> verts;
+    vector<int> edges;
+
+    for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
+        vector<float> output;
+        for (uint i = 0; i < mResolution; i++) {
+            output = mListener({(int) i}, lineIndex);
+            verts.push_back(output.at(0));
+            verts.push_back(output.at(1));
+            verts.push_back(0);
+            verts.push_back(0);
+
+            if (i != mResolution - 1) {
+                edges.push_back(i);
+                edges.push_back(i + 1);
+            }
+        }
+
+        // Initialize buffers
+        if (mPoints.size() <= lineIndex) {
+            mPointCount.push_back(edges.size());
+            unsigned int lineBuffer;
+            glGenBuffers(1, &lineBuffer);
+            mPoints.push_back(lineBuffer);
+
+            unsigned int edgeBuffer;
+            glGenBuffers(1, &edgeBuffer);
+            mEdges.push_back(edgeBuffer);
+        } else {
+            mPointCount.at(lineIndex) = edges.size();
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+    }
+
+}
+
+void ZLineChart::updateChart1D() {
+    for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
+        vector<float> verts;
+        vector<int> edges;
+
+        for (uint i = 0; i < mResolution; i++) {
+            vector<float> y = mListener({(int) i}, lineIndex);
+            verts.push_back(((float) i / (float) (mResolution - 1)));
+            verts.push_back(y.at(0));
+            verts.push_back(0);
+            verts.push_back(0);
+
+            if (i != mResolution - 1) {
+                edges.push_back(i);
+                edges.push_back(i + 1);
+            }
+        }
+
+        // Initialize buffers
+        if (mPoints.size() <= lineIndex) {
+            mPointCount.push_back(edges.size());
+            unsigned int lineBuffer;
+            glGenBuffers(1, &lineBuffer);
+            mPoints.push_back(lineBuffer);
+
+            unsigned int edgeBuffer;
+            glGenBuffers(1, &edgeBuffer);
+            mEdges.push_back(edgeBuffer);
+        } else {
+            mPointCount.at(lineIndex) = edges.size();
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+    }
+}
+
 void ZLineChart::draw() {
 
-    if (mLineUpdatedNeeded) {
-        mLineUpdatedNeeded = false;
-        updateLineBuffers();
+    if (mDataInvalid) {
+        mDataInvalid = false;
+
+        if (mInputType == HEAT_MAP) {
+            updateHeatMap();
+        } else {
+            updateLines();
+        }
+
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
@@ -264,24 +287,37 @@ void ZLineChart::draw() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // draw heat map
+    if (mInputType == HEAT_MAP) {
+        mShader->setVec4("uColor", green);
+        glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);
+        int dimension = 4;
+        glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+        glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), dimension, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * dimension, nullptr);
+
+        int triangles = 2;
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHeatEdgeBuffer);
+        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+    }
+
     // draw background grid
     mShader->setVec4("uColor", grey);
     glLineWidth(1.0);
     glBindBuffer(GL_ARRAY_BUFFER, mBGridVertBuffer);
     glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
     glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 4, (void*) 0);
+                          sizeof(float) * 4, nullptr);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
     glDrawElements(GL_LINES, mBGridVCount, GL_UNSIGNED_INT, nullptr);
-
 
     // draw grid
     mShader->setVec4("uColor", red);
     glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
     glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
     glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 4, (void*) 0);
+                          sizeof(float) * 4, nullptr);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
     glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);
@@ -309,10 +345,6 @@ void ZLineChart::draw() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ZView::draw();
-}
-
-mat<4, 4, float> ZLineChart::getMatrix() const {
-    return mTmpTransform;
 }
 
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
@@ -361,7 +393,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
         vec4 p1 = vec4(0,0,0,1);
         vec4 p2 = vec4(0.5,0.5,0,1);
         vec4 sampleScale = ((mTransform * p2) - (mTransform * p1)) / vec4(1,-1,0,0);
-        vec4 sampleTranslation = (mTransform * p1);
 
         if (mScaleOrigin.x > 0) {
             positionInView.x = getWidth() - positionInView.x;
@@ -395,7 +426,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
                              scale(mat4(1), vec3(percent.x, percent.y, 1)) *
                              translate(mat4(1), -mScaleOrigin)) * mTransform;
             needsRefresh = true;
-
         }
     }
 

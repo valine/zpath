@@ -10,6 +10,14 @@
 #define ZPATH_ZLINECHART_H
 
 
+static const int LINE = 0;
+
+static const int LINE_2X = 1;
+
+static const int LINE_2D = 2;
+
+static const int HEAT_MAP = 3;
+
 #include "zview.h"
 #include <regex>
 
@@ -70,7 +78,7 @@ public:
     void onScrollChange(double x, double y) override;
 
     void requestLineUpdate() {
-        mLineUpdatedNeeded = true;
+        mDataInvalid = true;
     }
 
     void setInvalidateListener(function<void()> listener) {
@@ -105,6 +113,12 @@ private:
 
     unsigned int mBGridVertBuffer = -1;
     unsigned int mBGridEdgeBuffer = -1;
+
+    unsigned int mHeatTexBuffer = -1;
+    unsigned int mHeatVertBuffer = -1;
+    unsigned int mHeatEdgeBuffer = -1;
+
+
     int mBGridVCount = 0;
 
     vector<unsigned int> mPoints;
@@ -114,7 +128,7 @@ private:
 
     ZTexture* mBackground;
     int mLineCount = 1;
-    bool mLineUpdatedNeeded = false;
+    bool mDataInvalid = false;
 
     float mLineWidth = 2;
 
@@ -134,17 +148,16 @@ private:
     ;
 
     void updateFBOSize();
-    void updateLineBuffers();
-    void addGrid();
+    void updateLines();
+    void initGrid();
 
-    mat<4, 4, float> getMatrix() const;
-
-    void addBackgroundGrid();
+    void initBackgroundGrid();
 
     void updateChart2D();
     void updateChart1D();
 
     void updateHeatMap();
+
 };
 
 

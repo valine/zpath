@@ -227,10 +227,12 @@ class ZView {
         vec4 red = vec4(1,0,0,1);
         vec4 blue = vec4(0,0,1,1);
         vec4 green = vec4(0,1,0,1);
+        vec4 yellow = vec4(1,1,0,1);
         vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
 
+        vec4 transparent = vec4(0);
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
-        vec4 yellow = vec4(1,1,0,1);
+
 
         void setName(string name);
         string getName();

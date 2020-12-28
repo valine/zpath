@@ -32,6 +32,23 @@ public:
                     bool isInput, float initialValue, string name)> onValueSelect);
     void setInvalidateListener(function<void(ZNodeView* node)> listener);
 
+    enum SocketType {
+        CON,
+        VAR
+    };
+
+    enum ChartResMode {
+        ADAPTIVE,
+        STATIC
+    };
+
+    enum ChartType {
+        LINE_1D,
+        LINE_1D_2X,
+        LINE_2D,
+        IMAGE
+    };
+
     enum Type {
         SIN,
         COS,
@@ -58,178 +75,97 @@ public:
         DOT,
         CROSS,
         CHART_2D,
+        COMBINE,
         HEAT_MAP,
         LAST // Fake enum to allow easy iteration
     };
-
-    enum SocketType {
-        CON,
-        VAR
-    };
-
-    enum ChartResMode {
-        ADAPTIVE,
-        STATIC
-    };
-
-    enum ChartType {
-        LINE_1D,
-        LINE_1D_2X,
-        LINE_2D,
-        IMAGE
-    };
-
-    float computeFirstDifference(float fx, float x) {
-        vec2 bound = mChart->getXBounds();
-        int index = 0;
-        float h = ((bound.y - bound.x) / (float) mChart->getResolution());
-        float x2 = x + (h);
-        float fxh = sumInputs(x2, index);
-        float y = (fxh - fx) / h;
-        return y;
-    }
-
-    pair<float, float> computeFft(float in, float start, float width) {
-        int res = std::max((int) mChart->getXBounds().y, 5);
-        mChart->setResolution(res);
-        if (mFftCache.empty()) {
-            for (int i = 0; i < res * 2; i++) {
-
-                float x = mix(start, start + width, (float) i / (float) (res * 2));
-                int index = 0;
-                float summedInput = sumInputs(x, index);
-                mFftCache.emplace_back(summedInput, 0.0f);
-            }
-            ZFFt::transform(mFftCache);
-        }
-
-        vec2 thisChartBounds = mChart->getXBounds();
-        float span = thisChartBounds.y - thisChartBounds.x;
-
-        pair<float, float> returnValue = {NAN, NAN};
-        if (span > 0) {
-            int xIndex = 0;
-            if (in >= 0 && (in) < mFftCache.size() && !mFftCache.empty()) {
-                xIndex = (int) in;
-                complex<float> y = mFftCache.at(xIndex);
-                returnValue = {y.real() / res, y.imag() / res};
-            }
-        }
-
-        mChart->invalidate();
-        return returnValue;
-    }
-
-    float sumInputs(float x, int index) const {
-        float summedInput = 0.0;
-        auto inputSocket = mInputIndices.at(index);
-        for (auto singleInput : inputSocket) {
-            summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {x})).at(
-                    singleInput.second).at(0);
-        }
-        return summedInput;
-    }
-
-    pair<float, float> computeInverseFft(float in, float fftRes, float windowSize) {
-        int res = std::max((int) fftRes, 1);
-        if (mFftCache.empty()) {
-            for (int i = 0; i < res * 2; i++) {
-                float summedInput = 0.0;
-                float summedInput2 = 0.0;
-                auto inputSocket = mInputIndices.at(0);
-                auto inputSocket2 = mInputIndices.at(1);
-                for (auto singleInput : inputSocket) {
-                    summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
-                            singleInput.second).at(0);
-                }
-
-                for (auto singleInput : inputSocket2) {
-                    summedInput2 += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
-                            singleInput.second).at(0);
-                }
-                mFftCache.emplace_back(summedInput, summedInput2);
-            }
-            ZFFt::inverseTransform(mFftCache);
-        }
-
-        pair<float, float> returnValue = {NAN, NAN};
-        int xIndex =  (int) ((in * (mFftCache.size() - 1)) / windowSize);
-        if (xIndex >= 0 && !mFftCache.empty() && windowSize > 0 && xIndex < mFftCache.size()) {
-
-            complex<float> y = mFftCache.at(xIndex);
-            returnValue = {y.real(), y.imag()};
-        }
-
-        mChart->invalidate();
-        return returnValue;
-    }
-
-    vector<vector<float>> evaluate(vector<vector<float>> x);
-    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView* root);
 
     vector<vector<float>> compute(const vector<vector<float>>& x, Type type) {
         vec2 chartBound = mChart->getXBounds();
         float chartWidth = chartBound.y - chartBound.x;
 
-        vector<float> in;
-        for (vector<float> firstInput : x) {
-            in.push_back(firstInput.at(0));
-        }
+        vector<float> in = x.at(0);
 
+        vector<float> out;
         switch (type) {
             case SIN:
-                return {{sin(in.at(0) * in.at(1)) * in.at(2)}, {chartBound.x}, {chartWidth}};
-            case COS:return {{cos(in.at(0) * in.at(1)) * in.at(2)}, {chartBound.x}, {chartWidth}};
-            case TAN:return {{tan(in.at(0))}, {chartBound.x}, {chartWidth}};
-            case EXP:return {{exp(in.at(0))}, {chartBound.x}, {chartWidth}};
-            case SQRT:return {{sqrt(in.at(0))}, {chartBound.x}, {chartWidth}};
-            case POW:return {{pow(in.at(0), in.at(1))}, {chartBound.x}, {chartWidth}};
-            case GAUSSIAN:return {{(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2)))},
-                                  {chartBound.x}, {chartWidth}};
-            case MORLET:return {{(float) (
+                out = {sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+                break;
+            case COS:out = {cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+                break;
+            case TAN:out = {tan(in.at(0)), chartBound.x, chartWidth};
+                break;
+            case EXP:out = {exp(in.at(0)), chartBound.x, chartWidth};
+                break;
+            case SQRT:out = {sqrt(in.at(0)), chartBound.x, chartWidth};
+                break;
+            case POW:out = {pow(in.at(0), in.at(1)), chartBound.x, chartWidth};
+                break;
+            case GAUSSIAN:out = {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
+                                  chartBound.x, chartWidth};
+                break;
+            case MORLET:out = {(float) (
                         cos(in.at(0) * in.at(4)) * // sinusoid
-                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))))}, // gaussian
-                        {chartBound.x}, {chartWidth}}; // Chart
-            case ADD:return {{in.at(0) + in.at(1)}, {chartBound.x}, {chartWidth}};
-            case SUBTRACT:return {{in.at(0) - in.at(1)}, {chartBound.x}, {chartWidth}};
-            case MULTIPLY:return {{in.at(0) * in.at(1)}, {chartBound.x}, {chartWidth}};
-            case DIVIDE:return {{in.at(0) / in.at(1)}, {chartBound.x}, {chartWidth}};
-            case C:return {mConstantValueOutput};
-            case X:return {{in.at(0)}, {chartBound.x}, {chartWidth}};
-            case Y:return {{x.at(0).at(1)}, {chartBound.x}, {chartWidth}};
-            case FILE:break;
+                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
+                        chartBound.x, chartWidth}; // Chart
+                break;
+            case ADD:out = {in.at(0) + in.at(1), chartBound.x, chartWidth};
+                break;
+            case SUBTRACT:out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
+                break;
+            case MULTIPLY:out = {in.at(0) * in.at(1), chartBound.x, chartWidth};
+                break;
+            case DIVIDE:out = {in.at(0) / in.at(1), chartBound.x, chartWidth};
+                break;
+            case C:out =  mConstantValueOutput;
+                break;
+            case X:out = {in.at(0), chartBound.x, chartWidth};
+                break;
+            case Y:out = {in.at(1), chartBound.x, chartWidth};
+                break;
+            case FILE: break;
             case FFT: {
                 auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                return {{fft.first}, {fft.second}, {chartWidth}, {in.at(3)}};
+                out = {fft.first, fft.second, chartWidth, in.at(3)};
+                break;
             }
             case IFFT: {
                 auto fft = computeInverseFft(in.at(2), in.at(3), in.at(4));
-                return {{fft.first}, {fft.second}, {chartBound.x}, {chartWidth}};
+                out = {fft.first, fft.second, chartBound.x, chartWidth};
+                break;
             }
             case HARTLEY: {
                 auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f))}, {chartBound.x}, {chartWidth}};
+                out = {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
+                break;
             }
             case LAPLACE:break;
             case FIRST_DIFF:{
                 float diff = computeFirstDifference(in.at(0), in.at(1));
-                return {{diff}, {chartBound.x}, {chartWidth}};
+                out = {diff, chartBound.x, chartWidth};
+                break;
             };
             case SECOND_DIFF:break;
             case DOT:break;
             case CROSS:break;
             case CHART_2D: {
                 mChart->setResolution(((int) in.at(2)));
-                return {{in.at(0)}, {in.at(1)}, {chartBound.x}, {chartWidth}};
+                out = {in.at(0), in.at(1), chartBound.x, chartWidth};
+                break;
             }
 
             case HEAT_MAP: {
-                return {{x.at(0).at(0)}, {x.at(0).at(1)}, {chartBound.x}, {chartWidth}};
+                out = {x.at(0).at(0), x.at(0).at(1), chartBound.x, chartWidth};
+                break;
+            }
+            case COMBINE: {
+                out = {in.at(0), in.at(1)};
+                break;
             }
             case LAST:break;
         }
 
-        return vector<vector<float>>(3);
+        return {out};
     }
 
     /**
@@ -266,6 +202,7 @@ public:
             case CROSS:return ivec2(4,4);
             case CHART_2D: return ivec2(3,4);
             case HEAT_MAP: return ivec2(1,3);
+            case COMBINE: return ivec2(2,1);
             case LAST:return ivec2(0,0);
         }
     }
@@ -299,6 +236,7 @@ public:
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
             case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
             case HEAT_MAP: return {{VAR}, {VAR, CON, CON}};
+            case COMBINE: return {{VAR, VAR}, {VAR}};
             case LAST:return {};
         }
     }
@@ -331,6 +269,7 @@ public:
             case CROSS:return "cross";
             case CHART_2D:return "2D Chart";
             case HEAT_MAP:return "Heat Map";
+            case COMBINE:return "Combine";
             case LAST:return "none";
         }
     }
@@ -345,7 +284,6 @@ public:
             case HARTLEY:
             case IFFT:
                 return vec2(200, 200);
-
             default:
                 return vec2(80, 100);
         }
@@ -436,6 +374,95 @@ public:
             case HEAT_MAP: return IMAGE;
         }
     }
+
+    float computeFirstDifference(float fx, float x) {
+        vec2 bound = mChart->getXBounds();
+        int index = 0;
+        float h = ((bound.y - bound.x) / (float) mChart->getResolution());
+        float x2 = x + (h);
+        float fxh = sumInputs(x2, index);
+        float y = (fxh - fx) / h;
+        return y;
+    }
+
+    pair<float, float> computeFft(float in, float start, float width) {
+        int res = std::max((int) mChart->getXBounds().y, 5);
+        mChart->setResolution(res);
+        if (mFftCache.empty()) {
+            for (int i = 0; i < res * 2; i++) {
+
+                float x = mix(start, start + width, (float) i / (float) (res * 2));
+                int index = 0;
+                float summedInput = sumInputs(x, index);
+                mFftCache.emplace_back(summedInput, 0.0f);
+            }
+            ZFFt::transform(mFftCache);
+        }
+
+        vec2 thisChartBounds = mChart->getXBounds();
+        float span = thisChartBounds.y - thisChartBounds.x;
+
+        pair<float, float> returnValue = {NAN, NAN};
+        if (span > 0) {
+            int xIndex = 0;
+            if (in >= 0 && (in) < mFftCache.size() && !mFftCache.empty()) {
+                xIndex = (int) in;
+                complex<float> y = mFftCache.at(xIndex);
+                returnValue = {y.real() / res, y.imag() / res};
+            }
+        }
+
+        mChart->invalidate();
+        return returnValue;
+    }
+
+    float sumInputs(float x, int index) const {
+        float summedInput = 0.0;
+        auto inputSocket = mInputIndices.at(index);
+        for (auto singleInput : inputSocket) {
+            summedInput += singleInput.first->evaluate(vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x))).at(
+                    0).at(singleInput.second);
+        }
+        return summedInput;
+    }
+
+    pair<float, float> computeInverseFft(float in, float fftRes, float windowSize) {
+        int res = std::max((int) fftRes, 1);
+        if (mFftCache.empty()) {
+            for (int i = 0; i < res * 2; i++) {
+                float summedInput = 0.0;
+                float summedInput2 = 0.0;
+                auto inputSocket = mInputIndices.at(0);
+                auto inputSocket2 = mInputIndices.at(1);
+                for (auto singleInput : inputSocket) {
+                    summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
+                            singleInput.second).at(0);
+                }
+
+                for (auto singleInput : inputSocket2) {
+                    summedInput2 += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
+                            singleInput.second).at(0);
+                }
+                mFftCache.emplace_back(summedInput, summedInput2);
+            }
+            ZFFt::inverseTransform(mFftCache);
+        }
+
+        pair<float, float> returnValue = {NAN, NAN};
+        int xIndex =  (int) ((in * (mFftCache.size() - 1)) / windowSize);
+        if (xIndex >= 0 && !mFftCache.empty() && windowSize > 0 && xIndex < mFftCache.size()) {
+
+            complex<float> y = mFftCache.at(xIndex);
+            returnValue = {y.real(), y.imag()};
+        }
+
+        mChart->invalidate();
+        return returnValue;
+    }
+
+    vector<vector<float>> evaluate(vector<vector<float>> x);
+    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView* root);
+
 
     void setType(Type type);
 
