@@ -51,6 +51,14 @@ public:
         return mYBound;
     }
 
+    void setZBound(vec2 zbound) {
+        mZBound = zbound;
+    }
+
+    vec2 getZBound() {
+        return mZBound;
+    }
+
     void setLineCount(int count) {
         mLineCount = count;
     }
@@ -99,6 +107,7 @@ private:
     vec3 mScaleOrigin = vec3(0);
     vec2 mXBound = vec2(0);
     vec2 mYBound = vec2(0);
+    vec2 mZBound = vec2(-1,1);
 
     // OpenGL buffers
     unsigned int mFBO = -1;
@@ -171,6 +180,7 @@ private:
     void updateHeatMap();
 
     void initHeatLUT();
+
 };
 
 

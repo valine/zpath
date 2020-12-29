@@ -22,9 +22,7 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     glGenBuffers(1, &mHeatEdgeBuffer);
     glGenTextures(1, &mHeatTexBuffer);
 
-
     initHeatLUT();
-
 
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
@@ -96,8 +94,8 @@ void ZLineChart::updateHeatMap() {
     glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, std::min(mResolution, 50), std::min(mResolution, 50), 0, GL_RED, GL_FLOAT, &pixels[0]);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -335,8 +333,8 @@ void ZLineChart::draw() {
         mHeatShader->use();
         mHeatShader->setMat4("uVPMatrix", mTransform);
 
-        mHeatShader->setFloat("zmin", -1.0);
-        mHeatShader->setFloat("zmax", 1.0);
+        mHeatShader->setFloat("zmin", mZBound.x);
+        mHeatShader->setFloat("zmax", mZBound.y);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);

@@ -152,8 +152,11 @@ public:
                     out = {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
                     break;
                 }
-                case LAPLACE:
-                    return {{x.at(0).at(0) + x.at(1).at(0)}};
+                case LAPLACE: {
+                    // Static resolution for now
+                    auto laplace = computeLaplace(x.at(0).at(1), x.at(1).at(1), in.at(2), in.at(3), 10);
+                    return {{laplace.first}};
+                }
                 case FIRST_DIFF: {
                     float diff = computeFirstDifference(in.at(0), in.at(1));
                     out = {diff, chartBound.x, chartWidth};
@@ -170,7 +173,8 @@ public:
                 }
 
                 case HEAT_MAP: {
-                    out = {x.at(0).at(0), x.at(0).at(1), chartBound.x, chartWidth};
+                    mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
+                    out = {x.at(0).at(0), chartBound.x, chartWidth};
                     break;
                 }
                 case COMBINE: {
@@ -224,7 +228,7 @@ public:
             case DOT:return ivec2(2,3);
             case CROSS:return ivec2(4,4);
             case CHART_2D: return ivec2(3,4);
-            case HEAT_MAP: return ivec2(1,3);
+            case HEAT_MAP: return ivec2(3,3);
             case COMBINE: return ivec2(2,1);
             case SPLIT: return ivec2(1,2);
             case LAST:return ivec2(0,0);
@@ -258,7 +262,7 @@ public:
             case DOT:return {{CON, CON}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
             case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
-            case HEAT_MAP: return {{VAR}, {VAR, CON, CON}};
+            case HEAT_MAP: return {{VAR, CON, CON}, {VAR, CON, CON}};
             case COMBINE: return {{VAR, VAR}, {VAR}};
             case SPLIT: return {{VAR}, {VAR, VAR}};
             case LAST:return {};
@@ -337,6 +341,8 @@ public:
                 return {0.0,0.0,100};
             case DOT:
                 return {1.0, 1.0};
+            case HEAT_MAP:
+                return {0.0, -1.0, 1.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -366,6 +372,7 @@ public:
             case FFT: return {"", "", "Window Start", "Window Size"};
             case LAPLACE: return {"", "", "Window Start", "Window Size"};
             case CHART_2D: return {"", "", "Resolution"};
+            case HEAT_MAP: return {"", "Z Min", "Z Max"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
@@ -421,9 +428,9 @@ public:
 
             for (int i = 0; i < res * 2; i++) {
                 float x = mix(start, start + width, (float) i / (float) (res * 2));
-                int index = 0;
-                float summedInput = sumInputs(x, index, 0);
-                float summedInput2 = sumInputs(x, index, 1);
+                int socketIndex = 0;
+                float summedInput = sumInputs(x, socketIndex, 0);
+                float summedInput2 = sumInputs(x, socketIndex, 1);
                 if (isnan(summedInput)) {
                     summedInput = 0;
                 }
@@ -453,6 +460,13 @@ public:
         return returnValue;
     }
 
+    pair<float, float> computeLaplace(float x, float y, float start, float width, int resolution) {
+        int socketIndex = 0;
+        int dimenIndex = 0;
+        float summedInput = sumInputs(x, socketIndex, dimenIndex);
+        return {x + y, 0};
+    }
+
     float sumInputs(float x, int index, int var) const {
         float summedInput = 0.0;
         auto inputSocket = mInputIndices.at(index);
@@ -468,9 +482,12 @@ public:
         if (mFftCache.empty()) {
             for (int i = 0; i < res * 2; i++) {
 
+                int socketIndex = 0;
+                int dimenIndexX = 0;
+                int dimenIndexY = 1;
                 auto inputSocket = mInputIndices.at(0);
-                float summedInput = sumInputs(i, 0, 0);
-                float summedInput2 = sumInputs(i, 0, 1);
+                float summedInput = sumInputs(i, socketIndex, dimenIndexX);
+                float summedInput2 = sumInputs(i, socketIndex, dimenIndexY);
 
                 mFftCache.emplace_back(summedInput, summedInput2);
             }
