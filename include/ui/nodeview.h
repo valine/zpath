@@ -154,7 +154,7 @@ public:
                 }
                 case LAPLACE: {
                     // Static resolution for now
-                    auto laplace = computeLaplace(x.at(0).at(1), x.at(1).at(1), in.at(2), in.at(3), 10);
+                    auto laplace = computeLaplace(x.at(0).at(1), x.at(1).at(1), in.at(2), in.at(3), 50);
                     return {{laplace.first}};
                 }
                 case FIRST_DIFF: {
@@ -479,17 +479,23 @@ public:
         }
 
         mLaplaceCache = vector<vector<float>>(resolution, vector<float>(resolution, 0));
-        for (int fi = 0; fi < resolution; fi++) {
-            for (int ei = 0; ei < resolution; ei++) {
+        for (int ei = 0; ei < resolution; ei++) {
+            for (int fi = 0; fi < resolution; fi++) {
 
-                float freq = ((fi / fres) * windowSize) + start;
+                float freq = (float) fi;
                 float expo = ((ei / fres) * windowSize) + start;
-                float output = 0;
+                float outputR = 0;
+                float outputI = 0;
                 for (int t = 0; t < resolution; t++) {
-                    output += (timeDomain.at(t) * cos(((freq * t * M_PI * 2)))) * exp((expo * t * M_PI * 2));
+                    float time = ((t / fres) * windowSize) + start;
+                    //output += (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))) * exp((expo * time * M_PI * 2));
+                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((expo * time * M_PI * 2)));
+                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((expo * time * M_PI * 2)));
+                    outputR += real / timeDomain.size();
+                    outputI += img / timeDomain.size();
                 }
 
-                mLaplaceCache.at(fi).at(ei) = output;
+                mLaplaceCache.at(ei).at(fi) = sqrt(pow(outputR, 2.0) + pow(outputI, 2.0));
             }
         }
 
