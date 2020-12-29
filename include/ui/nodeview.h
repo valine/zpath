@@ -141,13 +141,11 @@ public:
                     break;
                 case FFT: {
                     auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                    out = {fft.first, fft.second, chartWidth, in.at(3)};
-                    break;
+                    return  {{fft.first, chartWidth, in.at(3)}, {fft.second, chartWidth, in.at(3)}};
                 }
                 case IFFT: {
-                    auto fft = computeInverseFft(in.at(2), in.at(3), in.at(4));
-                    out = {fft.first, fft.second, chartBound.x, chartWidth};
-                    break;
+                    auto fft = computeInverseFft(in.at(1), in.at(2), in.at(3));
+                    return  {{fft.first, chartBound.x, chartWidth}, {fft.second, chartBound.x, chartWidth}};
                 }
                 case HARTLEY: {
                     auto fft = computeFft(in.at(1), in.at(2), in.at(3));
@@ -218,8 +216,8 @@ public:
             case X:return ivec2(0,3);
             case Y:return ivec2(0,3);
             case FILE:return ivec2(0,1);
-            case FFT:return ivec2(4,4);
-            case IFFT:return ivec2(5,4);
+            case FFT:return ivec2(4,3);
+            case IFFT:return ivec2(4,3);
             case HARTLEY:return ivec2(4,3);
             case LAPLACE:return ivec2(3,3);
             case FIRST_DIFF:return ivec2(2,3);
@@ -252,8 +250,8 @@ public:
             case X:
             case Y:return {{}, {VAR, CON, CON}};
             case FILE:return {{}, {VAR, CON, CON}};
-            case IFFT:return {{VAR, VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
-            case FFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
+            case IFFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
+            case FFT:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case HARTLEY:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, VAR}, {VAR, CON, CON}};
@@ -329,7 +327,7 @@ public:
                 return {0.0, 1.0, 1.0};
             case MORLET:
                 return {0.0, 1.0, 1.0, 0.0, 1.0};
-            case IFFT:return {0.0, 0.0,0.0, 1.0, 1.0};
+            case IFFT:return {0.0,0.0, 1.0, 1.0};
             case FFT:
             case HARTLEY:
                 return {0.0, 0.0, 0.0, 1.0};
@@ -361,7 +359,7 @@ public:
             case COS:return {"", "Frequency", "Height"};
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
-            case IFFT:return {"", "","", "Window Start", "Window Size"};
+            case IFFT:return {"", "", "Window Start", "Window Size"};
             case HARTLEY:
             case FFT: return {"", "", "Window Start", "Window Size"};
             case CHART_2D: return {"", "", "Resolution"};
@@ -407,7 +405,7 @@ public:
         int index = 0;
         float h = ((bound.y - bound.x) / (float) mChart->getResolution());
         float x2 = x + (h);
-        float fxh = sumInputs(x2, index);
+        float fxh = sumInputs(x2, index, 0);
         float y = (fxh - fx) / h;
         return y;
     }
@@ -416,13 +414,21 @@ public:
         int res = std::max((int) mChart->getXBounds().y, 5);
         mChart->setResolution(res);
         if (mFftCache.empty()) {
-            for (int i = 0; i < res * 2; i++) {
 
+            for (int i = 0; i < res * 2; i++) {
                 float x = mix(start, start + width, (float) i / (float) (res * 2));
                 int index = 0;
-                float summedInput = sumInputs(x, index);
-                mFftCache.emplace_back(summedInput, 0.0f);
+                float summedInput = sumInputs(x, index, 0);
+                float summedInput2 = sumInputs(x, index, 1);
+                if (isnan(summedInput)) {
+                    summedInput = 0;
+                }
+                if (isnan(summedInput2)) {
+                    summedInput2 = 0;
+                }
+                mFftCache.emplace_back(summedInput, summedInput2);
             }
+
             ZFFt::transform(mFftCache);
         }
 
@@ -443,12 +449,12 @@ public:
         return returnValue;
     }
 
-    float sumInputs(float x, int index) const {
+    float sumInputs(float x, int index, int var) const {
         float summedInput = 0.0;
         auto inputSocket = mInputIndices.at(index);
         for (auto singleInput : inputSocket) {
-            summedInput += singleInput.first->evaluate(vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x))).at(
-                    0).at(singleInput.second);
+            summedInput += singleInput.first->evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x))).at(
+                    var).at(singleInput.second);
         }
         return summedInput;
     }
@@ -457,19 +463,11 @@ public:
         int res = std::max((int) fftRes, 1);
         if (mFftCache.empty()) {
             for (int i = 0; i < res * 2; i++) {
-                float summedInput = 0.0;
-                float summedInput2 = 0.0;
-                auto inputSocket = mInputIndices.at(0);
-                auto inputSocket2 = mInputIndices.at(1);
-                for (auto singleInput : inputSocket) {
-                    summedInput += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
-                            singleInput.second).at(0);
-                }
 
-                for (auto singleInput : inputSocket2) {
-                    summedInput2 += singleInput.first->evaluate(vector<vector<float>>(MAX_INPUT_COUNT, {(float) i})).at(
-                            singleInput.second).at(0);
-                }
+                auto inputSocket = mInputIndices.at(0);
+                float summedInput = sumInputs(i, 0, 0);
+                float summedInput2 = sumInputs(i, 0, 1);
+
                 mFftCache.emplace_back(summedInput, summedInput2);
             }
             ZFFt::inverseTransform(mFftCache);
