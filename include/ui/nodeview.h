@@ -544,6 +544,7 @@ private:
     // Todo: remove  these
     ZLineChart* mChart;
     vector<vector<float>> mPointCache;
+    vector<float> mPointCache1D;
 
     vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
     vector<float> mConstantValueInput = vector<float>(MAX_INPUT_COUNT, 0.0);
@@ -575,6 +576,8 @@ private:
     void updateChart1D2X();
 
     void setOutputLabel(float output) const;
+
+    void updateChartHeatMap();
 };
 
 

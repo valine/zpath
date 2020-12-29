@@ -64,11 +64,11 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
         if (getChartType(getType()) == LINE_1D || getChartType(getType()) == LINE_1D_2X) {
             if (mPointCache.empty()) {
-                return vector<float>(2, 0);
+                return vector<float>(1, 0);
             } else if (mPointCache.size() - 1 < x.at(0) || mPointCache.at(x.at(0)).empty()) {
-                return vector<float>(2, 0);
+                return vector<float>(1, 0);
             }
-            return vector<float>(2, mPointCache.at(x.at(0)).at(lineIndex));
+            return vector<float>(1, mPointCache.at(x.at(0)).at(lineIndex));
         } else if (getChartType(getType()) == LINE_2D) {
             if (mPointCache.empty() || mPointCache.size() <= x.at(0)) {
                 return vector<float>(2, 0);
@@ -79,6 +79,8 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
             point.push_back(mPointCache.at(x.at(0)).at(1));
 
             return point;
+        } else if (getChartType(getType()) == ChartType::IMAGE) {
+            return mPointCache1D;
         }
     });
 
@@ -135,10 +137,12 @@ void ZNodeView::updateChart() {
             updateChart2D();
         } else if (getChartType(getType()) == LINE_1D_2X) {
             updateChart1D2X();
+        } else if (getChartType(getType()) == IMAGE) {
+            updateChartHeatMap();
         }
     }
 
-    mChart->requestLineUpdate();
+    mChart->invalidateData();
     vec2 xBound = mChart->getXBounds();
     vec2 yBound = mChart->getYBounds();
 
@@ -155,6 +159,37 @@ void ZNodeView::updateChart() {
     mXMaxLabel->setText(xmax.str());
     mYMinLabel->setText(ymin.str());
     mYMaxLabel->setText(ymax.str());
+}
+
+void ZNodeView::updateChartHeatMap() {
+
+    // todo: update this when x and y resolution defined independently
+    int xRes = std::min(mChart->getResolution(), 100);
+    int yRes = std::min(mChart->getResolution(), 100);
+
+    mChart->computeChartBounds();
+    vec2 xBounds = mChart->getXBounds();
+    vec2 yBounds = mChart->getYBounds();
+
+    vector<float> points;
+
+    for (int iy = 0; iy < yRes; iy++) {
+        for (int ix = 0; ix < xRes; ix++) {
+            float xFactor = (float) ix / (float) xRes;
+            float yFactor = (float) iy / (float) yRes;
+
+            float x = mix(xBounds.x, xBounds.y, xFactor);
+            float y = mix(yBounds.x, yBounds.y, yFactor);
+            vector<vector<float>> inVec = {vector<float>(MAX_INPUT_COUNT, x), vector<float>(MAX_INPUT_COUNT, y)};
+
+            vector<vector<float>> z = evaluate(inVec);
+            if (!z.empty()) {
+                points.push_back(z.at(0).at(0));
+            }
+        }
+    }
+
+    mPointCache1D = points;
 }
 
 void ZNodeView::updateChart2D() {
@@ -200,8 +235,6 @@ void ZNodeView::updateChart1D() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float factor = (float) i / (float) chartRes;
         float x = mix(xBounds.x, xBounds.y, factor);
-        vector<float> inVec = vector<float>(MAX_INPUT_COUNT, x);
-        inVec.at(inVec.size() - 1) = i;
         vector<vector<float>> fx = evaluate(vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x)));
         if (fx.empty()) {
             mChart->setVisibility(false);
@@ -228,8 +261,6 @@ void ZNodeView::updateChart1D2X() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float factor = (float) i / (float) chartRes;
         float x = mix(xBounds.x, xBounds.y, factor);
-        vector<float> inVec = vector<float>(MAX_INPUT_COUNT, x);
-        inVec.at(inVec.size() - 1) = i;
         vector<vector<float>> fx = evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x)));
         if (fx.empty()) {
             mChart->setVisibility(false);

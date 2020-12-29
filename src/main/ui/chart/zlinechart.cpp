@@ -19,6 +19,8 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
 
     glGenBuffers(1, &mHeatVertBuffer);
     glGenBuffers(1, &mHeatEdgeBuffer);
+    glGenTextures(1, &mHeatTexBuffer);
+
 
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
@@ -31,13 +33,14 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     updateFBOSize();
     initGrid();
     initBackgroundGrid();
-    updateHeatMap();
 
 }
 
 void ZLineChart::updateHeatMap() {
 
-    glGenTextures(1, &mHeatTexBuffer);
+    if (mListener == nullptr) {
+        return;
+    }
                         // pos,  texture
     vector<float> verts = {mXBound.x, mYBound.x, 0, 0,
                            mXBound.y, mYBound.x, 1, 0,
@@ -50,9 +53,20 @@ void ZLineChart::updateHeatMap() {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHeatEdgeBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+
+    vector<float> pixels = mListener({(int) 0, (int) 0}, 0);
+
+    glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, std::min(mResolution, 100), std::min(mResolution, 100), 0, GL_RED, GL_FLOAT, &pixels[0]);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    invalidate();
 }
 
-void ZLineChart::updateLines() {
+void ZLineChart::updateData() {
 
     if (mListener == nullptr) {
         return;
@@ -267,13 +281,7 @@ void ZLineChart::draw() {
 
     if (mDataInvalid) {
         mDataInvalid = false;
-
-        if (mInputType == HEAT_MAP) {
-            updateHeatMap();
-        } else {
-            updateLines();
-        }
-
+        updateData();
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
@@ -289,6 +297,9 @@ void ZLineChart::draw() {
 
     // draw heat map
     if (mInputType == HEAT_MAP) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
+
         mShader->setVec4("uColor", green);
         glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);
         int dimension = 4;
@@ -337,7 +348,7 @@ void ZLineChart::draw() {
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(i));
         glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
         glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                              sizeof(float) * 4, (void*) 0);
+                              sizeof(float) * 4, nullptr);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(i));
         glDrawElements(GL_LINES, mPointCount.at(i), GL_UNSIGNED_INT, nullptr);

@@ -77,7 +77,7 @@ public:
 
     void onScrollChange(double x, double y) override;
 
-    void requestLineUpdate() {
+    void invalidateData() {
         mDataInvalid = true;
     }
 
@@ -87,7 +87,7 @@ public:
 
 private:
     function<void()> mInvalidateListener;
-    function<vector<float>(vector<int>, int index)> mListener;
+    function<vector<float>(vector<int>, int index)> mListener = nullptr;
 
     mat4 mDefaultMat = ortho(-1.5f, 1.5f, 1.5f, -1.5f, -1.0f, 10.0f);
 
@@ -148,7 +148,7 @@ private:
     ;
 
     void updateFBOSize();
-    void updateLines();
+    void updateData();
     void initGrid();
 
     void initBackgroundGrid();
