@@ -70,11 +70,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
 void ZNodeEditor::addTestNodes() {
     ZNodeView *sin = addNode(ZNodeView::SIN);
-    ZNodeView *fft = addNode(ZNodeView::FFT);
-
-    ZNodeView *heatmap = addNode(ZNodeView::HEAT_MAP);
-
-
+//    ZNodeView *fft = addNode(ZNodeView::FFT);
+//
+//    ZNodeView *heatmap = addNode(ZNodeView::HEAT_MAP);
+//
+//
 
 //    ZNodeView *x = addNode(ZNodeView::X);
 //    ZNodeView *c = addNode(ZNodeView::C);

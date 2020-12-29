@@ -164,8 +164,8 @@ void ZNodeView::updateChart() {
 void ZNodeView::updateChartHeatMap() {
 
     // todo: update this when x and y resolution defined independently
-    int xRes = std::min(mChart->getResolution(), 100);
-    int yRes = std::min(mChart->getResolution(), 100);
+    int xRes = std::min(mChart->getResolution(), 50);
+    int yRes = std::min(mChart->getResolution(), 50);
 
     mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
@@ -439,26 +439,25 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
             return output;
         }
 
-        for (int d = 0; d < summedInputs.size(); d++) {
-            // Loop over input sockets
-            for (int i = 0; i < size.x; i++) {
 
-                const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
+        // Loop over input sockets
+        for (int i = 0; i < size.x; i++) {
 
-                // If inputs are connected evaluate recursively, otherwise use the specified input.
-                if (!inputs.empty()) {
-                    // Summing all inputs is useful for dot products.
-                    float sum = 0;
-                    // Loop over all inputs on a single socket
-                    for (pair<ZNodeView *, int> input : inputs) {
+            const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
 
-                        vector<vector<float>> recurOutput;
-                        if (root == nullptr) {
-                            recurOutput = input.first->evaluate(x, this);
-                        } else {
-                            recurOutput = input.first->evaluate(x, root);
-                        }
+            // If inputs are connected evaluate recursively, otherwise use the specified input.
+            if (!inputs.empty()) {
+                // Summing all inputs is useful for dot products.
 
+                // Loop over all inputs on a single socket
+                for (pair<ZNodeView *, int> input : inputs) {
+                    vector<vector<float>> recurOutput;
+                    if (root == nullptr) {
+                        recurOutput = input.first->evaluate(x, this);
+                    } else {
+                        recurOutput = input.first->evaluate(x, root);
+                    }
+                    for (int d = 0; d < summedInputs.size(); d++) {
                         // It's possible a previous node on the stack has too few inputs.
                         // When that happens display an error message.
                         if (recurOutput.empty()) {
@@ -467,22 +466,23 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                             return vector<vector<float>>();
                         } else {
                             if (d < recurOutput.size() && input.second < recurOutput.at(d).size()) {
-                                sum += recurOutput.at(d).at(input.second);
+                                summedInputs.at(d).at(i) += recurOutput.at(d).at(input.second);
                             }
                         }
                     }
-                    summedInputs.at(d).at(i) = sum;
+                }
+
+            } else {
+
+                // Check that the passed input vector dimension matches
+                // the number of input sockets on the node. If not
+                // display an error message.
+                if (x.at(0).size() <= size.x) {
+                    mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+                    mOutputLabel->setTextColor(white);
+                    return vector<vector<float>>();
                 } else {
-
-                    // Check that the passed input vector dimension matches
-                    // the number of input sockets on the node. If not
-                    // display an error message.
-                    if (x.at(0).size() <= size.x) {
-                        mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-                        mOutputLabel->setTextColor(white);
-                        return vector<vector<float>>();
-                    } else {
-
+                    for (int d = 0; d < summedInputs.size(); d++) {
                         // Use the default input when nothing is connected to a constant socket
                         if (getSocketType().first.at(i) == VAR) {
                             summedInputs.at(d).at(i) = x.at(d).at(i);
@@ -493,6 +493,7 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                 }
             }
         }
+
         output = compute(summedInputs, mType);
     }
     return output;

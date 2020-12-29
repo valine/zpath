@@ -90,10 +90,10 @@ public:
             vector<float> out;
             switch (type) {
                 case SIN:
-                    out = {sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+                    out = {in.at(2) * sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
                     break;
                 case COS:
-                    out = {cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
+                    out = {in.at(2) * cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
                     break;
                 case TAN:
                     out = {tan(in.at(0)), chartBound.x, chartWidth};
