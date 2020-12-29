@@ -200,12 +200,12 @@ void ZNodeView::updateChart2D() {
     mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
-    evaluate(evaluate(vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, 0))));
+    evaluate(evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, 0))));
     vector<vector<float>> points;
     for (int i = 0; i < mChart->getResolution(); i++) {
         float input = (float) i * increment;
 
-        vector<vector<float>> fx = evaluate(vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, input)));
+        vector<vector<float>> fx = evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, input)));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
