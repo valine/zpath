@@ -23,6 +23,9 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     glGenTextures(1, &mHeatTexBuffer);
 
 
+    initHeatLUT();
+
+
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
 
@@ -35,6 +38,39 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     initGrid();
     initBackgroundGrid();
 
+}
+
+void ZLineChart::initHeatLUT()  {
+    glGenTextures(1, &mHeatLUTBuffer);
+    mHeatShader->use();
+    glUniform1i(glGetUniformLocation(mHeatShader->mID, "texture"), 0);
+    glUniform1i(glGetUniformLocation(mHeatShader->mID, "texLut"), 1);
+    int res = 15;
+    vector<float> pixels = {
+            0.0f,0.0f,0.0f,
+            0.000000f,0.000000f,0.520996f,
+            0.000000f,0.000000f,1.000000f,
+            0.000000f,0.051269f,1.000000f,
+            0.000000f,0.215861f,1.000000f,
+            0.000000f,0.520996f,1.000000f,
+            0.051269f,1.000000f,1.000000f,
+            0.215861f,1.000000f,0.520996f,
+            0.520996f,1.000000f,0.215861f,
+            1.000000f,1.000000f,0.051269f,
+            1.000000f,1.000000f,0.000000f,
+            1.000000f,0.520996f,0.000000f,
+            1.000000f,0.215861f,0.000000f,
+            1.000000f,0.051269f,0.000000f,
+            0.215861f,0.000000f,0.000000f,
+    };
+
+    glBindTexture(GL_TEXTURE_2D, mHeatLUTBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, res, 1, 0, GL_RGB, GL_FLOAT, &pixels[0]);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void ZLineChart::updateHeatMap() {
@@ -58,12 +94,14 @@ void ZLineChart::updateHeatMap() {
     vector<float> pixels = mListener({(int) 0, (int) 0}, 0);
 
     glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, std::min(mResolution, 50), std::min(mResolution, 50), 0, GL_RED, GL_FLOAT, &pixels[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, std::min(mResolution, 50), std::min(mResolution, 50), 0, GL_RED, GL_FLOAT, &pixels[0]);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
     invalidate();
 }
 
@@ -296,8 +334,15 @@ void ZLineChart::draw() {
     if (mInputType == HEAT_MAP) {
         mHeatShader->use();
         mHeatShader->setMat4("uVPMatrix", mTransform);
+
+        mHeatShader->setFloat("zmin", -1.0);
+        mHeatShader->setFloat("zmax", 1.0);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, mHeatLUTBuffer);
 
         mHeatShader->setVec4("uColor", green);
         glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);

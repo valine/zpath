@@ -108,6 +108,8 @@ private:
     unsigned int mRBO = -1;
     unsigned int mFinalRBO = -1;
 
+    unsigned int mHeatLUTBuffer = -1;
+
     unsigned int mGridVertBuffer = -1;
     unsigned int mGridEdgeBuffer = -1;
 
@@ -168,6 +170,7 @@ private:
 
     void updateHeatMap();
 
+    void initHeatLUT();
 };
 
 
