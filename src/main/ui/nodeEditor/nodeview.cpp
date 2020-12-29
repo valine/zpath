@@ -138,6 +138,7 @@ void ZNodeView::updateChart() {
         } else if (getChartType(getType()) == LINE_1D_2X) {
             updateChart1D2X();
         } else if (getChartType(getType()) == IMAGE) {
+            mLaplaceCache.clear();
             updateChartHeatMap();
         }
     }

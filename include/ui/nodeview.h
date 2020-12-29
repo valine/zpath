@@ -460,16 +460,60 @@ public:
         return returnValue;
     }
 
-    pair<float, float> computeLaplace(float x, float y, float start, float width, int resolution) {
+    pair<float, float> computeLaplace(float x, float y, float start, float windowSize, int resolution) {
+        int xi = (int) std::min(std::max(0.0f, x), (float) resolution - 1.0f);
+        int yi = (int) std::min(std::max(0.0f, y), (float) resolution - 1.0f);
+        if (!mLaplaceCache.empty()) {
+            return {mLaplaceCache.at(xi).at(yi), 0};
+        }
+
+        auto fres = (float) resolution;
         int socketIndex = 0;
         int dimenIndex = 0;
-        float summedInput = sumInputs(x, socketIndex, dimenIndex);
-        return {x + y, 0};
+
+        vector<float> timeDomain;
+        for (int i = 0; i < resolution; i++) {
+            float t = ((i / fres) * windowSize) + start;
+            float summedInput = sumInputs(t, socketIndex, dimenIndex);
+            timeDomain.push_back(summedInput);
+        }
+
+        mLaplaceCache = vector<vector<float>>(resolution, vector<float>(resolution, 0));
+        for (int fi = 0; fi < resolution; fi++) {
+            for (int ei = 0; ei < resolution; ei++) {
+
+                float freq = ((fi / fres) * windowSize) + start;
+                float expo = ((ei / fres) * windowSize) + start;
+                float output = 0;
+                for (int t = 0; t < resolution; t++) {
+                    output += (timeDomain.at(t) * cos(((freq * t * M_PI * 2)))) * exp((expo * t * M_PI * 2));
+                }
+
+                mLaplaceCache.at(fi).at(ei) = output;
+            }
+        }
+
+        return {mLaplaceCache.at(xi).at(yi), 0};
     }
 
-    float sumInputs(float x, int index, int var) const {
+    float sumInputs(vec2 input, int socketIndex) {
+        float sum = 0.0;
+        auto inputSocket = mInputIndices.at(socketIndex);
+
+        vector<float> x = vector<float>(MAX_INPUT_COUNT, input.x);
+        vector<float> y = vector<float>(MAX_INPUT_COUNT, input.y);
+
+        for (auto singleInput : inputSocket) {
+            sum += singleInput.first->evaluate({x, y}).at(
+                    0).at(singleInput.second);
+        }
+
+        return sum;
+    }
+
+    float sumInputs(float x, int socketIndex, int var) const {
         float summedInput = 0.0;
-        auto inputSocket = mInputIndices.at(index);
+        auto inputSocket = mInputIndices.at(socketIndex);
         for (auto singleInput : inputSocket) {
             summedInput += singleInput.first->evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x))).at(
                     var).at(singleInput.second);
@@ -582,6 +626,7 @@ private:
     function<void(ZNodeView* node)> mInvalidateListener;
 
     vector<complex<float>> mFftCache;
+    vector<vector<float>> mLaplaceCache;
 
     bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
