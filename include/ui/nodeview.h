@@ -153,7 +153,7 @@ public:
                     break;
                 }
                 case LAPLACE:
-                    break;
+                    return {{x.at(0).at(0) + x.at(1).at(0)}};
                 case FIRST_DIFF: {
                     float diff = computeFirstDifference(in.at(0), in.at(1));
                     out = {diff, chartBound.x, chartWidth};
@@ -219,7 +219,7 @@ public:
             case FFT:return ivec2(4,3);
             case IFFT:return ivec2(4,3);
             case HARTLEY:return ivec2(4,3);
-            case LAPLACE:return ivec2(3,3);
+            case LAPLACE:return ivec2(4,3);
             case FIRST_DIFF:return ivec2(2,3);
             case DOT:return ivec2(2,3);
             case CROSS:return ivec2(4,4);
@@ -253,7 +253,7 @@ public:
             case IFFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
             case FFT:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case HARTLEY:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-            case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case LAPLACE:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, VAR}, {VAR, CON, CON}};
             case DOT:return {{CON, CON}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
@@ -331,6 +331,8 @@ public:
             case FFT:
             case HARTLEY:
                 return {0.0, 0.0, 0.0, 1.0};
+            case LAPLACE:
+                return {0.0, 0.0, 0.0, 1.0};
             case CHART_2D:
                 return {0.0,0.0,100};
             case DOT:
@@ -362,6 +364,7 @@ public:
             case IFFT:return {"", "", "Window Start", "Window Size"};
             case HARTLEY:
             case FFT: return {"", "", "Window Start", "Window Size"};
+            case LAPLACE: return {"", "", "Window Start", "Window Size"};
             case CHART_2D: return {"", "", "Resolution"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
@@ -396,6 +399,7 @@ public:
             case FFT:
             case IFFT:return LINE_1D_2X;
             case CHART_2D: return LINE_2D;
+            case LAPLACE:
             case HEAT_MAP: return IMAGE;
         }
     }
