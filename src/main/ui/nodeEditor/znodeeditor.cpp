@@ -50,7 +50,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         allTypes.push_back(ZNodeView::getName(type));
     }
 
-    ZDropDown* dropDown = new ZDropDown(100,700, allTypes, mHeader);
+    ZDropDown* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(150, 0);
     dropDown->setTitle("Node Picker");
 
@@ -72,7 +72,7 @@ void ZNodeEditor::addTestNodes() {
     ZNodeView *sin = addNode(ZNodeView::SIN);
     ZNodeView *fft = addNode(ZNodeView::FFT);
     ZNodeView *heatmap = addNode(ZNodeView::HEAT_MAP);
-    
+
     ZNodeView *x = addNode(ZNodeView::X);
     ZNodeView *c = addNode(ZNodeView::C);
     ZNodeView *s = addNode(ZNodeView::SIN);
@@ -111,14 +111,11 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
     while(shouldRun) {
         while (!editor->mEvalSet.empty()) {
-
             ZNodeView *node = *editor->mEvalSet.begin();
-            if (node->getVisibility()) {
-                {
+            if (node->getVisibility()) {{
                     std::lock_guard<std::mutex> guard(editor->mEvalMutex);
                     editor->mEvalSet.erase(node);
                 }
-
                 node->updateChart();
             } else {
                 editor->removeNodeAsync(node);
@@ -243,7 +240,7 @@ void ZNodeEditor::duplicateSelectedNodes(){
 
         int outputIndex = 0;
         // Looping over sockets
-        for (vector<pair<ZNodeView*, int>> edges : original->mOutputIndices) {
+        for (const vector<pair<ZNodeView*, int>>& edges : original->mOutputIndices) {
             // Looping over individual edges
             for(pair<ZNodeView*, int> edge : edges) {
                 ZNodeView* nextNode = edge.first;
@@ -292,7 +289,7 @@ void ZNodeEditor::deleteNode(ZNodeView * node) {
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
-    for (vector<pair<ZNodeView *, int>> inputs : node->mInputIndices) {
+    for (const vector<pair<ZNodeView *, int>>& inputs : node->mInputIndices) {
         for (pair<ZNodeView *, int> input : inputs) {
             ZNodeView *prevNode = input.first;
             int index = 0;
@@ -306,7 +303,7 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
         }
     }
 
-    for (vector<pair<ZNodeView *, int>> outputs : node->mOutputIndices) {
+    for (const vector<pair<ZNodeView *, int>>& outputs : node->mOutputIndices) {
         int pairIndex = 0;
         for (pair<ZNodeView *, int> output : outputs) {
             ZNodeView *nextNode = output.first;

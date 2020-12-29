@@ -71,7 +71,6 @@ public:
         HARTLEY,
         LAPLACE,
         FIRST_DIFF,
-        SECOND_DIFF,
         DOT,
         CROSS,
         CHART_2D,
@@ -161,12 +160,9 @@ public:
                     float diff = computeFirstDifference(in.at(0), in.at(1));
                     out = {diff, chartBound.x, chartWidth};
                     break;
-                };
-                case SECOND_DIFF:
-                    break;
+                }
                 case DOT:
                     return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)), vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
-                    break;
                 case CROSS:
                     break;
                 case CHART_2D: {
@@ -180,7 +176,6 @@ public:
                     break;
                 }
                 case COMBINE: {
-
                     return {{x.at(0).at(0)},
                             {x.at(1).at(1)}};
 
@@ -228,7 +223,6 @@ public:
             case HARTLEY:return ivec2(4,3);
             case LAPLACE:return ivec2(3,3);
             case FIRST_DIFF:return ivec2(2,3);
-            case SECOND_DIFF:return ivec2(3,3);
             case DOT:return ivec2(2,3);
             case CROSS:return ivec2(4,4);
             case CHART_2D: return ivec2(3,4);
@@ -263,7 +257,6 @@ public:
             case HARTLEY:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, VAR}, {VAR, CON, CON}};
-            case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case DOT:return {{CON, CON}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
             case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
@@ -297,7 +290,6 @@ public:
             case HARTLEY:return "Hartley";
             case LAPLACE:return "Laplace";
             case FIRST_DIFF:return "1st diff";
-            case SECOND_DIFF:return "2nd diff";
             case DOT:return "dot";
             case CROSS:return "cross";
             case CHART_2D:return "2D Chart";
@@ -349,7 +341,6 @@ public:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
     }
-
 
     static bool isOutputLabelVisible(Type type) {
         switch(type) {
@@ -497,8 +488,8 @@ public:
     }
 
     vector<vector<float>> evaluate(vector<vector<float>> x);
-    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView* root);
 
+    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView* root);
 
     void setType(Type type);
 
@@ -520,7 +511,6 @@ public:
     int getInputMagnitude(int index) {
        return mConstantMagnitudeInput.at(index);
     }
-
     int getOutputMagnitude(int index) {
         return mConstantMagnitudeOutput.at(index);
     }
