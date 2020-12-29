@@ -125,6 +125,7 @@ private:
     vector<unsigned int> mEdges;
     vector<unsigned int> mPointCount;
     ZShader* mShader;
+    ZShader* mHeatShader;
 
     ZTexture* mBackground;
     int mLineCount = 1;
@@ -145,6 +146,15 @@ private:
 
     const string ui_fs =
         #include "shaders/chart.fs"
+    ;
+
+    // Shader code
+    const string heat_vs =
+        #include "shaders/heatmap.vs"
+    ;
+
+    const string heat_fs =
+        #include "shaders/heatmap.fs"
     ;
 
     void updateFBOSize();

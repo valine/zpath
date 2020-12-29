@@ -8,6 +8,7 @@
 
 ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, height, parent) {
     mShader = new ZShader(ui_vs, ui_fs);
+    mHeatShader = new ZShader(heat_vs, heat_fs);
 
     glGenFramebuffers(1, &mFBO);
     glGenTextures(1, &mTexBuffer);
@@ -285,10 +286,6 @@ void ZLineChart::draw() {
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-    mShader->use();
-
-   // mat4 projection = mTmpTransform;
-    mShader->setMat4("uVPMatrix", mTransform);
 
     glViewport(0, 0, getWidth(), getHeight());
 
@@ -297,14 +294,16 @@ void ZLineChart::draw() {
 
     // draw heat map
     if (mInputType == HEAT_MAP) {
+        mHeatShader->use();
+        mHeatShader->setMat4("uVPMatrix", mTransform);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
 
-        mShader->setVec4("uColor", green);
+        mHeatShader->setVec4("uColor", green);
         glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);
         int dimension = 4;
-        glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
-        glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), dimension, GL_FLOAT, GL_FALSE,
+        glEnableVertexAttribArray(glGetAttribLocation(mHeatShader->mID, "vPosUi"));
+        glVertexAttribPointer(glGetAttribLocation(mHeatShader->mID, "vPosUi"), dimension, GL_FLOAT, GL_FALSE,
                               sizeof(float) * dimension, nullptr);
 
         int triangles = 2;
@@ -312,16 +311,23 @@ void ZLineChart::draw() {
         glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
     }
 
-    // draw background grid
-    mShader->setVec4("uColor", grey);
-    glLineWidth(1.0);
-    glBindBuffer(GL_ARRAY_BUFFER, mBGridVertBuffer);
-    glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
-    glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 4, nullptr);
+    mShader->use();
+    // mat4 projection = mTmpTransform;
+    mShader->setMat4("uVPMatrix", mTransform);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
-    glDrawElements(GL_LINES, mBGridVCount, GL_UNSIGNED_INT, nullptr);
+
+    if (mInputType != HEAT_MAP) {
+        // draw background grid
+        mShader->setVec4("uColor", grey);
+        glLineWidth(1.0);
+        glBindBuffer(GL_ARRAY_BUFFER, mBGridVertBuffer);
+        glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+        glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * 4, nullptr);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
+        glDrawElements(GL_LINES, mBGridVCount, GL_UNSIGNED_INT, nullptr);
+    }
 
     // draw grid
     mShader->setVec4("uColor", red);

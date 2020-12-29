@@ -261,7 +261,9 @@ void ZNodeView::updateChart1D2X() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float factor = (float) i / (float) chartRes;
         float x = mix(xBounds.x, xBounds.y, factor);
-        vector<vector<float>> fx = evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x)));
+        vector<vector<float>> inVec = {vector<float>(MAX_INPUT_COUNT, x), vector<float>(MAX_INPUT_COUNT, x)};
+
+        vector<vector<float>> fx = evaluate(inVec);
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -464,7 +466,9 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                             mOutputLabel->setTextColor(red);
                             return vector<vector<float>>();
                         } else {
-                            sum += recurOutput.at(d).at(input.second);
+                            if (d < recurOutput.size() && input.second < recurOutput.at(d).size()) {
+                                sum += recurOutput.at(d).at(input.second);
+                            }
                         }
                     }
                     summedInputs.at(d).at(i) = sum;

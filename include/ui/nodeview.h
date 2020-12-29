@@ -76,6 +76,7 @@ public:
         CROSS,
         CHART_2D,
         COMBINE,
+        SPLIT,
         HEAT_MAP,
         LAST // Fake enum to allow easy iteration
     };
@@ -132,11 +133,11 @@ public:
                     out = mConstantValueOutput;
                     break;
                 case X:
-                    return {{in.at(0), chartBound.x, chartWidth},
+                    return {{x.at(0).at(0), chartBound.x, chartWidth},
                             {NAN,      chartBound.x, chartWidth}};
                 case Y:
                     return {{NAN,      chartBound.x, chartWidth},
-                            {in.at(1), chartBound.x, chartWidth}};
+                            {x.at(1).at(0), chartBound.x, chartWidth}};
                 case FILE:
                     break;
                 case FFT: {
@@ -164,6 +165,7 @@ public:
                 case SECOND_DIFF:
                     break;
                 case DOT:
+                    return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)), vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
                     break;
                 case CROSS:
                     break;
@@ -181,6 +183,10 @@ public:
 
                     return {{x.at(0).at(0)},
                             {x.at(1).at(1)}};
+
+                }
+                case SPLIT: {
+                    return {{x.at(1).at(0), x.at(0).at(0)}, {NAN, NAN}};
 
                 }
                 case LAST:
@@ -223,11 +229,12 @@ public:
             case LAPLACE:return ivec2(3,3);
             case FIRST_DIFF:return ivec2(2,3);
             case SECOND_DIFF:return ivec2(3,3);
-            case DOT:return ivec2(4,3);
+            case DOT:return ivec2(2,3);
             case CROSS:return ivec2(4,4);
             case CHART_2D: return ivec2(3,4);
             case HEAT_MAP: return ivec2(1,3);
             case COMBINE: return ivec2(2,1);
+            case SPLIT: return ivec2(1,2);
             case LAST:return ivec2(0,0);
         }
     }
@@ -257,11 +264,12 @@ public:
             case LAPLACE:return {{VAR, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, VAR}, {VAR, CON, CON}};
             case SECOND_DIFF:return {{VAR, CON, CON}, {VAR, CON, CON}};
-            case DOT:return {{VAR, VAR, VAR, VAR}, {VAR, CON, CON}};
+            case DOT:return {{CON, CON}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
             case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
             case HEAT_MAP: return {{VAR}, {VAR, CON, CON}};
             case COMBINE: return {{VAR, VAR}, {VAR}};
+            case SPLIT: return {{VAR}, {VAR, VAR}};
             case LAST:return {};
         }
     }
@@ -295,6 +303,7 @@ public:
             case CHART_2D:return "2D Chart";
             case HEAT_MAP:return "Heat Map";
             case COMBINE:return "Combine";
+            case SPLIT:return "Split";
             case LAST:return "none";
         }
     }
@@ -334,6 +343,8 @@ public:
                 return {0.0, 0.0, 0.0, 1.0};
             case CHART_2D:
                 return {0.0,0.0,100};
+            case DOT:
+                return {1.0, 1.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
