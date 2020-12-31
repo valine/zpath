@@ -15,6 +15,8 @@ static const int CHART_TOP_MARGIN = 15;
 static const int DEFAULT_MAGNITUDE = 6;
 static const int LABEL_THRESHOLD = 120;
 static const int LABEL_THRESHOLD_X = 160;
+static const int REAL = 0;
+static const int IMAG = 1;
 using namespace std;
 #include <vector>
 #include "zview.h"
@@ -86,20 +88,41 @@ public:
         vector<vector<float>> output;
         for (int d = 0; d < x.size(); d++) {
             vector<float> in = x.at(d);
+
             vector<float> out;
             switch (type) {
-                case SIN:
-                    out = {in.at(2) * sin(in.at(0) * in.at(1)), chartBound.x, chartWidth};
-                    break;
+                case SIN: {
+                    float a = x.at(REAL).at(0);
+                    float b = x.at(IMAG).at(0);
+
+                    float c = x.at(REAL).at(1);
+                    float e = x.at(IMAG).at(1);
+
+                    auto firstMul = multiply(a, b, c, e);
+
+                    float a2 = sin(firstMul.first) * cosh(firstMul.second);
+                    float b2 = cos(firstMul.first) * sinh(firstMul.second);
+
+                    float c2 = x.at(REAL).at(2);
+                    float e2 = x.at(IMAG).at(2);
+
+                    auto result = multiply(a2, b2, c2, e2);
+
+                    return {{result.first,  chartBound.x, chartWidth},
+                            {result.second, chartBound.x, chartWidth}};
+                }
                 case COS:
                     out = {in.at(2) * cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
                     break;
                 case TAN:
                     out = {tan(in.at(0)), chartBound.x, chartWidth};
                     break;
-                case EXP:
-                    out = {exp(in.at(0)), chartBound.x, chartWidth};
-                    break;
+                case EXP: {
+                    complex<float> comIn = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> comOut = exp(comIn);
+                    return {{comOut.real(), chartBound.x, chartWidth},
+                            {comOut.imag(), chartBound.x, chartWidth}};
+                }
                 case SQRT:
                     out = {sqrt(in.at(0)), chartBound.x, chartWidth};
                     break;
@@ -122,20 +145,35 @@ public:
                 case SUBTRACT:
                     out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
                     break;
-                case MULTIPLY:
-                    out = {in.at(0) * in.at(1), chartBound.x, chartWidth};
-                    break;
-                case DIVIDE:
-                    out = {in.at(0) / in.at(1), chartBound.x, chartWidth};
-                    break;
+                case MULTIPLY: {
+                    float a = x.at(REAL).at(0);
+                    float b = x.at(IMAG).at(0);
+                    float c = x.at(REAL).at(1);
+                    float e = x.at(IMAG).at(1);
+                    auto result = multiply(a,b,c,e);
+                    return {{result.first, chartBound.x, chartWidth},
+                            {result.second, chartBound.x, chartWidth}};
+                }
+                case DIVIDE: {
+                    float a = x.at(REAL).at(1);
+                    float b = x.at(IMAG).at(1);
+                    float c = x.at(REAL).at(0);
+                    float e = x.at(IMAG).at(0);
+
+                    float denom = pow(a, 2) + pow(b, 2);
+
+                    float r = (c * a + b * e) / denom;
+                    float img = (a * d - c * e) / denom;
+                    return {{r, chartBound.x, chartWidth}, {{img, chartBound.x, chartWidth}}};
+                }
                 case C:
                     out = mConstantValueOutput;
                     break;
                 case X:
                     return {{x.at(0).at(0), chartBound.x, chartWidth},
-                            {NAN,      chartBound.x, chartWidth}};
+                            {0,      chartBound.x, chartWidth}};
                 case Y:
-                    return {{NAN,      chartBound.x, chartWidth},
+                    return {{0,      chartBound.x, chartWidth},
                             {x.at(1).at(0), chartBound.x, chartWidth}};
                 case FILE:
                     break;
@@ -194,6 +232,10 @@ public:
         }
 
         return output;
+    }
+
+    pair<float, float> multiply(float a, float b, float c, float d) {
+        return {a * c - b * d, a * d + b * c};
     }
 
     /**
@@ -483,19 +525,23 @@ public:
             for (int fi = 0; fi < resolution; fi++) {
 
                 float freq = (float) fi;
-                float expo = ((ei / fres) * windowSize) + start;
+                float expo = (float) ei;
                 float outputR = 0;
                 float outputI = 0;
                 for (int t = 0; t < resolution; t++) {
-                    float time = ((t / fres) * windowSize) + start;
+                    float time = ((t / fres));
                     //output += (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))) * exp((expo * time * M_PI * 2));
-                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((expo * time * M_PI * 2)));
-                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((expo * time * M_PI * 2)));
-                    outputR += real / timeDomain.size();
-                    outputI += img / timeDomain.size();
+                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo * time * M_PI * 2)));
+                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo * time * M_PI * 2)));
+
+//                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))));
+//                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2))));
+                    outputR += real;
+                    outputI += img;
                 }
 
-                mLaplaceCache.at(ei).at(fi) = sqrt(pow(outputR, 2.0) + pow(outputI, 2.0));
+               // mLaplaceCache.at(ei).at(fi) = outputR;
+                mLaplaceCache.at(ei).at(fi) = sqrt(pow(outputR, 2.0) + pow(outputI, 2.0)) / resolution;
             }
         }
 

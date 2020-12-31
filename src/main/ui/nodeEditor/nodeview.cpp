@@ -488,7 +488,12 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                         if (getSocketType().first.at(i) == VAR) {
                             summedInputs.at(d).at(i) = x.at(d).at(i);
                         } else {
-                            summedInputs.at(d).at(i) = mConstantValueInput.at(i);
+                            // By default constants have no imaginary component
+                            if (d == REAL) {
+                                summedInputs.at(d).at(i) = mConstantValueInput.at(i);
+                            } else {
+                                summedInputs.at(d).at(i) = 0.0;
+                            }
                         }
                     }
                 }
