@@ -92,53 +92,73 @@ public:
             vector<float> out;
             switch (type) {
                 case SIN: {
-                    float a = x.at(REAL).at(0);
-                    float b = x.at(IMAG).at(0);
-
-                    float c = x.at(REAL).at(1);
-                    float e = x.at(IMAG).at(1);
-
-                    auto firstMul = multiply(a, b, c, e);
-
-                    float a2 = sin(firstMul.first) * cosh(firstMul.second);
-                    float b2 = cos(firstMul.first) * sinh(firstMul.second);
-
-                    float c2 = x.at(REAL).at(2);
-                    float e2 = x.at(IMAG).at(2);
-
-                    auto result = multiply(a2, b2, c2, e2);
-
-                    return {{result.first,  chartBound.x, chartWidth},
-                            {result.second, chartBound.x, chartWidth}};
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                    complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                    complex<float> out0 = sin(in0 * in1) * in2;
+                    return {{out0.real(),  chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
                 }
-                case COS:
-                    out = {in.at(2) * cos(in.at(0) * in.at(1)), chartBound.x, chartWidth};
-                    break;
-                case TAN:
-                    out = {tan(in.at(0)), chartBound.x, chartWidth};
-                    break;
+                case COS:{
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                    complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                    complex<float> out0 = cos(in0 * in1) * in2;
+                    return {{out0.real(),  chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
+                case TAN: {
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> out0 = tan(in0);
+                    return {{out0.real(), chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
                 case EXP: {
                     complex<float> comIn = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> comOut = exp(comIn);
                     return {{comOut.real(), chartBound.x, chartWidth},
                             {comOut.imag(), chartBound.x, chartWidth}};
                 }
-                case SQRT:
-                    out = {sqrt(in.at(0)), chartBound.x, chartWidth};
-                    break;
-                case POW:
-                    out = {pow(in.at(0), in.at(1)), chartBound.x, chartWidth};
-                    break;
-                case GAUSSIAN:
-                    out = {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
-                           chartBound.x, chartWidth};
-                    break;
-                case MORLET:
-                    out = {(float) (
+                case SQRT:{
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> out0 = sqrt(in0);
+                    return {{out0.real(), chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
+                case POW: {
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                    complex<float> out0 = pow(in0, in1);
+                    return {{out0.real(), chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
+                case GAUSSIAN: {
+
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                    complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                    complex<float> two = {2.0, 0};
+                    complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
+                    return {{out0.real(),  chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+
+
+                }
+//                    out = {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
+//                           chartBound.x, chartWidth};
+//                    break;
+                case MORLET: {
+                    auto real = (float) (
                             cos(in.at(0) * in.at(4)) * // sinusoid
-                            (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2)))), // gaussian
-                           chartBound.x, chartWidth}; // Chart
-                    break;
+                            (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))));
+
+                    auto imaginary = (float) (
+                            sin(in.at(0) * in.at(4)) * // sinusoid
+                            (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))));
+                    return {{real,  chartBound.x, chartWidth},
+                            {imaginary, chartBound.x, chartWidth}};
+                }
+
                 case ADD:
                     out = {in.at(0) + in.at(1), chartBound.x, chartWidth};
                     break;
