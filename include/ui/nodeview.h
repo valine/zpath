@@ -58,6 +58,7 @@ public:
         EXP,
         SQRT,
         POW,
+        ABS,
         GAUSSIAN,
         MORLET,
         ADD,
@@ -113,6 +114,12 @@ public:
                     return {{out0.real(), chartBound.x, chartWidth},
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
+                case ABS: {
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> out0 = abs(in0);
+                    return {{out0.real(), chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
                 case EXP: {
                     complex<float> comIn = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> comOut = exp(comIn);
@@ -133,7 +140,6 @@ public:
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
                 case GAUSSIAN: {
-
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
                     complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
@@ -144,9 +150,6 @@ public:
 
 
                 }
-//                    out = {(float) (in.at(2) * exp(-pow(in.at(0), 2) / pow(2 * in.at(1), 2))),
-//                           chartBound.x, chartWidth};
-//                    break;
                 case MORLET: {
                     auto real = (float) (
                             cos(in.at(0) * in.at(4)) * // sinusoid
@@ -238,11 +241,9 @@ public:
                 case COMBINE: {
                     return {{x.at(0).at(0)},
                             {x.at(1).at(1)}};
-
                 }
                 case SPLIT: {
                     return {{x.at(0).at(0), x.at(1).at(0)}, {NAN, NAN}};
-
                 }
                 case LAST:
                     break;
@@ -269,6 +270,7 @@ public:
             case SIN:return ivec2(3,3);
             case COS:return ivec2(3,3);
             case TAN:return ivec2(1,3);
+            case ABS:return ivec2(1,3);
             case EXP:return ivec2(1,3);
             case SQRT:return ivec2(1,3);
             case POW:return ivec2(2,3);
@@ -303,6 +305,7 @@ public:
             case COS:
                 return {{VAR, CON, CON}, {VAR, CON, CON}};
             case TAN:
+            case ABS:
             case EXP:
             case SQRT:return {{VAR}, {VAR, CON, CON}};
             case POW:return {{VAR, VAR}, {VAR, CON, CON}};
@@ -336,6 +339,7 @@ public:
             case SIN:return "sin";
             case COS:return "cos";
             case TAN:return "tan";
+            case ABS:return "abs";
             case EXP:return "exp";
             case SQRT:return "sqrt";
             case POW:return "pow";
