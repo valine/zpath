@@ -239,11 +239,11 @@ public:
                     break;
                 }
                 case COMBINE: {
-                    return {{x.at(0).at(0)},
-                            {x.at(1).at(1)}};
+                    return {{x.at(REAL).at(0)},
+                            {x.at(REAL).at(1)}};
                 }
                 case SPLIT: {
-                    return {{x.at(0).at(0), x.at(1).at(0)}, {NAN, NAN}};
+                    return {{x.at(REAL).at(0), x.at(IMAG).at(0)}, {NAN, NAN}};
                 }
                 case LAST:
                     break;
