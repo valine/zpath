@@ -52,12 +52,32 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     ZDropDown* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(150, 0);
-    dropDown->setTitle("Node Picker");
+    dropDown->setTitle("All Nodes");
 
-    dropDown->setOnItemChange([this](int index){
-        auto type = static_cast<ZNodeView::Type>(index);
+    vector<ZNodeView::Type> complexTypes = {
+            ZNodeView::Type::SIN_C,
+            ZNodeView::Type::COS_C,
+            ZNodeView::Type::TAN_C,};
+    ZDropDown* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
+    complexDropdown->setOffset(250, 0);
+    complexDropdown->setTitle("Complex");
+    complexDropdown->setOnItemChange([this, complexTypes](int index){
+        ZNodeView::Type type = complexTypes.at(index);
         addNode(type);
     });
+
+    vector<ZNodeView::Type> realTypes = {
+            ZNodeView::Type::SIN,
+            ZNodeView::Type::COS,
+            ZNodeView::Type::TAN,};
+    ZDropDown* real2d = new ZDropDown(100,800, getNodeTypeNames(realTypes), mHeader);
+    real2d->setOffset(350, 0);
+    real2d->setTitle("2D Real");
+    real2d->setOnItemChange([this, realTypes](int index){
+        ZNodeView::Type type = realTypes.at(index);
+        addNode(type);
+    });
+
 
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
@@ -65,6 +85,15 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(this);
     mMagnitudePicker->setVisibility(false);
+}
+
+vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
+    vector<string> names;
+    for (ZNodeView::Type type : types) {
+        names.push_back(ZNodeView::getName(type));
+    }
+
+    return names;
 }
 
 
