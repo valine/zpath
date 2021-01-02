@@ -55,6 +55,9 @@ public:
         SIN,
         COS,
         TAN,
+        SIN_C,
+        COS_C,
+        TAN_C,
         EXP,
         SQRT,
         POW,
@@ -66,6 +69,7 @@ public:
         MULTIPLY,
         DIVIDE,
         C, // Constant value
+        CI, // Constant value imaginary
         X,
         Y,
         FILE,
@@ -93,12 +97,15 @@ public:
             vector<float> out;
             switch (type) {
                 case SIN: {
-                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-                    complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
-                    complex<float> out0 = sin(in0 * in1) * in2;
-                    return {{out0.real(),  chartBound.x, chartWidth},
-                            {out0.imag(), chartBound.x, chartWidth}};
+                    float in0 = x.at(REAL).at(0);
+                    float in1 = x.at(REAL).at(1);
+                    float in2 = x.at(REAL).at(2);
+
+                    float inI0 = x.at(IMAG).at(0);
+                    float out0 = sin(in0 * in1) * in2;
+                    float outI = sin(inI0 * in1) * in2;
+                    return {{out0,  chartBound.x, chartWidth},
+                            {outI, chartBound.x, chartWidth}};
                 }
                 case COS:{
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
@@ -109,6 +116,28 @@ public:
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
                 case TAN: {
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> out0 = tan(in0);
+                    return {{out0.real(), chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
+                case SIN_C: {
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                    complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                    complex<float> out0 = sin(in0 * in1) * in2;
+                    return {{out0.real(),  chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
+                case COS_C:{
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                    complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                    complex<float> out0 = cos(in0 * in1) * in2;
+                    return {{out0.real(),  chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
+                case TAN_C: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> out0 = tan(in0);
                     return {{out0.real(), chartBound.x, chartWidth},
@@ -162,9 +191,13 @@ public:
                             {imaginary, chartBound.x, chartWidth}};
                 }
 
-                case ADD:
-                    out = {in.at(0) + in.at(1), chartBound.x, chartWidth};
-                    break;
+                case ADD: {
+                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                    complex<float> out0 = in0 + in1;
+                    return {{out0.real(), chartBound.x, chartWidth},
+                            {out0.imag(), chartBound.x, chartWidth}};
+                }
                 case SUBTRACT:
                     out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
                     break;
@@ -190,8 +223,10 @@ public:
                     return {{r, chartBound.x, chartWidth}, {{img, chartBound.x, chartWidth}}};
                 }
                 case C:
-                    out = mConstantValueOutput;
+                    return {{mConstantValueOutput}, {0.0}};
                     break;
+                case CI:
+                    return {{0.0}, {mConstantValueOutput}};
                 case X:
                     return {{x.at(0).at(0), chartBound.x, chartWidth},
                             {0,      chartBound.x, chartWidth}};
@@ -267,9 +302,12 @@ public:
      */
     ivec2 getSocketCount() {
         switch (mType) {
+            case SIN_C:
             case SIN:return ivec2(3,3);
-            case COS:return ivec2(3,3);
-            case TAN:return ivec2(1,3);
+            case COS:
+            case COS_C:return ivec2(3,3);
+            case TAN:
+            case TAN_C:return ivec2(1,3);
             case ABS:return ivec2(1,3);
             case EXP:return ivec2(1,3);
             case SQRT:return ivec2(1,3);
@@ -281,6 +319,7 @@ public:
             case MULTIPLY:return ivec2(2,3);
             case DIVIDE:return ivec2(2,3);
             case C:return ivec2(0,1);
+            case CI:return ivec2(0,1);
             case X:return ivec2(0,3);
             case Y:return ivec2(0,3);
             case FILE:return ivec2(0,1);
@@ -303,8 +342,11 @@ public:
         switch (mType) {
             case SIN:
             case COS:
+            case SIN_C:
+            case COS_C:
                 return {{VAR, CON, CON}, {VAR, CON, CON}};
             case TAN:
+            case TAN_C:
             case ABS:
             case EXP:
             case SQRT:return {{VAR}, {VAR, CON, CON}};
@@ -315,7 +357,8 @@ public:
             case SUBTRACT:
             case MULTIPLY:
             case DIVIDE:return {{CON, CON}, {VAR, CON, CON}};
-            case C:return {{}, {CON}};
+            case C:
+            case CI:return {{}, {CON}};
             case X:
             case Y:return {{}, {VAR, CON, CON}};
             case FILE:return {{}, {VAR, CON, CON}};
@@ -339,6 +382,9 @@ public:
             case SIN:return "sin";
             case COS:return "cos";
             case TAN:return "tan";
+            case SIN_C:return "sin (complex)";
+            case COS_C:return "cos (complex)";
+            case TAN_C:return "tan (complex)";
             case ABS:return "abs";
             case EXP:return "exp";
             case SQRT:return "sqrt";
@@ -350,6 +396,7 @@ public:
             case MULTIPLY:return "*";
             case DIVIDE:return "/";
             case C:return "C";
+            case CI:return "C Imag";
             case X:return "x";
             case Y:return "y";
             case FILE:return "file";
@@ -371,6 +418,7 @@ public:
     static vec2 getNodeSize(Type type) {
         switch(type) {
             case C:
+            case CI:
                 return vec2(80, 20);
             case CHART_2D:
             case HEAT_MAP:
@@ -391,6 +439,8 @@ public:
             case DIVIDE: return {1.0, 1.0};
             case SIN:
             case COS:
+            case SIN_C:
+            case COS_C:
                 return {0.0, 1.0, 1.0};
             case GAUSSIAN:
                 // X, width, height
@@ -417,6 +467,7 @@ public:
     static bool isOutputLabelVisible(Type type) {
         switch(type) {
             case C:
+            case CI:
                 return true;
             default:
                 return false;
@@ -430,7 +481,9 @@ public:
             case MULTIPLY:
             case DIVIDE: return {"", ""};
             case SIN:
-            case COS:return {"", "Frequency", "Height"};
+            case COS:
+            case SIN_C:
+            case COS_C:return {"", "Frequency", "Height"};
             case GAUSSIAN: return {"", "Width", "Height"};
             case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
             case IFFT:return {"", "", "Window Start", "Window Size"};
@@ -446,6 +499,7 @@ public:
     vec4 getNodeColor(Type type) {
         switch (type) {
             case C:
+            case CI:
                 return mConstantColor;
             case X:
             case Y:
