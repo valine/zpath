@@ -53,6 +53,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     ZDropDown* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(150, 0);
     dropDown->setTitle("All Nodes");
+    dropDown->setOnItemChange([this](int index){
+        auto type = static_cast<ZNodeView::Type>(index);
+        addNode(type);
+    });
+
 
     vector<ZNodeView::Type> complexTypes = {
             ZNodeView::Type::SIN_C,
@@ -99,9 +104,12 @@ vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
 
 void ZNodeEditor::addTestNodes() {
     ZNodeView *sin = addNode(ZNodeView::SIN);
-    ZNodeView *fft = addNode(ZNodeView::FFT);
-    ZNodeView *heatmap = addNode(ZNodeView::HEAT_MAP);
+    ZNodeView *exp = addNode(ZNodeView::EXP);
+
     ZNodeView *laplace = addNode(ZNodeView::LAPLACE);
+
+    connectNodes(0, 0, sin, laplace);
+    connectNodes(0, 0, exp, laplace);
 
 //    ZNodeView *x = addNode(ZNodeView::X);
 //    ZNodeView *c = addNode(ZNodeView::C);

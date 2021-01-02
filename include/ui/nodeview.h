@@ -509,6 +509,18 @@ public:
         }
     }
 
+    int getDefaultMagnitude(Type type) {
+        switch (type) {
+            case SIN:
+            case COS:
+            case SIN_C:
+            case COS_C:
+                return 7;
+            default:
+                return 6;
+        }
+    }
+
     static ChartResMode getChartResolutionMode(Type type) {
         switch (type) {
             default: return ADAPTIVE;
@@ -602,8 +614,8 @@ public:
         for (int ei = 0; ei < resolution; ei++) {
             for (int fi = 0; fi < resolution; fi++) {
 
-                float freq = (float) fi;
-                float expo = (float) ei;
+                auto freq = (float) fi;
+                auto expo = (float) ei / 100.0;
                 float outputR = 0;
                 float outputI = 0;
                 for (int t = 0; t < resolution; t++) {

@@ -354,6 +354,12 @@ void ZNodeView::setType(ZNodeView::Type type) {
         mConstantValueInput.at(i) = cValue;
         i++;
     }
+
+    int magnitude = getDefaultMagnitude(type);
+    for (int & k : mConstantMagnitudeInput) {
+        k = magnitude;
+    }
+
 }
 
 vector<ZView *> ZNodeView::getSocketsIn() {
