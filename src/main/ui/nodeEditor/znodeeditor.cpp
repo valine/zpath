@@ -62,7 +62,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     vector<ZNodeView::Type> complexTypes = {
             ZNodeView::Type::SIN_C,
             ZNodeView::Type::COS_C,
-            ZNodeView::Type::TAN_C,};
+            ZNodeView::Type::TAN_C,
+            ZNodeView::Type::EXP_C,};
     ZDropDown* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
     complexDropdown->setOffset(250, 0);
     complexDropdown->setTitle("Complex");
