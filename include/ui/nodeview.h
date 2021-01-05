@@ -634,8 +634,11 @@ public:
                 for (int t = 0; t < resolution; t++) {
                     float time = ((t / fres));
                     //output += (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))) * exp((expo * time * M_PI * 2));
-                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo * time * M_PI * 2)));
-                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo * time * M_PI * 2)));
+                   // float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo * time * M_PI * 2)));
+                  //  float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo * time * M_PI * 2)));
+
+                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo)));
+                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo)));
 
 //                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))));
 //                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2))));
