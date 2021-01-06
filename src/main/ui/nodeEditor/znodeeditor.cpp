@@ -60,6 +60,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
 
     vector<ZNodeView::Type> complexTypes = {
+            ZNodeView::Type::Z,
             ZNodeView::Type::SIN_C,
             ZNodeView::Type::COS_C,
             ZNodeView::Type::TAN_C,

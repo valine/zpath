@@ -73,6 +73,7 @@ public:
         CI, // Constant value imaginary
         X,
         Y,
+        Z, // Complex variable
         FILE,
         FFT,
         IFFT,
@@ -238,11 +239,14 @@ public:
                 case CI:
                     return {{0.0}, {mConstantValueOutput}};
                 case X:
-                    return {{x.at(0).at(0), chartBound.x, chartWidth},
+                    return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                             {0,      chartBound.x, chartWidth}};
                 case Y:
                     return {{0,      chartBound.x, chartWidth},
-                            {x.at(1).at(0), chartBound.x, chartWidth}};
+                            {x.at(IMAG).at(0), chartBound.x, chartWidth}};
+                case Z:
+                    return {{x.at(REAL).at(0),      chartBound.x, chartWidth},
+                            {x.at(IMAG).at(0), chartBound.x, chartWidth}};
                 case FILE:
                     break;
                 case FFT: {
@@ -333,6 +337,7 @@ public:
             case CI:return ivec2(0,1);
             case X:return ivec2(0,3);
             case Y:return ivec2(0,3);
+            case Z:return ivec2(0,3);
             case FILE:return ivec2(0,1);
             case FFT:return ivec2(4,3);
             case IFFT:return ivec2(4,3);
@@ -373,6 +378,7 @@ public:
             case CI:return {{}, {CON}};
             case X:
             case Y:return {{}, {VAR, CON, CON}};
+            case Z:return {{}, {VAR, CON, CON}};
             case FILE:return {{}, {VAR, CON, CON}};
             case IFFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
             case FFT:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
@@ -412,6 +418,7 @@ public:
             case CI:return "C Imag";
             case X:return "x";
             case Y:return "y";
+            case Z:return "z (complex)";
             case FILE:return "file";
             case IFFT:return "Inverse FFT";
             case FFT:return "FFT";
@@ -516,13 +523,14 @@ public:
                 return mConstantColor;
             case X:
             case Y:
+            case Z:
                 return mVariableColor;
             default:
                 return vec4(1);
         }
     }
 
-    int getDefaultMagnitude(Type type) {
+    static int getDefaultMagnitude(Type type) {
         switch (type) {
             case SIN:
             case COS:
