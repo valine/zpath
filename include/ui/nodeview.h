@@ -636,7 +636,7 @@ public:
             for (int fi = 0; fi < resolution; fi++) {
 
                 auto freq = (float) fi;
-                auto expo = (float) ei / 100.0;
+                float expo = (float) ei / 100.0;
                 float outputR = 0;
                 float outputI = 0;
                 for (int t = 0; t < resolution; t++) {
@@ -644,14 +644,19 @@ public:
                     //output += (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))) * exp((expo * time * M_PI * 2));
                    // float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo * time * M_PI * 2)));
                   //  float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo * time * M_PI * 2)));
-
-                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo)));
-                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo)));
+//
+//                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo)));
+//                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo)));
 
 //                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))));
 //                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2))));
-                    outputR += real;
-                    outputI += img;
+
+
+                    complex<float> sC = {-expo, freq};
+                    complex<float> timeC = {time, 0};
+                    complex<float> output = timeDomain.at(t) * exp(sC * timeC);
+                    outputR += output.real();
+                    outputI += output.imag();
                 }
 
                // mLaplaceCache.at(ei).at(fi) = outputR;
