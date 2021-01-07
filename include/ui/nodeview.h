@@ -635,7 +635,7 @@ public:
         for (int ei = 0; ei < resolution; ei++) {
             for (int fi = 0; fi < resolution; fi++) {
 
-                auto freq = (float) fi;
+                float freq = (float) fi * 2.0 * M_PI;
                 float expo = (float) ei / 100.0;
                 float outputR = 0;
                 float outputI = 0;
@@ -653,8 +653,9 @@ public:
 
 
                     complex<float> sC = {-expo, freq};
-                    complex<float> timeC = {time, 0};
-                    complex<float> output = timeDomain.at(t) * exp(sC * timeC);
+                    complex<float> timeC = {time, 0.0};
+                    complex<float> fxC = {timeDomain.at(t), 0};
+                    complex<float> output = fxC * exp(sC * timeC);
                     outputR += output.real();
                     outputI += output.imag();
                 }
