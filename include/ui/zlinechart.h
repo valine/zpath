@@ -93,6 +93,14 @@ public:
         mInvalidateListener = std::move(listener);
     }
 
+    int getMaxResolution() {
+        return mMaxResolution;
+    }
+
+    void setMaxResolution(int res) {
+        mMaxResolution = res;
+    }
+
 private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener = nullptr;
@@ -146,6 +154,8 @@ private:
 
     // This will be set by view width
     int mResolution = 2;
+
+    int mMaxResolution = 60;
 
     // Input dimensions, default should be 1
     int mInputType = 1;

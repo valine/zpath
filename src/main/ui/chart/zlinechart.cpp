@@ -92,7 +92,7 @@ void ZLineChart::updateHeatMap() {
     vector<float> pixels = mListener({(int) 0, (int) 0}, 0);
 
     glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, std::min(mResolution, 50), std::min(mResolution, 50), 0, GL_RED, GL_FLOAT, &pixels[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, std::min(mResolution, mMaxResolution), std::min(mResolution, mMaxResolution), 0, GL_RED, GL_FLOAT, &pixels[0]);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);

@@ -165,8 +165,8 @@ void ZNodeView::updateChart() {
 void ZNodeView::updateChartHeatMap() {
 
     // todo: update this when x and y resolution defined independently
-    int xRes = std::min(mChart->getResolution(), 50);
-    int yRes = std::min(mChart->getResolution(), 50);
+    int xRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
+    int yRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
 
     mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();

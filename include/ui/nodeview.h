@@ -6,7 +6,7 @@
 #define ZPATH_NODEVIEW_H
 
 static const int SOCKET_SIZE = 15;
-static const int MAX_INPUT_COUNT = 6;
+static const int MAX_INPUT_COUNT = 7;
 static const int MAX_OUTPUT_COUNT = 4;
 static const int CHART_RES_THRESHOLD = 4;
 static const int CHART_SIDE_MARGIN_WIDE = 20;
@@ -213,13 +213,12 @@ public:
                     out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
                     break;
                 case MULTIPLY: {
-                    float a = x.at(REAL).at(0);
-                    float b = x.at(IMAG).at(0);
-                    float c = x.at(REAL).at(1);
-                    float e = x.at(IMAG).at(1);
-                    auto result = multiply(a,b,c,e);
-                    return {{result.first, chartBound.x, chartWidth},
-                            {result.second, chartBound.x, chartWidth}};
+                    complex<float> a = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                    complex<float> b = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+
+                    auto result = a * b;
+                    return {{result.real(), chartBound.x, chartWidth},
+                            {result.imag(), chartBound.x, chartWidth}};
                 }
                 case DIVIDE: {
                     float a = x.at(REAL).at(1);
@@ -263,8 +262,9 @@ public:
                     break;
                 }
                 case LAPLACE: {
+                    mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
                     // Static resolution for now
-                    auto laplace = computeLaplace(x.at(0).at(1), x.at(1).at(1), in.at(2), in.at(3), 50);
+                    auto laplace = computeLaplace(x.at(REAL).at(1), x.at(IMAG).at(1), in.at(2), in.at(3), mChart->getMaxResolution());
                     return {{laplace.first}};
                 }
                 case FIRST_DIFF: {
@@ -304,10 +304,6 @@ public:
         return output;
     }
 
-    pair<float, float> multiply(float a, float b, float c, float d) {
-        return {a * c - b * d, a * d + b * c};
-    }
-
     /**
      * First value is input count, second value is output count. If input count is zero node
      * is an input node like a constant or number range. If output count is zero the node is
@@ -342,7 +338,7 @@ public:
             case FFT:return ivec2(4,3);
             case IFFT:return ivec2(4,3);
             case HARTLEY:return ivec2(4,3);
-            case LAPLACE:return ivec2(4,3);
+            case LAPLACE:return ivec2(6,3);
             case FIRST_DIFF:return ivec2(2,3);
             case DOT:return ivec2(2,3);
             case CROSS:return ivec2(4,4);
@@ -383,7 +379,7 @@ public:
             case IFFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
             case FFT:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
             case HARTLEY:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-            case LAPLACE:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+            case LAPLACE:return {{VAR, VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
             case FIRST_DIFF:return {{VAR, VAR}, {VAR, CON, CON}};
             case DOT:return {{CON, CON}, {VAR, CON, CON}};
             case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
@@ -472,7 +468,7 @@ public:
             case HARTLEY:
                 return {0.0, 0.0, 0.0, 1.0};
             case LAPLACE:
-                return {0.0, 0.0, 0.0, 1.0};
+                return {0.0, 0.0, 0.0, 1.0, -1.0, 1.0};
             case CHART_2D:
                 return {0.0,0.0,100};
             case DOT:
@@ -509,7 +505,7 @@ public:
             case IFFT:return {"", "", "Window Start", "Window Size"};
             case HARTLEY:
             case FFT: return {"", "", "Window Start", "Window Size"};
-            case LAPLACE: return {"", "", "Window Start", "Window Size"};
+            case LAPLACE: return {"", "", "Window Start", "Window Size", "Z Min", "Z Max"};
             case CHART_2D: return {"", "", "Resolution"};
             case HEAT_MAP: return {"", "Z Min", "Z Max"};
             default: vector<string>(MAX_INPUT_COUNT, "");
@@ -641,17 +637,6 @@ public:
 
                 for (int t = 0; t < resolution; t++) {
                     float time = ((t / fres) * windowSize) + start;
-                    //output += (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))) * exp((expo * time * M_PI * 2));
-                   // float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo * time * M_PI * 2)));
-                  //  float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo * time * M_PI * 2)));
-//
-//                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))) * exp((-expo)));
-//                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2)))  * exp((-expo)));
-
-//                    float real = (timeDomain.at(t) * cos(((freq * time * M_PI * 2))));
-//                    float img = (timeDomain.at(t) * sin(((freq * time * M_PI * 2))));
-
-
                     complex<float> sC = {-expo, -freq};
                     complex<float> timeC = {time, 0.0};
                     complex<float> fxC = {timeDomain.at(t), 0};
