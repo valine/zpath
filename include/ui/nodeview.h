@@ -610,9 +610,19 @@ public:
     }
 
     pair<float, float> computeLaplace(float x, float y, float start, float windowSize, int resolution) {
-        int xi = (int) std::min(std::max(0.0f, x), (float) resolution - 1.0f);
-        int yi = (int) std::min(std::max(0.0f, y), (float) resolution - 1.0f);
+
+
+        vec2 xBounds = mChart->getXBounds();
+        vec2 yBounds = mChart->getYBounds();
+
+        float xFactor = (x - xBounds.x) / (xBounds.y - xBounds.x);
+        float yFactor = (y - yBounds.x) / (yBounds.y - yBounds.x);
+
+        int xi = (int) std::min(std::max(0.0f, resolution * xFactor), (float) resolution - 1.0f);
+        int yi = (int) std::min(std::max(0.0f, resolution * yFactor), (float) resolution - 1.0f);
+
         if (!mLaplaceCache.empty()) {
+            cout << "x: " << xi << " y: " << yi << " size: " << mLaplaceCache.size() << " " << mLaplaceCache.at(0).size() << endl;
             return {mLaplaceCache.at(xi).at(yi), 0};
         }
 
@@ -622,7 +632,7 @@ public:
 
         vector<float> timeDomain;
         for (int i = 0; i < resolution; i++) {
-            float t = ((i / fres) * windowSize) + start;
+            float t = (((float) i / fres) * windowSize) + start;
             float summedInput = sumInputs(t, socketIndex, dimenIndex);
             timeDomain.push_back(summedInput);
         }
@@ -631,8 +641,9 @@ public:
         for (int ei = 0; ei < resolution; ei++) {
             for (int fi = 0; fi < resolution; fi++) {
 
-                float freq = (float) fi * 2.0 * M_PI;
-                float expo = (float) ei;
+
+                float freq = ((float) mix(yBounds.x, yBounds.y, (float) fi / fres)) * 2.0 * M_PI;
+                float expo = ((float) mix(xBounds.x, xBounds.y, (float) ei / fres));
                 complex<float> sum = {0,0};
 
                 for (int t = 0; t < resolution; t++) {
