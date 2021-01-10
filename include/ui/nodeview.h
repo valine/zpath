@@ -622,7 +622,7 @@ public:
         int yi = (int) std::min(std::max(0.0f, resolution * yFactor), (float) resolution - 1.0f);
 
         if (!mLaplaceCache.empty()) {
-            cout << "x: " << xi << " y: " << yi << " size: " << mLaplaceCache.size() << " " << mLaplaceCache.at(0).size() << endl;
+            //cout << "x: " << xi << " y: " << yi << " size: " << mLaplaceCache.size() << " " << mLaplaceCache.at(0).size() << endl;
             return {mLaplaceCache.at(xi).at(yi), 0};
         }
 
@@ -655,8 +655,8 @@ public:
                     sum += output;
                 }
 
-               // mLaplaceCache.at(ei).at(fi) = outputR;
-                mLaplaceCache.at(ei).at(fi) = sqrt(pow(sum.real(), 2.0) + pow(sum.imag(), 2.0)) / resolution;
+                mLaplaceCache.at(ei).at(fi) = sum.real() / resolution;
+              //  mLaplaceCache.at(ei).at(fi) = sqrt(pow(sum.real(), 2.0) + pow(sum.imag(), 2.0)) / resolution;
             }
         }
 
