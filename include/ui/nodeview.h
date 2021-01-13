@@ -69,6 +69,7 @@ public:
         SUBTRACT,
         MULTIPLY,
         DIVIDE,
+        POLY,
         C, // Constant value
         CI, // Constant value imaginary
         X,
@@ -98,6 +99,18 @@ public:
 
             vector<float> out;
             switch (type) {
+                case POLY: {
+                    float in0 = x.at(REAL).at(0);
+                    float term0 = x.at(REAL).at(1);
+                    float term1 = x.at(REAL).at(2);
+                    float term2 = x.at(REAL).at(3);
+                    float term3 = x.at(REAL).at(4);
+
+                    float out0 = (term3 * pow(in0, 3)) + (term2 * pow(in0, 2)) + (term1 * in0) + term0;
+
+                    return {{out0,  chartBound.x, chartWidth},
+                            {0.0, chartBound.x, chartWidth}};
+                }
                 case SIN: {
                     float in0 = x.at(REAL).at(0);
                     float in1 = x.at(REAL).at(1);
@@ -312,6 +325,7 @@ public:
      */
     ivec2 getSocketCount() {
         switch (mType) {
+            case POLY: return ivec2(5, 3);
             case SIN_C:
             case SIN:return ivec2(3,3);
             case COS:
@@ -352,6 +366,7 @@ public:
 
     pair<vector<SocketType>,vector<SocketType>>  getSocketType() {
         switch (mType) {
+            case POLY: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
             case SIN:
             case COS:
             case SIN_C:
@@ -393,6 +408,7 @@ public:
 
     static string getName(Type type) {
         switch (type) {
+            case POLY:return "polynomial";
             case SIN:return "sin";
             case COS:return "cos";
             case TAN:return "tan";
@@ -449,6 +465,7 @@ public:
 
     static vector<float> getDefaultInput(Type type) {
         switch(type) {
+            case POLY: return {0.0, 0.0, 0.0, 0.0};
             case ADD:
             case SUBTRACT: return {0.0, 0.0};
             case MULTIPLY:
@@ -492,6 +509,7 @@ public:
 
     vector<string> getSocketName() {
         switch (mType) {
+            case POLY:return {"", "A", "BX", "CX^2", "DX^3"};
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
