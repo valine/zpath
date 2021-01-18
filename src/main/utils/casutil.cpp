@@ -3,11 +3,18 @@
 //
 
 #include "utils/casutil.h"
+#include <giac/config.h>
+#include <giac/giac.h>
+using namespace std;
+using namespace giac;
 
-#include <pari.h>
+
 
 void CasUtil::testCompute() {
-    pari_init(8000000,500000);
-    GEN out = gp_read_str("");
-    cout << "Hello world" << endl;
+
+    context ct;
+    gen e("laplace(x^2)", &ct);
+    e = eval(e, 1, &ct);
+    cout << e << endl;
+
 }

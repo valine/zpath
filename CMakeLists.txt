@@ -261,7 +261,7 @@ if (LINUX)
     include_directories(${zdep_path}/zlib/include)
     include_directories(${zdep_path}/assimp/include)
     include_directories(${zdep_path}/assimp/include)
-    include_directories(${zdep_path}/pari/include)
+    include_directories(${zdep_path}/giac/include)
     target_link_libraries (zpath
             ${OPENGL_LIBRARIES}
             "${zdep_path}/glfw/libglfw3.a"
@@ -272,7 +272,7 @@ if (LINUX)
             "${zdep_path}/png/libpng16.a"
             "${zdep_path}/zlib/libz.a"
             "${zdep_path}/freetype/libfreetype.a"
-            "${zdep_path}/pari/libpari.so")
+            "${zdep_path}/giac/libgiac.so")
   endif(COMPILE_DEPS)
 
 endif (LINUX)
