@@ -14,7 +14,6 @@
 #include <thread>
 #include <zconf.h>
 #include <utils/zsettingsstore.h>
-#include <utils/casutil.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {

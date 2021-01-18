@@ -32,6 +32,7 @@ static const int DRAG_THRESHOLD = 5;
 #include <set>
 #include <mutex>
 #include <condition_variable>
+#include <utils/casutil.h>
 
 class ZNodeEditor : public ZView {
 public:

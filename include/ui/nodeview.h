@@ -29,9 +29,11 @@ class ZNodeView : public ZView {
 public:
 
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
+
     void setShowMagPickerListener(
             function<void(ZView *sender, ZNodeView *node, int socketIndex,
                     bool isInput, float initialValue, string name)> onValueSelect);
+
     void setInvalidateListener(function<void(ZNodeView* node)> listener);
 
     enum SocketType {
@@ -770,6 +772,8 @@ public:
 
     void copyParameters(ZNodeView *node);
     void setMaxWidth(int width) override;
+
+
 private:
     bool mInvalid = true;
 

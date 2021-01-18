@@ -6,7 +6,7 @@
 #define ZPATH_CASUTIL_H
 
 #include <iostream>
-
+#include <vector>
 
 using namespace std;
 
@@ -14,6 +14,7 @@ class CasUtil {
 
 
 public:
+
     void testCompute();
 
     static CasUtil& get(){
@@ -21,6 +22,7 @@ public:
         // Instantiated on first use.
         return instance;
     }
+
 };
 
 
