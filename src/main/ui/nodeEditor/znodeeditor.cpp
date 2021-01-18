@@ -14,6 +14,7 @@
 #include <thread>
 #include <zconf.h>
 #include <utils/zsettingsstore.h>
+#include <utils/casutil.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -92,6 +93,10 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(this);
     mMagnitudePicker->setVisibility(false);
+
+
+    // Test computer algebra system library
+    CasUtil::get().testCompute();
 }
 
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {

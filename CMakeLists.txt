@@ -25,10 +25,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if (BUILD_LIB) 
   add_library(zpath STATIC ${sources} ${headers})
-  target_compile_options(zpath PUBLIC -std=c++1y -Wall)
+  target_compile_options(zpath PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-std=c++14>)
    target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
-  add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/nodeview.cpp include/ui/nodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h)
+  add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/nodeview.cpp include/ui/nodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h)
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
   file(COPY ${data} DESTINATION resources)
   add_custom_command(TARGET zpath PRE_BUILD
@@ -190,9 +190,7 @@ else(COMPILE_DEPS)
           GIT_SHALLOW 1
           BUILD_COMMAND ""
           INSTALL_COMMAND ""
-          UPDATE_COMMAND ""
-          LOG_DOWNLOAD ON
-          )
+          LOG_DOWNLOAD ON)
   add_dependencies(zpath zdep)
 
 endif(COMPILE_DEPS)
@@ -254,16 +252,16 @@ if (LINUX)
             "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b-build/libfreetype.a")
 
   else(COMPILE_DEPS)
-
-
     set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/linux")
     message(STATUS "${zdep_path}")
+
     include_directories(${zdep_path}/glm)
     include_directories(${zdep_path}/glfw/include)
     include_directories(${zdep_path}/freetype/include)
     include_directories(${zdep_path}/zlib/include)
     include_directories(${zdep_path}/assimp/include)
-
+    include_directories(${zdep_path}/assimp/include)
+    include_directories(${zdep_path}/pari/include)
     target_link_libraries (zpath
             ${OPENGL_LIBRARIES}
             "${zdep_path}/glfw/libglfw3.a"
@@ -273,7 +271,8 @@ if (LINUX)
             "${zdep_path}/assimp/libassimp.so"
             "${zdep_path}/png/libpng16.a"
             "${zdep_path}/zlib/libz.a"
-            "${zdep_path}/freetype/libfreetype.a")
+            "${zdep_path}/freetype/libfreetype.a"
+            "${zdep_path}/pari/libpari.so")
   endif(COMPILE_DEPS)
 
 endif (LINUX)
