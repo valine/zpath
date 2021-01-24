@@ -13,23 +13,41 @@ using namespace std;
 
 class ZNodeUtil {
 
-    vector<ZNodeView *> stringToGraph(string input) {
-        istringstream iss(input);
-        vector<string> tokens;
-        copy(istream_iterator<string>(iss),
-             istream_iterator<string>(),
-             back_inserter(tokens));
-
-    }
-
     //string graphToString(ZNodeView* node);
 
+public:
     static ZNodeUtil& get(){
         static ZNodeUtil instance; // Guaranteed to be destroyed.
         // Instantiated on first use.
         return instance;
     }
 
+    vector<ZNodeView *> stringToGraph(string input) {
+
+
+        string testString = "3 + 4(10+2*2)+1";
+        testString.erase(std::remove_if(testString.begin(), testString.end(), ::isspace), testString.end());
+
+        char testArray[testString.length() + 1];
+        strcpy(testArray, testString.c_str());
+        char *copy = strdup(testArray);
+
+        const char* delim = " +-*/^()";
+        char* afterSplit = strtok(testArray, delim);
+
+        while (afterSplit != nullptr) {
+
+            char d = copy[afterSplit - testArray + strlen(afterSplit)];
+            cout << "t:" << afterSplit << endl;
+            cout << "d:" << d << endl;
+
+
+
+            afterSplit = strtok(nullptr, delim);
+        }
+
+        return vector<ZNodeView*>();
+    }
 };
 
 

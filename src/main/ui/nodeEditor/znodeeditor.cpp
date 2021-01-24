@@ -14,6 +14,7 @@
 #include <thread>
 #include <zconf.h>
 #include <utils/zsettingsstore.h>
+#include <utils/znodeutil.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -96,6 +97,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     // Test computer algebra system library
     CasUtil::get().testCompute();
+
+    ZNodeUtil::get().stringToGraph("test");
 }
 
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
