@@ -8,6 +8,7 @@
 class ZLabel;
 
 #include <ui/nodeview.h>
+#include <queue>
 
 using namespace std;
 
@@ -34,6 +35,9 @@ public:
 
         const char* delim = " +-*/^()";
         char* afterSplit = strtok(testArray, delim);
+
+        stack<string> operators;
+        queue<string> outputs;
 
         while (afterSplit != nullptr) {
 
