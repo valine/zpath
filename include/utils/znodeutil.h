@@ -9,6 +9,7 @@ class ZLabel;
 
 #include <ui/nodeview.h>
 #include <queue>
+#include <set>
 
 using namespace std;
 
@@ -26,25 +27,53 @@ public:
     vector<ZNodeView *> stringToGraph(string input) {
 
 
+        set<string> functions = {"max", "min", "sin", "cos", "tan"};
+        set<string> operators = {"+", "-", "*", "/", "^"};
         string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
 
 
         vector<string> tokens = getTokens(testString);
 
-        stack<string> operators;
+        stack<string> opStack;
         queue<string> outputs;
 
 
         // Shunting-yard implementation
-        for (string token : tokens) {
+        for (const string& token : tokens) {
             if (isNumber(token)) {
                 outputs.push(token);
-            }
+            } else if (functions.count(token) > 0) {
+                opStack.push(token);
+            } else if (operators.count(token) > 0) {
 
+                // There is operator at top of operator stack
+                if (!opStack.empty()) {
+                    string topOfOpStack = opStack.top();
+                    int tokenPriority = getPriority(token);
+                    int topPriority = getPriority(topOfOpStack);
+                    while (operators.count(topOfOpStack) > 0 && topPriority >= tokenPriority && topOfOpStack != ")") {
+                        outputs.push(topOfOpStack);
+                        opStack.pop();
+                    }
+                }
+                opStack.push(token);
+            } else if (token == "(" || token == ")") {
+                opStack.push(token);
+            }
         }
 
 
         return vector<ZNodeView*>();
+    }
+
+    int getPriority(const string& op) {
+        switch(op[0]) {
+            case '^': return 4;
+            case '*': return 3;
+            case '/': return 3;
+            case '+': return 2;
+            case '-': return 2;
+        }
     }
 
     vector<string> getTokens(string input) {
@@ -64,8 +93,8 @@ public:
             char d = copy[afterSplit - testArray + strlen(afterSplit)];
             afterSplit = strtok(nullptr, delim);
 
+            tokens.emplace_back(string(1, d));
             if (afterSplit != nullptr) {
-                tokens.emplace_back(string(1, d));
                 tokens.emplace_back(string(afterSplit));
             }
         }
