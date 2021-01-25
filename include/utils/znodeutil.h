@@ -58,22 +58,15 @@ public:
 
         const char* delim = " ,+-*/^()";
         char* afterSplit = strtok(testArray, delim);
-        char d = copy[afterSplit - testArray + strlen(afterSplit)];
-
-       // tokens.emplace_back(string(1, d));
         tokens.emplace_back(string(afterSplit));
 
         while (afterSplit != nullptr) {
-
-            d = copy[afterSplit - testArray + strlen(afterSplit)];
-            cout << "t:" << afterSplit << endl;
-            cout << "d:" << d << endl;
+            char d = copy[afterSplit - testArray + strlen(afterSplit)];
             afterSplit = strtok(nullptr, delim);
 
             if (afterSplit != nullptr) {
                 tokens.emplace_back(string(1, d));
                 tokens.emplace_back(string(afterSplit));
-
             }
         }
 
