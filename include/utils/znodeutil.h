@@ -29,44 +29,66 @@ public:
 
         set<string> functions = {"max", "min", "sin", "cos", "tan"};
         set<string> operators = {"+", "-", "*", "/", "^"};
-        string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
-
+    //    string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
+        string testString = "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3";
+        //string testString = "sin(max(2,3)/3*3.1415)";
 
         vector<string> tokens = getTokens(testString);
 
         stack<string> opStack;
-        queue<string> outputs;
-
+        queue<string> outQueue;
 
         // Shunting-yard implementation
         for (const string& token : tokens) {
             if (isNumber(token)) {
-                outputs.push(token);
+                outQueue.push(token);
             } else if (functions.count(token) > 0) {
                 opStack.push(token);
             } else if (operators.count(token) > 0) {
 
                 // There is operator at top of operator stack
                 if (!opStack.empty()) {
-                    string topOfOpStack = opStack.top();
                     int tokenPriority = getPriority(token);
-                    int topPriority = getPriority(topOfOpStack);
-                    while (operators.count(topOfOpStack) > 0 && topPriority >= tokenPriority && topOfOpStack != ")") {
-                        outputs.push(topOfOpStack);
+                    while (operators.count(opStack.top()) > 0 &&
+                            ((getPriority(opStack.top()) > tokenPriority) ||
+                            (getPriority(opStack.top()) == tokenPriority && token != "^")) &&
+                            opStack.top() != ")") {
+                        outQueue.push(opStack.top());
                         opStack.pop();
                     }
                 }
                 opStack.push(token);
-            } else if (token == "(" || token == ")") {
+            } else if (token == "(") {
                 opStack.push(token);
+
+            } else if (token == ")") {
+                // Could handle mismatched parentheses here, but not doing that for now.
+                while(opStack.top() != "(") {
+                    outQueue.push(opStack.top());
+                    opStack.pop();
+                }
+
+                if (opStack.top() == "(") {
+                    opStack.pop();
+                }
+
+                if (functions.count(opStack.top()) > 0) {
+                    outQueue.push(opStack.top());
+                    opStack.pop();
+                }
             }
         }
 
 
+        while(!opStack.empty()) {
+            outQueue.push(opStack.top());
+            opStack.pop();
+        }
+
         return vector<ZNodeView*>();
     }
 
-    int getPriority(const string& op) {
+    static int getPriority(const string& op) {
         switch(op[0]) {
             case '^': return 4;
             case '*': return 3;
@@ -83,19 +105,31 @@ public:
 
         char testArray[input.length() + 1];
         strcpy(testArray, input.c_str());
-        char *copy = strdup(testArray);
+        char *fullInput = strdup(testArray);
 
         const char* delim = " ,+-*/^()";
+
+
         char* afterSplit = strtok(testArray, delim);
         tokens.emplace_back(string(afterSplit));
 
         while (afterSplit != nullptr) {
-            char d = copy[afterSplit - testArray + strlen(afterSplit)];
+            uint start = afterSplit - testArray + strlen(afterSplit);
+
             afterSplit = strtok(nullptr, delim);
 
-            tokens.emplace_back(string(1, d));
             if (afterSplit != nullptr) {
+                uint end = afterSplit - testArray;
+
+                for (uint i = start; i < end; i++) {
+                    char d = fullInput[i];
+                    tokens.emplace_back(string(1, d));
+                }
+
                 tokens.emplace_back(string(afterSplit));
+            } else if (start < input.size()){
+                char d = fullInput[start];
+                tokens.emplace_back(string(1, d));
             }
         }
 
@@ -112,7 +146,6 @@ public:
         while (j >= 0 && str[j] == ' ') {
             j--;
         }
-
         if (i > j) {
             return false;
         }

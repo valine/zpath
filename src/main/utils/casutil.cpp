@@ -24,6 +24,6 @@ void CasUtil::testCompute() {
     stringstream stream(out);
     stream << e << endl;
 
-    cout << e << endl;
+ //   cout << e << endl;
 
 }

@@ -25,7 +25,7 @@ BasicScene::BasicScene(string resourcePath)
         //if (i % 3 ==0) {
         //object->setBillboard(true);
         //}
-        mat4 model = ZRenderUtils::getModelMatrix(object, nullptr);
+        //mat4 model = ZRenderUtils::getModelMatrix(object, nullptr);
         //cout << "model matrix::" << ZRenderUtils::extractScale(model).x << endl;
         //cout << "translation::" << ZRenderUtils::extractTranslation(model).x << endl;
 

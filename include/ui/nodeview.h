@@ -96,7 +96,7 @@ public:
         vec2 chartBound = mChart->getXBounds();
         float chartWidth = chartBound.y - chartBound.x;
         vector<vector<float>> output;
-        for (int d = 0; d < x.size(); d++) {
+        for (uint d = 0; d < x.size(); d++) {
             vector<float> in = x.at(d);
 
             vector<float> out;
@@ -726,7 +726,7 @@ public:
         }
 
         pair<float, float> returnValue = {NAN, NAN};
-        int xIndex =  (int) ((in * (mFftCache.size() - 1)) / windowSize);
+        uint xIndex =  (int) ((in * (mFftCache.size() - 1)) / windowSize);
         if (xIndex >= 0 && !mFftCache.empty() && windowSize > 0 && xIndex < mFftCache.size()) {
 
             complex<float> y = mFftCache.at(xIndex);

@@ -78,7 +78,7 @@ vector<ZObject*> ZObjLoader::processNode(aiNode *node, const aiScene *scene, ZOb
 	    	if (parent != nullptr) {
 	       
 				for (vector<ZObject*>::iterator it = children.begin() ; it != children.end(); ++it) {
-					ZObject *child = (*it);
+					// ZObject *child = (*it);
 				}
 			}
 			objects.insert(objects.end(), children.begin(), children.end());
