@@ -460,6 +460,8 @@ public:
             case HARTLEY:
             case IFFT:
                 return vec2(200, 200);
+            case LAPLACE:
+                return vec2(400, 400);
             default:
                 return vec2(80, 100);
         }
