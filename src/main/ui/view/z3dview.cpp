@@ -121,7 +121,7 @@ ZScene* Z3DView::getScene() {
 
 void Z3DView::draw() {
 	glDisable(GL_DEPTH_TEST);
-	glDepthMask(true);
+	//glDepthMask(true);
 
 	//int yv = getWindowHeight() - getBottom();
 	//glViewport(getLeft(),yv,getWidth(),getHeight());
