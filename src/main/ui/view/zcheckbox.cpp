@@ -144,7 +144,7 @@ bool ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
         invalidate();
 	}
 
-	return false;
+	return true;
 }
 
 void ZCheckbox::onKeyPress(int key, int scancode, int action, int mods) {
