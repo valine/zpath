@@ -22,6 +22,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mSlider->setYOffset(0);
     mSlider->setMaxHeight(20);
     mSlider->setGravity(bottomLeft);
+    mSlider->setTextColor(vec3(0));
     mSlider->setLineColor(grey);
     mSlider->setOnSlide([this](ZView* view, float v, bool mouseUp){
         if (mListener != nullptr) {
@@ -45,6 +46,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
         label->setXOffset(rangeWidth * index);
         label->setOutlineType(WireType::outline);
         label->setMargin(vec4(0));
+        label->setTextColor(vec3(0));
         mRangeLabels.push_back(label);
 
         if (index == mSelectedMagnitude) {
