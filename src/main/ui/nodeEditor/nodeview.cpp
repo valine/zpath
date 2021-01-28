@@ -17,6 +17,8 @@
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
+
+
     mNameLabel = new ZLabel("Node", this);
     mNameLabel->setTextColor(black);
     mNameLabel->setXOffset(30);

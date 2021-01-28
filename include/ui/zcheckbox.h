@@ -48,7 +48,7 @@ private:
 	ZView* mCheck;
 	ZCheckboxListener* mListener = nullptr;
 	bool mIsChecked = true;
-    function<void(ZView*, float)> mClickListener = nullptr;
+    std::function<void(ZView*, float)> mClickListener = nullptr;
 
 };
 

@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 #include <functional>
 #include <utility>
 #include <mesh/zpath_constants.h>
@@ -35,7 +37,7 @@ void ZButton::draw() {
 }
 
 void ZButton::setOnClick(std::function<void(ZView* sender)> onClick) {
-    mOnClick = onClick;
+    mOnClick = std::move(onClick);
 }
 
 string ZButton::getText() {

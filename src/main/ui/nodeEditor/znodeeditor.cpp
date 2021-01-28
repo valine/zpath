@@ -23,6 +23,17 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
+
+
+    // Checkbox example
+    auto* checkbox = new ZCheckbox("Checkbox name", mNodeContainer);
+    checkbox->setOnCheck([this](ZView* sender, bool checked) {
+        // Handle check change
+
+        cout << "hellow" << endl;
+    });
+
+
     
     mHeader = new ZView(fillParent, fillParent, this);
 

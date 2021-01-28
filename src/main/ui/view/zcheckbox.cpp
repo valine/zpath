@@ -23,6 +23,7 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
 	addSubView(mLabel);
 
+	setClickable(true);
 	//ZLabel* label = new ZLabel(maxWidth, maxHeight, "roboto/Roboto-Regular.ttf", resourcePath);
 	//label->setMargin(0,0,0,0);
 	//addSubView(label);
@@ -140,7 +141,6 @@ bool ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 			mListener->onCheckChange(this, mIsChecked);
 		}
 
-
         invalidate();
 	}
 
@@ -153,7 +153,7 @@ void ZCheckbox::onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void ZCheckbox::onCursorPosChange(double x, double y)  {
-	// ZView::onCursorPosChange(x, y);
+	 ZView::onCursorPosChange(x, y);
 
 	// if (mouseIsDown()) {
 	// 	int deltaX =  x - getMouseDownX();
@@ -165,6 +165,6 @@ void ZCheckbox::setListener(ZCheckboxListener* l) {
 	mListener = l;
 }
 
-void ZCheckbox::setOnCheck(function<void(ZView *, bool)> onClick) {
+void ZCheckbox::setOnCheck(std::function<void(ZView *, bool)> onClick) {
     mClickListener = onClick;
 }
