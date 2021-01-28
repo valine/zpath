@@ -43,7 +43,7 @@ void ZSlider::setThumbBackground(ZTexture* tex) {
 }
 
 ZSlider::ZSlider(string label, float min, float max, float value, ZView *parent) :
-ZView(ZView::fillParent, 40, parent){
+ZView(ZView::fillParent, 50, parent){
     setBackgroundColor(parent->getBackgroundColor());
     float lineHeight = SLIDER_THUMB_SIZE;
     mLine = new ZView(getWidth(), lineHeight);
