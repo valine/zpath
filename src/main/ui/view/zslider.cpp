@@ -76,8 +76,6 @@ ZView(ZView::fillParent, 40, parent){
     setMinValue(min);
 
     setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
-
-    parent->addSubView(this);
     setValue(value);
 }
 
