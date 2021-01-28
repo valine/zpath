@@ -7,7 +7,13 @@
 
 #include <iostream>
 #include <vector>
+#include <giac/config.h>
+#include <giac/giac.h>
 
+#include <iostream>
+#include <string>
+#include <cctype>
+#include <algorithm>
 using namespace std;
 
 class CasUtil {
@@ -15,7 +21,19 @@ class CasUtil {
 
 public:
 
-    void testCompute();
+    void testCompute() {
+        giac::context ct;
+        giac::gen e("laplace(sin(x))", &ct);
+        e = eval(e, 1, &ct);
+
+        string out;
+        stringstream stream(out);
+        stream << e << endl;
+        //   cout << e << endl;
+
+    }
+
+
 
     static CasUtil& get(){
         static CasUtil instance; // Guaranteed to be destroyed.

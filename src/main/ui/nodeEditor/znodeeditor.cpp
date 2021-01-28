@@ -96,7 +96,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
 
     // Test computer algebra system library
-    CasUtil::get().testCompute();
+//    CasUtil::get().testCompute();
 
     ZNodeUtil::get().stringToGraph("test");
 }
