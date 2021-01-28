@@ -36,7 +36,7 @@ public:
 	void setChecked(bool);
 
     void setCheckColor(vec4 color);
-    void setOnClick(function<void(ZView*, bool)>);
+    void setOnCheck(function<void(ZView *, bool)> onClick);
 
 private:
 	int debug;

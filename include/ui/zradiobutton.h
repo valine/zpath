@@ -38,6 +38,9 @@ public:
 	void showLabel(bool);
 	void setHighlightColor(vec4);
 	void setBaseColor(vec4);
+	void setTextColor(vec3 color) {
+	    mLabel->setTextColor(color);
+	}
 	ZButton* getButton(int index);
 	void setOnClick(function<void(ZView*, int)>);
 private:

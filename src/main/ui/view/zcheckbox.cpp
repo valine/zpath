@@ -164,6 +164,6 @@ void ZCheckbox::setListener(ZCheckboxListener* l) {
 	mListener = l;
 }
 
-void ZCheckbox::setOnClick(function<void(ZView*, bool)> onClick) {
+void ZCheckbox::setOnCheck(function<void(ZView *, bool)> onClick) {
     mClickListener = onClick;
 }
