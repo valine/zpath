@@ -292,7 +292,7 @@ public:
                 case CROSS:
                     break;
                 case CHART_2D: {
-                    mChart->setResolution(((int) in.at(2)));
+                    mChart->setResolution(100);
                     out = {in.at(0), in.at(1), chartBound.x, chartWidth};
                     break;
                 }
