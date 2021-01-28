@@ -120,8 +120,6 @@ ZScene* Z3DView::getScene() {
 }
 
 void Z3DView::draw() {
-	ZView::draw();
-
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(true);
 
@@ -130,6 +128,12 @@ void Z3DView::draw() {
 	if (getVisibility()) {
     	mRenderer->draw();
 	}
+
+    for (ZView* view : getSubViews()) {
+        view->draw();
+    }
+
+   // ZView::draw();
     //glDepthMask(true);
     //glEnable(GL_DEPTH_TEST);
 }   
