@@ -4,10 +4,12 @@
 
 ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
+    mRootView = new ZView(fillParent, fillParent, this);
    	mScene = scene;
    	mResourcePath = resourcePath;
 	setTileCount(tilesX, tilesY);
     setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
+
 }
 
 void ZTiledView::setTileCount(int tilesX, int tilesY) {
@@ -32,7 +34,7 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 				mTiles.push_back(tile);
 				tile->setWindowWidth(getWindowWidth());
 				tile->setWindowHeight(getWindowHeight());
-				addSubView(tile);
+				mRootView->addSubView(tile);
 			}
 
 			tile->setOffset(x * (width + mTileMargin), y * (height + mTileMargin));
@@ -97,7 +99,7 @@ void ZTiledView::computeBounds() {
 			int width = (getWidth() - (mTileMargin * mTileCountX)) / mTileCountX;
 			int height = (getHeight() - (mTileMargin * mTileCountY)) / mTileCountY;
 
-			ZView *tile = getSubViews().at(i);
+			ZView *tile = mRootView->getSubViews().at(i);
 
 			tile->setMaxWidth(width);
 			tile->setMaxHeight(height);

@@ -40,6 +40,7 @@ private:
 	int mTileWeightX = 0;
 
 
+	ZView* mRootView;
 	ZScene* mScene;
 	string mResourcePath;
 	vector<Z3DView*> mTiles;
