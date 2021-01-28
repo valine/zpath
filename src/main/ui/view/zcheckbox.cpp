@@ -78,10 +78,8 @@ ZView(ZView::fillParent, CB_HEIGHT) {
     mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     addSubView(mLabel);
     
-    setCheckBackground(new ZTexture(resourcePath +
-                                                         "resources/icons/check.png"));
-    setBoxBackground(new ZTexture(resourcePath +
-                                                       "resources/icons/box.png"));
+    setCheckBackground(new ZTexture(resourcePath + "resources/icons/check.png"));
+    setBoxBackground(new ZTexture(resourcePath + "resources/icons/box.png"));
 
     setMargin(5,5,5,5);
     setCheckColor(ZSettingsStore::getInstance().getBaseColor());
@@ -133,14 +131,15 @@ bool ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 		setBackgroundColor(getBackgroundColor() - highlight);
 		mIsChecked = !mIsChecked;
 
+		if (mClickListener != nullptr) {
+            mClickListener(this, mIsChecked);
+        }
+
 		mCheck->setVisibility(mIsChecked);
 		if (mListener != nullptr) {
 			mListener->onCheckChange(this, mIsChecked);
 		}
 
-		if (mClickListener != nullptr) {
-		    mClickListener(this, mIsChecked);
-		}
 
         invalidate();
 	}

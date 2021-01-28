@@ -37,6 +37,9 @@ public:
 
     void setCheckColor(vec4 color);
     void setOnCheck(function<void(ZView *, bool)> onClick);
+    void setTextColor(vec3 color) {
+        mLabel->setTextColor(color);
+    }
 
 private:
 	int debug;
@@ -45,7 +48,7 @@ private:
 	ZView* mCheck;
 	ZCheckboxListener* mListener = nullptr;
 	bool mIsChecked = true;
-    function<void(ZView*, float)> mClickListener;
+    function<void(ZView*, float)> mClickListener = nullptr;
 
 };
 
