@@ -23,17 +23,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
-
-
-    // Checkbox example
-    auto* checkbox = new ZCheckbox("Checkbox name", mNodeContainer);
-    checkbox->setOnCheck([this](ZView* sender, bool checked) {
-        // Handle check change
-
-        cout << "hellow" << endl;
-    });
-
-
     
     mHeader = new ZView(fillParent, fillParent, this);
 
@@ -131,25 +120,25 @@ void ZNodeEditor::addTestNodes() {
     connectNodes(0, 0, sin, laplace);
     connectNodes(0, 0, exp, laplace);
 
-//    ZNodeView *x = addNode(ZNodeView::X);
-//    ZNodeView *c = addNode(ZNodeView::C);
-//    ZNodeView *s = addNode(ZNodeView::SIN);
-//    ZNodeView *co = addNode(ZNodeView::COS);
-//    ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
-//
-//    connectNodes(0, 0, c, s);
-//    connectNodes(0, 0, x, s);
-//    connectNodes(0, 0, x, co);
-//    connectNodes(0, 0, s, chart0);
-//    connectNodes(0, 1, co, chart0);
-//
-//    ZNodeView *lastChart = chart0;
-//    for (int i = 0; i < 2; i++) {
-//        ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
-//        connectNodes(0, 0, lastChart, chart1);
-//        connectNodes(1, 1, lastChart, chart1);
-//        lastChart = chart1;
-//    }
+    ZNodeView *x = addNode(ZNodeView::X);
+    ZNodeView *c = addNode(ZNodeView::C);
+    ZNodeView *s = addNode(ZNodeView::SIN);
+    ZNodeView *co = addNode(ZNodeView::COS);
+    ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
+
+    connectNodes(0, 0, c, s);
+    connectNodes(0, 0, x, s);
+    connectNodes(0, 0, x, co);
+    connectNodes(0, 0, s, chart0);
+    connectNodes(0, 1, co, chart0);
+
+    ZNodeView *lastChart = chart0;
+    for (int i = 0; i < 2; i++) {
+        ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
+        connectNodes(0, 0, lastChart, chart1);
+        connectNodes(1, 1, lastChart, chart1);
+        lastChart = chart1;
+    }
 
     updateLines();
 }
