@@ -26,7 +26,6 @@ public:
 
     vector<ZNodeView *> stringToGraph(string input) {
 
-
         set<string> functions = {"max", "min", "sin", "cos", "tan"};
         set<string> operators = {"+", "-", "*", "/", "^"};
     //    string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
@@ -79,26 +78,23 @@ public:
             }
         }
 
-
         while(!opStack.empty()) {
             outQueue.push(opStack.top());
             opStack.pop();
         }
 
+        // Todo:
+        // 1: Evaluate out queue
+        // 2: Once evaluation works it should be more clear how to build a node structure
+        // 3: Functions with 3+ arguments need to be handled differently
+        // 4: After string to nodes works, implement nodes to string. This should be easier.
+        // 5: Add UI / keyboard shortcuts for symbolic operations 
+
+
         return vector<ZNodeView*>();
     }
 
-    static int getPriority(const string& op) {
-        switch(op[0]) {
-            case '^': return 4;
-            case '*': return 3;
-            case '/': return 3;
-            case '+': return 2;
-            case '-': return 2;
-        }
-    }
-
-    vector<string> getTokens(string input) {
+    static vector<string> getTokens(string input) {
         vector<string> tokens;
 
         input.erase(std::remove_if(input.begin(), input.end(), ::isspace), input.end());
@@ -134,6 +130,16 @@ public:
         }
 
         return tokens;
+    }
+
+    static int getPriority(const string& op) {
+        switch(op[0]) {
+            case '^': return 4;
+            case '*': return 3;
+            case '/': return 3;
+            case '+': return 2;
+            case '-': return 2;
+        }
     }
 
     static bool isNumber(const std::string& str) {
