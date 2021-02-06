@@ -209,7 +209,7 @@ if (APPLE)
 
   if (COMPILE_DEPS)
 
-    find_package(glfw3 3.2 REQUIRED)
+#    find_package(glfw3 3.2 REQUIRED)
   include_directories(/usr/local/include)
   find_library(COCOA_LIBRARY Cocoa REQUIRED)
   find_library(IOKIT_LIBRARY IOKit REQUIRED)
@@ -219,7 +219,7 @@ if (APPLE)
   find_library(fr_coregraphics CoreGraphics)
 
   target_link_libraries (zpath
-          glfw ${GLFW_LIBRARIES}
+          ${GLFW_LIBRARIES}
           ${OPENGL_LIBRARIES}
           ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
           ${fr_coretext}
@@ -229,35 +229,43 @@ if (APPLE)
 
     else(COMPILE_DEPS)
 
-    set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos")
-    message(STATUS "${zdep_path}")
+    find_package(BZIP2 REQUIRED)
+      add_definitions(-D__APPLE__)
+      remove_definitions(-DHAVE_GETTEXT)
+        set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos")
+        set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
+        message(STATUS "${zdep_path}")
 
-    include_directories(/usr/local/include)
-    find_library(COCOA_LIBRARY Cocoa REQUIRED)
-    find_library(IOKIT_LIBRARY IOKit REQUIRED)
-    find_library(COREVID_LIBRARY CoreVideo REQUIRED)
-    find_library(fr_coretext CoreText)
-    find_library(fr_corefoundation CoreFoundation)
-    find_library(fr_coregraphics CoreGraphics)
+        include_directories(/usr/local/include)
+        find_library(COCOA_LIBRARY Cocoa REQUIRED)
+        find_library(IOKIT_LIBRARY IOKit REQUIRED)
+        find_library(COREVID_LIBRARY CoreVideo REQUIRED)
+        find_library(fr_coretext CoreText)
+        find_library(fr_corefoundation CoreFoundation)
+        find_library(fr_coregraphics CoreGraphics)
 
-    include_directories(${zdep_path}/glm)
-    include_directories(${zdep_path}/glfw/include)
-    include_directories(${zdep_path}/freetype/include)
-    include_directories(${zdep_path}/zlib/include)
-    include_directories(${zdep_path}/assimp/include)
-    include_directories(${zdep_path}/assimp/include)
-    include_directories(${zdep_path}/giac/include)
-    target_link_libraries (zpath
-            ${OPENGL_LIBRARIES}
-            ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
-            ${fr_coretext}
-            ${fr_corefoundation}
-            ${fr_coregraphics}
-            "${zdep_path}/assimp/libassimp.so"
-            "${zdep_path}/png/libpng16.a"
-            "${zdep_path}/zlib/libz.a"
-            "${zdep_path}/freetype/libfreetype.a"
-            "${zdep_path}/giac/libgiac.so")
+        include_directories(${zdep_path_include}/glm)
+        include_directories(${zdep_path_include}/glfw/include)
+        include_directories(${zdep_path_include}/freetype/include)
+        include_directories(${zdep_path_include}/zlib/include)
+        include_directories(${zdep_path_include}/assimp/include)
+        include_directories(${zdep_path_include}/png/include)
+        include_directories(${zdep_path}/giac/include)
+      include_directories(${zdep_path}/giac/include/other)
+#        include_directories("/Applications/usr/include/")
+        target_link_libraries (zpath
+                ${OPENGL_LIBRARIES}
+                ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+                "${zdep_path}/glfw/libglfw3.a"
+                ${fr_coretext}
+                ${fr_corefoundation}
+                ${fr_coregraphics}
+                "${zdep_path}/assimp/libassimp.dylib"
+                "${zdep_path}/png/libpng16.a"
+                "${zdep_path}/zlib/libz.a"
+                ${BZIP2_LIBRARY}
+                "${zdep_path}/freetype/libfreetyped.a"
+                "${zdep_path}/giac/libgiac.dylib")
 
 
     endif()
@@ -298,7 +306,7 @@ if (LINUX)
     include_directories(${zdep_path}/freetype/include)
     include_directories(${zdep_path}/zlib/include)
     include_directories(${zdep_path}/assimp/include)
-    include_directories(${zdep_path}/assimp/include)
+    include_directories(${zdep_path}/png/include)
     include_directories(${zdep_path}/giac/include)
     target_link_libraries (zpath
             ${OPENGL_LIBRARIES}

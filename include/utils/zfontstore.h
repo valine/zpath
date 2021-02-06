@@ -16,6 +16,7 @@ using namespace std;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character {
@@ -47,7 +48,7 @@ private:
     map<string, FT_Face> mFonts;
     ZFontStore(ZFontStore const&);              // Don't Implement
     void operator=(ZFontStore const&); // Don't implement
-    string mDefaultResource;
+    std::string mDefaultResource = "";
 };
 
 
