@@ -206,7 +206,10 @@ if(UNIX AND NOT APPLE)
 endif()
 
 if (APPLE)
-  find_package(glfw3 3.2 REQUIRED)
+
+  if (COMPILE_DEPS)
+
+    find_package(glfw3 3.2 REQUIRED)
   include_directories(/usr/local/include)
   find_library(COCOA_LIBRARY Cocoa REQUIRED)
   find_library(IOKIT_LIBRARY IOKit REQUIRED)
@@ -223,6 +226,41 @@ if (APPLE)
           ${fr_corefoundation}
           ${fr_coregraphics}
           ${FREETYPE_LIBRARIES})
+
+    else(COMPILE_DEPS)
+
+    set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos")
+    message(STATUS "${zdep_path}")
+
+    include_directories(/usr/local/include)
+    find_library(COCOA_LIBRARY Cocoa REQUIRED)
+    find_library(IOKIT_LIBRARY IOKit REQUIRED)
+    find_library(COREVID_LIBRARY CoreVideo REQUIRED)
+    find_library(fr_coretext CoreText)
+    find_library(fr_corefoundation CoreFoundation)
+    find_library(fr_coregraphics CoreGraphics)
+
+    include_directories(${zdep_path}/glm)
+    include_directories(${zdep_path}/glfw/include)
+    include_directories(${zdep_path}/freetype/include)
+    include_directories(${zdep_path}/zlib/include)
+    include_directories(${zdep_path}/assimp/include)
+    include_directories(${zdep_path}/assimp/include)
+    include_directories(${zdep_path}/giac/include)
+    target_link_libraries (zpath
+            ${OPENGL_LIBRARIES}
+            ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+            ${fr_coretext}
+            ${fr_corefoundation}
+            ${fr_coregraphics}
+            "${zdep_path}/assimp/libassimp.so"
+            "${zdep_path}/png/libpng16.a"
+            "${zdep_path}/zlib/libz.a"
+            "${zdep_path}/freetype/libfreetype.a"
+            "${zdep_path}/giac/libgiac.so")
+
+
+    endif()
 
 endif (APPLE)
 
