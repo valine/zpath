@@ -25,11 +25,11 @@ FT_Face ZFontStore::loadFont(string resourcePath) {
         const char *resourceChar = resourceString.c_str();
 
         FT_New_Face(mFreetype, resourceChar, 0, &face);
-        mFonts.insert(make_pair(resourcePath, face));
 
 
         // Set size to load glyphs as
         FT_Set_Pixel_Sizes(face, 0, 10);
+        mFonts.insert(make_pair(resourcePath, face));
 
         // Disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

@@ -1,10 +1,12 @@
 R"(
 #version 330 core
 #define PI 3.14159265359
-varying vec3 WorldPos;
+in vec3 WorldPos;
 
 uniform samplerCube environmentMap;
 uniform float roughness;
+
+out vec4 fragColor;
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a = roughness*roughness;
@@ -92,7 +94,7 @@ void main() {
 
     prefilteredColor = prefilteredColor / totalWeight;
 
-    gl_FragColor = vec4(prefilteredColor, 1.0);
+    fragColor = vec4(prefilteredColor, 1.0);
 }
 
 )"

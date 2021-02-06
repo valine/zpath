@@ -23,17 +23,22 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-if (BUILD_LIB) 
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
+
+if (BUILD_LIB)
   add_library(zpath STATIC ${sources} ${headers})
   target_compile_options(zpath PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-std=c++14>)
-   target_include_directories(zpath PUBLIC src/main)
+  target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
   add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/nodeview.cpp include/ui/nodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h src/main/utils/znodeutil.cpp include/utils/znodeutil.h)
   target_compile_options(zpath PUBLIC -std=c++1y -Wall)
   file(COPY ${data} DESTINATION resources)
   add_custom_command(TARGET zpath PRE_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E copy_directory
-                        ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:zpath>/resources)
+          COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:zpath>/resources)
   target_include_directories(zpath PUBLIC src/main)
 endif()
 
@@ -47,21 +52,21 @@ include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 if (COMPILE_DEPS)
 
   if (WIN32)
-  set(freetype_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype")
-  set(freetype_install_dir "${freetype_prefix}")
-  set(freetype_cmake_args  "")
-  externalproject_add(freetype
-                      PREFIX         ${freetype_prefix}
-                      GIT_REPOSITORY https://github.com/ubawurinna/freetype-windows-binaries.git
-                      CMAKE_ARGS     ${freetype_cmake_args}
-                      UPDATE_COMMAND ""
-                      CONFIGURE_COMMAND ""
-                      BUILD_COMMAND ""
-                      INSTALL_COMMAND ""
-                      LOG_DOWNLOAD ON
-                      )
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype/src/freetype/include)
-  add_dependencies(zpath freetype)
+    set(freetype_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype")
+    set(freetype_install_dir "${freetype_prefix}")
+    set(freetype_cmake_args  "")
+    externalproject_add(freetype
+            PREFIX         ${freetype_prefix}
+            GIT_REPOSITORY https://github.com/ubawurinna/freetype-windows-binaries.git
+            CMAKE_ARGS     ${freetype_cmake_args}
+            UPDATE_COMMAND ""
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
+            LOG_DOWNLOAD ON
+            )
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype/src/freetype/include)
+    add_dependencies(zpath freetype)
 
   endif(WIN32)
 
@@ -74,14 +79,14 @@ if (COMPILE_DEPS)
   set(glfw_install_dir "${glfw_prefix}")
   set(glfw_cmake_args  "-DCMAKE_INSTALL_PREFIX=${glfw_install_dir}")
   externalproject_add(glfw
-                      PREFIX         ${glfw_prefix}
-                      GIT_REPOSITORY https://github.com/glfw/glfw.git
-                      UPDATE_COMMAND ""
-                      GIT_SHALLOW 1
-                      INSTALL_DIR    ${glfw_install_dir}
-                      CMAKE_ARGS     ${glfw_cmake_args}
-                      LOG_DOWNLOAD ON
-                      )
+          PREFIX         ${glfw_prefix}
+          GIT_REPOSITORY https://github.com/glfw/glfw.git
+          UPDATE_COMMAND ""
+          GIT_SHALLOW 1
+          INSTALL_DIR    ${glfw_install_dir}
+          CMAKE_ARGS     ${glfw_cmake_args}
+          LOG_DOWNLOAD ON
+          )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/include)
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/glfw/lib)
   add_dependencies(zpath glfw)
@@ -129,15 +134,15 @@ if (COMPILE_DEPS)
   set(assimp_install_dir "${assimp_prefix}")
   set(assimp_cmake_args  "-DCMAKE_INSTALL_PREFIX=${assimp_install_dir}")
   externalproject_add(assimp
-                      PREFIX         ${assimp_prefix}
-                      GIT_REPOSITORY https://github.com/assimp/assimp.git
-                      UPDATE_COMMAND ""
-                      GIT_SHALLOW 1
-                      GIT_TAG        v4.1.0
-                      INSTALL_DIR    ${assimp_install_dir}
-                      CMAKE_ARGS     ${assimp_cmake_args}
-                      LOG_DOWNLOAD ON
-                      )
+          PREFIX         ${assimp_prefix}
+          GIT_REPOSITORY https://github.com/assimp/assimp.git
+          UPDATE_COMMAND ""
+          GIT_SHALLOW 1
+          GIT_TAG        v4.1.0
+          INSTALL_DIR    ${assimp_install_dir}
+          CMAKE_ARGS     ${assimp_cmake_args}
+          LOG_DOWNLOAD ON
+          )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/include)
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/lib)
   add_dependencies(zpath assimp)
@@ -201,74 +206,73 @@ include_directories(zpath ${OPENGL_INCLUDE_DIR})
 link_libraries(zpath ${OPENGL_gl_LIBRARY})
 find_package (Threads)
 
-if(UNIX AND NOT APPLE)
-    set(LINUX TRUE)
-endif()
-
 if (APPLE)
 
   if (COMPILE_DEPS)
 
-#    find_package(glfw3 3.2 REQUIRED)
-  include_directories(/usr/local/include)
-  find_library(COCOA_LIBRARY Cocoa REQUIRED)
-  find_library(IOKIT_LIBRARY IOKit REQUIRED)
-  find_library(COREVID_LIBRARY CoreVideo REQUIRED)
-  find_library(fr_coretext CoreText)
-  find_library(fr_corefoundation CoreFoundation)
-  find_library(fr_coregraphics CoreGraphics)
+    #    find_package(glfw3 3.2 REQUIRED)
+    include_directories(/usr/local/include)
+    find_library(COCOA_LIBRARY Cocoa REQUIRED)
+    find_library(IOKIT_LIBRARY IOKit REQUIRED)
+    find_library(COREVID_LIBRARY CoreVideo REQUIRED)
+    find_library(fr_coretext CoreText)
+    find_library(fr_corefoundation CoreFoundation)
+    find_library(fr_coregraphics CoreGraphics)
 
-  target_link_libraries (zpath
-          ${GLFW_LIBRARIES}
-          ${OPENGL_LIBRARIES}
-          ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
-          ${fr_coretext}
-          ${fr_corefoundation}
-          ${fr_coregraphics}
-          ${FREETYPE_LIBRARIES})
+    target_link_libraries (zpath
+            ${GLFW_LIBRARIES}
+            ${OPENGL_LIBRARIES}
+            ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+            ${fr_coretext}
+            ${fr_corefoundation}
+            ${fr_coregraphics}
+            ${FREETYPE_LIBRARIES})
 
-    else(COMPILE_DEPS)
+  else(COMPILE_DEPS)
 
     find_package(BZIP2 REQUIRED)
-      add_definitions(-D__APPLE__)
-      remove_definitions(-DHAVE_GETTEXT)
-        set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos")
-        set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
-        message(STATUS "${zdep_path}")
+    add_definitions(-D__APPLE__)
+    remove_definitions(-DHAVE_GETTEXT)
+    set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos")
+    set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
+    message(STATUS "${zdep_path}")
 
-        include_directories(/usr/local/include)
-        find_library(COCOA_LIBRARY Cocoa REQUIRED)
-        find_library(IOKIT_LIBRARY IOKit REQUIRED)
-        find_library(COREVID_LIBRARY CoreVideo REQUIRED)
-        find_library(fr_coretext CoreText)
-        find_library(fr_corefoundation CoreFoundation)
-        find_library(fr_coregraphics CoreGraphics)
+    include_directories(/usr/local/include)
+    find_library(COCOA_LIBRARY Cocoa REQUIRED)
+    find_library(IOKIT_LIBRARY IOKit REQUIRED)
+    find_library(COREVID_LIBRARY CoreVideo REQUIRED)
+    find_library(fr_coretext CoreText)
+    find_library(fr_corefoundation CoreFoundation)
+    find_library(fr_coregraphics CoreGraphics)
 
-        include_directories(${zdep_path_include}/glm)
-        include_directories(${zdep_path_include}/glfw/include)
-        include_directories(${zdep_path_include}/freetype/include)
-        include_directories(${zdep_path_include}/zlib/include)
-        include_directories(${zdep_path_include}/assimp/include)
-        include_directories(${zdep_path_include}/png/include)
-        include_directories(${zdep_path}/giac/include)
-      include_directories(${zdep_path}/giac/include/other)
-#        include_directories("/Applications/usr/include/")
-        target_link_libraries (zpath
-                ${OPENGL_LIBRARIES}
-                ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
-                "${zdep_path}/glfw/libglfw3.a"
-                ${fr_coretext}
-                ${fr_corefoundation}
-                ${fr_coregraphics}
-                "${zdep_path}/assimp/libassimp.dylib"
-                "${zdep_path}/png/libpng16.a"
-                "${zdep_path}/zlib/libz.a"
-                ${BZIP2_LIBRARY}
-                "${zdep_path}/freetype/libfreetyped.a"
-                "${zdep_path}/giac/libgiac.dylib")
+    include_directories(${zdep_path_include}/glm)
+    include_directories(${zdep_path_include}/glfw/include)
+    include_directories(${zdep_path_include}/freetype/include)
+    include_directories(${zdep_path_include}/zlib/include)
+    include_directories(${zdep_path_include}/assimp/include)
+    include_directories(${zdep_path_include}/png/include)
+    include_directories(${zdep_path}/giac/include)
+    include_directories(${zdep_path}/giac/include/other)
+    #        include_directories("/Applications/usr/include/")
+    target_link_libraries (zpath
+            ${OPENGL_LIBRARIES}
+            ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+            "${zdep_path}/glfw/libglfw3.a"
+            ${fr_coretext}
+            ${fr_corefoundation}
+            ${fr_coregraphics}
+            "${zdep_path}/assimp/libassimp.dylib"
+            "${zdep_path}/png/libpng16.a"
+            "${zdep_path}/zlib/libz.a"
+            ${BZIP2_LIBRARY}
+            "${zdep_path}/freetype/libfreetyped.a")
 
+    add_custom_command (TARGET zpath
+            POST_BUILD COMMAND "${CMAKE_INSTALL_NAME_TOOL}"
+            "-change" "/usr/local/lib/libgiac.0.dylib" "@executable_path/../deps/zdep/src/zdep/macos/giac/libgiac.0.dylib"
+            "$<TARGET_FILE:zpath>" VERBATIM)
 
-    endif()
+  endif()
 
 endif (APPLE)
 
@@ -324,7 +328,7 @@ if (LINUX)
 endif (LINUX)
 
 if (WIN32)
-      #Opengl
+  #Opengl
   find_package (OpenGL REQUIRED)
   include_directories(zpath ${OPENGL_INCLUDE_DIR})
   link_libraries(zpath ${OPENGL_gl_LIBRARY})
@@ -336,7 +340,7 @@ if (WIN32)
   message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
   message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
   include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
- 
+
   target_link_libraries (zpath
           ${OPENGL_LIBRARIES}
           "${glfw_install_dir}/lib/glfw3.lib"
@@ -354,9 +358,9 @@ endif(WIN32)
 ###############################################################################
 
 install (TARGETS zpath
-         ARCHIVE DESTINATION lib
-         LIBRARY DESTINATION lib
-         RUNTIME DESTINATION bin)
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
 
 SET(CPACK_OUTPUT_FILE_PREFIX packages)
 set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")

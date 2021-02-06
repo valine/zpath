@@ -9,8 +9,8 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;  
 
-varying vec3 vPosition;
-varying vec3 vNormal;
+in vec3 vPosition;
+in vec3 vNormal;
 
 uniform vec4 uColor;
 uniform vec3 uCameraPosition;
@@ -25,6 +25,7 @@ uniform float uSelected;
 
 float ao = 1;
 
+out vec4 fragColor;
 
 vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
      return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 2.0);
@@ -145,10 +146,10 @@ void main() {
     if (uSelected == 1) {
 
         vec3 selectedFactor = fresnelSchlickSelection(max(dot(N, V), 0.0), vec3(0)) * 100;
-        gl_FragColor = vec4(color + vec3(0,0,selectedFactor), alpha);
+        fragColor = vec4(color + vec3(0,0,selectedFactor), alpha);
     } else {
 
-        gl_FragColor = vec4(color, alpha);
+        fragColor = vec4(color, alpha);
     }
 }
 

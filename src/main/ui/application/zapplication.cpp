@@ -72,8 +72,9 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glfwSetErrorCallback(error_callback);
 
     GLFWwindow *window;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     const char *c = windowName.c_str();
     window = glfwCreateWindow(width, height, c, NULL, NULL);

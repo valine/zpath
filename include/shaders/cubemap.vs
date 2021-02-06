@@ -1,8 +1,8 @@
 R"(
 #version 330 core
-attribute vec3 aPos;
+in vec3 aPos;
 
-varying vec3 WorldPos;
+out vec3 WorldPos;
 
 uniform mat4 projection;
 uniform mat4 view;

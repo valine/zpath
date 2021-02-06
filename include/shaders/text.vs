@@ -1,7 +1,7 @@
 R"(
 #version 330 core
-attribute vec4 vertex; 
-varying vec2 TexCoords;
+in vec4 vertex;
+out vec2 TexCoords;
 
 uniform mat4 projection;
 

@@ -1,10 +1,12 @@
 R"(
 #version 330 core
-varying vec2 TexCoords;
+in vec2 TexCoords;
 
 uniform sampler2D hdrBuffer;
 uniform bool hdr;
 uniform float exposure;
+
+out vec4 fragColor;
 
 void main() {             
     const float gamma = 2.2;
@@ -48,12 +50,12 @@ void main() {
 
 
 
-        gl_FragColor = vec4(result.rgb, 1.0);
+        fragColor = vec4(result.rgb, 1.0);
     }
     else
     {
         vec4 result = pow(hdrColor, vec4(1.0 / gamma));
-        gl_FragColor = vec4(1,0,0,1);
+        fragColor = vec4(1,0,0,1);
     }
 }
 

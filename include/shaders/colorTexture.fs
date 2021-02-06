@@ -3,9 +3,9 @@ R"(
 #define lightCount 4
 #define PI 3.14159265359
 
-varying vec3 vPosition;
-varying vec3 vNormal;
-varying vec2 vTextureCoords;
+in vec3 vPosition;
+in vec3 vNormal;
+in vec2 vTextureCoords;
 
 uniform vec4 uColor;
 uniform vec3 uCameraPosition;
@@ -19,8 +19,9 @@ uniform float uRoughness;
 uniform sampler2D sColorTexture;
 uniform sampler2D sNormalTexture;
 
-float ao = 1;
+out vec4 fragColor;
 
+float ao = 1;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
@@ -64,7 +65,7 @@ void main() {
     vec3 V = normalize(uCameraPosition - vPosition);
 
     vec3 Lo = vec3(0.0);
-    vec3 texColor = texture2D(sColorTexture, vTextureCoords).rgb;
+    vec3 texColor = texture(sColorTexture, vTextureCoords).rgb;
     texColor = pow(texColor, vec3(2.2));
 
     for(int i = 0; i < lightCount; i++) {
@@ -101,7 +102,7 @@ void main() {
     vec3 color = ambient + Lo;
 
     
-    gl_FragColor = vec4(color, 1.0);
+    fragColor = vec4(color, 1.0);
 }
 )"
 

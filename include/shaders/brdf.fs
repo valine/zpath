@@ -1,8 +1,8 @@
 R"(
 #version 330 core
 #define PI 3.14159265359
-varying vec2 TexCoords;
-
+in vec2 TexCoords;
+out vec4 fragColor;
 // ----------------------------------------------------------------------------
 // http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
 // efficient VanDerCorpus calculation.
@@ -119,6 +119,6 @@ vec2 IntegrateBRDF(float NdotV, float roughness) {
 
 void main() {
     vec2 integratedBRDF = IntegrateBRDF(TexCoords.x, TexCoords.y);
-    gl_FragColor = vec4(integratedBRDF, 0.0, 1.0);
+    fragColor = vec4(integratedBRDF, 0.0, 1.0);
 }
 )"

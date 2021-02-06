@@ -7,14 +7,14 @@ uniform mat4 uProjectionMatrix;
 uniform mat4 uModelMatrix;
 
 
-attribute vec3 aPos;
-attribute vec3 aNormal;
-attribute vec2 aTextureCoords;
+in vec3 aPos;
+in vec3 aNormal;
+in vec2 aTextureCoords;
 
-varying vec3 vColor;
-varying vec3 vNormal;
-varying vec3 vPosition;
-varying vec2 vTextureCoords;
+out vec3 vColor;
+out vec3 vNormal;
+out vec3 vPosition;
+out vec2 vTextureCoords;
 
 void main() {
     gl_Position = (uProjectionMatrix * uViewMatrix * uModelMatrix) * vec4(aPos, 1.0);

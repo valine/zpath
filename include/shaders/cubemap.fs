@@ -1,8 +1,10 @@
 R"(
 #version 330 core
-varying vec3 WorldPos;
+in vec3 WorldPos;
 
 uniform sampler2D equirectangularMap;
+
+out vec4 fragColor;
 
 vec2 SampleSphericalMap(vec3 v) {
 	vec2 invAtan = vec2(0.1591, 0.3183);
@@ -14,8 +16,8 @@ vec2 SampleSphericalMap(vec3 v) {
 
 void main() {		
     vec2 uv = SampleSphericalMap(normalize(WorldPos));
-    vec3 color = texture2D(equirectangularMap, uv).rgb;
+    vec3 color = texture(equirectangularMap, uv).rgb;
     
-    gl_FragColor = vec4(color, 1.0);
+    fragColor = vec4(color, 1.0);
 }
 )"

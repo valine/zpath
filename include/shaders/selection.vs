@@ -6,8 +6,8 @@ uniform mat4 uViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat4 uModelMatrix;
 
-attribute vec3 aPos;
-attribute vec3 aNormal;
+in vec3 aPos;
+in vec3 aNormal;
 
 void main() {
 

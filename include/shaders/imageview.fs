@@ -1,14 +1,15 @@
 R"(
 #version 330 core
 uniform vec4 uColor;
-varying vec2 TexCoords;
-uniform sampler2D texture;
+in vec2 TexCoords;
+uniform sampler2D imageTexture;
+in vec3 color;
 
-varying vec3 color;
+out vec4 fragColor;
 void main() {
-	vec4 texColor = texture2D(texture, TexCoords);
+	vec4 texColor = texture(imageTexture, TexCoords);
 	float gamma = 1.0 / 2.2;
-   	gl_FragColor = pow(texColor, vec4(vec3(1.0/2.2), 1.0)) * pow(uColor, vec4(vec3(gamma),1.0));
+   	fragColor = pow(texColor, vec4(vec3(1.0/2.2), 1.0)) * pow(uColor, vec4(vec3(gamma),1.0));
 }
 )"
 

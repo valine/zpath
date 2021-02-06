@@ -2,9 +2,11 @@ R"(
 #version 330 core
 #define PI 3.14159265359
 
-varying vec3 WorldPos;
+in vec3 WorldPos;
 
 uniform samplerCube environmentMap;
+
+out vec4 fragColor;
 
 void main() {		
 
@@ -32,7 +34,7 @@ void main() {
     }
     irradiance = PI * irradiance * (1.0 / float(nrSamples));
     
-    gl_FragColor = vec4(irradiance, 1.0);
+    fragColor = vec4(irradiance, 1.0);
 }
 
 )"

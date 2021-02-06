@@ -1,7 +1,7 @@
 R"(
 #version 330 core
 uniform mat4 uVPMatrix;
-attribute vec4 vPosUi;
+in vec4 vPosUi;
 
 
 void main() {
