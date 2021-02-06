@@ -391,15 +391,22 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
 }
 
 void ZNodeEditor::deselectNode(ZNodeView* node) {
-    node->setOutlineColor(grey);
-    node->setLineWidth(2.0);
-    if (mSelectedNodes.count(node) != 0) {
-        mSelectedNodes.erase(node);
+    if (node->getVisibility()) {
+        node->setOutlineColor(grey);
+        node->setLineWidth(2.0);
+        if (mSelectedNodes.count(node) != 0) {
+            mSelectedNodes.erase(node);
+        }
     }
 }
 
 void ZNodeEditor::deselectAllNodes() {
+    vector<ZNodeView*> nodes;
     for (ZNodeView* oldNode : mSelectedNodes) {
+        nodes.push_back(oldNode);
+    }
+
+    for (ZNodeView* oldNode : nodes) {
         deselectNode(oldNode);
     }
 }
