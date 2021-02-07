@@ -164,6 +164,9 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glClearColor(background.r, background.g, background.b, background.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Draw first frame during application startup
+    glfwSwapBuffers(window);
+
     viewController->onCreate();
 
     int windowWidth, windowHeight;
