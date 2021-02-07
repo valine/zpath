@@ -26,6 +26,9 @@ int main(int argc, char* argv[]) {
     auto* nodeView = new NodeViewController(argv);
     nodeView->setName("Node Editor");
 
-    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, view3d});
+
+//    auto* empty = new ZViewController(argv);
+
+      ZTabbedViewController* tabs = new ZTabbedViewController(argv, {view3d, nodeView});
     ZApplication(tabs, "ZPATH", false, 1200, 800);
 }

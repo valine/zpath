@@ -138,11 +138,13 @@ void ZViewController::draw() {
     if (mDrawingEnabled) {
 
         mUIShader->use();
+
         GLint vp_location = glGetUniformLocation(mUIShader->mID, "uVPMatrix");
         mat4 projection = ortho(0.0f, (float) mParentWidth, (float) mParentHeight, 0.0f, -1.0f, 1.0f);
         glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(projection));
 
         mImageViewShader->use();
+
         GLint vp_locationi = glGetUniformLocation(mImageViewShader->mID, "uVPMatrix");
         glUniformMatrix4fv(vp_locationi, 1, GL_FALSE, glm::value_ptr(projection));
         ZView::draw();

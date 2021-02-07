@@ -35,9 +35,11 @@ void ZTabbedViewController::onCreate() {
     }
 
     for (ZViewController* controller : mControllers) {
+
         controllerHolder->addSubView(controller);
         controller->setVisibility(false);
         controller->invalidate();
+
     }
     mControllers.at(0)->setVisibility(true);
 

@@ -17,12 +17,12 @@
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
-
-
     mNameLabel = new ZLabel("Node", this);
     mNameLabel->setTextColor(black);
     mNameLabel->setXOffset(30);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
+
+
 
     mOutputLabel = new ZLabel("", this);
     mOutputLabel->setOffset(vec2(20, 0));
@@ -38,11 +38,17 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     // Add input sockets
     auto socketType = getSocketType();
 
+
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
+
+
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
+
         socket->setClickable(false);
         mSocketsIn.push_back(socket);
+
+
     }
 
     // Add output sockets
@@ -56,9 +62,10 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     initializeEdges();
     parent->invalidate();
-
     mChart = new ZLineChart(fillParent, fillParent, this);
+
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
+
     mChart->setBackgroundColor(grey);
     mChart->setOffset(vec2(0,10));
     mChart->setChartListener([this](vector<int> x, int lineIndex){

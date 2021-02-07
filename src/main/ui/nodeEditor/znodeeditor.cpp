@@ -112,6 +112,7 @@ vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
 
 
 void ZNodeEditor::addTestNodes() {
+
     ZNodeView *sin = addNode(ZNodeView::SIN);
     ZNodeView *exp = addNode(ZNodeView::EXP);
 

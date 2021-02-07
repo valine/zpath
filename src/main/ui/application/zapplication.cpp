@@ -5,7 +5,8 @@
 #include <utils/zsettingsstore.h>
 
 static void error_callback(int error, const char* description) {
-    cout<<description;
+    cout<< "GLFW error " << description << endl;
+    cout<< "GLFW error " << error << endl;
     fprintf(stderr, "Error: %s\n", description);
 }
 
@@ -67,6 +68,11 @@ ZApplication::init(vector<ZViewController *> controllers, string windowName, boo
     exit(EXIT_SUCCESS);
 }
 
+
+void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+    std::cout << "[OpenGL Error](" << type << ") " << message << std::endl;
+}
+
 void ZApplication::startUiThread(ZViewController *viewController, bool shouldPoll, ZApplication *app, string windowName,
                             int width, int height) {
     glfwSetErrorCallback(error_callback);
@@ -75,6 +81,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
     const char *c = windowName.c_str();
     window = glfwCreateWindow(width, height, c, NULL, NULL);
@@ -84,6 +91,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+
 
     glfwSetWindowUserPointer(window, reinterpret_cast<void *>(app));
 
@@ -166,8 +174,10 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     viewController->onWindowChange(windowWidth, windowHeight);
 
     viewController->onLayoutFinished();
+
     viewController->draw();
     glfwSwapBuffers(window);
+
 
     while (!glfwWindowShouldClose(window)) {
         if (shouldPoll) {
@@ -178,6 +188,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
         viewController->draw();
         glfwSwapBuffers(window);
+
     }
 
 }

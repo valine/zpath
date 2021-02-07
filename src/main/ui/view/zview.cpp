@@ -255,6 +255,8 @@ void ZView::draw() {
         glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
         mVertsInvalid = false;
     }
+
+
     if (mVisible) {
         if (mNeedsRender) {
             if (mBackgroundImage != nullptr) {
@@ -268,9 +270,11 @@ void ZView::draw() {
                 shader = mShader;
             }
 
-            mPositionLocation = glGetAttribLocation(shader->mID, "vPos");
+            mPositionLocation = glGetAttribLocation(shader->mID, "vPosUi");
             mColorLocation = glGetUniformLocation(shader->mID, "uColor");
             mTexCoordLocation = glGetUniformLocation(shader->mID, "aTexCoords");
+
+
 
             // Update scale, useful for zooming a view out
             GLint vp_location = glGetUniformLocation(shader->mID, "uVPMatrix");
@@ -290,12 +294,14 @@ void ZView::draw() {
             glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
             glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "vPosUi"));
             glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                                  sizeof(float) * 4, (void *) 0);
+                                  sizeof(float) * 4, nullptr);
 
             glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
             glEnableVertexAttribArray(glGetUniformLocation(shader->mID, "aTexCoords"));
             glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
-                                  sizeof(float) * 2, (void *) 0);
+                                  sizeof(float) * 2, nullptr);
+
+
 
             glLineWidth(mLineWidth);
             if (mDrawWire == full) {
@@ -323,6 +329,8 @@ void ZView::draw() {
                 }
             }
 
+
+
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
@@ -331,8 +339,13 @@ void ZView::draw() {
             view->draw();
         }
 
+
+        GLenum err;
+
         glBindTexture(GL_TEXTURE_2D, 0);
         mNeedsRender = false;
+
+
     }
 }
 

@@ -24,6 +24,7 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
 
     initHeatLUT();
 
+
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
 
@@ -33,7 +34,9 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     computeChartBounds();
 
     updateFBOSize();
+
     initGrid();
+
     initBackgroundGrid();
 
 }
@@ -41,7 +44,7 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
 void ZLineChart::initHeatLUT()  {
     glGenTextures(1, &mHeatLUTBuffer);
     mHeatShader->use();
-    glUniform1i(glGetUniformLocation(mHeatShader->mID, "texture"), 0);
+    glUniform1i(glGetUniformLocation(mHeatShader->mID, "textureMap"), 0);
     glUniform1i(glGetUniformLocation(mHeatShader->mID, "texLut"), 1);
     int res = 15;
     vector<float> pixels = {
@@ -203,12 +206,19 @@ void ZLineChart::onWindowChange(int width, int height) {
 void ZLineChart::updateFBOSize() {
     int width = getWidth();
     int height = getHeight();
+
+
+    glEnable(GL_MULTISAMPLE);
+
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer);
-
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, GL_RGBA, width, height, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
     glBindRenderbuffer(GL_RENDERBUFFER, mRBO);
     glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_DEPTH_COMPONENT, width, height);
@@ -216,12 +226,16 @@ void ZLineChart::updateFBOSize() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mTexBuffer);
 
+
+
     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
     glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
+
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
     glBindRenderbuffer(GL_RENDERBUFFER, mFinalRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
@@ -230,6 +244,7 @@ void ZLineChart::updateFBOSize() {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mFinalTexBuffer);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void ZLineChart::updateChart2D() {
