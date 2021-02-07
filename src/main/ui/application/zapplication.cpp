@@ -163,7 +163,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
     glClearColor(background.r, background.g, background.b, background.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glfwSwapBuffers(window);
 
     viewController->onCreate();
 
@@ -178,7 +177,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     viewController->draw();
     glfwSwapBuffers(window);
 
-
     while (!glfwWindowShouldClose(window)) {
         if (shouldPoll) {
             glfwPollEvents();
@@ -188,7 +186,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
         viewController->draw();
         glfwSwapBuffers(window);
-
     }
 
 }

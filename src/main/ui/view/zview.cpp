@@ -330,6 +330,7 @@ void ZView::draw() {
 }
 
 void ZView::init() {
+    computeBounds();
 
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -378,8 +379,6 @@ void ZView::init() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
     glBindVertexArray(0);
-
-    computeBounds();
 }
 
 void ZView::setShader(ZShader *shader) {
