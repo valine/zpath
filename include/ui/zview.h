@@ -267,6 +267,7 @@ class ZView {
 		vec4 mBackgroundColor = vec4(0);
 		vec4 mOutlineColor = red;
 
+		GLuint mVAO = 0;
 		GLuint mVertexBuffer = 0;
 		GLuint mTexBuffer = 0;
 		GLuint mFaceIndicesBuffer = 0;

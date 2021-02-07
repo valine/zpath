@@ -24,9 +24,9 @@ int main(int argc, char* argv[]) {
     auto* view3d = new ZPathViewController(argv);
     view3d->setName("3D Viewport");
     auto* nodeView = new NodeViewController(argv);
-    nodeView->setName("Node Editor");
-
-
+//    nodeView->setName("Node Editor");
+//
+//
 //    auto* empty = new ZViewController(argv);
 
       ZTabbedViewController* tabs = new ZTabbedViewController(argv, {view3d, nodeView});

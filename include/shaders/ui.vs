@@ -1,8 +1,8 @@
 R"(
-#version 330 core
-uniform mat4 uVPMatrix;
-in vec3 vCol;
+#version 330
 in vec4 vPosUi;
+
+uniform mat4 uVPMatrix;
 
 out vec3 uiColor;
 out vec2 TexCoords;

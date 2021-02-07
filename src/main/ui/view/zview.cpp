@@ -246,6 +246,10 @@ void ZView::setTag(string tag) {
 
 void ZView::draw() {
     ZShader* shader;
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        cerr << "OpenGL error: " << err << endl;
+    }
 
     if (mVertsInvalid) {
         glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -254,6 +258,10 @@ void ZView::draw() {
         glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
         mVertsInvalid = false;
+    }
+
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        cerr << "OpenGL error: " << err << endl;
     }
 
 
@@ -270,11 +278,19 @@ void ZView::draw() {
                 shader = mShader;
             }
 
+
+            GLenum err;
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                cerr << "OpenGL error: " << err << endl;
+            }
+
             mPositionLocation = glGetAttribLocation(shader->mID, "vPosUi");
             mColorLocation = glGetUniformLocation(shader->mID, "uColor");
             mTexCoordLocation = glGetUniformLocation(shader->mID, "aTexCoords");
 
-
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                cerr << "OpenGL error: " << err << endl;
+            }
 
             // Update scale, useful for zooming a view out
             GLint vp_location = glGetUniformLocation(shader->mID, "uVPMatrix");
@@ -285,71 +301,103 @@ void ZView::draw() {
             glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(scaleMat));
 
 
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                cerr << "OpenGL error: " << err << endl;
+            }
+
             // Set the view background color
             glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
                         mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
 
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                cerr << "OpenGL error: " << err << endl;
+            }
+
             glViewport(0, 0, mWindowWidth, mWindowHeight);
 
-            glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-            glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "vPosUi"));
-            glVertexAttribPointer(glGetAttribLocation(shader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                                  sizeof(float) * 4, nullptr);
-
-            glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-            glEnableVertexAttribArray(glGetUniformLocation(shader->mID, "aTexCoords"));
-            glVertexAttribPointer(glGetUniformLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
-                                  sizeof(float) * 2, nullptr);
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                cerr << "OpenGL error: " << err << endl;
+            }
 
 
+            glBindVertexArray(mVAO);
+//            glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+//            while ((err = glGetError()) != GL_NO_ERROR) {
+//                cerr << "OpenGL error: " << err << endl;
+//            }
+//            glEnableVertexAttribArray(0);
+//            while ((err = glGetError()) != GL_NO_ERROR) {
+//                cerr << "OpenGL error: " << err << endl;
+//            }
+//            glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,
+//                                  sizeof(float) * 4, nullptr);
+//            while ((err = glGetError()) != GL_NO_ERROR) {
+//                cerr << "OpenGL error: " << err << endl;
+//            }
 
-            glLineWidth(mLineWidth);
-            if (mDrawWire == full) {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
-                if (getVisibility()) {
-                    glDrawElements(GL_LINES, EDGE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
-            } else if (mDrawWire == outline) {
-                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
-                            mOutlineColor.r, mOutlineColor.g, mOutlineColor.b, mOutlineColor.a);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
-                if (getVisibility()) {
-                    glDrawElements(GL_LINES, OUTLINE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
-                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
-                            mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-                if (getVisibility()) {
-                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
-            } else {
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-                if (getVisibility()) {
-                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
+//            glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+//            glEnableVertexAttribArray(glGetAttribLocation(shader->mID, "aTexCoords"));
+//            glVertexAttribPointer(glGetAttribLocation(shader->mID, "aTexCoords"), 2, GL_FLOAT, GL_FALSE,
+//                                  sizeof(float) * 2, nullptr);
+
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                cerr << "OpenGL error: " << err << endl;
             }
 
 
 
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+//            glLineWidth(mLineWidth);
+//            if (mDrawWire == full) {
+//                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
+//                if (getVisibility()) {
+//                    glDrawElements(GL_LINES, EDGE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+//                }
+//            } else if (mDrawWire == outline) {
+//                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+//                            mOutlineColor.r, mOutlineColor.g, mOutlineColor.b, mOutlineColor.a);
+//                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
+//                if (getVisibility()) {
+//                    glDrawElements(GL_LINES, OUTLINE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+//                }
+//                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+//                            mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
+//                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+//                if (getVisibility()) {
+//                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+//                }
+//            } else {
+              //  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+                if (getVisibility()) {
+                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+                }
+            //}
+
+            while ((err = glGetError()) != GL_NO_ERROR) {
+                cerr << "OpenGL error: " << err << endl;
+            }
+
+            glBindVertexArray(0);
         }
 
         for (ZView* view : mViews) {
             view->draw();
         }
 
-
-        GLenum err;
-
         glBindTexture(GL_TEXTURE_2D, 0);
         mNeedsRender = false;
+
+
+        GLenum err;
+        while ((err = glGetError()) != GL_NO_ERROR) {
+            cerr << "OpenGL error: " << err << endl;
+        }
 
 
     }
 }
 
 void ZView::init() {
+
     glGenBuffers(1, &mVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float),  &mVertices, GL_STATIC_DRAW);
@@ -371,6 +419,21 @@ void ZView::init() {
     glGenBuffers(1, &mTexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
     glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), mTexCoords, GL_STATIC_DRAW);
+
+
+    glGenVertexArrays(1, &mVAO);
+    glBindVertexArray(mVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+
+    glBindVertexArray(0);
 
     computeBounds();
 }

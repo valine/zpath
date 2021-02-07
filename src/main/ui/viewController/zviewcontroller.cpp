@@ -47,6 +47,8 @@ ZViewController::ZViewController(char **argv) : ZView(ZView::fillParent, ZView::
     std::string name = aux.substr(pos+1);
     mResourcePath = path;
     setRootView(this);
+
+    setBackgroundColor(white);
 }
 
 

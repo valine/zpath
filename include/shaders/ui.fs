@@ -1,5 +1,5 @@
 R"(
-#version 330 core
+#version 330
 uniform vec4 uColor;
 //varying vec2 TexCoords;
 
