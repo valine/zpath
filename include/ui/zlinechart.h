@@ -125,6 +125,10 @@ private:
     unsigned int mRBO = -1;
     unsigned int mFinalRBO = -1;
 
+    unsigned int mHeatVAO;
+    unsigned int mVAO;
+    unsigned int mGridVAO;
+
     unsigned int mHeatLUTBuffer = -1;
 
     unsigned int mGridVertBuffer = -1;

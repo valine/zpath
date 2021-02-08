@@ -151,7 +151,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     ZSettingsStore::getInstance().setResourcePath(viewController->getResourcePath());
 
     glEnable(GL_MULTISAMPLE);
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -171,8 +171,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
-
-    //  glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
     viewController->onWindowChange(windowWidth, windowHeight);
 
     viewController->onLayoutFinished();
@@ -186,6 +184,13 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
         } else {
             glfwWaitEvents();
         }
+
+#ifdef __APPLE__
+        // MacOS corrupts the back buffer so the partial
+        // view update optimization won't work until
+        // the ui renders to an off screen framebuffer
+        viewController->invalidate();
+#endif
 
         viewController->draw();
         glfwSwapBuffers(window);
