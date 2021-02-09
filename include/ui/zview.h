@@ -72,6 +72,8 @@ class ZView {
         virtual void onFileDrop(int count, const char** paths);
 
         virtual void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button);
+        virtual void onSizeChange();
+
 
         // OpenGL shader
         virtual void setShader(ZShader *shader);
@@ -355,6 +357,7 @@ class ZView {
 
 
     void removeSubView(int index);
+
 };
 
 #endif

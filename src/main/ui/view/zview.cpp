@@ -344,7 +344,6 @@ void ZView::init() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, EDGE_INDEX_COUNT * sizeof(int), &mEdgeIndices, GL_STATIC_DRAW);
 
-
     glGenBuffers(1, &mOutlineIndicesBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, OUTLINE_INDEX_COUNT * sizeof(int), &mOutlineIndices, GL_STATIC_DRAW);
@@ -697,11 +696,19 @@ void ZView::setGravity(Gravity gravity) {
 void ZView::setMaxWidth(int width) {
     mMaxWidth = width;
     computeBounds();
+    onSizeChange();
 }
 
 void ZView::setMaxHeight(int height) {
     mMaxHeight = height;
     computeBounds();
+    onSizeChange();
+}
+
+void ZView::onSizeChange() {
+    for (ZView* view : mViews) {
+        view->onSizeChange();
+    }
 }
 
 bool ZView::anyMouseDown() {

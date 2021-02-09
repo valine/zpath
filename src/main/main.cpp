@@ -25,8 +25,7 @@ int main(int argc, char* argv[]) {
     view3d->setName("3D Viewport");
     auto* nodeView = new NodeViewController(argv);
     nodeView->setName("Node Editor");
-//
-//
+
 //    auto* empty = new ZViewController(argv);
 
     ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, view3d});
