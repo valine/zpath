@@ -168,10 +168,12 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
             } else {
                 editor->removeNodeAsync(node);
 
-                std::lock_guard<std::mutex> guard(editor->mEvalMutex);
-                editor->mEvalSet.erase(node);
-                node->removeView();
-                editor->updateLines();
+                {
+                    std::lock_guard<std::mutex> guard(editor->mEvalMutex);
+                    editor->mEvalSet.erase(node);
+                    node->removeView();
+                    editor->updateLines();
+                }
             }
 
             editor->mLineContainer->invalidate();
@@ -337,32 +339,39 @@ void ZNodeEditor::deleteNode(ZNodeView * node) {
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
-    for (const vector<pair<ZNodeView *, int>>& inputs : node->mInputIndices) {
-        for (pair<ZNodeView *, int> input : inputs) {
-            ZNodeView *prevNode = input.first;
-            int index = 0;
-            for (pair<ZNodeView *, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
-                if (outputNode.first == node) {
-                    remove(prevNode->mOutputIndices.at(input.second), index);
-                }
 
-                index++;
+
+        for (const vector<pair<ZNodeView *, int>> &inputs : node->mInputIndices) {
+            for (pair<ZNodeView *, int> input : inputs) {
+                ZNodeView *prevNode = input.first;
+                int index = 0;
+                for (pair<ZNodeView *, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
+                    if (outputNode.first == node) {
+                        remove(prevNode->mOutputIndices.at(input.second), index);
+                    }
+
+                    index++;
+                }
             }
         }
-    }
 
-    for (const vector<pair<ZNodeView *, int>>& outputs : node->mOutputIndices) {
-        int pairIndex = 0;
-        for (pair<ZNodeView *, int> output : outputs) {
-            ZNodeView *nextNode = output.first;
-            remove(nextNode->mInputIndices.at(output.second), pairIndex);
-            nextNode->invalidateNodeRecursive();
-            pairIndex++;
+        for (const vector<pair<ZNodeView *, int>> &outputs : node->mOutputIndices) {
+            int pairIndex = 0;
+            for (pair<ZNodeView *, int> output : outputs) {
+                ZNodeView *nextNode = output.first;
+
+                if (nextNode != nullptr) {
+                    remove(nextNode->mInputIndices.at(output.second), pairIndex);
+                    nextNode->invalidateNodeRecursive();
+                }
+                pairIndex++;
+
+            }
         }
-    }
 
-    node->initializeEdges();
-    node->invalidateSingleNode();
+        node->initializeEdges();
+        node->invalidateSingleNode();
+
 }
 
 void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection

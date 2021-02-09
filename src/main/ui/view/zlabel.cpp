@@ -182,6 +182,8 @@ void ZLabel::setTextSize(int textSize) {
     invalidate();
 }
 
+
+
 void ZLabel::setTextColor(vec3 color) {
     mTextColor = color;
     invalidate();
@@ -199,7 +201,6 @@ void ZLabel::setFont(string fontPath) {
 
 void ZLabel::onSizeChange() {
     ZView::onSizeChange();
-
     updateFrameSize();
     mTextInvalid = true;
 }

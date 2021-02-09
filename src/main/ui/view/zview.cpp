@@ -257,7 +257,6 @@ void ZView::draw() {
         mVertsInvalid = false;
     }
 
-
     if (mVisible) {
         if (mNeedsRender) {
             if (mBackgroundImage != nullptr) {
@@ -579,6 +578,15 @@ int ZView::getWindowWidth() {
 }
 
 void ZView::computeBounds() {
+    float prevLeft = getLeft();
+    float prevRight = getRight();
+
+    float prevTop = getTop();
+    float prevBottom = getBottom();
+
+    float prevWidth = prevRight - prevLeft;
+    float prevHeight = prevBottom - prevTop;
+
     calculateLeft();
     calculateTop();
     calculateBottom();
@@ -597,6 +605,10 @@ void ZView::computeBounds() {
     mVertices[13] = getBottom();
 
     mVertsInvalid = true;
+
+    if (abs(getWidth() - prevWidth) > 0.01 || abs(getHeight() - prevHeight) > 0.01) {
+        onSizeChange();
+    }
 }
 
 void ZView::addSubView(ZView *view) {
@@ -696,19 +708,15 @@ void ZView::setGravity(Gravity gravity) {
 void ZView::setMaxWidth(int width) {
     mMaxWidth = width;
     computeBounds();
-    onSizeChange();
 }
 
 void ZView::setMaxHeight(int height) {
     mMaxHeight = height;
     computeBounds();
-    onSizeChange();
 }
 
 void ZView::onSizeChange() {
-    for (ZView* view : mViews) {
-        view->onSizeChange();
-    }
+
 }
 
 bool ZView::anyMouseDown() {

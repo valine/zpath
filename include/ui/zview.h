@@ -335,6 +335,7 @@ class ZView {
 		bool mShiftKeyPressed = false;
 		bool mAltKeyPressed = false;
 
+		bool mDeleted = false;
 		bool mVisible = true;
 		bool mClickable = true;
 
