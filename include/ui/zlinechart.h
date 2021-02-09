@@ -153,6 +153,7 @@ private:
     ZTexture* mBackground;
     int mLineCount = 1;
     bool mDataInvalid = false;
+    bool mHeatInitialized = false;
 
     float mLineWidth = 2;
 

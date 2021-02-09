@@ -24,7 +24,6 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
 
     glGenBuffers(1, &mBGridEdgeBuffer);
     glGenBuffers(1, &mBGridVertBuffer);
-    initHeatLUT();
 
     glGenVertexArrays(1, &mHeatVAO);
     glBindVertexArray(mHeatVAO);
@@ -60,6 +59,8 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
                           sizeof(float) * 4, nullptr);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
     glBindVertexArray(0);
+
+    initHeatLUT();
 
     mBackground = new ZTexture(mFinalTexBuffer);
     setBackgroundImage(mBackground);
@@ -139,6 +140,7 @@ void ZLineChart::updateHeatMap() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
+    mHeatInitialized = true;
     invalidate();
 }
 
@@ -376,8 +378,9 @@ void ZLineChart::draw() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // draw heat map
-    if (mInputType == HEAT_MAP) {
+    // draw heat map. Heat map update is triggered by a second thread,
+    // so check that everything is initialized before drawing.
+    if (mInputType == HEAT_MAP && mHeatInitialized) {
         mHeatShader->use();
         mHeatShader->setMat4("uVPMatrix", mTransform);
 

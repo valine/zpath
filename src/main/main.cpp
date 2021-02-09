@@ -29,6 +29,6 @@ int main(int argc, char* argv[]) {
 //
 //    auto* empty = new ZViewController(argv);
 
-    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {view3d, nodeView});
+    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, view3d});
     ZApplication(tabs, "ZPATH", false, 1200, 800);
 }
