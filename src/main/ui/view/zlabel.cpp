@@ -73,7 +73,8 @@ ZLabel::ZLabel(float maxWidth, float maxHeight) : ZView(maxWidth, maxHeight) {
 void ZLabel::createFBO() {
     glGenFramebuffers(1, &mFBO);
     glGenTextures(1, &mTexBuffer);
-    updateFrameSize();
+    setBackgroundImage(new ZTexture(mTexBuffer));
+    //updateFrameSize();
 }
 
 void ZLabel::updateFrameSize() {
@@ -85,7 +86,7 @@ void ZLabel::updateFrameSize() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexBuffer, 0);
-    setBackgroundImage(new ZTexture(mTexBuffer));
+    mFrameInvalid = false;
 }
 
 void ZLabel::drawText() {
@@ -169,9 +170,14 @@ string ZLabel::getText() {
 }
 
 void ZLabel::draw() {
+    if (mFrameInvalid) {
+        updateFrameSize();
+    }
+
     if (mTextInvalid) {
         drawText();
     }
+
     if (needsRender()) {
         ZView::draw();
     }
@@ -201,7 +207,7 @@ void ZLabel::setFont(string fontPath) {
 
 void ZLabel::onSizeChange() {
     ZView::onSizeChange();
-    updateFrameSize();
+    mFrameInvalid = true;
     mTextInvalid = true;
 }
 

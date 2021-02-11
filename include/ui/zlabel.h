@@ -50,6 +50,7 @@ private:
     string mFont;
 
     bool mTextInvalid = true;
+    bool mFrameInvalid = true;
 
     void createFBO();
     void drawText();

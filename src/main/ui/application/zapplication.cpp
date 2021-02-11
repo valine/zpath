@@ -191,7 +191,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
         // the ui renders to an off screen framebuffer
         viewController->invalidate();
 #endif
-
         viewController->draw();
         glfwSwapBuffers(window);
     }

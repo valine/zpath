@@ -246,8 +246,6 @@ void ZView::setTag(string tag) {
 
 void ZView::draw() {
     ZShader* shader;
-    GLenum err;
-
     if (mVertsInvalid) {
         glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
         glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
