@@ -334,13 +334,10 @@ void ZNodeEditor::deleteSelectedConnections() {
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
     node->setVisibility(false);
-    node->invalidateSingleNode();
     updateLines();
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
-
-
         for (const vector<pair<ZNodeView *, int>> &inputs : node->mInputIndices) {
             for (pair<ZNodeView *, int> input : inputs) {
                 ZNodeView *prevNode = input.first;
@@ -371,7 +368,6 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 
         node->initializeEdges();
         node->invalidateSingleNode();
-
 }
 
 void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
