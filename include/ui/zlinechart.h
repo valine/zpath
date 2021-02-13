@@ -128,6 +128,7 @@ private:
     unsigned int mHeatVAO;
     unsigned int mVAO;
     unsigned int mGridVAO;
+    vector<unsigned int> mLineVAO;
 
     unsigned int mHeatLUTBuffer = -1;
 
