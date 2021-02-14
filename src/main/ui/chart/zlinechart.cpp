@@ -291,6 +291,11 @@ void ZLineChart::updateChart2D() {
 
         // Initialize buffers
         if (mPoints.size() <= lineIndex) {
+            unsigned int vao;
+            glGenVertexArrays(1, &vao);
+            mLineVAO.push_back(vao);
+
+
             mPointCount.push_back(edges.size());
             unsigned int lineBuffer;
             glGenBuffers(1, &lineBuffer);
@@ -299,6 +304,15 @@ void ZLineChart::updateChart2D() {
             unsigned int edgeBuffer;
             glGenBuffers(1, &edgeBuffer);
             mEdges.push_back(edgeBuffer);
+
+            glBindVertexArray(vao);
+            glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
+            glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+            glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                                  sizeof(float) * 4, nullptr);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
+            glBindVertexArray(0);
         } else {
             mPointCount.at(lineIndex) = edges.size();
         }
@@ -332,6 +346,11 @@ void ZLineChart::updateChart1D() {
 
         // Initialize buffers
         if (mPoints.size() <= lineIndex) {
+
+            unsigned int vao;
+            glGenVertexArrays(1, &vao);
+            mLineVAO.push_back(vao);
+
             mPointCount.push_back(edges.size());
             unsigned int lineBuffer;
             glGenBuffers(1, &lineBuffer);
@@ -340,6 +359,16 @@ void ZLineChart::updateChart1D() {
             unsigned int edgeBuffer;
             glGenBuffers(1, &edgeBuffer);
             mEdges.push_back(edgeBuffer);
+
+            glBindVertexArray(vao);
+                        glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
+            glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+            glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                                  sizeof(float) * 4, nullptr);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
+            glBindVertexArray(0);
+
         } else {
             mPointCount.at(lineIndex) = edges.size();
         }
@@ -420,17 +449,13 @@ void ZLineChart::draw() {
     // Draw graph lines
     glLineWidth(mLineWidth);
     glDepthMask(false);
-//    for (int i = mPoints.size() - 1; i >= 0; i--) {
-//        mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
-//                                   vec4(vec3((float) i / mPoints.size()), 1.0));
-//        glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(i));
-//        glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
-//        glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-//                              sizeof(float) * 4, nullptr);
-//
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(i));
-//        glDrawElements(GL_LINES, mPointCount.at(i), GL_UNSIGNED_INT, nullptr);
-//    }
+    for (int i = mPoints.size() - 1; i >= 0; i--) {
+        mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
+                                   vec4(vec3((float) i / mPoints.size()), 1.0));
+
+        glBindVertexArray(mLineVAO.at(i));
+        glDrawElements(GL_LINES, mPointCount.at(i), GL_UNSIGNED_INT, nullptr);
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ZView::draw();
