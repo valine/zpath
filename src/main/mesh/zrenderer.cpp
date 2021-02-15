@@ -499,10 +499,6 @@ void ZRenderer::renderSelection() {
         mSelectionShader->setMat4("uViewMatrix", ZRenderUtils::getViewMatrix(mCamera));
 
         vector<ZObject*> objects = mScene->getObjects();
-
-        int mPositionLocation = glGetAttribLocation(mSelectionShader->mID, "aPos");
-        int mNoramlLocation = glGetAttribLocation(mSelectionShader->mID, "aNormal");
-   
         vector<ZObject*> transparentObjects;
         vector<ZObject*> solidObjects;
         int count = 0;
@@ -523,22 +519,13 @@ void ZRenderer::renderSelection() {
 
             mSelectionShader->setMat4("uModelMatrix", ZRenderUtils::getModelMatrix(object, mCamera));
 
-            glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
-
-            glEnableVertexAttribArray(mPositionLocation);
-            glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-              sizeof(float) * 3, (void*) 0);
-
-            glEnableVertexAttribArray(mNoramlLocation);
-            glVertexAttribPointer(mNoramlLocation, 3, GL_FLOAT, GL_FALSE,
-              sizeof(float) * 3, (void*) 0);
-
             vec4 color = vec4((float) objectIndex / 256,0,0,1.0);
             mSelectionShader->setVec4("uColor", color.r, color.g, color.b, color.a);
 
             if (object->getSelectable() && object->getVisible()) {
-                glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+                glBindVertexArray(mesh->getVAO());
+                glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr);
+                glBindVertexArray(0);
             }
 
             objectIndex++;
