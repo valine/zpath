@@ -408,9 +408,7 @@ void ZRenderer::renderMain() {
     shader->setMat4("uProjectionMatrix", mCamera->getProjectionMatrix());
     shader->setMat4("uViewMatrix", ZRenderUtils::getViewMatrix(mCamera));
 
-    int mPositionLocation = glGetAttribLocation(shader->mID, "aPos");
-    int mNormalLocation = glGetAttribLocation(shader->mID, "aNormal");
-    int mTextureCoordLocation = glGetAttribLocation(shader->mID, "aTextureCoords");
+
 
     mat4 identityMatrix = mat4();
     shader->setMat4("uModelMatrix", identityMatrix);
@@ -428,25 +426,9 @@ void ZRenderer::renderMain() {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, material->getColorTexture()->getID());
             shader->use();
-        } 
+        }
 
-        glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexBuffer());
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->getFaceIndicesBuffer());
 
-        glEnableVertexAttribArray(mPositionLocation);
-        glVertexAttribPointer(mPositionLocation, 3, GL_FLOAT, GL_FALSE,
-          sizeof(float) * 3, (void*) 0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, mesh->getVertexNormalBuffer());
-
-        glEnableVertexAttribArray(mNormalLocation);
-        glVertexAttribPointer(mNormalLocation, 3, GL_FLOAT, GL_FALSE,
-          sizeof(float) * 3, (void*) 0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, mesh->getTextureCoordinatesBuffer());
-        glEnableVertexAttribArray(mTextureCoordLocation);
-        glVertexAttribPointer(mTextureCoordLocation, 2, GL_FLOAT, GL_FALSE,
-          sizeof(float) * 2, (void*) 0);
 
         vec4 color = material->getColor();
 
@@ -481,14 +463,20 @@ void ZRenderer::renderMain() {
             }
         }
 
+
         if (object->getVisible()) {
             if (material->getColor().a < 0.2) {
                 glDepthMask(false);
             }
-            glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr); 
+
+            glBindVertexArray(mesh->getVAO());
+            glDrawElements(GL_TRIANGLES, mesh->getFaceIndiceCount(), GL_UNSIGNED_INT, nullptr);
+            glBindVertexArray(0);
             glDepthMask(true);
         }   
         objectIndex++;
+
+
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

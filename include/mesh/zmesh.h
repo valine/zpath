@@ -10,7 +10,9 @@ using std::vector;
 class ZMesh {
 	
 public:
-	void setVertices(vector<float> vertices);
+    ZMesh();
+
+    void setVertices(vector<float> vertices);
 	void setVertexNormals(vector<float> normals);
 	void setFaceIndices(vector<int> indices);
 	void setTextureCoordinates(vector<float> coords);
@@ -27,7 +29,12 @@ public:
 	GLuint getFaceIndicesBuffer();
 	GLuint getTextureCoordinatesBuffer();
 
+    unsigned int getVAO();
+
 private:
+
+    unsigned int mVAO;
+
 	vector<float> mVertices;
 	vector<float> mVertexNormals;
 	vector<int> mFaceIndices;
@@ -37,6 +44,7 @@ private:
 	GLuint mVertexNormalBuffer;
 	GLuint mFaceIndicesBuffer;
 	GLuint mTextureCoordinatesBuffer;
+
 };
 
 #endif
