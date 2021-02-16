@@ -15,10 +15,12 @@ using namespace std;
 #include <zpath/zpathviewcontroller.h>
 #include <ztabbedviewcontroller.h>
 #include <zpath/nodeviewcontroller.h>
+#include <utils/casutil.h>
 
 
 int main(int argc, char* argv[]) {
 
+    CasUtil::get().testCompute();
    // vector<ZViewController*> controller = {new ZPathViewController(argv), new ZPathViewController(argv)};
 
     auto* view3d = new ZPathViewController(argv);
