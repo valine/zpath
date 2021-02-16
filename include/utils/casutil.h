@@ -4,11 +4,11 @@
 
 #ifndef ZPATH_CASUTIL_H
 #define ZPATH_CASUTIL_H
-
-#include <iostream>
-#include <vector>
 #include <giac/config.h>
 #include <giac/giac.h>
+#include <iostream>
+#include <vector>
+
 
 #include <iostream>
 #include <string>
