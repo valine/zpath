@@ -29,7 +29,8 @@ public:
         string out;
         stringstream stream(out);
         stream << e << endl;
-        //   cout << e << endl;
+
+        cout << e << endl;
 
     }
 

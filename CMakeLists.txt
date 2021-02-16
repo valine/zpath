@@ -251,9 +251,10 @@ if (APPLE)
     include_directories(${zdep_path_include}/zlib/include)
     include_directories(${zdep_path_include}/assimp/include)
     include_directories(${zdep_path_include}/png/include)
-    include_directories(${zdep_path}/giac/include)
+
+    include_directories(${zdep_path}/giac/include/)
     include_directories(${zdep_path}/giac/include/other)
-    #        include_directories("/Applications/usr/include/")
+
     target_link_libraries (zpath
             ${OPENGL_LIBRARIES}
             ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
@@ -264,6 +265,7 @@ if (APPLE)
             "${zdep_path}/assimp/libassimp.dylib"
             "${zdep_path}/png/libpng16.a"
             "${zdep_path}/zlib/libz.a"
+            "${zdep_path}/giac/libgiac.0.dylib"
             ${BZIP2_LIBRARY}
             "${zdep_path}/freetype/libfreetyped.a")
 
