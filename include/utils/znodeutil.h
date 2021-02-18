@@ -83,6 +83,17 @@ public:
             opStack.pop();
         }
 
+
+
+        while (!outQueue.empty()) {
+
+            string symbol = outQueue.front();
+            outQueue.pop();
+
+            cout << symbol << endl;
+        }
+        ZNodeView* nodeView;
+
         // Todo:
         // 1: Evaluate out queue
         // 2: Once evaluation works it should be more clear how to build a node structure
