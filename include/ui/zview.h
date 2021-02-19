@@ -231,16 +231,18 @@ class ZView {
         vec4 green = vec4(0,1,0,1);
         vec4 yellow = vec4(1,1,0,1);
         vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
-
         vec4 transparent = vec4(0);
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
-
 
         void setName(string name);
         string getName();
         void init();
 
         void setAllowNegativeSize(bool allow);
+
+        void setElevation(float elevation) {
+            mElevation = elevation;
+        }
 
         virtual ~ZView();
 
@@ -307,8 +309,10 @@ class ZView {
 
 		double mOffsetX = 0;
 		double mOffsetY = 0;
+        // Elevation determines the size of the shadow
+        float mElevation = 0.0;
 
-		vec2 mScale = vec2(1);
+        vec2 mScale = vec2(1);
 		vec2 mInnerTranslation = vec2(0);
 
 		int mParentWidth = 100;
@@ -357,7 +361,7 @@ class ZView {
         float mLineWidth = 2.0;
 
 
-    void removeSubView(int index);
+        void removeSubView(int index);
 
 };
 

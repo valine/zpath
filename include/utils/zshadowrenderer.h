@@ -16,7 +16,7 @@ class ZShadowRenderer {
 
     ZTexture* createShadow() {
 
-        
+
         return nullptr;
     }
 
