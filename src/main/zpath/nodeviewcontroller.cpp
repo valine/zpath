@@ -6,6 +6,7 @@
 #include <ui/zdropdown.h>
 #include <ui/znodeeditor.h>
 #include <ui/zradiobutton.h>
+#include <utils/zshadowrenderer.h>
 #include "zpath/nodeviewcontroller.h"
 
 /**
@@ -29,6 +30,14 @@ void NodeViewController::onCreate() {
 //    dropDown->setOffset(500, 0);
 //    ZDropDown* dropDown2 = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5", "hello4", "hello7", "hello8"}, this);
 //    dropDown2->setOffset(200, 0);
+
+
+    ZShadowRenderer shadowRenderer = ZShadowRenderer::get();
+    ZTexture* shadow = shadowRenderer.createShadow(100, 100, 0);
+
+    auto* myView = new ZView(100, 100, this);
+    myView->setBackgroundColor(blue);
+    myView->setBackgroundImage(shadow);
 
 }
 

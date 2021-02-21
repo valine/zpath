@@ -361,7 +361,7 @@ void ZLineChart::updateChart1D() {
             mEdges.push_back(edgeBuffer);
 
             glBindVertexArray(vao);
-                        glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
             glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
             glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
                                   sizeof(float) * 4, nullptr);
