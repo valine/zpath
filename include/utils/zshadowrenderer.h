@@ -26,30 +26,50 @@ public:
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glBindTexture(GL_TEXTURE_2D, mTexBuffer);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, shadowWidth, shadowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexBuffer, 0);
 
         glBindVertexArray(mVAO);
-
         mShader->use();
 
-        double margin = 0.1;
-        mat4 matrix = glm::ortho(0.0 - margin, 1.0 + margin, 1.0 + margin, 0.0 - margin, 1.0, -1.0);
+
+        double marginSide = radius / viewWidth;
+        double marginTop = radius / viewHeight;
+        mat4 matrix = glm::ortho(0.0 - marginSide, 1.0 + marginSide, 1.0 + marginTop, 0.0 - marginTop, 1.0, -1.0);
         mShader->setMat4("uMatrix", matrix);
 
         glViewport(0,0, shadowWidth, shadowHeight);
-        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         int triangles = 2;
         glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
+
+        // Render blur
+        mBlurShader->use();
+        mat4 blurMat = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
+        mBlurShader->setMat4("uMatrix", blurMat);
+        mBlurShader->setFloat("uRadiusX", marginSide);
+        mBlurShader->setFloat("uRadiusY", marginTop);
+
+        glBindTexture(GL_TEXTURE_2D, mBlurBuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, shadowWidth, shadowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mBlurBuffer, 0);
+
+        glViewport(0,0, shadowWidth, shadowHeight);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mTexBuffer);
+
+        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+
         glBindVertexArray(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        auto* tex = new ZTexture(mTexBuffer);
+        auto* tex = new ZTexture(mBlurBuffer);
         return tex;
     }
 
@@ -60,9 +80,11 @@ private:
     }
 
     ZShader* mShader;
+    ZShader* mBlurShader;
 
     unsigned int mFBO;
     unsigned int mTexBuffer;
+    unsigned int mBlurBuffer;
 
     unsigned int mVAO;
     unsigned int mVertBuffer;
@@ -76,6 +98,10 @@ private:
 
     const string shadow_fs =
 #include "shaders/shadow.fs"
+    ;
+
+    const string shadow_blur_fs =
+#include "shaders/shadowblur.fs"
     ;
 
 
@@ -112,8 +138,11 @@ private:
         glGenFramebuffers(1, &mFBO);
         glGenTextures(1, &mTexBuffer);
 
+        glGenTextures(1, &mBlurBuffer);
+
         // Shader
         mShader = new ZShader(shadow_vs, shadow_fs);
+        mBlurShader = new ZShader(shadow_vs, shadow_blur_fs);
     }
 
 

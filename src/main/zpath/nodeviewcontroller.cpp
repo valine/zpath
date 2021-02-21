@@ -33,9 +33,9 @@ void NodeViewController::onCreate() {
 
 
     ZShadowRenderer shadowRenderer = ZShadowRenderer::get();
-    ZTexture* shadow = shadowRenderer.createShadow(100, 100, 0);
+    ZTexture* shadow = shadowRenderer.createShadow(200, 100, 10);
 
-    auto* myView = new ZView(100, 100, this);
+    auto* myView = new ZView(200, 100, this);
     myView->setBackgroundColor(blue);
     myView->setBackgroundImage(shadow);
 

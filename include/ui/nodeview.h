@@ -195,9 +195,9 @@ public:
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
                 case GAUSSIAN: {
-                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                    complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-                    complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                    complex<float> in0 = {x.at(REAL).at(0), 0};
+                    complex<float> in1 = {x.at(REAL).at(1), 0};
+                    complex<float> in2 = {x.at(REAL).at(2), 0};
                     complex<float> two = {2.0, 0};
                     complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
                     return {{out0.real(),  chartBound.x, chartWidth},
