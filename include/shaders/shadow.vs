@@ -3,12 +3,12 @@ R"(
 
 layout (location = 0) in vec3 aPos;
 
-out vec3 vPos;
+out vec4 vPos;
 
 uniform mat4 uMatrix;
 
 void main() {
     gl_Position = uMatrix * vec4(aPos.xyz, 1.0);
-    vPos = aPos;
+    vPos = vec4(aPos, 1.0);
 }
 )"
