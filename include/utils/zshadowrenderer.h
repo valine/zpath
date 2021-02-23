@@ -19,6 +19,11 @@ public:
         return instance;
     }
 
+    void updateShadow(ZTexture texture, int viewWidth, int viewHeight, float radius) {
+
+        
+    }
+
     ZTexture* createShadow(int viewWidth, int viewHeight, float radius) {
 
         int shadowWidth = viewWidth + (int) radius;
