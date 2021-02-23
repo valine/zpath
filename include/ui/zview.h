@@ -17,6 +17,7 @@
 #include <vector>
 
 #include <ft2build.h>
+#include <utils/zshadowrenderer.h>
 #include FT_FREETYPE_H  
 
 using namespace std;
@@ -50,6 +51,8 @@ class ZView {
         static const int mouseDrag = 1;
         static const int mouseUp = 2;
 		static const int fillParent = 100000;
+
+		ZView* mShadowView = nullptr;
 
 		ZView(float maxWidth, float maxHeight);
 		ZView(Bounds maxWidth, float maxHeight);
@@ -242,9 +245,14 @@ class ZView {
 
         void setElevation(float elevation) {
             mElevation = elevation;
+
         }
 
         virtual ~ZView();
+
+        void setClippingEnabled(bool clipping) {
+            mClipping = clipping;
+        }
 
 	private:
 
@@ -360,9 +368,12 @@ class ZView {
 
         float mLineWidth = 2.0;
 
+        bool mClipping = true;
+
 
         void removeSubView(int index);
 
+    void drawShadow();
 };
 
 #endif

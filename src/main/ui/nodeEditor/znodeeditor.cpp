@@ -18,7 +18,7 @@
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
-    setBackgroundColor(vec4(0.005130, 0.013321, 0.025381, 1.000000));
+    setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
 
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
@@ -263,6 +263,8 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 
     node->resetInitialPosition();
     node->invalidateSingleNode();
+
+    node->setElevation(1.0);
     return node;
 }
 

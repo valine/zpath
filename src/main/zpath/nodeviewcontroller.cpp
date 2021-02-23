@@ -32,12 +32,12 @@ void NodeViewController::onCreate() {
 //    dropDown2->setOffset(200, 0);
 
 
-    ZShadowRenderer shadowRenderer = ZShadowRenderer::get();
-    ZTexture* shadow = shadowRenderer.createShadow(200, 100, 10);
+    //ZShadowRenderer shadowRenderer = ZShadowRenderer::get();
+    //ZTexture* shadow = shadowRenderer.createShadow(200, 100, 10);
 
-    auto* myView = new ZView(200, 100, this);
-    myView->setBackgroundColor(blue);
-    myView->setBackgroundImage(shadow);
+    //auto* myView = new ZView(200, 100, this);
+    //myView->setBackgroundColor(blue);
+    //myView->setBackgroundImage(shadow);
 
 }
 

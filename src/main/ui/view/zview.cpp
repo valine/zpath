@@ -245,6 +245,7 @@ void ZView::setTag(string tag) {
 }
 
 void ZView::draw() {
+
     ZShader* shader;
     if (mVertsInvalid) {
         glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -254,6 +255,8 @@ void ZView::draw() {
         glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
         mVertsInvalid = false;
     }
+
+    drawShadow();
 
     if (mVisible) {
         if (mNeedsRender) {
@@ -318,11 +321,39 @@ void ZView::draw() {
         }
 
         for (ZView* view : mViews) {
-            view->draw();
+            if (view != mShadowView) {
+                view->draw();
+            }
         }
+
 
         glBindTexture(GL_TEXTURE_2D, 0);
         mNeedsRender = false;
+    }
+}
+
+void ZView::drawShadow() {
+    float shadowRadius = 10;
+    if (mElevation > 0 && mShadowView == nullptr) {
+
+        mShadowView = new ZView(getMaxWidth() + shadowRadius, getMaxWidth() + shadowRadius, this);
+        mShadowView->setClippingEnabled(false);
+        // Shadow view should be invisible so it doesn't render as a child view
+        ZTexture *shadow = ZShadowRenderer::get().createShadow(getWidth(), getHeight(), shadowRadius);
+        //mShadowView->setVisibility(false);
+        mShadowView->setBackgroundImage(shadow);
+        mShadowView->setOffset(10, 10);
+       // mShadowView->setBackgroundColor(blue);
+    }
+    glBindVertexArray(0);
+    if (mShadowView != nullptr) {
+        if (mShadowView->getMaxWidth() != getWidth() || mShadowView->getMaxHeight() != getHeight()) {
+            ZShadowRenderer::get().updateShadow(mShadowView->mBackgroundImage->getID(), getWidth(), getHeight(), shadowRadius);
+            
+            mShadowView->setMaxWidth(getWidth());
+            mShadowView->setMaxHeight(getHeight());
+        }
+        mShadowView->draw();
     }
 }
 
@@ -757,6 +788,7 @@ int ZView::calculateLeft() {
     float parentLeft = mParentView->getLeft() / scale + translation.x;
     float parentRight = mParentView->getRight() / scale + translation.x;
 
+
     if (mParentView == this) {
         mLeft = thisLeft;
         return mLeft;
@@ -764,7 +796,7 @@ int ZView::calculateLeft() {
         if (mGravity == bottomRight || mGravity == topRight) {
             thisLeft = parentRight - mMarginRight - mMaxWidth - mOffsetX;
 
-            if (thisLeft - mMarginLeft < parentLeft) {
+            if (mClipping && thisLeft - mMarginLeft < parentLeft) {
                 thisLeft = parentLeft + mMarginLeft;
             }
 
@@ -772,7 +804,7 @@ int ZView::calculateLeft() {
             return mLeft;
         } else {
             if (!mAllowNegativeSize) {
-                if (thisLeft + parentLeft > parentRight) {
+                if (mClipping && thisLeft + parentLeft > parentRight) {
                     mLeft = parentRight;
                     return mLeft;
                 }
@@ -803,7 +835,7 @@ int ZView::calculateRight() {
             thisRight = parentRight - mMarginRight - mOffsetX;
 
             if (!mAllowNegativeSize) {
-                if (thisRight < parentLeft + mMarginLeft) {
+                if (mClipping && thisRight < parentLeft + mMarginLeft) {
                     thisRight = parentLeft + mMarginLeft;
                 }
             }
@@ -811,7 +843,7 @@ int ZView::calculateRight() {
             return mRight;
         }
 
-        if (thisRight + parentLeft + mMarginRight < parentRight) {
+        if (!mClipping || thisRight + parentLeft + mMarginRight < parentRight) {
             thisRight = parentLeft + thisRight;
         } else {
             thisRight = parentRight - mMarginRight;
@@ -847,7 +879,7 @@ int ZView::calculateTop() {
         if (mGravity == bottomRight || mGravity == bottomLeft) {
             thisTop = (int) (parentBottom - mMarginBottom - mMaxHeight - mOffsetY);
 
-            if (thisTop - mMarginTop < parentTop) {
+            if (mClipping && thisTop - mMarginTop < parentTop) {
                 thisTop = (int) parentTop + mMarginTop;
             }
 
@@ -856,7 +888,7 @@ int ZView::calculateTop() {
         } else {
 
             if (!mAllowNegativeSize) {
-                if (thisTop + parentTop > parentBottom) {
+                if (mClipping && thisTop + parentTop > parentBottom) {
                     mTop = (int) parentBottom;
                     return mTop;
                 }
@@ -885,14 +917,14 @@ int ZView::calculateBottom() {
         if (mGravity == bottomLeft || mGravity == bottomRight) {
             thisBottom = parentBottom - mMarginBottom - mOffsetY;
 
-            if (thisBottom < parentTop + mMarginTop) {
+            if (mClipping && thisBottom < parentTop + mMarginTop) {
                 thisBottom = parentTop + mMarginTop;
             }
             mBottom = thisBottom;
             return mBottom;
         }
 
-        if (thisBottom + parentTop + mMarginTop < parentBottom) {
+        if (!mClipping || thisBottom + parentTop + mMarginTop < parentBottom) {
             thisBottom = parentTop + thisBottom;
         } else {
             thisBottom = parentBottom - mMarginBottom;
