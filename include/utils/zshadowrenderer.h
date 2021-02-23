@@ -19,13 +19,7 @@ public:
         return instance;
     }
 
-    void updateShadow(ZTexture texture, int viewWidth, int viewHeight, float radius) {
-
-        
-    }
-
-    ZTexture* createShadow(int viewWidth, int viewHeight, float radius) {
-
+    int drawShadow(int texId, int viewWidth, int viewHeight, float radius) {
         int shadowWidth = viewWidth + (int) radius;
         int shadowHeight = viewHeight + (int) radius;
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
@@ -37,7 +31,6 @@ public:
 
         glBindVertexArray(mVAO);
         mShader->use();
-
 
         double marginSide = radius / viewWidth;
         double marginTop = radius / viewHeight;
@@ -59,11 +52,11 @@ public:
         mBlurShader->setFloat("uRadiusX", marginSide);
         mBlurShader->setFloat("uRadiusY", marginTop);
 
-        glBindTexture(GL_TEXTURE_2D, mBlurBuffer);
+        glBindTexture(GL_TEXTURE_2D, texId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, shadowWidth, shadowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mBlurBuffer, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texId, 0);
 
         glViewport(0,0, shadowWidth, shadowHeight);
         glActiveTexture(GL_TEXTURE0);
@@ -74,7 +67,20 @@ public:
         glBindVertexArray(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        auto* tex = new ZTexture(mBlurBuffer);
+        return texId;
+
+    }
+
+    void updateShadow(ZTexture texture, int viewWidth, int viewHeight, float radius) {
+        drawShadow(texture.getID(), viewWidth, viewHeight, radius);
+    }
+
+    ZTexture* createShadow(int viewWidth, int viewHeight, float radius) {
+        unsigned int blurBuffer;
+        glGenTextures(1, &blurBuffer);
+        drawShadow(blurBuffer, viewWidth, viewHeight, radius);
+
+        auto* tex = new ZTexture(blurBuffer);
         return tex;
     }
 
@@ -89,7 +95,6 @@ private:
 
     unsigned int mFBO;
     unsigned int mTexBuffer;
-    unsigned int mBlurBuffer;
 
     unsigned int mVAO;
     unsigned int mVertBuffer;
@@ -143,7 +148,6 @@ private:
         glGenFramebuffers(1, &mFBO);
         glGenTextures(1, &mTexBuffer);
 
-        glGenTextures(1, &mBlurBuffer);
 
         // Shader
         mShader = new ZShader(shadow_vs, shadow_fs);
