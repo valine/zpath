@@ -21,11 +21,11 @@ float gauss(float x, float height, float width) {
 void main() {
 
 
-    int steps = 20;
+    int steps = 10;
 
     vec4 sum = vec4(0);
 
-    vec2 coord = vPos.xy;
+    vec2 coord = max(min(vPos.xy, vec2(1.0)), vec2(0.0));
     for (int x = 0; x < steps; x++) {
         float factorX = float(x) / float(steps);
         float guassX = gauss(factorX * 2.0 - 1.0, 1.5, 0.5);

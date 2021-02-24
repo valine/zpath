@@ -3,6 +3,7 @@
 // #include <unistd.h>
 #include <thread>
 #include <utils/zsettingsstore.h>
+#include <zconf.h>
 
 static void error_callback(int error, const char* description) {
     cout<< "GLFW error " << description << endl;
@@ -151,7 +152,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     ZSettingsStore::getInstance().setResourcePath(viewController->getResourcePath());
 
     glEnable(GL_MULTISAMPLE);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

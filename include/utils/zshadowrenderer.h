@@ -20,7 +20,12 @@ public:
     }
 
     int drawShadow(int texId, int viewWidth, int viewHeight, float radius) {
-        int shadowWidth = viewWidth + (int) radius;
+        int resRatio = 5;
+        viewWidth /= resRatio;
+        viewHeight /= resRatio;
+        radius /= resRatio;
+
+        int shadowWidth = viewWidth  + (int) radius;
         int shadowHeight = viewHeight + (int) radius;
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glBindTexture(GL_TEXTURE_2D, mTexBuffer);
@@ -32,9 +37,17 @@ public:
         glBindVertexArray(mVAO);
         mShader->use();
 
-        double marginSide = radius / viewWidth;
-        double marginTop = radius / viewHeight;
-        mat4 matrix = glm::ortho(0.0 - marginSide, 1.0 + marginSide, 1.0 + marginTop, 0.0 - marginTop, 1.0, -1.0);
+
+        double vw = (double) viewWidth;
+        double vh = (double) viewHeight;
+        double marginSide = (vw / ((vw + radius)));
+        double marginTop = (vh / ((vh + radius)));
+
+
+        mat4 matrix = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
+        matrix = glm::translate(matrix, vec3(0.5, 0.5, 0));
+        matrix = glm::scale(matrix, vec3(marginSide, marginTop, 1.0));
+        matrix = glm::translate(matrix, vec3(-0.5, -0.5, 0));
         mShader->setMat4("uMatrix", matrix);
 
         glViewport(0,0, shadowWidth, shadowHeight);
@@ -49,8 +62,8 @@ public:
         mBlurShader->use();
         mat4 blurMat = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
         mBlurShader->setMat4("uMatrix", blurMat);
-        mBlurShader->setFloat("uRadiusX", marginSide);
-        mBlurShader->setFloat("uRadiusY", marginTop);
+        mBlurShader->setFloat("uRadiusX", (0.5 / (viewWidth + radius)) * radius);
+        mBlurShader->setFloat("uRadiusY", (0.5 / (viewHeight + radius)) * radius);
 
         glBindTexture(GL_TEXTURE_2D, texId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, shadowWidth, shadowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
@@ -59,6 +72,9 @@ public:
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texId, 0);
 
         glViewport(0,0, shadowWidth, shadowHeight);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, mTexBuffer);
 
@@ -100,7 +116,6 @@ private:
     unsigned int mVertBuffer;
     unsigned int mEdgeBuffer;
 
-
     // Shader code
     const string shadow_vs =
 #include "shaders/shadow.vs"
@@ -113,7 +128,6 @@ private:
     const string shadow_blur_fs =
 #include "shaders/shadowblur.fs"
     ;
-
 
     void init() {
         // Mesh buffers
@@ -153,8 +167,6 @@ private:
         mShader = new ZShader(shadow_vs, shadow_fs);
         mBlurShader = new ZShader(shadow_vs, shadow_blur_fs);
     }
-
-
 
 };
 

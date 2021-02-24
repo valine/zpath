@@ -326,14 +326,13 @@ void ZView::draw() {
             }
         }
 
-
         glBindTexture(GL_TEXTURE_2D, 0);
         mNeedsRender = false;
     }
 }
 
 void ZView::drawShadow() {
-    float shadowRadius = 10;
+    float shadowRadius = 30;
     if (mElevation > 0 && mShadowView == nullptr) {
 
         mShadowView = new ZView(getMaxWidth() + shadowRadius, getMaxWidth() + shadowRadius, this);
@@ -342,16 +341,16 @@ void ZView::drawShadow() {
         ZTexture *shadow = ZShadowRenderer::get().createShadow(getWidth(), getHeight(), shadowRadius);
         //mShadowView->setVisibility(false);
         mShadowView->setBackgroundImage(shadow);
-        mShadowView->setOffset(10, 10);
+        mShadowView->setOffset(-5, -5);
        // mShadowView->setBackgroundColor(blue);
     }
     glBindVertexArray(0);
     if (mShadowView != nullptr) {
         if (mShadowView->getMaxWidth() != getWidth() || mShadowView->getMaxHeight() != getHeight()) {
             ZShadowRenderer::get().updateShadow(mShadowView->mBackgroundImage->getID(), getWidth(), getHeight(), shadowRadius);
-            
-            mShadowView->setMaxWidth(getWidth());
-            mShadowView->setMaxHeight(getHeight());
+
+            mShadowView->setMaxWidth(getWidth() + shadowRadius);
+            mShadowView->setMaxHeight(getHeight() + shadowRadius);
         }
         mShadowView->draw();
     }

@@ -103,14 +103,14 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mXMinLabel = new ZLabel("xmin", mChart);
     mXMinLabel->setMaxWidth(boundLabelWidth);
     mXMinLabel->setGravity(bottomLeft);
-    mXMinLabel->setBackgroundColor(vec4(0));
+    //mXMinLabel->setBackgroundColor(vec4(0));
     mXMinLabel->setTextColor(boundColor);
 
     mXMaxLabel = new ZLabel("xmax", mChart);
     mXMaxLabel->setMaxWidth(boundLabelWidth);
     mXMaxLabel->setGravity(bottomRight);
     mXMaxLabel->setMargin(vec4(0));
-    mXMaxLabel->setBackgroundColor(vec4(0));
+    //mXMaxLabel->setBackgroundColor(vec4(0));
     mXMaxLabel->setXOffset(-20);
     mXMaxLabel->setTextColor(boundColor);
 
@@ -118,13 +118,13 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mYMinLabel->setMaxWidth(boundLabelWidth);
     mYMinLabel->setGravity(bottomLeft);
     mYMinLabel->setYOffset(20);
-    mYMinLabel->setBackgroundColor(vec4(0));
+    //mYMinLabel->setBackgroundColor(vec4(0));
     mYMinLabel->setTextColor(boundColor);
 
     mYMaxLabel = new ZLabel("ymax", mChart);
     mYMaxLabel->setMaxWidth(boundLabelWidth);
     mYMaxLabel->setGravity(topLeft);
-    mYMaxLabel->setBackgroundColor(vec4(0));
+    //mYMaxLabel->setBackgroundColor(vec4(0));
     mYMaxLabel->setTextColor(boundColor);
 
     updateLabelVisibility();
