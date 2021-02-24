@@ -21,7 +21,7 @@ float gauss(float x, float height, float width) {
 void main() {
 
 
-    int steps = 10;
+    int steps = 5;
 
     vec4 sum = vec4(0);
 

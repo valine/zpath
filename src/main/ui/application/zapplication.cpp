@@ -186,12 +186,12 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
             glfwWaitEvents();
         }
 
-#ifdef __APPLE__
+//#ifdef __APPLE__
         // MacOS corrupts the back buffer so the partial
         // view update optimization won't work until
         // the ui renders to an off screen framebuffer
         viewController->invalidate();
-#endif
+//#endif
         viewController->draw();
         glfwSwapBuffers(window);
     }

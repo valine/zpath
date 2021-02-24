@@ -256,10 +256,13 @@ void ZView::draw() {
         mVertsInvalid = false;
     }
 
-    drawShadow();
+
 
     if (mVisible) {
         if (mNeedsRender) {
+
+            drawShadow();
+
             if (mBackgroundImage != nullptr) {
                 mImageShader->use();
                 shader = mImageShader;
@@ -344,15 +347,18 @@ void ZView::drawShadow() {
         mShadowView->setOffset(-5, -5);
        // mShadowView->setBackgroundColor(blue);
     }
-    glBindVertexArray(0);
-    if (mShadowView != nullptr) {
-        if (mShadowView->getMaxWidth() != getWidth() || mShadowView->getMaxHeight() != getHeight()) {
-            ZShadowRenderer::get().updateShadow(mShadowView->mBackgroundImage->getID(), getWidth(), getHeight(), shadowRadius);
 
+    if (mShadowView != nullptr) {
+        if ((abs((mShadowView->getMaxWidth() - shadowRadius) - getWidth()) > 1 ||
+            abs((mShadowView->getMaxHeight() - shadowRadius) - getHeight()) > 1) && getWidth() > 1 && getHeight() > 1) {
+            ZShadowRenderer::get().updateShadow(mShadowView->mBackgroundImage->getID(), getWidth(), getHeight(), shadowRadius);
             mShadowView->setMaxWidth(getWidth() + shadowRadius);
             mShadowView->setMaxHeight(getHeight() + shadowRadius);
         }
-        mShadowView->draw();
+
+        if (getWidth() > 1 && getHeight() > 1) {
+            mShadowView->draw();
+        }
     }
 }
 
