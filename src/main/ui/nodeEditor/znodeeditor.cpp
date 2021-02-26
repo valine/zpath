@@ -15,6 +15,7 @@
 #include <zconf.h>
 #include <utils/zsettingsstore.h>
 #include <utils/znodeutil.h>
+#include <ui/ztextfield.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -99,6 +100,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 //    CasUtil::get().testCompute();
 
     ZNodeUtil::get().stringToGraph("test");
+
+    auto* inputField = new ZTextField(mHeader);
+    inputField->setXOffset(450);
+    inputField->setBackgroundColor(blue);
+
 }
 
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {

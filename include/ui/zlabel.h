@@ -24,10 +24,9 @@ public:
 
     ZLabel(float maxWidth, float maxHeight, string font, string resourcePath);
     ZLabel(float maxWidth, float maxHeight);
-
     ZLabel(string label, ZView *parent);
 
-    void draw();
+    void draw() override;
     void setTextSize(int textSize);
     void setTextColor(vec3 color);
     void setText(string text);
@@ -39,14 +38,12 @@ private:
 
     unsigned int mFBO = -1;
     unsigned int mTexBuffer = -1;
-    unsigned int mRBO = -1;
 
     GLuint VAO, VBO;
     int mTextSize = 14;
     vec3 mTextColor = vec3(1,1,1);
     string mText = "";
     string mFontPath = "";
-    bool mInvalid = true;
     string mFont;
 
     bool mTextInvalid = true;
@@ -55,7 +52,6 @@ private:
     void createFBO();
     void drawText();
     void setup(const string &font, const string &resourcePath);
-
     void updateFrameSize();
 };
 

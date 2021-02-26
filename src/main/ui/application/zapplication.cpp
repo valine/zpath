@@ -117,6 +117,14 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
                            thiz->onKeyPress(key, scancode, action, mods, thiz->mWindows.at(window));
                        });
 
+
+    glfwSetCharCallback(window,
+                       [](GLFWwindow *window, unsigned int code) {
+                           auto thiz = reinterpret_cast<ZApplication *>(glfwGetWindowUserPointer(window));
+                           thiz->onCharacterInput(code, thiz->mWindows.at(window));
+                       });
+
+
     glfwSetMouseButtonCallback(window,[](GLFWwindow *window, int button, int action, int mods) {
                                    auto thiz = reinterpret_cast<ZApplication *>(glfwGetWindowUserPointer(window));
                                     double xpos, ypos;
@@ -203,7 +211,6 @@ void ZApplication::setShouldPollEvents(bool shouldPoll) {
 }
 
 void ZApplication::onWindowResize(int width, int height, ZViewController *viewController) {
-
     vec4 background = viewController->getBackgroundColor();
     glClearColor(background.r, background.g, background.b, background.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -212,6 +219,10 @@ void ZApplication::onWindowResize(int width, int height, ZViewController *viewCo
 
 void ZApplication::onWindowMove(GLFWwindow *window) {
     mShouldSwapBuffer = false;
+}
+
+void ZApplication::onCharacterInput(unsigned int character, ZViewController *viewController) {
+    viewController->onCharacterInput(character);
 }
 
 void ZApplication::onKeyPress(int key, int scancode, int action, int mods, ZViewController* viewController) {

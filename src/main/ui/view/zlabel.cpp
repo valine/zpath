@@ -16,7 +16,6 @@ ZLabel::ZLabel(string label, ZView *parent)
     setText(std::move(label));
     setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     parent->addSubView(this);
-    setBackgroundColor(parent->getBackgroundColor());
 
     setWindowHeight(parent->getWindowHeight());
     setWindowWidth(parent->getWindowWidth());
@@ -97,7 +96,8 @@ void ZLabel::drawText() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glViewport(0, 0, getWidth(), getHeight());
 
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    vec4 bg = transparent;
+    glClearColor(bg.r, bg.g, bg.b, bg.a);
     glClear(GL_COLOR_BUFFER_BIT);
 
     GLfloat labelScale = 1.0;
@@ -210,4 +210,3 @@ void ZLabel::onSizeChange() {
     mFrameInvalid = true;
     mTextInvalid = true;
 }
-

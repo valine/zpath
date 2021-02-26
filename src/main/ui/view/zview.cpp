@@ -91,6 +91,14 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
     }
 }
 
+void ZView::onCharacterInput(unsigned int character) {
+    for (auto & mView : mViews) {
+        //if ((isMouseInBounds(mView))) {
+            mView->onCharacterInput(character);
+       //ioj }
+    }
+}
+
 bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     vec2 scale = getScale();
     float sx = x / scale.x;

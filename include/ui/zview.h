@@ -73,9 +73,15 @@ class ZView {
         virtual void onCursorPosChange(double x, double y);
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
+        virtual void onCharacterInput(unsigned int character);
+        /**
+         * Called when mouse up anywhere on the screen
+         */
+        virtual void onGlobalMouseUp(int key);
 
         virtual void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button);
         virtual void onSizeChange();
+
 
 
         // OpenGL shader
@@ -215,10 +221,7 @@ class ZView {
         void removeView();
 
         vec2 getMouse();
-		/**
-		 * Called when mouse up anywhere on the screen
-		 */
-		virtual void onGlobalMouseUp(int key);
+
         bool isMouseInBounds(ZView *view) const;
 
         void setLineWidth(float width);
@@ -254,7 +257,8 @@ class ZView {
             mClipping = clipping;
         }
 
-	private:
+
+private:
 
 		bool mNeedsRender = true;
 		bool mVertsInvalid = false;
@@ -374,6 +378,7 @@ class ZView {
         void removeSubView(int index);
 
     void drawShadow();
+
 };
 
 #endif

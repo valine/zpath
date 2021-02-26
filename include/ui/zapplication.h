@@ -40,4 +40,6 @@ private:
 
     static void startUiThread(ZViewController *viewController, bool shouldPoll, ZApplication *app, string windowName,
                               int width, int height);
+
+    void onCharacterInput(unsigned int character, ZViewController *viewController);
 };
