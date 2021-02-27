@@ -119,6 +119,7 @@ void ZLabel::drawText() {
     GLfloat x = 0;
     GLfloat y = 5 * labelScale;
 
+    mPoints.clear();
     // Iterate through all characters
     std::string::const_iterator c;
     for (c = mText.begin(); c != mText.end(); c++) {
@@ -140,6 +141,8 @@ void ZLabel::drawText() {
                 {xpos + w, ypos,     1.0, 1.0},
                 {xpos + w, ypos + h, 1.0, 0.0}
         };
+
+        mPoints.push_back({xpos + w, y});
 
         glCullFace(GL_FRONT);
         // Render glyph texture over quad
@@ -163,6 +166,13 @@ void ZLabel::drawText() {
 
     glCullFace(GL_BACK);
     mTextInvalid = false;
+}
+
+pair<int,int> ZLabel::getEndPoint() {
+    if (mPoints.empty()) {
+        return {0,0};
+    }
+    return mPoints.at(mPoints.size() - 1);
 }
 
 string ZLabel::getText() {

@@ -33,6 +33,7 @@ public:
     void setFont(string fontPath);
     string getText();
 
+    pair<int,int> getEndPoint();
     void onSizeChange() override;
 private:
 
@@ -48,6 +49,12 @@ private:
 
     bool mTextInvalid = true;
     bool mFrameInvalid = true;
+
+    /**
+     * Character coordinates for setting cursor location
+     */
+    vector<pair<int, int>> mPoints;
+
 
     void createFBO();
     void drawText();

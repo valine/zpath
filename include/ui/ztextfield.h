@@ -21,6 +21,8 @@ public:
 
 private:
 
+    ZView* mCursor;
+
     string mInitialText;
     bool mInFocus = false;
 

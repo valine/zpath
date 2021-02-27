@@ -7,12 +7,20 @@
 ZTextField::ZTextField(ZView *parent)
         : ZLabel("Hellom", parent) {
 
+    mCursor = new ZView(3, fillParent, this);
+    mCursor->setBackgroundColor(black);
+    mCursor->setVisibility(false);
+    mCursor->setXOffset(getEndPoint().first);
+
 }
 
 void ZTextField::onCharacterInput(unsigned int code) {
     ZView::onCharacterInput(code);
     if (mInFocus) {
         setText(getText() + unicodeToStr(code));
+        int offset = getEndPoint().first;
+        mCursor->setXOffset(offset);
+        mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
     }
 }
 
@@ -30,17 +38,20 @@ void ZTextField::setInFocus() {
     mInFocus = true;
     setTextColor(red);
     mInitialText = getText();
+    mCursor->setVisibility(true);
 }
 
 void ZTextField::cancelEdit() {
     mInFocus = false;
     setText(mInitialText);
     setTextColor(black);
+    mCursor->setVisibility(false);
 }
 
 void ZTextField::applyEdit() {
     mInFocus = false;
     setTextColor(black);
+    mCursor->setVisibility(false);
 }
 
 void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
