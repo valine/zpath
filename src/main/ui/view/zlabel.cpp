@@ -142,8 +142,6 @@ void ZLabel::drawText() {
                 {xpos + w, ypos + h, 1.0, 0.0}
         };
 
-        mPoints.push_back({xpos + w, y});
-
         glCullFace(GL_FRONT);
         // Render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
@@ -158,6 +156,10 @@ void ZLabel::drawText() {
         // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
         x += (ch.Advance >> 6) *
              labelScale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+
+
+        mPoints.emplace_back(x, y);
+
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);

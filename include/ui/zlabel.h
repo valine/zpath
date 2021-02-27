@@ -33,6 +33,7 @@ public:
     void setFont(string fontPath);
     string getText();
 
+    void drawText();
     pair<int,int> getEndPoint();
     void onSizeChange() override;
 private:
@@ -57,7 +58,7 @@ private:
 
 
     void createFBO();
-    void drawText();
+
     void setup(const string &font, const string &resourcePath);
     void updateFrameSize();
 };

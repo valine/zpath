@@ -18,6 +18,7 @@ void ZTextField::onCharacterInput(unsigned int code) {
     ZView::onCharacterInput(code);
     if (mInFocus) {
         setText(getText() + unicodeToStr(code));
+        drawText();
         int offset = getEndPoint().first;
         mCursor->setXOffset(offset);
         mCursor->onWindowChange(getWindowWidth(), getWindowHeight());

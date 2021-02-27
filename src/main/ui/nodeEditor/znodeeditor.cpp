@@ -102,7 +102,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     ZNodeUtil::get().stringToGraph("test");
 
     auto* inputField = new ZTextField(mHeader);
-    inputField->setXOffset(450);
+    inputField->setGravity(ZView::bottomLeft);
+    inputField->setYOffset(50);
     inputField->setBackgroundColor(blue);
 
 }
