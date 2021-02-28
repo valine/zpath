@@ -56,6 +56,8 @@ private:
     void enterText(string str);
 
     void deleteCharacter();
+
+    void onFocusChanged(ZView *viewWithFocus);
 };
 
 

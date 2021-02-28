@@ -63,7 +63,7 @@ public:
 
 	bool isViewInFocus() override;
 	void requestFocus(ZView* view) override;
-    void releaseFocus() override;
+    void releaseFocus(ZView *forView) override;
 
 	void setDrawingEnabled(bool);
 private:

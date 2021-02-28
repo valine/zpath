@@ -24,6 +24,12 @@ void ZTextField::onCharacterInput(unsigned int code) {
     }
 }
 
+void ZTextField::onFocusChanged(ZView *viewWithFocus) {
+    if (this != viewWithFocus) {
+        applyEdit();
+    }
+}
+
 void ZTextField::enterText(string str) {
     setText(std::move(str));
     drawText();
@@ -52,14 +58,14 @@ void ZTextField::cancelEdit() {
     setText(mInitialText);
     setTextColor(black);
     mCursor->setVisibility(false);
-    releaseFocus();
+    releaseFocus(this);
 }
 
 void ZTextField::applyEdit() {
     mInFocus = false;
     setTextColor(black);
     mCursor->setVisibility(false);
-    releaseFocus();
+    releaseFocus(this);
 }
 
 void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
@@ -91,5 +97,3 @@ void ZTextField::onGlobalMouseUp(int key) {
         applyEdit();
     }
 }
-
-

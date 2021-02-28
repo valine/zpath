@@ -73,8 +73,10 @@ class ZView {
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
         virtual void onKeyPress(int key, int scancode, int action, int mods);
+        virtual void onFocusChanged(ZView *viewWithFocus);
 
-        virtual void onCharacterInput(unsigned int character);
+
+    virtual void onCharacterInput(unsigned int character);
         /**
          * Called when mouse up anywhere on the screen
          */
@@ -108,7 +110,7 @@ class ZView {
 
         virtual bool isViewInFocus();
         virtual void requestFocus(ZView* view);
-        virtual void releaseFocus();
+        virtual void releaseFocus(ZView *forView);
 
     // Margin
         void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);

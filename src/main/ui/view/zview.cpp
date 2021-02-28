@@ -1147,6 +1147,12 @@ bool ZView::isViewInFocus() {
 void ZView::requestFocus(ZView* view) {
     getParentView()->requestFocus(view);
 }
-void ZView::releaseFocus() {
-    getParentView()->releaseFocus();
+void ZView::releaseFocus(ZView *forView) {
+    getParentView()->releaseFocus(forView);
+}
+
+void ZView::onFocusChanged(ZView *viewWithFocus) {
+    for (ZView* child : getSubViews()) {
+        child->onFocusChanged(viewWithFocus);
+    }
 }

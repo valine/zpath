@@ -156,14 +156,17 @@ string ZViewController::getResourcePath() {
 
 void ZViewController::requestFocus(ZView *view) {
     mFocusedView = view;
+    onFocusChanged(mFocusedView);
 }
 
 bool ZViewController::isViewInFocus() {
     return mFocusedView != nullptr;
 }
 
-void ZViewController::releaseFocus() {
-    mFocusedView = nullptr;
+void ZViewController::releaseFocus(ZView *forView) {
+    if (mFocusedView == forView) {
+        mFocusedView = nullptr;
+    }
 }
 
 void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {

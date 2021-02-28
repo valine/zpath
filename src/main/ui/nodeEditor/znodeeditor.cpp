@@ -106,6 +106,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     inputField->setYOffset(50);
     inputField->setBackgroundColor(blue);
 
+    auto* inputField2 = new ZTextField(mHeader);
+    inputField2->setGravity(ZView::bottomLeft);
+    inputField2->setYOffset(25);
+    inputField2->setBackgroundColor(blue);
+
 }
 
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
