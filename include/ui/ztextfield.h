@@ -52,6 +52,10 @@ private:
     void cancelEdit();
 
     void applyEdit();
+
+    void enterText(string str);
+
+    void deleteCharacter();
 };
 
 

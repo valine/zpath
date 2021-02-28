@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by lukas on 2/25/21.
 //
@@ -17,22 +19,23 @@ ZTextField::ZTextField(ZView *parent)
 void ZTextField::onCharacterInput(unsigned int code) {
     ZView::onCharacterInput(code);
     if (mInFocus) {
-        setText(getText() + unicodeToStr(code));
-        drawText();
-        int offset = getEndPoint().first;
-        mCursor->setXOffset(offset);
-        mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
+        string str = unicodeToStr(code);
+        enterText(getText() + str);
     }
 }
 
-bool ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) {
-    bool consumed = ZView::onMouseEvent(button, action, mods, sx, sy);
+void ZTextField::enterText(string str) {
+    setText(std::move(str));
+    drawText();
+    int offset = getEndPoint().first;
+    mCursor->setXOffset(offset);
+    mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
+}
 
-    if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
-        setInFocus();
-    }
-
-    return consumed;
+void ZTextField::deleteCharacter() {
+    string text = getText();
+    text.pop_back();
+    enterText(text);
 }
 
 void ZTextField::setInFocus() {
@@ -66,8 +69,21 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
         cancelEdit();
     } else if (key == GLFW_KEY_ENTER) {
         applyEdit();
+    } else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        deleteCharacter();
     }
 }
+
+bool ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+    bool consumed = ZView::onMouseEvent(button, action, mods, sx, sy);
+
+    if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
+        setInFocus();
+    }
+
+    return consumed;
+}
+
 
 void ZTextField::onGlobalMouseUp(int key) {
     ZView::onGlobalMouseUp(key);
