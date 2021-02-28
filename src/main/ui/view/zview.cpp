@@ -1,4 +1,5 @@
 #include <utils/zsettingsstore.h>
+#include <ui/zviewcontroller.h>
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
@@ -1138,3 +1139,14 @@ void ZView::removeSubView(int index) {
 }
 
 ZView::~ZView(){}
+
+bool ZView::isViewInFocus() {
+    return getParentView()->isViewInFocus();
+}
+
+void ZView::requestFocus(ZView* view) {
+    getParentView()->requestFocus(view);
+}
+void ZView::releaseFocus() {
+    getParentView()->releaseFocus();
+}

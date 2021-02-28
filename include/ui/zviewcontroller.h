@@ -58,6 +58,13 @@ public:
     virtual void onScrollChange(double x, double y);
 	virtual void onFileDrop(int count, const char** paths);
 
+
+    virtual void onCharacterInput(unsigned int character);
+
+	bool isViewInFocus() override;
+	void requestFocus(ZView* view) override;
+    void releaseFocus() override;
+
 	void setDrawingEnabled(bool);
 private:
 	int mParentWidth = 0;
@@ -68,6 +75,8 @@ private:
 	ZShader *mImageViewShader;
 
 	bool mDrawingEnabled = true;
+
+	ZView* mFocusedView = nullptr;
 
 	string mResourcePath;
 

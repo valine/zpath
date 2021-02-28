@@ -98,12 +98,7 @@ void ZViewController::onWindowChange(int width, int height) {
     }
 }
 
-void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
-    if (getVisibility()) {
-        ZView::onKeyPress(key, scancode, action, mods);
-    }
-}
-	
+
 bool ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
     bool clickConsumed = false;
     if (getVisibility()) {
@@ -157,4 +152,35 @@ void ZViewController::draw() {
 
 string ZViewController::getResourcePath() {
     return mResourcePath;
+}
+
+void ZViewController::requestFocus(ZView *view) {
+    mFocusedView = view;
+}
+
+bool ZViewController::isViewInFocus() {
+    return mFocusedView != nullptr;
+}
+
+void ZViewController::releaseFocus() {
+    mFocusedView = nullptr;
+}
+
+void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
+    if (isViewInFocus()) {
+        mFocusedView->onKeyPress(key, scancode, action, mods);
+    } else {
+        if (getVisibility()) {
+            ZView::onKeyPress(key, scancode, action, mods);
+        }
+    }
+}
+
+void ZViewController::onCharacterInput(unsigned int character) {
+    if (isViewInFocus()) {
+        mFocusedView->onCharacterInput(character);
+    } else {
+        ZView::onCharacterInput(character);
+    }
+
 }

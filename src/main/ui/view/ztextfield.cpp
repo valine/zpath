@@ -40,6 +40,8 @@ void ZTextField::setInFocus() {
     setTextColor(red);
     mInitialText = getText();
     mCursor->setVisibility(true);
+
+    requestFocus(this);
 }
 
 void ZTextField::cancelEdit() {
@@ -47,12 +49,14 @@ void ZTextField::cancelEdit() {
     setText(mInitialText);
     setTextColor(black);
     mCursor->setVisibility(false);
+    releaseFocus();
 }
 
 void ZTextField::applyEdit() {
     mInFocus = false;
     setTextColor(black);
     mCursor->setVisibility(false);
+    releaseFocus();
 }
 
 void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {

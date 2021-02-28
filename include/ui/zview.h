@@ -18,7 +18,7 @@
 
 #include <ft2build.h>
 #include <utils/zshadowrenderer.h>
-#include FT_FREETYPE_H  
+#include FT_FREETYPE_H
 
 using namespace std;
 using namespace glm;
@@ -68,11 +68,12 @@ class ZView {
         virtual void onExit();
 
         virtual void onWindowChange(int windowWidth, int windowHeight);
-        virtual void onKeyPress(int key, int scancode, int action, int mods);
         virtual bool onMouseEvent(int button, int action, int mods, int sx, int sy);
         virtual void onCursorPosChange(double x, double y);
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
+        virtual void onKeyPress(int key, int scancode, int action, int mods);
+
         virtual void onCharacterInput(unsigned int character);
         /**
          * Called when mouse up anywhere on the screen
@@ -105,7 +106,11 @@ class ZView {
         void setZPosition(float z);
         float getZCursorPosition();
 
-        // Margin
+        virtual bool isViewInFocus();
+        virtual void requestFocus(ZView* view);
+        virtual void releaseFocus();
+
+    // Margin
         void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);
         void setMargin(vec4 margin);
         int getMarginLeft();
