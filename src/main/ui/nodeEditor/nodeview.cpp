@@ -66,7 +66,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
 
-    mChart->setBackgroundColor(grey);
     mChart->setOffset(vec2(0,10));
     mChart->setChartListener([this](vector<int> x, int lineIndex){
         // Can safely ignore line index for now

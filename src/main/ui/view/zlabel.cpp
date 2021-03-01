@@ -6,7 +6,7 @@
 
 ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath)
         : ZView(maxWidth, maxHeight) {
-    setup("resources/fonts/" + font, resourcePath);
+    setup("resources/fonts/" + font);
     createFBO();
 }
 
@@ -20,52 +20,28 @@ ZLabel::ZLabel(string label, ZView *parent)
     setWindowHeight(parent->getWindowHeight());
     setWindowWidth(parent->getWindowWidth());
 
-    mFont = ZFontStore::getInstance().getDefaultResource();
-    // Configure VAO/VBO for texture quads
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
+    setup(ZFontStore::getInstance().getDefaultResource());
     createFBO();
 }
 
-void ZLabel::setup(const string &font, const string &resourcePath) {
-    string resourceString = resourcePath + font;
-    ZFontStore::getInstance().loadFont(resourceString);
-
-    mFont = resourceString;
-    // Configure VAO/VBO for texture quads
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
 
 ZLabel::ZLabel(float maxWidth, float maxHeight) : ZView(maxWidth, maxHeight) {
-    string fontPath = "";
-#if defined(_WIN32) || defined(WIN32)
-    fontPath = "C:\\windows\\fonts";
-#elif __APPLE__
-
-    fontPath = "/System/Library/Fonts/";
-    setup("SFNS.ttf", fontPath);
-#else
-    fontPath = "/usr/share/fonts/truetype/liberation/";
-        setup("LiberationSans-Regular.ttf", fontPath);
-#endif
-
+    setup(ZFontStore::getInstance().getDefaultResource());
     createFBO();
+}
+
+void ZLabel::setup(const string &font) {
+    mFont = font;
+    // Configure VAO/VBO for texture quads
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 
@@ -88,6 +64,10 @@ void ZLabel::updateFrameSize() {
     mFrameInvalid = false;
 }
 
+void ZLabel::setBackgroundColor(vec4 color) {
+    ZView::setBackgroundColor(color);
+}
+
 void ZLabel::drawText() {
 
     if (getTextShader() == nullptr || getTextShader()->mID == -1) {
@@ -96,8 +76,7 @@ void ZLabel::drawText() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glViewport(0, 0, getWidth(), getHeight());
 
-    vec4 bg = transparent;
-    glClearColor(bg.r, bg.g, bg.b, bg.a);
+    glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     GLfloat labelScale = 1.0;

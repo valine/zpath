@@ -32,6 +32,7 @@ public:
     void setText(string text);
     void setFont(string fontPath);
     string getText();
+    void setBackgroundColor(vec4 color) override;
 
     void drawText();
     pair<int,int> getEndPoint();
@@ -59,8 +60,9 @@ private:
 
     void createFBO();
 
-    void setup(const string &font, const string &resourcePath);
+    void setup(const string &font);
     void updateFrameSize();
+
 };
 
 #endif

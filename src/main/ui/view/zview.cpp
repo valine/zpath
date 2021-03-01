@@ -254,91 +254,75 @@ void ZView::setTag(string tag) {
 }
 
 void ZView::draw() {
+    if (mVisible && mNeedsRender) {
+        if (mVertsInvalid) {
+            glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
 
-    ZShader* shader;
-    if (mVertsInvalid) {
-        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, 16 * sizeof(float), mVertices);
+            glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
+            mVertsInvalid = false;
+        }
 
-        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, 8 * sizeof(float), mTexCoords);
-        mVertsInvalid = false;
-    }
+        glViewport(0, 0, mWindowWidth, mWindowHeight);
+
+        // Update scale, useful for zooming a view out
+        mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -1.0f, 10.0f);
+        vec2 absoluteScale = getScale();
+        mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
 
 
-
-    if (mVisible) {
-        if (mNeedsRender) {
-
-            drawShadow();
-
-            if (mBackgroundImage != nullptr) {
-                mImageShader->use();
-                shader = mImageShader;
-
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
-            } else {
-                mShader->use();
-                shader = mShader;
-            }
-
-            mPositionLocation = glGetAttribLocation(shader->mID, "vPosUi");
-            mColorLocation = glGetUniformLocation(shader->mID, "uColor");
-            mTexCoordLocation = glGetUniformLocation(shader->mID, "aTexCoords");
-
-            // Update scale, useful for zooming a view out
-            GLint vp_location = glGetUniformLocation(shader->mID, "uVPMatrix");
-            mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -1.0f, 10.0f);
-
-            vec2 absoluteScale = getScale();
-            mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
-            glUniformMatrix4fv(vp_location, 1, GL_FALSE, glm::value_ptr(scaleMat));
+        drawShadow();
+        if (mBackgroundColor.a > 0) {
+            mShader->use();
+            glUniformMatrix4fv(glGetUniformLocation(mShader->mID, "uVPMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMat));
 
             // Set the view background color
-            glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+            glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
                         mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
-
-            glViewport(0, 0, mWindowWidth, mWindowHeight);
-
             glLineWidth(mLineWidth);
             if (mDrawWire == full) {
                 glBindVertexArray(mEdgeVAO);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
-                if (getVisibility()) {
-                    glDrawElements(GL_LINES, EDGE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
+                glDrawElements(GL_LINES, EDGE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
             } else if (mDrawWire == outline) {
                 glBindVertexArray(mOutlineVAO);
-                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+                glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
                             mOutlineColor.r, mOutlineColor.g, mOutlineColor.b, mOutlineColor.a);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
-                if (getVisibility()) {
-                    glDrawElements(GL_LINES, OUTLINE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
-                glUniform4f(glGetUniformLocation(shader->mID, "uColor"),
+
+                glDrawElements(GL_LINES, OUTLINE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+
+                glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
                             mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-                if (getVisibility()) {
-                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
+                glBindVertexArray(mVAO);
+                glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
             } else {
                 glBindVertexArray(mVAO);
-                if (getVisibility()) {
-                    glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
-                }
+                glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
             }
-
-            glBindVertexArray(0);
         }
+
+        if (mBackgroundImage != nullptr) {
+            mImageShader->use();
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
+
+            // Update scale, useful for zooming a view out
+            glUniformMatrix4fv(glGetUniformLocation(mImageShader->mID, "uVPMatrix"), 1,
+                    GL_FALSE, glm::value_ptr(scaleMat));
+
+            glBindVertexArray(mVAO);
+            glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+        }
+
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         for (ZView* view : mViews) {
             if (view != mShadowView) {
                 view->draw();
             }
         }
-
-        glBindTexture(GL_TEXTURE_2D, 0);
         mNeedsRender = false;
     }
 }
@@ -349,6 +333,7 @@ void ZView::drawShadow() {
 
         mShadowView = new ZView(getMaxWidth() + shadowRadius, getMaxWidth() + shadowRadius, this);
         mShadowView->setClippingEnabled(false);
+        mShadowView->setBackgroundColor(transparent);
         // Shadow view should be invisible so it doesn't render as a child view
         ZTexture *shadow = ZShadowRenderer::get().createShadow(getWidth(), getHeight(), shadowRadius);
         //mShadowView->setVisibility(false);
@@ -609,7 +594,6 @@ vec2 ZView::getCenter() {
 
 void ZView::setBackgroundImage(ZTexture* background) {
     mBackgroundImage = background;
-    setBackgroundColor(vec4(1));
 }
 
 int ZView::getWindowHeight() {

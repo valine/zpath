@@ -12,8 +12,8 @@ ZTextField::ZTextField(ZView *parent)
     mCursor = new ZView(3, fillParent, this);
     mCursor->setBackgroundColor(black);
     mCursor->setVisibility(false);
+    drawText();
     mCursor->setXOffset(getEndPoint().first);
-
 }
 
 void ZTextField::onCharacterInput(unsigned int code) {
@@ -46,24 +46,20 @@ void ZTextField::deleteCharacter() {
 
 void ZTextField::setInFocus() {
     mInFocus = true;
-    setTextColor(red);
     mInitialText = getText();
     mCursor->setVisibility(true);
-
     requestFocus(this);
 }
 
 void ZTextField::cancelEdit() {
     mInFocus = false;
     setText(mInitialText);
-    setTextColor(black);
     mCursor->setVisibility(false);
     releaseFocus(this);
 }
 
 void ZTextField::applyEdit() {
     mInFocus = false;
-    setTextColor(black);
     mCursor->setVisibility(false);
     releaseFocus(this);
 }

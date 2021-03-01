@@ -185,9 +185,9 @@ class ZView {
         void setVisibility(bool visible);
         bool getVisibility();
 
-        void setBackgroundColor(float color[4]);
-        void setBackgroundColor(vec4 color);
-        vec4 getBackgroundColor();
+        virtual void setBackgroundColor(float color[4]);
+        virtual void setBackgroundColor(vec4 color);
+        virtual vec4 getBackgroundColor();
         void setBackgroundImage(ZTexture* background);
         void setOutlineColor(vec4 color);
 
