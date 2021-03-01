@@ -16,6 +16,8 @@ using namespace std;
 #include <ztabbedviewcontroller.h>
 #include <zpath/nodeviewcontroller.h>
 #include <utils/casutil.h>
+#include <ui/ztextfield.h>
+#include <zpath/ztextviewcontroller.h>
 
 
 int main(int argc, char* argv[]) {
@@ -25,11 +27,13 @@ int main(int argc, char* argv[]) {
 
     auto* view3d = new ZPathViewController(argv);
     view3d->setName("3D Viewport");
+
     auto* nodeView = new NodeViewController(argv);
     nodeView->setName("Node Editor");
 
-//    auto* empty = new ZViewController(argv);
+    auto* textEditor = new ZTextViewController(argv);
+    textEditor->setName("Text Editor");
 
-    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, view3d});
-    ZApplication(tabs, "ZPATH", false, 1200, 800);
+    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {textEditor, nodeView, view3d});
+    ZApplication(tabs, "zpath", false, 1200, 800);
 }

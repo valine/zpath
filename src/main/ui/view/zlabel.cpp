@@ -98,27 +98,40 @@ void ZLabel::drawText() {
     GLfloat x = 0;
     GLfloat y = 5 * labelScale;
 
+    float vHeight = getHeight();
+    int lineHeight = 17;
     mPoints.clear();
     // Iterate through all characters
     std::string::const_iterator c;
     for (c = mText.begin(); c != mText.end(); c++) {
+
+
         Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
+        GLfloat w = ch.Size.x * labelScale;
+        GLfloat h = ch.Size.y * labelScale;
+
+        float lineOffset = vHeight - lineHeight;
+
+        char ac = c[0];
+        char newLine = '\n';
+        if (ac == newLine) {
+            y -= lineHeight;
+            x = 0;kj 
+        }
 
         GLfloat xpos = x + ch.Bearing.x * labelScale;
         GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * labelScale;
 
-        GLfloat w = ch.Size.x * labelScale;
-        GLfloat h = ch.Size.y * labelScale;
 
         // Update VBO for each character
         GLfloat vertices[6][4] = {
-                {xpos,     ypos + h, 0.0, 0.0},
-                {xpos,     ypos,     0.0, 1.0},
-                {xpos + w, ypos,     1.0, 1.0},
+                {xpos,     lineOffset + ypos + h, 0.0, 0.0},
+                {xpos,     lineOffset + ypos,     0.0, 1.0},
+                {xpos + w, lineOffset + ypos,     1.0, 1.0},
 
-                {xpos,     ypos + h, 0.0, 0.0},
-                {xpos + w, ypos,     1.0, 1.0},
-                {xpos + w, ypos + h, 1.0, 0.0}
+                {xpos,     lineOffset + ypos + h, 0.0, 0.0},
+                {xpos + w, lineOffset + ypos,     1.0, 1.0},
+                {xpos + w, lineOffset + ypos + h, 1.0, 0.0}
         };
 
         glCullFace(GL_FRONT);

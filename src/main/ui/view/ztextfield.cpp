@@ -7,13 +7,22 @@
 #include "ui/ztextfield.h"
 
 ZTextField::ZTextField(ZView *parent)
-        : ZLabel("Hellom", parent) {
+        : ZLabel("", parent) {
 
-    mCursor = new ZView(3, fillParent, this);
+    mCursor = new ZView(3, 17, this);
     mCursor->setBackgroundColor(black);
     mCursor->setVisibility(false);
     drawText();
-    mCursor->setXOffset(getEndPoint().first);
+
+    cursorToEnd();
+
+    setBackgroundColor(grey);
+}
+
+void ZTextField::cursorToEnd() {
+    pair<int, int> offset = getEndPoint();
+    mCursor->setXOffset(offset.first);
+    mCursor->setYOffset(offset.second);
 }
 
 void ZTextField::onCharacterInput(unsigned int code) {
@@ -33,15 +42,16 @@ void ZTextField::onFocusChanged(ZView *viewWithFocus) {
 void ZTextField::enterText(string str) {
     setText(std::move(str));
     drawText();
-    int offset = getEndPoint().first;
-    mCursor->setXOffset(offset);
+    cursorToEnd();
     mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZTextField::deleteCharacter() {
     string text = getText();
-    text.pop_back();
-    enterText(text);
+    if (!text.empty()) {
+        text.pop_back();
+        enterText(text);
+    }
 }
 
 void ZTextField::setInFocus() {
@@ -69,8 +79,8 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
         cancelEdit();
-    } else if (key == GLFW_KEY_ENTER) {
-        applyEdit();
+    } else if (key == GLFW_KEY_ENTER && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        enterText(getText() + '\n');
     } else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         deleteCharacter();
     }

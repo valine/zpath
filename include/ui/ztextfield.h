@@ -58,6 +58,8 @@ private:
     void deleteCharacter();
 
     void onFocusChanged(ZView *viewWithFocus);
+
+    void cursorToEnd();
 };
 
 
