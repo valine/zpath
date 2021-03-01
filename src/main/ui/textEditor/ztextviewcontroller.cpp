@@ -10,5 +10,8 @@ void ZTextViewController::onCreate() {
 
     ZTextField* textField = new ZTextField(this);
     textField->setMaxHeight(ZView::fillParent);
+    textField->setMargin(vec4(10));
+    textField->setXOffset(0);
+
 
 }

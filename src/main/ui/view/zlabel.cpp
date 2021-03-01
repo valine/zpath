@@ -11,8 +11,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
 }
 
 ZLabel::ZLabel(string label, ZView *parent)
-        : ZView(ZView::fillParent, 21) {
-    setOffset(5,0);
+        : ZView(ZView::fillParent, 18) {
     setText(std::move(label));
     setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     parent->addSubView(this);
@@ -96,62 +95,65 @@ void ZLabel::drawText() {
     glBindVertexArray(VAO);
 
     GLfloat x = 0;
-    GLfloat y = 5 * labelScale;
+    GLfloat y = 5;
 
     float vHeight = getHeight();
-    int lineHeight = 17;
+    int lineHeight = 18;
     mPoints.clear();
-    // Iterate through all characters
-    std::string::const_iterator c;
-    for (c = mText.begin(); c != mText.end(); c++) {
 
+    int xMargin = 1;
+    int yMargin = 1;
 
-        Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
-        GLfloat w = ch.Size.x * labelScale;
-        GLfloat h = ch.Size.y * labelScale;
+    // Handle cursor position for empty string
+    if (mText.empty()) {
+        mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
+    } else {
 
-        float lineOffset = vHeight - lineHeight;
+        // Iterate through all characters
+        std::string::const_iterator c;
+        for (c = mText.begin(); c != mText.end(); c++) {
+            Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
+            GLfloat w = ch.Size.x;
+            GLfloat h = ch.Size.y;
 
-        char ac = c[0];
-        char newLine = '\n';
-        if (ac == newLine) {
-            y -= lineHeight;
-            x = 0;kj 
+            float lineOffset = vHeight - lineHeight;
+            GLfloat xpos = x + ch.Bearing.x;
+            GLfloat ypos = lineOffset + y - (ch.Size.y - ch.Bearing.y);
+            char ac = c[0];
+            char newLine = '\n';
+            if (ac == newLine) {
+                y -= lineHeight;
+                x = 0;
+            } else {
+                // Update VBO for each character
+                GLfloat vertices[6][4] = {
+                        {xpos,     ypos + h, 0.0, 0.0},
+                        {xpos,     ypos,     0.0, 1.0},
+                        {xpos + w, ypos,     1.0, 1.0},
+
+                        {xpos,     ypos + h, 0.0, 0.0},
+                        {xpos + w, ypos,     1.0, 1.0},
+                        {xpos + w, ypos + h, 1.0, 0.0}
+                };
+
+                glCullFace(GL_FRONT);
+                // Render glyph texture over quad
+                glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+                // Update content of VBO memory
+                glBindBuffer(GL_ARRAY_BUFFER, VBO);
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4,
+                                vertices); // Be sure to use glBufferSubData and not glBufferData
+
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                // Render quad
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+                x += (ch.Advance >> 6) *
+                     labelScale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+            }
+
+            mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
         }
-
-        GLfloat xpos = x + ch.Bearing.x * labelScale;
-        GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * labelScale;
-
-
-        // Update VBO for each character
-        GLfloat vertices[6][4] = {
-                {xpos,     lineOffset + ypos + h, 0.0, 0.0},
-                {xpos,     lineOffset + ypos,     0.0, 1.0},
-                {xpos + w, lineOffset + ypos,     1.0, 1.0},
-
-                {xpos,     lineOffset + ypos + h, 0.0, 0.0},
-                {xpos + w, lineOffset + ypos,     1.0, 1.0},
-                {xpos + w, lineOffset + ypos + h, 1.0, 0.0}
-        };
-
-        glCullFace(GL_FRONT);
-        // Render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-        // Update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4,
-                        vertices); // Be sure to use glBufferSubData and not glBufferData
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // Render quad
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.Advance >> 6) *
-             labelScale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
-
-
-        mPoints.emplace_back(x, y);
-
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);

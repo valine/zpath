@@ -19,14 +19,14 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     mNameLabel = new ZLabel("Node", this);
     mNameLabel->setTextColor(black);
-    mNameLabel->setXOffset(30);
+    mNameLabel->setXOffset(22);
+    mNameLabel->setYOffset(1);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
-
-
 
     mOutputLabel = new ZLabel("", this);
     mOutputLabel->setOffset(vec2(20, 0));
     mOutputLabel->setMaxWidth(40);
+    mOutputLabel->setYOffset(1);
     mOutputLabel->setGravity(Gravity::topRight);
 
     setOutlineType(WireType::outline);

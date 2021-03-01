@@ -25,7 +25,7 @@ ZButton::ZButton(string label, ZView *parent) :
   //  mLabel->setOffset(10, (DEFAULT_HEIGHT - 16) / 2);
     mLabel->setGravity(ZView::topLeft);
     mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
-
+    mLabel->setOffset(10, (getMaxHeight() - 16) / 2);
    // mLabel->computeBounds();
    // setOffset(0, BTN_OFFSET);
     setMargin(BTN_MARGIN, BTN_MARGIN, BTN_MARGIN, BTN_MARGIN);

@@ -9,7 +9,7 @@
 ZTextField::ZTextField(ZView *parent)
         : ZLabel("", parent) {
 
-    mCursor = new ZView(3, 17, this);
+    mCursor = new ZView(1, 12, this);
     mCursor->setBackgroundColor(black);
     mCursor->setVisibility(false);
     drawText();
