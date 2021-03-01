@@ -129,7 +129,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
                                    auto thiz = reinterpret_cast<ZApplication *>(glfwGetWindowUserPointer(window));
                                     double xpos, ypos;
                                     glfwGetCursorPos(window, &xpos, &ypos);
-                                    thiz->onMouseEvent(window, button, action, mods, xpos, ypos);
+        thiz->onMouseEvent(window, button, action, mods, xpos, ypos, thiz->mWindows.at(window));
                                });
 
     glfwSetCursorPosCallback(window,
@@ -229,8 +229,9 @@ void ZApplication::onKeyPress(int key, int scancode, int action, int mods, ZView
     viewController->onKeyPress(key, scancode, action, mods);
 }
 
-void ZApplication::onMouseEvent(GLFWwindow* window, int button, int action, int mods, double xpos, double ypos) {
-    mWindows.at(window)->onMouseEvent(button, action, mods, xpos, ypos);
+void ZApplication::onMouseEvent(GLFWwindow *window, int button, int action, int mods, double xpos, double ypos,
+                                ZViewController *viewController) {
+    viewController->onMouseEvent(button, action, mods, xpos, ypos);
 }
 
 void ZApplication::onCursorPosChange(double x, double y, ZViewController *viewController) {

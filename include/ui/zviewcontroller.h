@@ -51,15 +51,15 @@ public:
     virtual void onTerminate();
 
 	// Glfw window events
-    virtual void onWindowChange(int width, int height);
-    virtual void onKeyPress(int key, int scancode, int action, int mods);
-    virtual bool onMouseEvent(int button, int action, int mods, int x, int y);
-    virtual void onCursorPosChange(double x, double y);
-    virtual void onScrollChange(double x, double y);
-	virtual void onFileDrop(int count, const char** paths);
+    void onWindowChange(int width, int height) override;
+    void onKeyPress(int key, int scancode, int action, int mods) override;
+    bool onMouseEvent(int button, int action, int mods, int x, int y) override;
+    void onCursorPosChange(double x, double y) override;
+    void onScrollChange(double x, double y) override;
+	void onFileDrop(int count, const char** paths) override;
 
 
-    virtual void onCharacterInput(unsigned int character);
+    void onCharacterInput(unsigned int character) override;
 
 	bool isViewInFocus() override;
 	void requestFocus(ZView* view) override;

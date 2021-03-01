@@ -24,7 +24,8 @@ public:
 	void onWindowResize(int width, int height, ZViewController *viewController);
 	void onWindowMove(GLFWwindow *window);
 	void onKeyPress(int key, int scancode, int action, int mods, ZViewController *viewController);
-	void onMouseEvent(GLFWwindow* window, int button, int action, int mods, double, double);
+	void onMouseEvent(GLFWwindow *window, int button, int action, int mods, double xpos, double ypos,
+                      ZViewController *viewController);
 	void onCursorPosChange(double x, double y, ZViewController *viewController);
 	void onScrollEvent(GLFWwindow *window, double xoffset, double yoffset, ZViewController *viewController);
 	void onFileDrop(GLFWwindow *window, int count, const char **paths, ZViewController *viewController);
