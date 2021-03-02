@@ -24,6 +24,7 @@ using namespace std;
 #include "zlinechart.h"
 #include <complex.h>
 #include <utils/zfft.h>
+#include <array>
 
 class ZNodeView : public ZView {
 public:
