@@ -303,7 +303,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsIn.at(i)->setVisibility(false);
         } else {
             if (i < socketCount.x) {
-                if (socketType.first.at(i) == VAR) {
+                if (socketType.at(0).at(i) == VAR) {
                     mSocketsIn.at(i)->setBackgroundColor(mVariableColor);
                 } else {
                     mSocketsIn.at(i)->setBackgroundColor(mConstantColor);
@@ -317,7 +317,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsOut.at(i)->setVisibility(false);
         } else {
             if (i < socketCount.y) {
-                if (socketType.second.at(i) == VAR) {
+                if (socketType.at(1).at(i) == VAR) {
                     mSocketsOut.at(i)->setBackgroundColor(mVariableColor - darkenVec);
                 } else {
                     mSocketsOut.at(i)->setBackgroundColor(mConstantColor - darkenVec);
@@ -391,7 +391,7 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
             int socketIndex = 0;
             for (ZView* inputSocket : mSocketsIn) {
                 if (isMouseInBounds(inputSocket) && mInputIndices.at(socketIndex).empty() &&
-                        inputSocket->getVisibility() && getSocketType().first.at(socketIndex) == CON) {
+                        inputSocket->getVisibility() && getSocketType().at(0).at(socketIndex) == CON) {
                     mShowMagnitudeView(mOutputLabel, this, socketIndex, true,
                             mConstantValueInput.at(socketIndex), getSocketName().at(socketIndex));
                 }
@@ -499,7 +499,7 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                 } else {
                     for (int d = 0; d < summedInputs.size(); d++) {
                         // Use the default input when nothing is connected to a constant socket
-                        if (getSocketType().first.at(i) == VAR) {
+                        if (getSocketType().at(0).at(i) == VAR) {
                             summedInputs.at(d).at(i) = x.at(d).at(i);
                         } else {
                             // By default constants have no imaginary component

@@ -579,7 +579,7 @@ void ZNodeEditor::onMouseDown() {
 
             for (int j = 0; j < node->getSocketCount().x; j++) {
                 ZView *socket = node->getSocketsIn().at(j);
-                bool magPicker = (shiftKeyPressed() || node->getSocketType().first.at(j) == ZNodeView::SocketType::CON);
+                bool magPicker = (shiftKeyPressed() || node->getSocketType().at(0).at(j) == ZNodeView::SocketType::CON);
 
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
 

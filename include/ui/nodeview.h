@@ -366,47 +366,31 @@ public:
         }
     }
 
-    const pair<vector<SocketType>, vector<SocketType>> COS_TYPE = {{VAR, CON, CON},
-                                                                      {VAR, CON, CON}};
+   vector<vector<SocketType>> COS_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
+   vector<vector<SocketType>> POLY_TYPE =  {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
+   vector<vector<SocketType>> SQRT_TYPE =  {{VAR}, {VAR, CON, CON}};
+   vector<vector<SocketType>> POW_TYPE = {{VAR, VAR},{VAR, CON, CON}};
+   vector<vector<SocketType>> GAUSSIAN_TYPE = {{VAR, CON, CON},{VAR, CON, CON}};
+   vector<vector<SocketType>> MORLET_TYPE = {{VAR, CON, CON, CON, CON},{VAR, CON, CON}};
+   vector<vector<SocketType>> DIVIDE_TYPE = {{CON, CON},{VAR, CON, CON}};
+   vector<vector<SocketType>> CI_TYPE = {{},{CON}};
+   vector<vector<SocketType>> Y_TYPE = {{},{VAR, CON, CON}};
+   vector<vector<SocketType>> Z_TYPE = {{},{VAR, CON, CON}};
+   vector<vector<SocketType>> FILE_TYPE =  {{}, {VAR, CON, CON}};
+   vector<vector<SocketType>> IFFT_TYPE = {{VAR, VAR, CON, CON},{VAR, VAR, CON, CON}};
+   vector<vector<SocketType>> FFT_TYPE ={{VAR, VAR, CON, CON},{VAR, CON, CON}};
+   vector<vector<SocketType>> HARTLEY_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+   vector<vector<SocketType>> LAPLACE_TYPE ={{VAR, VAR, CON, CON, CON, CON},{VAR, CON, CON}};
+   vector<vector<SocketType>> FIRST_DIFF_TYPE ={{VAR, VAR},{VAR, CON, CON}};
+   vector<vector<SocketType>> DOT_TYPE = {{CON, CON},{VAR, CON, CON}};
+   vector<vector<SocketType>> CROSS_TYPE = {{VAR, VAR, VAR, VAR},{VAR, VAR, CON, CON}};
+   vector<vector<SocketType>> CHART_2D_TYPE = {{VAR, VAR, CON},{VAR, VAR, CON, CON}};
+   vector<vector<SocketType>> HEAT_MAP_TYPE = {{VAR, CON, CON},{VAR, CON, CON}};
+   vector<vector<SocketType>> COMBINE_TYPE = {{VAR, VAR},{VAR}};
+   vector<vector<SocketType>> SPLIT_TYPE ={{VAR},{VAR, VAR}};
+   vector<vector<SocketType>> NONE_TYPE = {};
 
-    const pair<vector<SocketType>, vector<SocketType>> POLY_TYPE =  {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> SQRT_TYPE =  {{VAR}, {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> POW_TYPE = {{VAR, VAR},{VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> GAUSSIAN_TYPE = {{VAR, CON, CON},
-                                                                        {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> MORLET_TYPE = {{VAR, CON, CON, CON, CON},
-                                                                      {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> DIVIDE_TYPE = {{CON, CON},
-                                                                     {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> CI_TYPE = {{},{CON}};
-    const pair<vector<SocketType>, vector<SocketType>> Y_TYPE = {{},{VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> Z_TYPE = {{},{VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> FILE_TYPE =  {{}, {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> IFFT_TYPE = {{VAR, VAR, CON, CON},
-                                                               {VAR, VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> FFT_TYPE ={{VAR, VAR, CON, CON},
-                                                               {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> HARTLEY_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> LAPLACE_TYPE ={{VAR, VAR, CON, CON, CON, CON},
-                                                               {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> FIRST_DIFF_TYPE ={{VAR, VAR},
-                                                               {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> DOT_TYPE = {{CON, CON},
-                                                               {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> CROSS_TYPE = {{VAR, VAR, VAR, VAR},
-                                                               {VAR, VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> CHART_2D_TYPE = {{VAR, VAR, CON},
-                                                               {VAR, VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> HEAT_MAP_TYPE = {{VAR, CON, CON},
-                                                                {VAR, CON, CON}};
-    const pair<vector<SocketType>, vector<SocketType>> COMBINE_TYPE = {{VAR, VAR},
-                                                               {VAR}};
-    const pair<vector<SocketType>, vector<SocketType>> SPLIT_TYPE ={{VAR},
-                                                               {VAR, VAR}};
-    const pair<vector<SocketType>, vector<SocketType>> NONE_TYPE = {};
-
-
-    pair<vector<SocketType>,vector<SocketType>> getSocketType() {
+   vector<vector<SocketType>> getSocketType() {
         switch (mType) {
             case POLY: {
                 return POLY_TYPE;
