@@ -366,45 +366,131 @@ public:
         }
     }
 
-    pair<vector<SocketType>,vector<SocketType>>  getSocketType() {
+    pair<vector<SocketType>,vector<SocketType>> getSocketType() {
         switch (mType) {
-            case POLY: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
+            case POLY: {
+                const static pair<vector<SocketType>,vector<SocketType>> type = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
+                return type;
+            }
             case SIN:
             case COS:
             case SIN_C:
-            case COS_C:
-                return {{VAR, CON, CON}, {VAR, CON, CON}};
+            case COS_C: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
             case TAN:
             case TAN_C:
             case ABS:
             case EXP:
             case EXP_C:
-            case SQRT:return {{VAR}, {VAR, CON, CON}};
-            case POW:return {{VAR, VAR}, {VAR, CON, CON}};
-            case GAUSSIAN:return {{VAR, CON, CON}, {VAR, CON, CON}};
-            case MORLET:return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
+            case SQRT:{
+                const static pair<vector<SocketType>, vector<SocketType>> type =  {{VAR}, {VAR, CON, CON}};
+                return type;
+            }
+            case POW: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case GAUSSIAN: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case MORLET: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON, CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
-            case DIVIDE:return {{CON, CON}, {VAR, CON, CON}};
+            case DIVIDE: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
             case C:
-            case CI:return {{}, {CON}};
+            case CI: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{},
+                                                                            {CON}};
+                return type;
+            }
             case X:
-            case Y:return {{}, {VAR, CON, CON}};
-            case Z:return {{}, {VAR, CON, CON}};
-            case FILE:return {{}, {VAR, CON, CON}};
-            case IFFT:return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
-            case FFT:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-            case HARTLEY:return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-            case LAPLACE:return {{VAR, VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-            case FIRST_DIFF:return {{VAR, VAR}, {VAR, CON, CON}};
-            case DOT:return {{CON, CON}, {VAR, CON, CON}};
-            case CROSS:return  {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
-            case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
-            case HEAT_MAP: return {{VAR, CON, CON}, {VAR, CON, CON}};
-            case COMBINE: return {{VAR, VAR}, {VAR}};
-            case SPLIT: return {{VAR}, {VAR, VAR}};
-            case LAST:return {};
+            case Y: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case Z: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case FILE:{
+                const static pair<vector<SocketType>, vector<SocketType>> type =  {{}, {VAR, CON, CON}};
+                return type;
+                }
+            case IFFT: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON, CON},
+                                                                            {VAR, VAR, CON, CON}};
+                return type;
+            }
+            case FFT: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case HARTLEY:{
+                const static pair<vector<SocketType>, vector<SocketType>> type =  {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+                return type;
+                }
+            case LAPLACE: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON, CON, CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case FIRST_DIFF: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case DOT: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case CROSS: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, VAR, VAR},
+                                                                            {VAR, VAR, CON, CON}};
+                return type;
+            }
+            case CHART_2D: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON},
+                                                                            {VAR, VAR, CON, CON}};
+                return type;
+            }
+            case HEAT_MAP: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON},
+                                                                            {VAR, CON, CON}};
+                return type;
+            }
+            case COMBINE: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR},
+                                                                            {VAR}};
+                return type;
+            }
+            case SPLIT: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR},
+                                                                            {VAR, VAR}};
+                return type;
+            }
+            case LAST: {
+                const static pair<vector<SocketType>, vector<SocketType>> type = {};
+                return type;
+            }
         }
     }
 
