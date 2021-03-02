@@ -11,7 +11,7 @@ ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath
 }
 
 ZLabel::ZLabel(string label, ZView *parent)
-        : ZView(ZView::fillParent, 18) {
+        : ZView(ZView::fillParent, getLineHeight()) {
     setText(std::move(label));
     setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     parent->addSubView(this);
@@ -98,9 +98,10 @@ void ZLabel::drawText() {
     GLfloat y = 5;
 
     float vHeight = getHeight();
-    int lineHeight = 18;
+    int lineHeight = getLineHeight();
     mPoints.clear();
-
+    mLineIndices.clear();
+    mLineIndices.push_back(0);
     int xMargin = 1;
     int yMargin = 1;
 
@@ -124,6 +125,7 @@ void ZLabel::drawText() {
             if (ac == newLine) {
                 y -= lineHeight;
                 x = 0;
+                mLineIndices.push_back(mPoints.size());
             } else {
                 // Update VBO for each character
                 GLfloat vertices[6][4] = {
@@ -169,6 +171,18 @@ pair<int,int> ZLabel::getEndPoint() {
         return {0,0};
     }
     return mPoints.at(mPoints.size() - 1);
+}
+
+vector<pair<int,int>> ZLabel::getPoints() {
+    return mPoints;
+}
+
+vector<int> ZLabel::getLineIndices() {
+    return mLineIndices;
+}
+
+int ZLabel::getLineHeight() {
+    return 18;
 }
 
 string ZLabel::getText() {

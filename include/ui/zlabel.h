@@ -37,6 +37,12 @@ public:
     void drawText();
     pair<int,int> getEndPoint();
     void onSizeChange() override;
+
+    vector<pair<int, int>> getPoints();
+    vector<int> getLineIndices();
+
+    int getLineHeight();
+
 private:
 
     unsigned int mFBO = -1;
@@ -56,12 +62,14 @@ private:
      * Character coordinates for setting cursor location
      */
     vector<pair<int, int>> mPoints;
+    vector<int> mLineIndices;
 
 
     void createFBO();
 
     void setup(const string &font);
     void updateFrameSize();
+
 
 };
 

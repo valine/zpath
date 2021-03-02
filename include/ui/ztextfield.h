@@ -60,6 +60,8 @@ private:
     void onFocusChanged(ZView *viewWithFocus);
 
     void cursorToEnd();
+
+    void cursorToPosition(int x, int y);
 };
 
 

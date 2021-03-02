@@ -13,6 +13,8 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     setOutlineType(WireType::outline);
     setOutlineColor(black);
 
+    setElevation(1.0);
+
     // Slider example
     float min = -1.0;
     float max = 1.0;

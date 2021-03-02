@@ -493,7 +493,7 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                 // the number of input sockets on the node. If not
                 // display an error message.
                 if (x.at(0).size() <= size.x) {
-                    mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+                    //mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
                     mOutputLabel->setTextColor(white);
                     return vector<vector<float>>();
                 } else {
