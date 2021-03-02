@@ -366,31 +366,31 @@ public:
         }
     }
 
-   vector<vector<SocketType>> COS_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
-   vector<vector<SocketType>> POLY_TYPE =  {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-   vector<vector<SocketType>> SQRT_TYPE =  {{VAR}, {VAR, CON, CON}};
-   vector<vector<SocketType>> POW_TYPE = {{VAR, VAR},{VAR, CON, CON}};
-   vector<vector<SocketType>> GAUSSIAN_TYPE = {{VAR, CON, CON},{VAR, CON, CON}};
-   vector<vector<SocketType>> MORLET_TYPE = {{VAR, CON, CON, CON, CON},{VAR, CON, CON}};
-   vector<vector<SocketType>> DIVIDE_TYPE = {{CON, CON},{VAR, CON, CON}};
-   vector<vector<SocketType>> CI_TYPE = {{},{CON}};
-   vector<vector<SocketType>> Y_TYPE = {{},{VAR, CON, CON}};
-   vector<vector<SocketType>> Z_TYPE = {{},{VAR, CON, CON}};
-   vector<vector<SocketType>> FILE_TYPE =  {{}, {VAR, CON, CON}};
-   vector<vector<SocketType>> IFFT_TYPE = {{VAR, VAR, CON, CON},{VAR, VAR, CON, CON}};
-   vector<vector<SocketType>> FFT_TYPE ={{VAR, VAR, CON, CON},{VAR, CON, CON}};
-   vector<vector<SocketType>> HARTLEY_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-   vector<vector<SocketType>> LAPLACE_TYPE ={{VAR, VAR, CON, CON, CON, CON},{VAR, CON, CON}};
-   vector<vector<SocketType>> FIRST_DIFF_TYPE ={{VAR, VAR},{VAR, CON, CON}};
-   vector<vector<SocketType>> DOT_TYPE = {{CON, CON},{VAR, CON, CON}};
-   vector<vector<SocketType>> CROSS_TYPE = {{VAR, VAR, VAR, VAR},{VAR, VAR, CON, CON}};
-   vector<vector<SocketType>> CHART_2D_TYPE = {{VAR, VAR, CON},{VAR, VAR, CON, CON}};
-   vector<vector<SocketType>> HEAT_MAP_TYPE = {{VAR, CON, CON},{VAR, CON, CON}};
-   vector<vector<SocketType>> COMBINE_TYPE = {{VAR, VAR},{VAR}};
-   vector<vector<SocketType>> SPLIT_TYPE ={{VAR},{VAR, VAR}};
-   vector<vector<SocketType>> NONE_TYPE = {};
+   const array<array<SocketType, 6>, 2>  COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> POLY_TYPE =  {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> SQRT_TYPE =  {{{{VAR}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> POW_TYPE = {{{{VAR, VAR}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> GAUSSIAN_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> MORLET_TYPE = {{{{VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> DIVIDE_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> CI_TYPE = {{{{}},{{CON}}}};
+   const array<array<SocketType, 6>, 2> Y_TYPE = {{{{}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> Z_TYPE = {{{{}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> FILE_TYPE =  {{{{}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> IFFT_TYPE = {{{{VAR, VAR, CON, CON}},{{VAR, VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> FFT_TYPE ={{{{VAR, VAR, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> HARTLEY_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> LAPLACE_TYPE ={{{{VAR, VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> FIRST_DIFF_TYPE ={{{{VAR, VAR}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> DOT_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}},{{VAR, VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}},{{VAR, VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 6>, 2> COMBINE_TYPE = {{{{VAR, VAR}},{{VAR}}}};
+   const array<array<SocketType, 6>, 2> SPLIT_TYPE = {{{{VAR}},{{VAR, VAR}}}};
+   const array<array<SocketType, 6>, 2> NONE_TYPE = {{}};
 
-   vector<vector<SocketType>> getSocketType() {
+   const array<array<SocketType, 6>, 2> getSocketType() {
         switch (mType) {
             case POLY: {
                 return POLY_TYPE;
