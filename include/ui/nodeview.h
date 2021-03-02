@@ -366,19 +366,56 @@ public:
         }
     }
 
+    const pair<vector<SocketType>, vector<SocketType>> COS_TYPE = {{VAR, CON, CON},
+                                                                      {VAR, CON, CON}};
+
+    const pair<vector<SocketType>, vector<SocketType>> POLY_TYPE =  {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> SQRT_TYPE =  {{VAR}, {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> POW_TYPE = {{VAR, VAR},{VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> GAUSSIAN_TYPE = {{VAR, CON, CON},
+                                                                        {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> MORLET_TYPE = {{VAR, CON, CON, CON, CON},
+                                                                      {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> DIVIDE_TYPE = {{CON, CON},
+                                                                     {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> CI_TYPE = {{},{CON}};
+    const pair<vector<SocketType>, vector<SocketType>> Y_TYPE = {{},{VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> Z_TYPE = {{},{VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> FILE_TYPE =  {{}, {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> IFFT_TYPE = {{VAR, VAR, CON, CON},
+                                                               {VAR, VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> FFT_TYPE ={{VAR, VAR, CON, CON},
+                                                               {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> HARTLEY_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> LAPLACE_TYPE ={{VAR, VAR, CON, CON, CON, CON},
+                                                               {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> FIRST_DIFF_TYPE ={{VAR, VAR},
+                                                               {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> DOT_TYPE = {{CON, CON},
+                                                               {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> CROSS_TYPE = {{VAR, VAR, VAR, VAR},
+                                                               {VAR, VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> CHART_2D_TYPE = {{VAR, VAR, CON},
+                                                               {VAR, VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> HEAT_MAP_TYPE = {{VAR, CON, CON},
+                                                                {VAR, CON, CON}};
+    const pair<vector<SocketType>, vector<SocketType>> COMBINE_TYPE = {{VAR, VAR},
+                                                               {VAR}};
+    const pair<vector<SocketType>, vector<SocketType>> SPLIT_TYPE ={{VAR},
+                                                               {VAR, VAR}};
+    const pair<vector<SocketType>, vector<SocketType>> NONE_TYPE = {};
+
+
     pair<vector<SocketType>,vector<SocketType>> getSocketType() {
         switch (mType) {
             case POLY: {
-                const static pair<vector<SocketType>,vector<SocketType>> type = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-                return type;
+                return POLY_TYPE;
             }
             case SIN:
             case COS:
             case SIN_C:
             case COS_C: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return COS_TYPE;
             }
             case TAN:
             case TAN_C:
@@ -386,110 +423,73 @@ public:
             case EXP:
             case EXP_C:
             case SQRT:{
-                const static pair<vector<SocketType>, vector<SocketType>> type =  {{VAR}, {VAR, CON, CON}};
-                return type;
+                return SQRT_TYPE;
             }
             case POW: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return POW_TYPE;
             }
             case GAUSSIAN: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return GAUSSIAN_TYPE;
             }
             case MORLET: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON, CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return MORLET_TYPE;
             }
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
             case DIVIDE: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return DIVIDE_TYPE;
             }
             case C:
             case CI: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{},
-                                                                            {CON}};
-                return type;
+                return CI_TYPE;
             }
             case X:
             case Y: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return Y_TYPE;
             }
             case Z: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return Z_TYPE;
             }
             case FILE:{
-                const static pair<vector<SocketType>, vector<SocketType>> type =  {{}, {VAR, CON, CON}};
-                return type;
+                return FILE_TYPE;
                 }
             case IFFT: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON, CON},
-                                                                            {VAR, VAR, CON, CON}};
-                return type;
+                return IFFT_TYPE;
             }
             case FFT: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return FFT_TYPE;
             }
             case HARTLEY:{
-                const static pair<vector<SocketType>, vector<SocketType>> type =  {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-                return type;
-                }
+                return HARTLEY_TYPE;
+            }
             case LAPLACE: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON, CON, CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return LAPLACE_TYPE;
             }
             case FIRST_DIFF: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return FIRST_DIFF_TYPE;
             }
             case DOT: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return DOT_TYPE;
             }
             case CROSS: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, VAR, VAR},
-                                                                            {VAR, VAR, CON, CON}};
-                return type;
+
+                return CROSS_TYPE;
             }
             case CHART_2D: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR, CON},
-                                                                            {VAR, VAR, CON, CON}};
-                return type;
+                return CHART_2D_TYPE;
             }
             case HEAT_MAP: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, CON, CON},
-                                                                            {VAR, CON, CON}};
-                return type;
+                return HEAT_MAP_TYPE;
             }
             case COMBINE: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR, VAR},
-                                                                            {VAR}};
-                return type;
+                return COMBINE_TYPE;
             }
             case SPLIT: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {{VAR},
-                                                                            {VAR, VAR}};
-                return type;
+                return SPLIT_TYPE;
             }
             case LAST: {
-                const static pair<vector<SocketType>, vector<SocketType>> type = {};
-                return type;
+                return NONE_TYPE;
             }
         }
     }
