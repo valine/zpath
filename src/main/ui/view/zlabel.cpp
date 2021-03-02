@@ -101,13 +101,13 @@ void ZLabel::drawText() {
     int lineHeight = getLineHeight();
     mPoints.clear();
     mLineIndices.clear();
-    mLineIndices.push_back(0);
     int xMargin = 1;
     int yMargin = 1;
 
     // Handle cursor position for empty string
+    mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
     if (mText.empty()) {
-        mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
+
     } else {
 
         // Iterate through all characters
@@ -156,6 +156,8 @@ void ZLabel::drawText() {
 
             mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
         }
+
+        mLineIndices.push_back(mPoints.size());
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);

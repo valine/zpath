@@ -30,21 +30,38 @@ void ZTextField::cursorToEnd() {
 void ZTextField::cursorToPosition(int x, int y) {
 
     cout << "x" << x << "y" << y << endl;
-    int yIndex = std::min(y / getLineHeight(), (int) getLineIndices().size() - 1);
+    int yIndex = std::max(0, std::min(y / getLineHeight(), (int) getLineIndices().size() - 1));
 
     cout << "index" << yIndex << endl;
-    pair<int, int> offset = getPoints().at(getLineIndices().at(yIndex));
-    mCursor->setXOffset(offset.first);
-    mCursor->setYOffset(offset.second);
-    mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
+    if (getLineIndices().empty()) {
+        mCursorIndex = 0;
+    } else {
+        mCursorIndex = getLineIndices().at(yIndex) - 1;
+    }
+
+    updateCursorPosition();
 }
 
 void ZTextField::onCharacterInput(unsigned int code) {
     ZView::onCharacterInput(code);
     if (mInFocus) {
         string str = unicodeToStr(code);
-        enterText(getText() + str);
+        insertCharacter(str);
     }
+}
+
+void ZTextField::insertCharacter(string str) {
+    setText(std::move(getText().insert(mCursorIndex, str)));
+    drawText();
+    mCursorIndex++;
+    updateCursorPosition();
+}
+
+void ZTextField::updateCursorPosition() {
+    pair<int, int> offset = getPoints().at(std::max(0, mCursorIndex));
+    mCursor->setXOffset(offset.first);
+    mCursor->setYOffset(offset.second);
+    mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZTextField::onFocusChanged(ZView *viewWithFocus) {
@@ -53,18 +70,16 @@ void ZTextField::onFocusChanged(ZView *viewWithFocus) {
     }
 }
 
-void ZTextField::enterText(string str) {
-    setText(std::move(str));
-    drawText();
-    cursorToEnd();
-    mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
-}
-
 void ZTextField::deleteCharacter() {
     string text = getText();
     if (!text.empty()) {
-        text.pop_back();
-        enterText(text);
+        if (mCursorIndex > 0) {
+            mCursorIndex-=1;
+            text.erase(mCursorIndex, 1);
+            setText(std::move(text));
+            drawText();
+            updateCursorPosition();
+        }
     }
 }
 
@@ -94,8 +109,16 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
         cancelEdit();
     } else if (key == GLFW_KEY_ENTER && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        enterText(getText() + '\n');
-    } else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        insertCharacter("\n");
+    } else if (key == GLFW_KEY_TAB && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        //insertCharacter("\t");
+
+        // Could pull from a setting
+        int spaceCount = 5;
+        for (int i = 0; i < spaceCount; i++) {
+            insertCharacter(" ");
+        }
+    }else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         deleteCharacter();
     }
 }

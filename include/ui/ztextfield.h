@@ -22,6 +22,7 @@ public:
 private:
 
     ZView* mCursor;
+    int mCursorIndex = 0;
 
     string mInitialText;
     bool mInFocus = false;
@@ -53,8 +54,6 @@ private:
 
     void applyEdit();
 
-    void enterText(string str);
-
     void deleteCharacter();
 
     void onFocusChanged(ZView *viewWithFocus);
@@ -62,6 +61,10 @@ private:
     void cursorToEnd();
 
     void cursorToPosition(int x, int y);
+
+    void insertCharacter(string str);
+
+    void updateCursorPosition();
 };
 
 
