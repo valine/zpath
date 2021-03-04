@@ -122,7 +122,11 @@ void ZViewController::onCursorPosChange(double x, double y) {
 
 void ZViewController::onScrollChange(double x, double y) {
     if (getVisibility()) {
-        ZView::onScrollChange(x, y);
+        if (isViewInFocus()) {
+            mFocusedView->onScrollChange(x,y);
+        } else {
+            ZView::onScrollChange(x, y);
+        }
     }
 }
 

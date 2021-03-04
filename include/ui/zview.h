@@ -18,6 +18,7 @@
 
 #include <ft2build.h>
 #include <utils/zshadowrenderer.h>
+#include "utils/zsettingsstore.h"
 #include FT_FREETYPE_H
 
 using namespace std;
@@ -246,6 +247,7 @@ class ZView {
         vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
         vec4 transparent = vec4(0);
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
+        vec4 bg = ZSettingsStore::get().getBackgroundColor();
 
         void setName(string name);
         string getName();
@@ -263,7 +265,6 @@ class ZView {
         void setClippingEnabled(bool clipping) {
             mClipping = clipping;
         }
-
 
 private:
 
@@ -380,7 +381,6 @@ private:
         float mLineWidth = 2.0;
 
         bool mClipping = true;
-
 
         void removeSubView(int index);
 

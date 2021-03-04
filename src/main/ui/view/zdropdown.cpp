@@ -15,12 +15,14 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     mTitle = new ZLabel("Dropdown", this);
     mTitle->setText("Dropdown");
     mTitle->setTextColor(vec3(1));
+    mTitle->setBackgroundColor(bg);
     addSubView(mTitle);
 
     mDrawer = new ZScrollView(400, 0, this);
-    mDrawer->setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
+    mDrawer->setBackgroundColor(bg);
     mDrawer->setOffset(0,30);
     mDrawer->setVisibility(false);
+    mDrawer->setConsumeScroll(true);
     addSubView(mDrawer);
 
     int index = 0;
@@ -61,6 +63,11 @@ bool ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
 	if (action == GLFW_PRESS) {
 		if (y < mTitle->getBottom()) {
 			mDrawer->setVisibility(!mDrawer->getVisibility());
+			if (mDrawer->getVisibility()) {
+			    requestFocus(this);
+			} else {
+			    releaseFocus(this);
+			}
 		}
 	}
 
@@ -99,6 +106,7 @@ void ZDropDown::onScrollChange(double x, double y) {
 void ZDropDown::onGlobalMouseUp(int key) {
     if (!isMouseInBounds(mTitle)) {
         mDrawer->setVisibility(false);
+        releaseFocus(this);
         getParentView()->invalidate();
     }
 }

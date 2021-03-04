@@ -24,7 +24,6 @@ public:
     void onScrollChange(double x, double y) override;
     void onGlobalMouseUp(int key) override;
 
-
     void setOnItemChange(std::function<void(int item)> onClick);
 	void setTitle(string title);
 private:

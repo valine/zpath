@@ -229,12 +229,8 @@ bool ZView::isMouseInBounds(ZView *view) const {
 void ZView::onScrollChange(double x, double y) {
     if (getVisibility()) {
         for (auto view : mViews) {
-            bool isInViewX = view->getLeft() < mMouseX && view->getRight() > mMouseX;
-            bool isInViewY = view->getTop() < mMouseY && view->getBottom() > mMouseY;
-
             computeBounds();
-
-            if (isInViewX && isInViewY) {
+            if (isMouseInBounds(view)) {
                 view->onScrollChange(x, y);
             }
         }
