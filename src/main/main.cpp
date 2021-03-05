@@ -34,6 +34,6 @@ int main(int argc, char* argv[]) {
     auto* textEditor = new ZTextViewController(argv);
     textEditor->setName("Text Editor");
 
-    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {textEditor, nodeView, view3d});
+    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, textEditor, view3d});
     ZApplication(tabs, "zpath", false, 1200, 800);
 }

@@ -31,6 +31,25 @@ ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
     parent->addSubView(this);
 }
 
+
+ZView::ZView(float maxWidth, float maxHeight, ZView* parent, bool isScrollable) {
+    mIsScrollable = isScrollable;
+    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mMaxWidth = maxWidth;
+    mMaxHeight = maxHeight;
+    mVertices[4] = (GLfloat) mMaxWidth;
+    mVertices[8] = (GLfloat) mMaxHeight;
+    mVertices[12] = (GLfloat) mMaxWidth;
+    mVertices[13] = (GLfloat) mMaxHeight;
+    mWindowHeight = parent->getWindowHeight();
+    mWindowWidth = parent->getWindowWidth();
+    mParentView = parent;
+    parent->addSubView(this);
+}
+
+
 ZView::ZView(Bounds maxWidth, float maxHeight) {
     setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
     mMaxWidth = 10000;
@@ -327,7 +346,7 @@ void ZView::drawShadow() {
     float shadowRadius = 30;
     if (mElevation > 0 && mShadowView == nullptr) {
 
-        mShadowView = new ZView(getMaxWidth() + shadowRadius, getMaxWidth() + shadowRadius, this);
+        mShadowView = new ZView(getMaxWidth() + shadowRadius, getMaxWidth() + shadowRadius, this, false);
         mShadowView->setClippingEnabled(false);
         mShadowView->setBackgroundColor(transparent);
         // Shadow view should be invisible so it doesn't render as a child view
