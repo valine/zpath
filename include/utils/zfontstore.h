@@ -17,6 +17,7 @@ using namespace std;
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <unordered_map>
 
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character {
@@ -35,7 +36,7 @@ public:
         return instance;
     }
     FT_Face loadFont(string resoucePath);
-    Character getCharacter(string resourcePath, GLchar);
+    Character getCharacter(const string& resourcePath, GLchar);
 
     string getDefaultResource();
     void setDefaultResource(string);
@@ -43,8 +44,8 @@ public:
 private:
     ZFontStore();
     static ZFontStore *mInstance;
-    FT_Library mFreetype;
-    map<pair<GLchar, string>, Character> mCharacters;
+    FT_Library mFreetype{};
+    unordered_map<string, Character> mCharacters = unordered_map<string, Character>();
     map<string, FT_Face> mFonts;
     ZFontStore(ZFontStore const&);              // Don't Implement
     void operator=(ZFontStore const&); // Don't implement

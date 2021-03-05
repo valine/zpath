@@ -274,8 +274,7 @@ public:
                 }
                 case HARTLEY: {
                     auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                    out = {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartBound.x, chartWidth};
-                    break;
+                    return  {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartWidth, in.at(3)}, {0.0, chartWidth, in.at(3)}};
                 }
                 case LAPLACE: {
                     mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
@@ -644,7 +643,7 @@ public:
     static ChartType getChartType(Type type) {
         switch (type) {
             default: return LINE_1D_2X;
-            case HARTLEY: return LINE_1D;
+            case HARTLEY:
             case FFT:
             case IFFT:return LINE_1D_2X;
             case CHART_2D: return LINE_2D;

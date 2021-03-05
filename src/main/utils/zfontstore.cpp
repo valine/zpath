@@ -1,3 +1,5 @@
+#include <utility>
+
 //
 // Created by lukas on 7/14/19.
 //
@@ -71,7 +73,8 @@ FT_Face ZFontStore::loadFont(string resourcePath) {
                     (GLuint) face->glyph->advance.x
             };
             make_pair(c, resourcePath);
-            mCharacters.insert(pair<pair<GLchar, string>, Character>(make_pair(c, resourcePath), character));
+            string key = to_string(c) + resourcePath;
+            mCharacters.insert(make_pair(key, character));
 
             glBindTexture(GL_TEXTURE_2D, 0);
             // Destroy FreeType once we're finished
@@ -84,12 +87,17 @@ FT_Face ZFontStore::loadFont(string resourcePath) {
     return mFonts.at(resourcePath);
 }
 
-Character ZFontStore::getCharacter(string resourcePath, GLchar c) {
-    return mCharacters.at(pair<GLchar, string>(c, resourcePath));
+Character ZFontStore::getCharacter(const string& resourcePath, GLchar c) {
+    string key = to_string(c) + resourcePath;
+    if (mCharacters.count(key) == 0) {
+        string defaultKey = to_string(' ') + resourcePath;
+        return mCharacters.at(defaultKey);
+    }
+    return mCharacters.at(key);
 }
 
 void ZFontStore::setDefaultResource(string r) {
-    mDefaultResource = r;
+    mDefaultResource = std::move(r);
 }
 
 string ZFontStore::getDefaultResource() {
