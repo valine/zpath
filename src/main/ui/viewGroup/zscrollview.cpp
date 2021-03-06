@@ -33,6 +33,7 @@ void ZScrollView::init() {
 void ZScrollView::addSubView(ZView* view) {
 	if (view == mInnerView ||
 		view == mScrollBar ||
+		!view->mIsScrollable ||
 		mInnerView == nullptr) {
 		ZView::addSubView(view);
 	} else {
@@ -89,7 +90,6 @@ void ZScrollView::onScrollChange(double x, double y) {
 	float scrollBarHeight = viewHeight * (viewHeight / innerHeight);
 
     mScrollBar->setMaxHeight(scrollBarHeight);
-    float min = 0;
     float max = viewHeight - scrollBarHeight;
     float factor = -(mInnerView->getOffsetY()) / (innerHeight - getHeight());
     mScrollBar->setOffset(0, (max * factor));

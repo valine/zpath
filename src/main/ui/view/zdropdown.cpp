@@ -9,19 +9,26 @@
 
 ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
+    auto* background = new ZView(200, 25, this);
+    background->setBackgroundColor(grey);
+
+
     //setBackgroundColor(vec4(1,0,1,1));
     mButtonHeight = maxHeight;
 
     mTitle = new ZLabel("Dropdown", this);
     mTitle->setText("Dropdown");
-    mTitle->setTextColor(vec3(1));
-    mTitle->setBackgroundColor(bg);
+    mTitle->setTextColor(vec3(0));
+    mTitle->setMarginLeft(5);
+    mTitle->setMarginTop(3);
+
     addSubView(mTitle);
 
     mDrawer = new ZScrollView(400, 0, this);
-    mDrawer->setBackgroundColor(bg);
+    mDrawer->setBackgroundColor(bg - vec4(0.05,0.05,0.05, 0.0));
     mDrawer->setOffset(0,30);
     mDrawer->setVisibility(false);
+    mDrawer->setElevation(1.0);
     addSubView(mDrawer);
 
     int index = 0;

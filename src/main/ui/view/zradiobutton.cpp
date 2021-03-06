@@ -34,8 +34,10 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, vector<ZTexture *> b
 		if (i == 0) {
 		    button->setBackgroundColor(mHighlightColor);
 		      mHighlighted = button;
+            button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
 		} else {
 			button->setBackgroundColor(mBaseColor);
+			button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
 		}
 		
 		button->setText("");
@@ -60,8 +62,10 @@ void ZRadioButton::init(float maxWidth, float maxHeight, vector<string> &titles)
         if (i == 0) {
             button->setBackgroundColor(mHighlightColor);
             mHighlighted = button;
+            button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
         } else {
             button->setBackgroundColor(mBaseColor);
+            button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
         }
 
         button->setText(titles.at(i));

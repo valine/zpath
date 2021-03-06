@@ -31,7 +31,9 @@ class ZView {
 
         ZView(float maxWidth, float maxHeight, ZView *parent);
 
-        enum Gravity {
+    ZView(float maxWidth, float maxHeight, ZView *parent, bool isScrollable);
+
+    enum Gravity {
 		    topLeft,
 		    topRight,
 		    bottomLeft,
@@ -247,7 +249,9 @@ class ZView {
         vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
         vec4 transparent = vec4(0);
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
+
         vec4 bg = ZSettingsStore::get().getBackgroundColor();
+        vec4 base =  ZSettingsStore::get().getBaseColor();
 
         void setName(string name);
         string getName();
@@ -266,6 +270,7 @@ class ZView {
             mClipping = clipping;
         }
 
+    bool mIsScrollable = true;
 private:
 
 		bool mNeedsRender = true;
@@ -382,7 +387,7 @@ private:
 
         bool mClipping = true;
 
-        void removeSubView(int index);
+    void removeSubView(int index);
 
     void drawShadow();
 
