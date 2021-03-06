@@ -22,7 +22,6 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     mDrawer->setBackgroundColor(bg);
     mDrawer->setOffset(0,30);
     mDrawer->setVisibility(false);
-    mDrawer->setConsumeScroll(true);
     addSubView(mDrawer);
 
     int index = 0;
