@@ -21,7 +21,7 @@ ZButton::ZButton(string label, ZView *parent) :
     mLabel = new ZLabel(std::move(label), this);
   //  mLabel->setOffset(10, (DEFAULT_HEIGHT - 16) / 2);
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
+    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     mLabel->setOffset(10, (getMaxHeight() - 16) / 2);
    // mLabel->computeBounds();
    // setOffset(0, BTN_OFFSET);

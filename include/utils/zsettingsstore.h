@@ -44,7 +44,7 @@ public:
     void setHighlightTextColor(vec3);
     void setBaseTextColor(vec3);
 private:
-    vec4 mBaseColor = vec4(0.36, 0.36, 0.37, 1.0);
+    vec4 mBaseColor = vec4(0.9, 0.9, 0.92, 1.0);
     vec4 mBackgroundColor = vec4(0.85, 0.85, 0.86, 1.0);
     vec4 mHighlightColor = vec4(0.005858, 0.253008, 0.698193, 1);
     vec4 mInactiveColor = vec4(0.0,0.0,0.0,0.5);

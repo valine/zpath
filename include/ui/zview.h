@@ -249,7 +249,9 @@ class ZView {
         vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
         vec4 transparent = vec4(0);
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
+
         vec4 bg = ZSettingsStore::get().getBackgroundColor();
+        vec4 base =  ZSettingsStore::get().getBaseColor();
 
         void setName(string name);
         string getName();

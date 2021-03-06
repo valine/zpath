@@ -8,10 +8,7 @@
 
 ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent) {
 
-    setBackgroundColor(white);
-
-    setOutlineType(WireType::outline);
-    setOutlineColor(black);
+    setBackgroundColor(base);
 
     setElevation(1.0);
 
@@ -140,6 +137,6 @@ void ZMagnitudePicker::selectMagnitude(int index) {
     mRangeLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
     mSlider->setMaxValue(mRanges.at(index));
     mSlider->setMinValue(-mRanges.at(index));
-    mSlider->setIncrement(mRanges.at(index) / 1000.0);
+    mSlider->setIncrement(mRanges.at(index) / 10000.0);
     mSelectedMagnitude = index;
 }
