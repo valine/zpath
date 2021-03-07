@@ -118,8 +118,14 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
         for (int i = 0; i < spaceCount; i++) {
             insertCharacter(" ");
         }
-    }else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+    } else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         deleteCharacter();
+    } else if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        mCursorIndex--;
+        updateCursorPosition();
+    } else if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        mCursorIndex++;
+        updateCursorPosition();
     }
 }
 
