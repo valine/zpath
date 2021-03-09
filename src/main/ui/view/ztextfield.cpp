@@ -36,6 +36,7 @@ void ZTextField::cursorToPosition(int x, int y) {
     }
 
     updateCursorPosition();
+    updateCursorOffset();
 }
 
 void ZTextField::onCharacterInput(unsigned int code) {
@@ -51,6 +52,7 @@ void ZTextField::insertCharacter(string str) {
     drawText();
     mCursorIndex++;
     updateCursorPosition();
+    updateCursorOffset();
 }
 
 void ZTextField::updateCursorPosition() {
@@ -121,14 +123,17 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
         }
     } else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         deleteCharacter();
+        updateCursorOffset();
     } else if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         if (mCursorIndex > 0) {
             mCursorIndex--;
+            updateCursorOffset();
             updateCursorPosition();
         }
     } else if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         if (mCursorIndex < getPoints().size() - 1) {
             mCursorIndex++;
+            updateCursorOffset();
             updateCursorPosition();
         }
     } else if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
@@ -139,27 +144,34 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
             if (currentLine > 1) {
                 previousLineIndex = std::max(0, getLineIndices().at(currentLine - 2));
             }
-            int offset = mCursorIndex - lineIndex;
-            mCursorIndex = std::min(lineIndex - 1, previousLineIndex + offset);
+            mCursorIndex = std::min(lineIndex - 1, previousLineIndex + mCursorOffset);
             updateCursorPosition();
         }
     } else if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         int currentLine = getLineIndex();
         if (currentLine < getLineIndices().size() - 1) {
-
-            int lineIndex = 0;
-            if (currentLine > 0) {
-                lineIndex = getLineIndices().at(currentLine - 1);
-            }
-
             int nextLineIndex = getLineIndices().size() - 1;
             if (currentLine < getLineIndices().size()) {
                 nextLineIndex = std::max(0, getLineIndices().at(currentLine));
             }
-            int offset = mCursorIndex - lineIndex;
-            mCursorIndex = std::min(getLineIndices().at(currentLine + 1) - 1, nextLineIndex + offset);
+            mCursorIndex = std::min(getLineIndices().at(currentLine + 1) - 1, nextLineIndex + mCursorOffset);
             updateCursorPosition();
         }
+    }
+}
+
+void ZTextField::updateCursorOffset() {
+    if (!getLineIndices().empty()) {
+
+        if (getLineIndex() != 0) {
+            int currentLine = std::max(1, getLineIndex());
+            int lineIndex = getLineIndices().at(currentLine - 1);
+            mCursorOffset = mCursorIndex - lineIndex;
+        } else {
+            mCursorOffset = mCursorIndex;
+        }
+    } else {
+        mCursorOffset = 0;
     }
 }
 

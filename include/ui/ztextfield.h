@@ -25,6 +25,7 @@ private:
     int mCursorIndex = 0;
     int mLineIndex = 0;
 
+    int mCursorOffset = 0;
     string mInitialText;
     bool mInFocus = false;
 
@@ -68,6 +69,8 @@ private:
     void updateCursorPosition();
 
     int getLineIndex();
+
+    void updateCursorOffset();
 };
 
 
