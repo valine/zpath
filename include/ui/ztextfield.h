@@ -23,6 +23,7 @@ private:
 
     ZView* mCursor;
     int mCursorIndex = 0;
+    int mLineIndex = 0;
 
     string mInitialText;
     bool mInFocus = false;
@@ -65,6 +66,8 @@ private:
     void insertCharacter(string str);
 
     void updateCursorPosition();
+
+    int getLineIndex();
 };
 
 

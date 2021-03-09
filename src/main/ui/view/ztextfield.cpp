@@ -28,11 +28,7 @@ void ZTextField::cursorToEnd() {
 }
 
 void ZTextField::cursorToPosition(int x, int y) {
-
-    cout << "x" << x << "y" << y << endl;
     int yIndex = std::max(0, std::min(y / getLineHeight(), (int) getLineIndices().size() - 1));
-
-    cout << "index" << yIndex << endl;
     if (getLineIndices().empty()) {
         mCursorIndex = 0;
     } else {
@@ -62,6 +58,11 @@ void ZTextField::updateCursorPosition() {
     mCursor->setXOffset(offset.first);
     mCursor->setYOffset(offset.second);
     mCursor->onWindowChange(getWindowWidth(), getWindowHeight());
+}
+
+int ZTextField::getLineIndex() {
+    pair<int, int> offset = getPoints().at(std::max(0, mCursorIndex));
+    return (int) std::max(0, (offset.second / getLineHeight()));
 }
 
 void ZTextField::onFocusChanged(ZView *viewWithFocus) {
@@ -121,11 +122,44 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
     } else if (key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         deleteCharacter();
     } else if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        mCursorIndex--;
-        updateCursorPosition();
+        if (mCursorIndex > 0) {
+            mCursorIndex--;
+            updateCursorPosition();
+        }
     } else if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        mCursorIndex++;
-        updateCursorPosition();
+        if (mCursorIndex < getPoints().size() - 1) {
+            mCursorIndex++;
+            updateCursorPosition();
+        }
+    } else if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        int currentLine = getLineIndex();
+        if (currentLine > 0) {
+            int lineIndex = getLineIndices().at(currentLine - 1);
+            int previousLineIndex = 0;
+            if (currentLine > 1) {
+                previousLineIndex = std::max(0, getLineIndices().at(currentLine - 2));
+            }
+            int offset = mCursorIndex - lineIndex;
+            mCursorIndex = std::min(lineIndex - 1, previousLineIndex + offset);
+            updateCursorPosition();
+        }
+    } else if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        int currentLine = getLineIndex();
+        if (currentLine < getLineIndices().size() - 1) {
+
+            int lineIndex = 0;
+            if (currentLine > 0) {
+                lineIndex = getLineIndices().at(currentLine - 1);
+            }
+
+            int nextLineIndex = getLineIndices().size() - 1;
+            if (currentLine < getLineIndices().size()) {
+                nextLineIndex = std::max(0, getLineIndices().at(currentLine));
+            }
+            int offset = mCursorIndex - lineIndex;
+            mCursorIndex = std::min(getLineIndices().at(currentLine + 1) - 1, nextLineIndex + offset);
+            updateCursorPosition();
+        }
     }
 }
 
