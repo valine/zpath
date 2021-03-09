@@ -286,7 +286,6 @@ void ZView::draw() {
         vec2 absoluteScale = getScale();
         mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
 
-
         drawShadow();
         if (mBackgroundColor.a > 0) {
             mShader->use();
@@ -300,16 +299,20 @@ void ZView::draw() {
                 glBindVertexArray(mEdgeVAO);
                 glDrawElements(GL_LINES, EDGE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
             } else if (mDrawWire == outline) {
+
+
+                glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
+                            mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
+                glBindVertexArray(mVAO);
+                glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
+
                 glBindVertexArray(mOutlineVAO);
                 glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
                             mOutlineColor.r, mOutlineColor.g, mOutlineColor.b, mOutlineColor.a);
 
                 glDrawElements(GL_LINES, OUTLINE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
 
-                glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
-                            mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
                 glBindVertexArray(mVAO);
-                glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
             } else {
                 glBindVertexArray(mVAO);
                 glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
@@ -343,7 +346,8 @@ void ZView::draw() {
 }
 
 void ZView::drawShadow() {
-    float shadowRadius = 30;
+    float shadowRadius = 30 * mElevation;
+    float offset = -5 * mElevation;
     if (mElevation > 0 && mShadowView == nullptr) {
 
         mShadowView = new ZView(getMaxWidth() + shadowRadius, getMaxWidth() + shadowRadius, this, false);
@@ -353,7 +357,7 @@ void ZView::drawShadow() {
         ZTexture *shadow = ZShadowRenderer::get().createShadow(getWidth(), getHeight(), shadowRadius);
         //mShadowView->setVisibility(false);
         mShadowView->setBackgroundImage(shadow);
-        mShadowView->setOffset(-5, -5);
+        mShadowView->setOffset(offset, offset);
        // mShadowView->setBackgroundColor(blue);
     }
 

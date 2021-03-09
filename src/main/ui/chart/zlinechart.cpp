@@ -491,7 +491,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
         mLastMouse = positionInView;
     }
 
-    if (middleMouseIsDown() && shiftKeyPressed()) {
+    if ((middleMouseIsDown() || mouseIsDown()) && shiftKeyPressed()) {
         if (state == mouseDrag) {
             vec2 d = (mLastMouse - positionInView) * vec2(2.0);
             mTmpTransformIdentity = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransformIdentity;

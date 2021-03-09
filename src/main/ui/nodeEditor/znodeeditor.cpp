@@ -276,8 +276,8 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 
     node->resetInitialPosition();
     node->invalidateSingleNode();
+    deselectNode(node);
 
-    node->setElevation(1.0);
     return node;
 }
 
@@ -401,8 +401,9 @@ void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last
 
 void ZNodeEditor::selectNode(ZNodeView* node) {
     if (node->getVisibility()) {
-        node->setOutlineColor(yellow);
+        node->setOutlineColor(gold);
         node->setLineWidth(3.0);
+        node->setElevation(SELECTED_ELEVATION);
 
         mSecondLastSelected = mLastSelected;
         mLastSelected = node;
@@ -415,6 +416,7 @@ void ZNodeEditor::deselectNode(ZNodeView* node) {
     if (node->getVisibility()) {
         node->setOutlineColor(grey);
         node->setLineWidth(2.0);
+        node->setElevation(DEFAULT_ELEVATION);
         if (mSelectedNodes.count(node) != 0) {
             mSelectedNodes.erase(node);
         }
@@ -655,7 +657,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
             mTmpLine->setVisibility(true);
             mTmpLine->setPoints(absolute, mInitialOffset);
         } else {
-            if (mGrab) {
+            if (mGrab && !shiftKeyPressed()) {
                 for (ZNodeView* selected : mSelectedNodes) {
                     selected->setOffset(
                             (int) selected->getInitialPosition().x + delta.x,
@@ -678,7 +680,8 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
         }
     }
 
-    if (middleMouseIsDown() && (!shiftKeyPressed() || mDragNode == NO_SELECTION)) {
+    if ((middleMouseIsDown() && (!shiftKeyPressed() || mDragNode == NO_SELECTION)) ||
+        (mouseIsDown() && mDragNode == NO_SELECTION && !isViewInFocus())) {
         for (ZNodeView* node : mNodeViews) {
             if (node->getVisibility()) {
                 node->setOffset(

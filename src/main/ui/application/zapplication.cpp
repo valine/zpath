@@ -160,6 +160,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     ZSettingsStore::getInstance().setResourcePath(viewController->getResourcePath());
 
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_LINE_SMOOTH);
     glfwSwapInterval(0);
 
     glEnable(GL_BLEND);

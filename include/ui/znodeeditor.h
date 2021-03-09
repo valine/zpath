@@ -24,6 +24,10 @@ static const int NODE_CONTAINER_OFFSET = 30;
 
 static const int DRAG_THRESHOLD = 5;
 
+static const double DEFAULT_ELEVATION = 0.3;
+
+static const double SELECTED_ELEVATION = 1.0;
+
 #include <ui/zview.h>
 #include "nodeview.h"
 #include "zmagnitudepicker.h"

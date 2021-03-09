@@ -246,6 +246,7 @@ class ZView {
         vec4 blue = vec4(0,0,1,1);
         vec4 green = vec4(0,1,0,1);
         vec4 yellow = vec4(1,1,0,1);
+        vec4 gold = vec4(1, 0.709230, 0, 1);
         vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
         vec4 transparent = vec4(0);
         vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
@@ -276,7 +277,7 @@ private:
 		bool mNeedsRender = true;
 		bool mVertsInvalid = false;
 
-		Gravity mGravity;
+		Gravity mGravity = topLeft;
 		ZView *mParentView;
 		ZView *mRootView;
 
