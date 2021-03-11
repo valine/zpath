@@ -74,7 +74,7 @@ class ZView {
         virtual void onExit();
 
         virtual void onWindowChange(int windowWidth, int windowHeight);
-        virtual bool onMouseEvent(int button, int action, int mods, int sx, int sy);
+        virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
         virtual void onCursorPosChange(double x, double y);
         virtual void onScrollChange(double x, double y);
         virtual void onFileDrop(int count, const char** paths);
@@ -277,10 +277,17 @@ class ZView {
         }
 
     bool mIsScrollable = true;
+
+    void removeSubView(int index);
+
+    void removeSubView(ZView *view);
+
 private:
 
 		bool mNeedsRender = true;
 		bool mVertsInvalid = false;
+
+		bool mCreateComplete = false;
 
 		Gravity mGravity = topLeft;
 		ZView *mParentView{};
@@ -392,8 +399,6 @@ private:
         float mLineWidth = 2.0;
 
         bool mClipping = true;
-
-    void removeSubView(int index);
 
     void drawShadow();
 

@@ -7,69 +7,74 @@
 #include "ui/ztileviewcontroller.h"
 
 ZTileViewController::ZTileViewController(char **argv, std::function<ZViewController *(int)> factory,
-                                         vector<string> names) : ZViewController(argv){
+                                         vector<string> names, bool isRoot, ZViewController *content) : ZViewController(argv){
     mControllerFactory = std::move(factory);
     mNames = std::move(names);
+    mIsRoot = isRoot;
+    mContent = content;
 }
 
 ZTileViewController::ZTileViewController(string path, std::function<ZViewController *(int)> factory,
-                                         vector<string> names) : ZViewController(std::move(path)) {
+                                         vector<string> names, bool isRoot, ZViewController *content) : ZViewController(std::move(path)) {
 
     mControllerFactory = std::move(factory);
     mNames = std::move(names);
+    mIsRoot = isRoot;
+    mContent = content;
 }
 
 void ZTileViewController::onLayoutFinished() {
     ZViewController::onLayoutFinished();
 
-   // setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
+    if (mContent == nullptr) {
+        mContent = mControllerFactory(1);
+    }
 
-    mFirstView = mControllerFactory(1);
-    mFirstView->setDrawingEnabled(false);
-    mFirstView->setOutlineColor(black);
-    mFirstView->setOutlineType(WireType::outline);
-    addSubView(mFirstView);
+    mContent->setDrawingEnabled(false);
+    mContent->setOutlineType(outline);
+    mContent->setLineWidth(2);
 
-    mHandle = new ZView(vec2(40), highlight, mFirstView);
-    mHandle->setGravity(topRight);
-    mHandle->setElevation(0.8);
+    bool viewAdded = false;
+    for (ZView* view : getSubViews()) {
+        if (view == mContent) {
+            viewAdded = true;
+        }
+    }
+
+    if (!viewAdded) {
+        addSubView(mContent);
+        mHandle = new ZView(vec2(40), highlight, this);
+        mHandle->setGravity(topRight);
+        mHandle->setElevation(0.8);
+    }
 }
 
-
-bool ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
-    ZViewController::onMouseEvent(button, action, mods, x, y);
+void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
+  ZViewController::onMouseEvent(button, action, mods, x, y);
 
     if (action == GLFW_PRESS && mHandle != nullptr && isMouseInBounds(mHandle)) {
         mDragType = cornerDrag;
     } else if(action == GLFW_PRESS) {
 
-        if (mSecondView != nullptr) {
+        if (mFirstView != nullptr) {
+            if (mSplitType == sideBySide && (abs(mFirstView->getRight() - x) < 10)) {
+                mInitialFirst = mFirstView->getWidth();
+                mInitialSecond = mSecondView->getWidth();
+                mDragType = tileDrag;
+            }
 
-                if (mSplitType == sideBySide && (abs(mFirstView->getRight() - x) < 10)) {
-                    mInitialFirst = mFirstView->getWidth();
-                    mInitialSecond = mSecondView->getWidth();
-                    mDragType = tileDrag;
-                }
+            if (mSplitType == overUnder && (abs(mFirstView->getBottom() - y) < 10)) {
+                mInitialFirst = mSecondView->getHeight();
+                mInitialSecond = mFirstView->getHeight();
+                mDragType = tileDrag;
+            }
         }
-//
-//        else if (mSplitType == overUnder && mSecondView != nullptr) {
-//            if (abs(mFirstView->getBottom() - y) < DRAG_THRESHOLD || abs(mSecondView->getTop() - y) < DRAG_THRESHOLD) {
-//                mInitialSecond = mFirstView->getHeight();
-//                mInitialFirst = mSecondView->getHeight();
-//                mDragType = tileDrag;
-//
-//            }
-//        }
 
     }
-
-
 
     if (action == GLFW_RELEASE) {
         mDragType = noDrag;
     }
-
-    return false;
 }
 
 void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
@@ -86,28 +91,20 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
         } else if (mDragType == tileDrag) {
 
             if (mSplitType == sideBySide) {
+                int first = mInitialFirst + (int) delta.x;
+                mSecondView->setMaxWidth(fillParent);
+                mSecondView->setXOffset(first);
+                mFirstView->setMaxWidth(first);
+                mFirstView->invalidate();
+                mSecondView->invalidate();
 
-                if (mSecondView != nullptr) {
-                    int second = mInitialSecond - (int) delta.x;
-                    int first = mInitialFirst + (int) delta.x;
-
-                    mSecondView->setMaxWidth(second);
-                    mSecondView->setXOffset(first);
-                    mFirstView->setMaxWidth(first);
-                    mFirstView->invalidate();
-                    mSecondView->invalidate();
-                    mSecondView->onWindowChange(getWidth(), getHeight());
-                }
             } else if (mSplitType == overUnder) {
                 int first = mInitialSecond + (int) delta.y;
-                int second = mInitialFirst - (int) delta.y;
-
-                mSecondView->setMaxHeight(second);
+                mSecondView->setMaxHeight(fillParent);
                 mSecondView->setYOffset(first);
                 mFirstView->setMaxHeight(first);
                 mFirstView->invalidate();
                 mSecondView->invalidate();
-                mSecondView->onWindowChange(getWidth(), getHeight());
             }
         }
     } else if (state == mouseUp) {
@@ -116,52 +113,61 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
 }
 
 void ZTileViewController::triggerSideSplit() {// Trigger split
-    mSecondView = new ZTileViewController(getResourcePath(), mControllerFactory, mNames);
-    mSecondView->setParentTile(this);
-    mSecondView->setBackgroundColor(getBackgroundColor() - vec4(0.1, 0.1, 0.1, 0.0));
+
+    mSplitType = sideBySide;
+    mDragType = tileDrag;
+
+    mFirstView = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
+    mFirstView->setDrawingEnabled(false);
+    removeSubView(mContent);
+    addSubView(mFirstView);
+
+    mSecondView = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+    mSecondView->setDrawingEnabled(false);
+    mSecondView->setBackgroundColor(red);
     addSubView(mSecondView);
 
     mSecondView->setMaxHeight(mFirstView->getMaxHeight());
     mSecondView->setMaxWidth(0);
-    mSecondView->setXOffset(mFirstView->getWidth());
-    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+    mSecondView->setXOffset(getWidth());
 
     mInitialFirst = mFirstView->getWidth();
     mInitialSecond = mSecondView->getWidth();
 
-    mSplitType = sideBySide;
-    mDragType = tileDrag;
+    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+    mHandle->setVisibility(false);
 }
 
 
 void ZTileViewController::triggerOverUnderSplit() {// Trigger split
 
+    mSplitType = overUnder;
+    mDragType = tileDrag;
 
-    mSecondView = new ZTileViewController(getResourcePath(), mControllerFactory, mNames);
-    mSecondView->setParentTile(this);
-    mSecondView->setBackgroundColor(getBackgroundColor() - vec4(0.1, 0.1, 0.1, 0.0));
+    mFirstView = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
+    mFirstView->setDrawingEnabled(false);
+    removeSubView(mContent);
+    addSubView(mFirstView);
+
+    mSecondView = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+    mSecondView->setDrawingEnabled(false);
+    mSecondView->setBackgroundColor(red);
     addSubView(mSecondView);
 
-    mSecondView->setMaxWidth(mFirstView->getMaxWidth());
     mSecondView->setMaxHeight(0);
-    mSecondView->setYOffset(mFirstView->getHeight());
-    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+    mSecondView->setMaxWidth(mFirstView->getMaxWidth());
+    mSecondView->setYOffset(getHeight());
 
     mInitialFirst = mFirstView->getHeight();
     mInitialSecond = mSecondView->getHeight();
-    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
 
-    mSplitType = overUnder;
-    mDragType = tileDrag;
+    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+    mHandle->setVisibility(false);
 }
 
 void ZTileViewController::onGlobalMouseUp(int key) {
     ZViewController::onGlobalMouseUp(key);
     mDragType = noDrag;
-}
-
-void ZTileViewController::setParentTile(ZTileViewController* tileView) {
-    mParentTile = tileView;
 }
 
 

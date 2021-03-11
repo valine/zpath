@@ -35,10 +35,12 @@ void ZView::setup(float maxWidth, float maxHeight, ZView *parent) {
     mMaxHeight = maxHeight;
     mWindowHeight = parent->getWindowHeight();
     mWindowWidth = parent->getWindowWidth();
-    mParentView = parent;
+
     if (parent != this) {
         parent->addSubView(this);
     }
+
+    mParentView = parent;
 }
 
 void ZView::onKeyPress(int key, int scancode, int action, int mods) {
@@ -71,12 +73,11 @@ void ZView::onCharacterInput(unsigned int character) {
     }
 }
 
-bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     vec2 scale = getScale();
     float sx = x / scale.x;
     float sy = y / scale.y;
 
-    bool clickConsumed = false;
     if (getVisibility() && isClickable()) {
 
         for (ZView* view : mViews) {
@@ -84,10 +85,8 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             if (view  != nullptr) {
 
                 if (isMouseInBounds(view)) {
-                    clickConsumed |= view->onMouseEvent(button, action, mods, x, y);
-                }
-
-                if (action == GLFW_RELEASE && view->anyMouseDown()) {
+                    view->onMouseEvent(button, action, mods, x, y);
+                } else if (action == GLFW_RELEASE && view->anyMouseDown()) {
                     view->onMouseEvent(button, action, mods, x, y);
                 }
 
@@ -114,29 +113,26 @@ bool ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
 //            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
 //                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
 //        }
-        if (!clickConsumed) {
-            if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
-                mMouseDown = true;
-            }
 
-            if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
-                mMiddleMouseDown = true;
-            }
+        if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
+            mMouseDown = true;
+        }
 
-            if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
-                mRightMouseDown = true;
-            }
+        if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {
+            mMiddleMouseDown = true;
+        }
 
-            if (action == GLFW_PRESS) {
-                onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-                            vec2(sx - mMouseDownX, sy - mMouseDownY), mouseDown, button);
-                mMouseDownX = sx;
-                mMouseDownY = sy;
-            }
+        if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS) {
+            mRightMouseDown = true;
+        }
+
+        if (action == GLFW_PRESS) {
+            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
+                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseDown, button);
+            mMouseDownX = sx;
+            mMouseDownY = sy;
         }
     }
-
-    return clickConsumed;
 }
 
 void ZView::setMiddleMouseDown(bool mouseDown) {
@@ -191,6 +187,9 @@ void ZView::setMouseDown(bool isDown) {
 }
 
 bool ZView::isMouseInBounds(ZView *view) const {
+    if (!view->getVisibility()) {
+        return false;
+    }
     vec2 inner = view->getInnerTranslation();
     bool isInViewX = view->getLeft() - inner.x < view->getMouse().x  && view->getRight() - inner.x > view->getMouse().x ;
     bool isInViewY = view->getTop() - inner.y < view->getMouse().y && view->getBottom() - inner.x > view->getMouse().y;
@@ -209,7 +208,12 @@ void ZView::onScrollChange(double x, double y) {
 }
 
 void ZView::onCreate() {
+    if (mCreateComplete) {
+        return;
+    }
     init();
+
+    mCreateComplete = true;
 }
 
 string ZView::getTag() {
@@ -614,6 +618,7 @@ void ZView::computeBounds() {
 }
 
 void ZView::addSubView(ZView *view) {
+
     mViews.push_back(view);
     view->setParentView(this);
     view->setRootView(mRootView);
@@ -624,7 +629,11 @@ void ZView::addSubView(ZView *view) {
         view->setImageShader(mImageShader);
     }
     view->onWindowChange(getWindowWidth(), getWindowHeight());
-    view->onCreate();
+
+    if (!view->mCreateComplete) {
+        view->onCreate();
+    }
+
     view->onLayoutFinished();
 
 }
@@ -1094,10 +1103,21 @@ void ZView::removeView() {
     }
 }
 
+void ZView::removeSubView(ZView* view) {
+    int index = 0;
+    for (ZView* aView : mViews) {
+        if (aView == view) {
+            removeSubView(index);
+            aView->setParentView(nullptr);
+            break;
+        }
+
+        index++;
+    }
+}
+
 void ZView::removeSubView(int index) {
-    auto it = mViews.begin();
-    std::advance(it, index);
-    mViews.erase(it);
+    mViews.erase(mViews.begin() + index);
 }
 
 ZView::~ZView(){}

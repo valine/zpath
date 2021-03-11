@@ -975,8 +975,8 @@ void ZNodeEditor::remove(std::vector<T>& vec, size_t pos){
     vec.erase(it);
 }
 
-bool ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy) {
-    bool mouseEvent = ZView::onMouseEvent(button, action, mods, sx, sy);
+void ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+    ZView::onMouseEvent(button, action, mods, sx, sy);
 
     // Quick connect nodes
     int nodeIndex = getMouseOverNode();
@@ -986,7 +986,5 @@ bool ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy)
 
         }
     }
-
-    return mouseEvent;
 
 }

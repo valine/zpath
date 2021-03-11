@@ -15,7 +15,7 @@ public:
     ZTextField(ZView *parent);
 
     void onCharacterInput(unsigned int code) override;
-    bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
+    void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
     void onKeyPress(int key, int scancode, int action, int mods) override;
     void onGlobalMouseUp(int key) override;
 

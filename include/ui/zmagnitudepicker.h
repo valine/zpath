@@ -31,7 +31,7 @@ public:
 private:
     void onGlobalMouseUp(int key) override;
 
-    bool onMouseEvent(int button, int action, int mods, int sx, int sy);
+    void onMouseEvent(int button, int action, int mods, int sx, int sy);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
     void onCursorPosChange(double x, double y) override;
     bool mSliderActivated = false;

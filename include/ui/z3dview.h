@@ -28,7 +28,7 @@ class Z3DView : public ZView {
 public:
 	Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer);
 	void onKeyPress(int key, int scancode, int action, int mods);
-	bool onMouseEvent(int button, int action, int mods, int x, int y);
+	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void onScrollChange(double x, double y);
 	void onExit();

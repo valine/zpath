@@ -88,14 +88,13 @@ void ZMagnitudePicker::onGlobalMouseUp(int key) {
     mSlider->setMouseDown(false);
 }
 
-bool ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+void ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
     if (action == GLFW_RELEASE ) {
         setVisibility(false);
     }
     mSlider->setMouseDown(false);
-    return false;
 }
 
 void ZMagnitudePicker::setValueChangedListener(function<void(int index, float value, bool isInput, int magIndex)> l) {

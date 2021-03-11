@@ -23,7 +23,7 @@ class Z2DSlider : public ZView {
 public:
     Z2DSlider(float maxWidth, float maxHeight, vec2 min, vec2 max, ZView *parent);
 
-	bool onMouseEvent(int button, int action, int mods, int x, int y);
+	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 
 	void setMaxValue(vec2 max);

@@ -110,7 +110,7 @@ void ZTiledView::computeBounds() {
     ZView::computeBounds();
 }
 
-bool ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZTiledView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 }
 

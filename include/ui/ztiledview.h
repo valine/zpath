@@ -19,7 +19,7 @@ public:
 	void setTileMargin(int margin);
 
 	void onKeyPress(int key, int scancode, int action, int mods);
-	bool onMouseEvent(int button, int action, int mods, int x, int y);
+	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 	void setScene(ZScene* scene);
 

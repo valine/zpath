@@ -56,7 +56,7 @@ void ZScrollView::onKeyPress(int key, int scancode, int action, int mods){
 
 }
 
-bool ZScrollView::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZScrollView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	return ZView::onMouseEvent(button, action, mods, x, y);
 }
 

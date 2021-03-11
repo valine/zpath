@@ -13,8 +13,10 @@ static const int DRAG_THRESHOLD = 5;
 class ZTileViewController : public ZViewController {
 public:
 
-    ZTileViewController(char **argv, std::function<ZViewController *(int)> factory, vector<string> names);
-    ZTileViewController(string path, std::function<ZViewController *(int)> factory, vector<string> names);
+    ZTileViewController(char **argv, std::function<ZViewController *(int)> factory,
+                        vector<string> names, bool isRoot, ZViewController *content);
+    ZTileViewController(string path, std::function<ZViewController *(int)> factory,
+                        vector<string> names, bool isRoot, ZViewController *content);
 
 
     int sideBySide = 0;
@@ -25,34 +27,32 @@ public:
     int noDrag = -1;
 private:
 
+    bool mIsRoot = false;
     int mDragType = noDrag;
     int mSplitType = sideBySide;
 
     int mInitialFirst = 0;
     int mInitialSecond = 0;
 
-    ZTileViewController* mParentTile = nullptr;
 
     std::function<ZViewController*(int)> mControllerFactory = nullptr;
     vector<string> mNames;
     void onLayoutFinished() override;
 
-    bool onMouseEvent(int button, int action, int mods, int x, int y) override;
+    void onMouseEvent(int button, int action, int mods, int x, int y) override;
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
     void onGlobalMouseUp(int key) override;
 
     ZView* mHandle = nullptr;
 
-    ZViewController* mFirstView = nullptr;
+    ZTileViewController* mFirstView = nullptr;
     ZTileViewController* mSecondView = nullptr;
-    vector<ZTileViewController*> mSecondViews;
-    vector<int> mInitialSeconds;
+    ZViewController* mContent = nullptr;
 
     void triggerSideSplit();
 
     void triggerOverUnderSplit();
 
-    void setParentTile(ZTileViewController *tileView);
 };
 
 

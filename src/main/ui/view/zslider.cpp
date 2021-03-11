@@ -90,7 +90,7 @@ ZSlider(maxWidth, maxHeight, title) {
     setValue(0.0);
 }
 
-bool ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
  	if (action == GLFW_RELEASE) {
 

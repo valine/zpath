@@ -889,7 +889,7 @@ private:
     vector<complex<float>> mFftCache;
     vector<vector<float>> mLaplaceCache;
 
-    bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
+    void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     void clearInvalidateNode();
     bool isInvalid();

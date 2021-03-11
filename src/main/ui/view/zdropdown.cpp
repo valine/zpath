@@ -63,7 +63,7 @@ void ZDropDown::setTitle(string text) {
 	mTitle->setText(std::move(text));
 }
 
-bool ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 
 	if (action == GLFW_PRESS) {

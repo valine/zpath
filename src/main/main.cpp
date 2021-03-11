@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     textEditor->setName("Text Editor");
 
     ZTileViewController* tiles = new ZTileViewController(argv, [argv](int index) {
-        ZViewController* controller = nullptr;
+        ZViewController *controller = nullptr;
 
         switch (index) {
             case 0: {
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-    }, {"3D Viewport", "Node Editor", "Text Editor"});
+    }, {"3D Viewport", "Node Editor", "Text Editor"}, true, nullptr);
 
 
     ZApplication(tiles, "zpath", false, 1200, 800);

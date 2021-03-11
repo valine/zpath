@@ -378,7 +378,7 @@ vector<ZView *> ZNodeView::getSocketsOut() {
     return mSocketsOut;
 }
 
-bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
 
     if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_1) {
@@ -404,10 +404,7 @@ bool ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     if (isMouseInBounds(mChart) &&
         ((middleMouseIsDown() && shiftKeyPressed()) ||
         (rightMouseIsDown() && shiftKeyPressed()))) {
-        return true;
     }
-
-    return ZView::onMouseEvent(button, action, mods, sx, sy);
 }
 
 void ZNodeView::setShowMagPickerListener(

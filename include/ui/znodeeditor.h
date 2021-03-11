@@ -43,7 +43,7 @@ public:
     ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
     ZNodeView * addNode(ZNodeView::Type type);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
-    bool onMouseEvent(int button, int action, int mods, int sx, int sy) override;
+    void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     // Background evaluation
     set<ZNodeView*> mEvalSet;

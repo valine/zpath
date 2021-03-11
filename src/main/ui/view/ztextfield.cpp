@@ -175,8 +175,8 @@ void ZTextField::updateCursorOffset() {
     }
 }
 
-bool ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) {
-    bool consumed = ZView::onMouseEvent(button, action, mods, sx, sy);
+void ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) {
+    ZView::onMouseEvent(button, action, mods, sx, sy);
 
     sx -= getLeft();
     sy -= getTop();
@@ -186,7 +186,6 @@ bool ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) 
         cursorToPosition(sx, sy);
     }
 
-    return consumed;
 }
 
 

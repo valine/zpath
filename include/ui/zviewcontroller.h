@@ -53,7 +53,7 @@ public:
 	// Glfw window events
     void onWindowChange(int width, int height) override;
     void onKeyPress(int key, int scancode, int action, int mods) override;
-    bool onMouseEvent(int button, int action, int mods, int x, int y) override;
+    void onMouseEvent(int button, int action, int mods, int x, int y) override;
     void onCursorPosChange(double x, double y) override;
     void onScrollChange(double x, double y) override;
 	void onFileDrop(int count, const char** paths) override;

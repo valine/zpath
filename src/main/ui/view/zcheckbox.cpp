@@ -119,7 +119,7 @@ void ZCheckbox::setText(string text) {
 	mLabel->setText(text);
 }
 
-bool ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 	vec4 highlight = vec4(0.2, 0.2, 0.2, 0.2);
 
@@ -143,8 +143,6 @@ bool ZCheckbox::onMouseEvent(int button, int action, int mods, int x, int y) {
 
         invalidate();
 	}
-
-	return true;
 }
 
 void ZCheckbox::onKeyPress(int key, int scancode, int action, int mods) {

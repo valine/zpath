@@ -99,10 +99,9 @@ void ZViewController::onWindowChange(int width, int height) {
 }
 
 
-bool ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
-    bool clickConsumed = false;
+void ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
     if (getVisibility()) {
-        clickConsumed = ZView::onMouseEvent(button, action, mods, x, y);
+        ZView::onMouseEvent(button, action, mods, x, y);
     }
 
     for (ZView* view : getSubViews()) {
@@ -110,8 +109,6 @@ bool ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
             view->onGlobalMouseUp(button);
         }
     }
-
-    return clickConsumed;
 }
 
 void ZViewController::onCursorPosChange(double x, double y) {

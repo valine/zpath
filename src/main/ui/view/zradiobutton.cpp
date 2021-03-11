@@ -186,7 +186,7 @@ void ZRadioButton::setText(string text) {
 	mLabel->setText(text);
 }
 
-bool ZRadioButton::onMouseEvent(int button, int action, int mods, int x, int y) {
+void ZRadioButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 	for (int i = 0; i < getSubViews().size(); i++) {
         ZView* view = getSubViews().at(i);
@@ -196,8 +196,6 @@ bool ZRadioButton::onMouseEvent(int button, int action, int mods, int x, int y) 
 	        }
     	}
     }
-
-	return true;
 }
 
 void ZRadioButton::onKeyPress(int key, int scancode, int action, int mods) {

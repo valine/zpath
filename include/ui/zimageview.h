@@ -18,7 +18,7 @@ public:
 	ZImageView(float maxWidth, float maxHeight, string title, string image);
 	void draw();
 	void onKeyPress(int key, int scancode, int action, int mods);
-	bool onMouseEvent(int button, int action, int mods, int x, int y);
+	void onMouseEvent(int button, int action, int mods, int x, int y);
 	void onCursorPosChange(double x, double y);
 private:
 	int debug;
