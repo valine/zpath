@@ -243,19 +243,20 @@ class ZView {
          * Color library. Useful for quickly setting a color to a view for testing
          *
          */
-        vec4 white = vec4(1,1,1,1);
-        vec4 black = vec4(0,0,0,1);
-        vec4 red = vec4(1,0,0,1);
-        vec4 blue = vec4(0,0,1,1);
-        vec4 green = vec4(0,1,0,1);
-        vec4 yellow = vec4(1,1,0,1);
-        vec4 gold = vec4(1, 0.709230, 0, 1);
-        vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
-        vec4 transparent = vec4(0);
-        vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
+        const vec4 white = vec4(1,1,1,1);
+        const vec4 black = vec4(0,0,0,1);
+        const vec4 red = vec4(1,0,0,1);
+        const vec4 blue = vec4(0,0,1,1);
+        const vec4 green = vec4(0,1,0,1);
+        const vec4 yellow = vec4(1,1,0,1);
+        const vec4 gold = vec4(1, 0.709230, 0, 1);
+        const vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
+        const vec4 transparent = vec4(0);
+        const vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
 
-        vec4 bg = ZSettingsStore::get().getBackgroundColor();
-        vec4 base =  ZSettingsStore::get().getBaseColor();
+        const vec4 bg = ZSettingsStore::get().getBackgroundColor();
+        const vec4 base =  ZSettingsStore::get().getBaseColor();
+        const vec4 highlight =  ZSettingsStore::get().getHighlightColor();
 
         void setName(string name);
         string getName();
@@ -270,6 +271,7 @@ class ZView {
 
         virtual ~ZView();
 
+        float getElevation();
         void setClippingEnabled(bool clipping) {
             mClipping = clipping;
         }
@@ -396,6 +398,7 @@ private:
     void drawShadow();
 
     void setup(float maxWidth, float maxHeight, ZView *parent);
+
 };
 
 #endif

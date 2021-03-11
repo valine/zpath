@@ -327,6 +327,10 @@ void ZView::drawShadow() {
     }
 }
 
+float ZView::getElevation() {
+    return mElevation;
+}
+
 void ZView::init() {
     computeBounds();
 

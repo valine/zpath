@@ -6,6 +6,8 @@
 #define ZPATH_ZTILEVIEWCONTROLLER_H
 
 
+static const int DRAG_THRESHOLD = 5;
+
 #include <ui/zviewcontroller.h>
 
 class ZTileViewController : public ZViewController {
@@ -23,10 +25,13 @@ public:
     int noDrag = -1;
 private:
 
-    bool mDragType = noDrag;
-
+    int mDragType = noDrag;
     int mSplitType = sideBySide;
 
+    int mInitialFirst = 0;
+    int mInitialSecond = 0;
+
+    ZTileViewController* mParentTile = nullptr;
 
     std::function<ZViewController*(int)> mControllerFactory = nullptr;
     vector<string> mNames;
@@ -34,14 +39,20 @@ private:
 
     bool onMouseEvent(int button, int action, int mods, int x, int y) override;
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
+    void onGlobalMouseUp(int key) override;
+
     ZView* mHandle = nullptr;
 
     ZViewController* mFirstView = nullptr;
-    ZViewController* mSecondView = nullptr;
+    ZTileViewController* mSecondView = nullptr;
+    vector<ZTileViewController*> mSecondViews;
+    vector<int> mInitialSeconds;
 
     void triggerSideSplit();
 
     void triggerOverUnderSplit();
+
+    void setParentTile(ZTileViewController *tileView);
 };
 
 
