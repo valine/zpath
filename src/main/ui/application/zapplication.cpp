@@ -181,9 +181,9 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
-    viewController->onWindowChange(windowWidth, windowHeight);
 
     viewController->onLayoutFinished();
+    viewController->onWindowChange(windowWidth, windowHeight);
 
     viewController->draw();
     glfwSwapBuffers(window);

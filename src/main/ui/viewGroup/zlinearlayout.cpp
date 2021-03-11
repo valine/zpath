@@ -10,7 +10,12 @@ ZLinearLayout::ZLinearLayout(float maxWidth, float maxHeight) :
 }
 
 void ZLinearLayout::addSubView(ZView* view) {
-	ZView::addSubView(view);
+    ZView::addSubView(view);
     view->setYOffset(mPos);
-    mPos+=view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
+    int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
+    mPos += offset;
+}
+
+void ZLinearLayout::resetCursor() {
+    mPos = 0;
 }

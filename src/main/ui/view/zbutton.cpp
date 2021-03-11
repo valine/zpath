@@ -111,5 +111,5 @@ void ZButton::setClickMode(ClickMode clickMode) {
 }
 
 void ZButton::setOnClick(std::function<void()> onClick) {
-    mOnClickSimple = onClick;
+    mOnClickSimple = std::move(onClick);
 }

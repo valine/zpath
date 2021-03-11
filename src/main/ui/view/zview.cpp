@@ -3,90 +3,42 @@
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
-    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mVertices[4] = (GLfloat) mMaxWidth;
-    mVertices[8] = (GLfloat) mMaxHeight;
-    mVertices[12] = (GLfloat) mMaxWidth;
-    mVertices[13] = (GLfloat) mMaxHeight;
-    mParentView = this;
+    setup(maxWidth, maxHeight, this);
+}
+
+ZView::ZView(float maxWidth, float maxHeight, vec4 bg, ZView* parent) {
+    setup(maxWidth, maxHeight, parent);
+    setBackgroundColor(bg);
+}
+
+ZView::ZView(vec2 size, ZView* parent) {
+    setup(size.x, size.y, parent);
+}
+
+ZView::ZView(vec2 size, vec4 bg, ZView* parent) {
+    setup(size.x, size.y, parent);
+    setBackgroundColor(bg);
 }
 
 ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
-    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mVertices[4] = (GLfloat) mMaxWidth;
-    mVertices[8] = (GLfloat) mMaxHeight;
-    mVertices[12] = (GLfloat) mMaxWidth;
-    mVertices[13] = (GLfloat) mMaxHeight;
-    mWindowHeight = parent->getWindowHeight();
-    mWindowWidth = parent->getWindowWidth();
-    mParentView = parent;
-    parent->addSubView(this);
+    setup(maxWidth, maxHeight, parent);
 }
-
 
 ZView::ZView(float maxWidth, float maxHeight, ZView* parent, bool isScrollable) {
+    setup(maxWidth, maxHeight, parent);
     mIsScrollable = isScrollable;
+}
+
+void ZView::setup(float maxWidth, float maxHeight, ZView *parent) {
     setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mVertices[4] = (GLfloat) mMaxWidth;
-    mVertices[8] = (GLfloat) mMaxHeight;
-    mVertices[12] = (GLfloat) mMaxWidth;
-    mVertices[13] = (GLfloat) mMaxHeight;
     mWindowHeight = parent->getWindowHeight();
     mWindowWidth = parent->getWindowWidth();
     mParentView = parent;
-    parent->addSubView(this);
-}
-
-
-ZView::ZView(Bounds maxWidth, float maxHeight) {
-    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
-    mMaxWidth = 10000;
-    mMaxHeight = maxHeight;
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mVertices[4] = (GLfloat) mMaxWidth;
-    mVertices[8] = (GLfloat) mMaxHeight;
-    mVertices[12] = (GLfloat) mMaxWidth;
-    mVertices[13] = (GLfloat) mMaxHeight;
-    mParentView = this;
-}
-
-ZView::ZView(float maxWidth, Bounds maxHeight) {
-    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
-    mMaxWidth = maxWidth;
-    mMaxHeight = 10000;
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mVertices[4] = (GLfloat) mMaxWidth;
-    mVertices[8] = (GLfloat) mMaxHeight;
-    mVertices[12] = (GLfloat) mMaxWidth;
-    mVertices[13] = (GLfloat) mMaxHeight;
-    mParentView = this;
-}
-
-ZView::ZView(Bounds maxWidth, Bounds maxHeight) {
-    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
-    mMaxWidth = 10000;
-    mMaxHeight = 10000;
-    mMaxWidth = maxWidth;
-    mMaxHeight = maxHeight;
-    mVertices[4] = (GLfloat) mMaxWidth;
-    mVertices[8] = (GLfloat) mMaxHeight;
-    mVertices[12] = (GLfloat) mMaxWidth;
-    mVertices[13] = (GLfloat) mMaxHeight;
-    mParentView = this;
+    if (parent != this) {
+        parent->addSubView(this);
+    }
 }
 
 void ZView::onKeyPress(int key, int scancode, int action, int mods) {
@@ -537,7 +489,7 @@ void ZView::setYOffset(int y) {
 void ZView::offsetBy(int x, int y) {
     mOffsetX += x;
     mOffsetY += y;
-    computeBounds();
+    onWindowChange(getWindowWidth(), getWindowHeight());
     invalidate();
 }
 
@@ -667,8 +619,10 @@ void ZView::addSubView(ZView *view) {
         view->setTextShader(mTextShader);
         view->setImageShader(mImageShader);
     }
-
+    view->onWindowChange(getWindowWidth(), getWindowHeight());
     view->onCreate();
+    view->onLayoutFinished();
+
 }
 
 void ZView::clearSubViews() {
@@ -748,17 +702,18 @@ vec4 ZView::getBackgroundColor() {
 
 void ZView::setGravity(Gravity gravity) {
     mGravity = gravity;
+    onWindowChange(getWindowWidth(), getWindowHeight());
     invalidate();
 }
 
 void ZView::setMaxWidth(int width) {
     mMaxWidth = width;
-    computeBounds();
+    onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZView::setMaxHeight(int height) {
     mMaxHeight = height;
-    computeBounds();
+    onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZView::onSizeChange() {

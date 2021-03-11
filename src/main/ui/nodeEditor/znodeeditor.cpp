@@ -16,6 +16,7 @@
 #include <utils/zsettingsstore.h>
 #include <utils/znodeutil.h>
 #include <ui/ztextfield.h>
+#include <ui/zdrawer.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -37,6 +38,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mBoxSelect->setAllowNegativeSize(true);
 
     mCursorView = new ZCursorView(mLineContainer);
+    mCursorView->setVisibility(false);
 
     ZLineView* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
@@ -45,6 +47,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     addNodeBtn->setOnClick([this](ZView* btn){
         addNode(mLastType);
     });
+
+    auto* mDrawer = new ZDrawer(mHeader);
+    mDrawer->setMarginTop(25);
 
     vector<string> allTypes;
     for (int i = 0; i != ZNodeView::Type::LAST; i++) {
@@ -59,7 +64,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         auto type = static_cast<ZNodeView::Type>(index);
         addNode(type);
     });
-
 
     vector<ZNodeView::Type> complexTypes = {
             ZNodeView::Type::Z,
@@ -112,6 +116,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     inputField2->setYOffset(25);
     inputField2->setBackgroundColor(grey);
     inputField2->setMaxWidth(120);
+
+
 
 }
 

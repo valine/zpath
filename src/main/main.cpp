@@ -18,6 +18,7 @@ using namespace std;
 #include <utils/casutil.h>
 #include <ui/ztextfield.h>
 #include <zpath/ztextviewcontroller.h>
+#include <ui/ztileviewcontroller.h>
 
 
 int main(int argc, char* argv[]) {
@@ -34,6 +35,33 @@ int main(int argc, char* argv[]) {
     auto* textEditor = new ZTextViewController(argv);
     textEditor->setName("Text Editor");
 
-    ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, textEditor, view3d});
-    ZApplication(tabs, "zpath", false, 1200, 800);
+    ZTileViewController* tiles = new ZTileViewController(argv, [argv](int index) {
+        ZViewController* controller = nullptr;
+
+        switch (index) {
+            case 0: {
+                controller = new ZPathViewController(argv);
+                return controller;
+            }
+            case 1: {
+                controller = new NodeViewController(argv);
+                return controller;
+            }
+            case 2: {
+                controller = new ZTextViewController(argv);
+                return controller;
+            }
+            default: {
+                controller = new ZViewController(argv);
+                return controller;
+            }
+        }
+
+    }, {"3D Viewport", "Node Editor", "Text Editor"});
+
+
+    ZApplication(tiles, "zpath", false, 1200, 800);
+
+    //ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, textEditor, view3d});
+   // ZApplication(tabs, "zpath", false, 1200, 800);
 }

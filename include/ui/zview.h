@@ -33,6 +33,12 @@ class ZView {
 
     ZView(float maxWidth, float maxHeight, ZView *parent, bool isScrollable);
 
+    ZView(float maxWidth, float maxHeight, vec4 bg, ZView *parent);
+
+    ZView(vec2 size, ZView *parent);
+
+    ZView(vec2 size, vec4 bg, ZView *parent);
+
     enum Gravity {
 		    topLeft,
 		    topRight,
@@ -58,9 +64,6 @@ class ZView {
 		ZView* mShadowView = nullptr;
 
 		ZView(float maxWidth, float maxHeight);
-		ZView(Bounds maxWidth, float maxHeight);
-		ZView(float maxWidth, Bounds maxHeight);
-		ZView(Bounds maxWidth, Bounds maxHeight);
 
         // Lifecycle
         virtual void draw();
@@ -278,8 +281,8 @@ private:
 		bool mVertsInvalid = false;
 
 		Gravity mGravity = topLeft;
-		ZView *mParentView;
-		ZView *mRootView;
+		ZView *mParentView{};
+		ZView *mRootView{};
 
 		/**
 		 * The z cursor position gets incremented on the root view every
@@ -289,8 +292,8 @@ private:
 		float mZPosition = 0;
 
 		ZShader *mShader = nullptr;
-		ZShader *mTextShader;
-		ZShader *mImageShader;
+		ZShader *mTextShader{};
+		ZShader *mImageShader{};
 		float mMaxWidth = 0; 
 		float mMaxHeight = 0;
 
@@ -319,9 +322,9 @@ private:
 
         int mOutlineIndices[10] = {3,1, 1,0, 0,2, 2,3};
 
-		int mColorLocation;
-		int mPositionLocation;
-		int mTexCoordLocation;
+		int mColorLocation{};
+		int mPositionLocation{};
+		int mTexCoordLocation{};
 
 		int mMarginLeft = 0;
 		int mMarginTop = 0;
@@ -347,13 +350,13 @@ private:
 		int mMouseX = 0;
 		int mMouseY = 0;
 
-		double mLastX;
-		double mLastY;
+		double mLastX{};
+		double mLastY{};
 
-		vec2 mMouseDragDelta;
+		vec2 mMouseDragDelta{};
 
-		int mMouseDownX;
-		int mMouseDownY;
+		int mMouseDownX{};
+		int mMouseDownY{};
 
 		int mWindowWidth = 0;
 		int mWindowHeight = 0;
@@ -373,7 +376,7 @@ private:
 		ZTexture* mBackgroundImage = nullptr;
 		vector<ZView*> mViews;
 		string mTag;
-		int mIndexTag;
+		int mIndexTag{};
 
         int mLeft = 0;
         int mRight = 0;
@@ -381,7 +384,7 @@ private:
         int mBottom = 0;
 
         WireType mDrawWire = none;
-        vec2 mInitialPosition;
+        vec2 mInitialPosition{};
         string mName;
 
         float mLineWidth = 2.0;
@@ -392,6 +395,7 @@ private:
 
     void drawShadow();
 
+    void setup(float maxWidth, float maxHeight, ZView *parent);
 };
 
 #endif
