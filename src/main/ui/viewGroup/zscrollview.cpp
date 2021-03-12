@@ -57,7 +57,7 @@ void ZScrollView::onKeyPress(int key, int scancode, int action, int mods){
 }
 
 void ZScrollView::onMouseEvent(int button, int action, int mods, int x, int y) {
-	return ZView::onMouseEvent(button, action, mods, x, y);
+    ZView::onMouseEvent(button, action, mods, x, y);
 }
 
 void ZScrollView::onCursorPosChange(double x, double y) {
@@ -85,6 +85,7 @@ void ZScrollView::onScrollChange(double x, double y) {
 	}
 
 	mInnerView->onWindowChange(getWidth(), getHeight());
+
 	auto innerHeight = (float) mInnerView->getMaxHeight();
     auto viewHeight = (float) getHeight();
 	float scrollBarHeight = viewHeight * (viewHeight / innerHeight);

@@ -688,7 +688,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
     }
 
     if ((middleMouseIsDown() && (!shiftKeyPressed() || mDragNode == NO_SELECTION)) ||
-        (mouseIsDown() && mDragNode == NO_SELECTION && !isViewInFocus())) {
+        ((mouseIsDown() && altKeyPressed() && mDragNode == NO_SELECTION) && !isViewInFocus())) {
         for (ZNodeView* node : mNodeViews) {
             if (node->getVisibility()) {
                 node->setOffset(

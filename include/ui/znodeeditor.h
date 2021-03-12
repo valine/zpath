@@ -83,7 +83,7 @@ private:
     vector<ZLineView*> mLineBucket;
     vec2 mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
 
-    ZNodeView::Type mLastType = ZNodeView::Type::ADD;
+    ZNodeView::Type mLastType = ZNodeView::Type::SIN;
 
     bool isSocketDrag();
 
