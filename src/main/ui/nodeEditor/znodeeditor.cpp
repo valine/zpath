@@ -237,7 +237,8 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 
     node->setShowMagPickerListener([this, node](ZView *view, ZNodeView *nodeView,
             int index, bool isInput, float initialValue, string name) {
-        vec2 mouse = getMouse();
+        vec2 mouse = getRelativeMouse();
+
 
         // This logic shows the popup slider window
         float difference = (mMagnitudePicker->getWidth()) / 2.0;
@@ -700,7 +701,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
         resetCursor();
     }
 
-    getParentView()->getParentView()->getParentView()->invalidate();
+    getRootView()->invalidate();
 }
 
 void ZNodeEditor::resetCursor() { mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y); }

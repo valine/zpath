@@ -32,11 +32,11 @@ void ZLineView::computeBounds() {
 
     float* vertices = getVertices();
 
-    vertices[0] = getLeft() + mPoint1.x;
-    vertices[1] = getTop() + mPoint1.y;
+    vertices[0] = mPoint1.x;
+    vertices[1] = mPoint1.y;
 
-    vertices[4] = getLeft() + mPoint2.x;
-    vertices[5] = getTop() + mPoint2.y;
+    vertices[4] = mPoint2.x;
+    vertices[5] = mPoint2.y;
 
     vertices[8] =  vertices[0];
     vertices[9] =  vertices[1];

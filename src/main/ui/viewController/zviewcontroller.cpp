@@ -28,7 +28,6 @@ ZViewController::ZViewController(const char **argv) : ZView(ZView::fillParent, Z
     std::string path = aux.substr(0,pos+1);
     std::string name = aux.substr(pos+1);
     mResourcePath = path;
-    setRootView(this);
 }
 
 ZViewController::ZViewController(char **argv) : ZView(ZView::fillParent, ZView::fillParent) {

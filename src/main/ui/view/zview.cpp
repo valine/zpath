@@ -497,7 +497,7 @@ void ZView::setYOffset(int y) {
 void ZView::offsetBy(int x, int y) {
     mOffsetX += x;
     mOffsetY += y;
-    onWindowChange(getWindowWidth(), getWindowHeight());
+    computeBounds();
     invalidate();
 }
 
@@ -618,7 +618,6 @@ void ZView::computeBounds() {
 }
 
 void ZView::addSubView(ZView *view) {
-
     mViews.push_back(view);
     view->setParentView(this);
     view->setRootView(mRootView);
@@ -628,7 +627,6 @@ void ZView::addSubView(ZView *view) {
         view->setTextShader(mTextShader);
         view->setImageShader(mImageShader);
     }
-    view->onWindowChange(getWindowWidth(), getWindowHeight());
 
     if (!view->mCreateComplete) {
         view->onCreate();
@@ -687,6 +685,10 @@ vec2 ZView::getMouse() {
     return vec2(mMouseX, mMouseY);
 }
 
+vec2 ZView::getRelativeMouse() {
+    return vec2(mMouseX - getLeft(), mMouseY - getTop());
+}
+
 double ZView::getLastX() {
     return mLastX;
 }
@@ -715,18 +717,17 @@ vec4 ZView::getBackgroundColor() {
 
 void ZView::setGravity(Gravity gravity) {
     mGravity = gravity;
-    onWindowChange(getWindowWidth(), getWindowHeight());
     invalidate();
 }
 
 void ZView::setMaxWidth(int width) {
     mMaxWidth = width;
-    onWindowChange(getWindowWidth(), getWindowHeight());
+    computeBounds();
 }
 
 void ZView::setMaxHeight(int height) {
     mMaxHeight = height;
-    onWindowChange(getWindowWidth(), getWindowHeight());
+    computeBounds();
 }
 
 void ZView::onSizeChange() {
@@ -760,6 +761,12 @@ bool ZView::getVisibility() {
 
 bool ZView::needsRender() {
     return mNeedsRender;
+}
+
+void ZView::bringToFront() {
+    ZView* parent = getParentView();
+    parent->removeSubView(this);
+    parent->addSubView(this);
 }
 
 int ZView::calculateLeft() {
@@ -1117,7 +1124,9 @@ void ZView::removeSubView(ZView* view) {
 }
 
 void ZView::removeSubView(int index) {
-    mViews.erase(mViews.begin() + index);
+    auto it = mViews.begin();
+    std::advance(it, index);
+    mViews.erase(it);
 }
 
 ZView::~ZView(){}

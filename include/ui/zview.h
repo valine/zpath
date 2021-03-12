@@ -235,6 +235,8 @@ class ZView {
 
         vec2 getMouse();
 
+        vec2 getRelativeMouse();
+
         bool isMouseInBounds(ZView *view) const;
 
         void setLineWidth(float width);
@@ -281,6 +283,8 @@ class ZView {
     void removeSubView(int index);
 
     void removeSubView(ZView *view);
+
+    void bringToFront();
 
 private:
 

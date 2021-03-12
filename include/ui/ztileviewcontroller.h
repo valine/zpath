@@ -45,13 +45,23 @@ private:
 
     ZView* mHandle = nullptr;
 
-    ZTileViewController* mFirstView = nullptr;
-    ZTileViewController* mSecondView = nullptr;
+    ZTileViewController* mLeftTile = nullptr;
+    ZTileViewController* mRightTile = nullptr;
+    ZTileViewController* mParentTile = nullptr;
     ZViewController* mContent = nullptr;
 
+    void triggerSideJoin();
     void triggerSideSplit();
+    void triggerSideJoinLeftToRight();
+    void triggerSideJoinRightToLeft();
+
 
     void triggerOverUnderSplit();
+
+    ZTileViewController * getLeftMostChild();
+
+    bool hasChildren();
+
 
 };
 
