@@ -29,7 +29,7 @@ class ZView {
 
 	public:
 
-        ZView(float maxWidth, float maxHeight, ZView *parent);
+    ZView(float maxWidth, float maxHeight, ZView *parent);
 
     ZView(float maxWidth, float maxHeight, ZView *parent, bool isScrollable);
 

@@ -25,8 +25,8 @@ ZView::ZView(float maxWidth, float maxHeight, ZView* parent) {
 }
 
 ZView::ZView(float maxWidth, float maxHeight, ZView* parent, bool isScrollable) {
-    setup(maxWidth, maxHeight, parent);
     mIsScrollable = isScrollable;
+    setup(maxWidth, maxHeight, parent);
 }
 
 void ZView::setup(float maxWidth, float maxHeight, ZView *parent) {
@@ -36,11 +36,11 @@ void ZView::setup(float maxWidth, float maxHeight, ZView *parent) {
     mWindowHeight = parent->getWindowHeight();
     mWindowWidth = parent->getWindowWidth();
 
+    mParentView = parent;
     if (parent != this) {
         parent->addSubView(this);
     }
 
-    mParentView = parent;
 }
 
 void ZView::onKeyPress(int key, int scancode, int action, int mods) {
