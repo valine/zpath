@@ -410,6 +410,8 @@ private:
     void setup(float maxWidth, float maxHeight, ZView *parent);
 
     void cacheScale();
+
+    void calculateBounds();
 };
 
 #endif

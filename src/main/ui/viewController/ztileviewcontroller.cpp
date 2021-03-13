@@ -48,8 +48,6 @@ void ZTileViewController::onLayoutFinished() {
         mHandle->setElevation(0.8);
     }
 
-    ZView::onWindowChange(getWindowWidth(), getWindowHeight());
-
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -188,8 +186,6 @@ void ZTileViewController::triggerSideJoinRightToLeft() {
         setVisibility(false);
     }
 }
-
-
 
 bool ZTileViewController::hasChildren() {
     return !(mRightTile == nullptr || !mRightTile->getVisibility());

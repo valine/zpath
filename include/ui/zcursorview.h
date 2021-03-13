@@ -7,6 +7,7 @@
 
 
 #include "zview.h"
+#include "zlineview.h"
 
 class ZCursorView : public ZView {
 public:

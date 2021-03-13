@@ -23,7 +23,7 @@ public:
     ZPathViewController(char* argv[]) : ZViewController(argv) {}
     ZPathViewController(string path) : ZViewController(path) {}
 
- 	void onCreate();
+ 	void onCreate() override;
     void onFileDrop(int count, const char** paths);
 private:
 	bool mIsQuadView = true;

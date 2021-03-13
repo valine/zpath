@@ -25,6 +25,7 @@ using namespace std;
 #include <complex.h>
 #include <utils/zfft.h>
 #include <array>
+#include "zlabel.h"
 
 class ZNodeView : public ZView {
 public:

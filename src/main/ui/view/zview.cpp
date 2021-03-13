@@ -593,10 +593,7 @@ void ZView::computeBounds() {
     float prevWidth = prevRight - prevLeft;
     float prevHeight = prevBottom - prevTop;
 
-    calculateLeft();
-    calculateTop();
-    calculateBottom();
-    calculateRight();
+    calculateBounds();
 
     mVertices[0] = getLeft();
     mVertices[1] = getTop();
@@ -617,6 +614,13 @@ void ZView::computeBounds() {
     }
 }
 
+void ZView::calculateBounds() {
+    calculateLeft();
+    calculateTop();
+    calculateBottom();
+    calculateRight();
+}
+
 void ZView::addSubView(ZView *view) {
     mViews.push_back(view);
     view->setParentView(this);
@@ -635,6 +639,8 @@ void ZView::addSubView(ZView *view) {
 
     view->onLayoutFinished();
     cacheScale();
+
+    calculateBounds();
 }
 
 void ZView::clearSubViews() {
@@ -771,10 +777,6 @@ void ZView::bringToFront() {
 }
 
 int ZView::calculateLeft() {
-    if (mParentView != this) {
-        mParentView->calculateLeft();
-    }
-
     int thisLeft = mOffsetX + mMarginLeft;
     vec2 translation = getInnerTranslation();
     float scale = getRelativeScale().x;
@@ -809,10 +811,6 @@ int ZView::calculateLeft() {
 }
 
 int ZView::calculateRight() {
-    if (mParentView != this) {
-        mParentView->calculateRight();
-    }
-
     int thisRight = mMaxWidth + mMarginLeft + mOffsetX;
 
     vec2 translation = getInnerTranslation();
@@ -855,10 +853,6 @@ int ZView::calculateRight() {
 }
 
 int ZView::calculateTop() {
-    if (mParentView != this) {
-        mParentView->calculateTop();
-    }
-
     int thisTop = (int) (mOffsetY + mMarginTop);
 
     vec2 translation = getInnerTranslation();
@@ -893,10 +887,6 @@ int ZView::calculateTop() {
 }
 
 int ZView::calculateBottom() {
-    if (mParentView != this) {
-        mParentView->calculateBottom();
-    }
-
     vec2 translation = getInnerTranslation();
     float parentTop = mParentView->getTop() / getRelativeScale().y  + translation.y;
     float parentBottom = mParentView->getBottom() / getRelativeScale().y + translation.y;
