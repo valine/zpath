@@ -183,16 +183,29 @@ class ZView {
         virtual void setMaxWidth(int width);
         virtual void setMaxHeight(int height);
 
+        virtual void onMouseOver();
+        virtual void onMouseLeave();
+
         virtual void computeBounds();
 
         // Misc view properties
-        void setGravity(ZView::Gravity gravity);
+        virtual void setGravity(ZView::Gravity gravity);
+        Gravity getGravity();
 
         void setVisibility(bool visible);
         bool getVisibility();
 
         virtual void setBackgroundColor(float color[4]);
         virtual void setBackgroundColor(vec4 color);
+
+        virtual void setHighlighColor(vec4 color) {
+            mHighlightColor = color;
+        }
+
+        virtual void showHighlight(bool shouldShow) {
+            mShowHighlight = shouldShow;
+        }
+
         virtual vec4 getBackgroundColor();
         void setBackgroundImage(ZTexture* background);
         void setOutlineColor(vec4 color);
@@ -317,7 +330,9 @@ private:
 		float mMaxHeight = 0;
 
 		vec4 mBackgroundColor = vec4(0);
+        vec4 mHighlightColor = vec4(0);
 		vec4 mOutlineColor = red;
+		bool mShowHighlight = false;
 
 		GLuint mVAO = 0;
         GLuint mEdgeVAO = 0;
@@ -410,8 +425,9 @@ private:
         float mLineWidth = 2.0;
 
         bool mClipping = true;
-
         vec2 mTranslation = vec2(0);
+
+        bool mMouseOver = false;
 
     void drawShadow();
 

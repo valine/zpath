@@ -1,6 +1,8 @@
 #ifndef ZDROPDOWN_H
 #define ZDROPDOWN_H
 
+static const int DEFAULT_OFFSET = 25;
+
 #include "zview.h"
 #include <iostream>
 #include <map>
@@ -26,11 +28,15 @@ public:
 
     void setOnItemChange(std::function<void(int item)> onClick);
 	void setTitle(string title);
+
+    void setGravity(Gravity gravity) override;
+
 private:
 	ZLabel* mTitle;
 	ZScrollView* mDrawer;
 	float mButtonHeight;
 
+	ZView* mBackground;
     std::function<void(int item)> mOnItemChange;
 };
 

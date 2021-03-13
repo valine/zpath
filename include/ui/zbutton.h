@@ -61,6 +61,8 @@ int debug;
 
 	ClickMode mClickMode = upAndDown;
 
+    void onMouseOver() override;
+    void onMouseLeave() override;
 };
 
 #endif

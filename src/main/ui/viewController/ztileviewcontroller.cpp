@@ -1,4 +1,5 @@
 #include <utility>
+#include <ui/zdropdown.h>
 
 //
 // Created by lukas on 3/10/21.
@@ -48,6 +49,9 @@ void ZTileViewController::onLayoutFinished() {
         mHandle->setElevation(0.8);
     }
 
+    ZDropDown* mDropDown = new ZDropDown(200, 300, mNames, this);
+    mDropDown->setGravity(bottomLeft);
+    mDropDown->setYOffset(0);
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {

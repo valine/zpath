@@ -27,6 +27,8 @@ public:
 
     ZView *getInnerView();
 
+    void scrollTo(int x, int y);
+
 private:
 
 	void init();

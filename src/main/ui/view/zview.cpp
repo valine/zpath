@@ -78,6 +78,7 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     float sx = x / scale.x;
     float sy = y / scale.y;
 
+
     if (getVisibility() && isClickable()) {
 
         for (ZView* view : mViews) {
@@ -89,7 +90,6 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
                 } else if (action == GLFW_RELEASE && view->anyMouseDown()) {
                     view->onMouseEvent(button, action, mods, x, y);
                 }
-
                 if (action == GLFW_RELEASE) {
                     view->onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
                                       vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp, button);
@@ -135,6 +135,10 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     }
 }
 
+void ZView::onMouseOver() {
+
+}
+
 void ZView::setMiddleMouseDown(bool mouseDown) {
     mMiddleMouseDown = mouseDown;
 }
@@ -177,8 +181,18 @@ void ZView::onCursorPosChange(double x, double y) {
                     vec2(sx - mMouseDownX, sy - mMouseDownY), mouseDrag, button);
     }
 
-    for (auto & mView : mViews) {
-        mView->onCursorPosChange(x, y);
+    if (!mMouseOver && isMouseInBounds(this)) {
+        mMouseOver = true;
+        onMouseOver();
+    }
+
+    for (auto & view : mViews) {
+        view->onCursorPosChange(x, y);
+        if (!isMouseInBounds(view) && view->mMouseOver) {
+            view->onMouseLeave();
+            view->mMouseOver = false;
+        }
+
     }
 }
 
@@ -242,14 +256,20 @@ void ZView::draw() {
         vec2 absoluteScale = getScale();
         mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
 
+        vec4 backgroundColor = mBackgroundColor;
+
+        if (mShowHighlight) {
+            backgroundColor = mHighlightColor;
+        }
+
         drawShadow();
-        if (mBackgroundColor.a > 0) {
+        if (backgroundColor.a > 0) {
             mShader->use();
             glUniformMatrix4fv(glGetUniformLocation(mShader->mID, "uVPMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMat));
 
             // Set the view background color
             glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
-                        mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
+                        backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
             glLineWidth(mLineWidth);
             if (mDrawWire == full) {
                 glBindVertexArray(mEdgeVAO);
@@ -258,7 +278,7 @@ void ZView::draw() {
 
 
                 glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
-                            mBackgroundColor.r, mBackgroundColor.g, mBackgroundColor.b, mBackgroundColor.a);
+                            backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
                 glBindVertexArray(mVAO);
                 glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
 
@@ -1173,4 +1193,12 @@ void ZView::setTranslation(vec2 translation) {
 
 vec2 ZView::getTranslation() {
     return mTranslation;
+}
+
+ZView::Gravity ZView::getGravity() {
+    return mGravity;
+}
+
+void ZView::onMouseLeave() {
+
 }

@@ -98,6 +98,10 @@ void ZScrollView::onScrollChange(double x, double y) {
 	invalidate();
 }
 
+void ZScrollView::scrollTo(int x, int y) {
+    mInnerView->setTranslation(vec2(x,y));
+}
+
 void ZScrollView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
