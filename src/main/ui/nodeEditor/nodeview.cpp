@@ -16,7 +16,6 @@
 #include <mutex>
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
-
     mChart = new ZLineChart(fillParent, fillParent, this);
 
     mNameLabel = new ZLabel("Node", this);

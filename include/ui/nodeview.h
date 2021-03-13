@@ -26,6 +26,7 @@ using namespace std;
 #include <utils/zfft.h>
 #include <array>
 #include "zlabel.h"
+#include "neuralcore/mlmodel.h"
 
 class ZNodeView : public ZView {
 public:
@@ -845,6 +846,17 @@ public:
 
     void copyParameters(ZNodeView *node);
     void setMaxWidth(int width) override;
+
+
+    //////////////////
+    /// Neural core integration
+
+    MlModel* model = nullptr;
+
+
+
+
+    //////////
 
 
 private:
