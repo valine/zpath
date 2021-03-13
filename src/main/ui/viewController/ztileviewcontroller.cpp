@@ -47,6 +47,9 @@ void ZTileViewController::onLayoutFinished() {
         mHandle->setGravity(topRight);
         mHandle->setElevation(0.8);
     }
+
+    ZView::onWindowChange(getWindowWidth(), getWindowHeight());
+
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {

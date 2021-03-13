@@ -355,6 +355,7 @@ private:
         float mElevation = 0.0;
 
         vec2 mScale = vec2(1);
+        vec2 mScaleCache = mScale;
 		vec2 mInnerTranslation = vec2(0);
 
 		int mParentWidth = 100;
@@ -408,6 +409,7 @@ private:
 
     void setup(float maxWidth, float maxHeight, ZView *parent);
 
+    void cacheScale();
 };
 
 #endif

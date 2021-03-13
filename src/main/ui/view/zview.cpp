@@ -622,6 +622,7 @@ void ZView::addSubView(ZView *view) {
     view->setParentView(this);
     view->setRootView(mRootView);
 
+
     if (mShader != nullptr) {
         view->setShader(mShader);
         view->setTextShader(mTextShader);
@@ -633,7 +634,7 @@ void ZView::addSubView(ZView *view) {
     }
 
     view->onLayoutFinished();
-
+    cacheScale();
 }
 
 void ZView::clearSubViews() {
@@ -1020,14 +1021,24 @@ void ZView::setOutlineColor(vec4 color) {
 }
 
 vec2 ZView::getScale() {
-    if (mParentView != nullptr && mParentView != this) {
-        return mScale * mParentView->getScale();
-    }
-    return mScale;
+    return mScaleCache;
 }
 
 void ZView::setScale(vec2 scale) {
     mScale = scale;
+    cacheScale();
+}
+
+void ZView::cacheScale() {
+    if (mParentView != nullptr && mParentView != this) {
+        mScaleCache = mScale * mParentView->getScale();
+    } else {
+        mScaleCache = mScale;
+    }
+
+    for(ZView* view : getSubViews()) {
+        view->cacheScale();
+    }
 }
 
 vec2 ZView::getInnerTranslation() {

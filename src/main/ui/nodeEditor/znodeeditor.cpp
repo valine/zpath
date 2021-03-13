@@ -411,7 +411,8 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
         node->setOutlineColor(gold);
         node->setLineWidth(3.0);
         node->setElevation(SELECTED_ELEVATION);
-
+        node->bringToFront();
+        
         mSecondLastSelected = mLastSelected;
         mLastSelected = node;
         mSelectedNodes.insert(node);
