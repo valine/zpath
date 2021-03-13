@@ -24,11 +24,12 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 
     addSubView(mTitle);
 
-    mDrawer = new ZScrollView(400, 0, this);
+    mDrawer = new ZScrollView(maxWidth, 0, this);
     mDrawer->setBackgroundColor(bg - vec4(0.05,0.05,0.05, 0.0));
     mDrawer->setOffset(0,30);
     mDrawer->setVisibility(false);
     mDrawer->setElevation(1.0);
+    mDrawer->setAllowNegativeSize(true);
     addSubView(mDrawer);
 
     int index = 0;

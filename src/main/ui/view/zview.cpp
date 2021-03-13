@@ -804,6 +804,12 @@ int ZView::calculateLeft() {
                     return mLeft;
                 }
             }
+
+            if (mClipping && thisLeft + mParentView->getInnerTranslation().x < 0) {
+                mLeft = (int) (parentLeft - mParentView->getInnerTranslation().x);
+                return mLeft;
+            }
+
             mLeft = parentLeft + thisLeft;
             return mLeft;
         }
@@ -834,10 +840,11 @@ int ZView::calculateRight() {
             return mRight;
         }
 
-        if (!mClipping || thisRight + parentLeft + mMarginRight < parentRight) {
+        if (!mClipping || thisRight + parentLeft + mMarginRight +
+            mParentView->getInnerTranslation().x < parentRight) {
             thisRight = parentLeft + thisRight;
         } else {
-            thisRight = parentRight - mMarginRight;
+            thisRight = parentRight - mMarginRight - mParentView->getInnerTranslation().x;
         }
 
         if (!mAllowNegativeSize) {
@@ -853,7 +860,7 @@ int ZView::calculateRight() {
 }
 
 int ZView::calculateTop() {
-    int thisTop = (int) (mOffsetY + mMarginTop);
+    int thisTop = (int) (mOffsetY + mMarginTop + mParentView->getTranslation().y);
 
     vec2 translation = getInnerTranslation();
     float parentTop = mParentView->getTop() / getRelativeScale().y  + translation.y;
@@ -880,6 +887,11 @@ int ZView::calculateTop() {
                     return mTop;
                 }
             }
+
+            if (mClipping && thisTop + mParentView->getInnerTranslation().y < 0) {
+                mTop = (int) (parentTop - mParentView->getInnerTranslation().y);
+                return mTop;
+            }
             mTop = (int) parentTop + thisTop;
             return mTop;
         }
@@ -891,7 +903,7 @@ int ZView::calculateBottom() {
     float parentTop = mParentView->getTop() / getRelativeScale().y  + translation.y;
     float parentBottom = mParentView->getBottom() / getRelativeScale().y + translation.y;
 
-    int thisBottom = (int) (mMaxHeight + mMarginTop + mOffsetY);
+    int thisBottom = (int) (mMaxHeight + mMarginTop + mOffsetY + mParentView->getTranslation().y);
 
     if (mParentView == this) {
         mBottom = thisBottom;
@@ -907,11 +919,14 @@ int ZView::calculateBottom() {
             return mBottom;
         }
 
-        if (!mClipping || thisBottom + parentTop + mMarginTop < parentBottom) {
+        if (!mClipping || thisBottom + parentTop + mMarginTop +
+            mParentView->getInnerTranslation().y < parentBottom) {
             thisBottom = parentTop + thisBottom;
         } else {
-            thisBottom = parentBottom - mMarginBottom;
+            thisBottom = parentBottom - mMarginBottom -
+                    mParentView->getInnerTranslation().y;
         }
+
 
         if (!mAllowNegativeSize) {
             if (thisBottom < getTop()) {
@@ -1147,4 +1162,15 @@ void ZView::onFocusChanged(ZView *viewWithFocus) {
     for (ZView* child : getSubViews()) {
         child->onFocusChanged(viewWithFocus);
     }
+}
+
+void ZView::translateBy(vec2 translation) {
+    mTranslation += translation;
+}
+void ZView::setTranslation(vec2 translation) {
+    mTranslation = translation;
+}
+
+vec2 ZView::getTranslation() {
+    return mTranslation;
 }

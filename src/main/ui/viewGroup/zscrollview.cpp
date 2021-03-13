@@ -72,15 +72,15 @@ void ZScrollView::onScrollChange(double x, double y) {
 
     mScrollBar->setVisibility(mInnerView->getHeight() >= getHeight());
 	int scrollSpeed = 50;
-	double scrollBottom = mInnerView->getOffsetY() + mInnerView->getMaxHeight();
+	double scrollBottom = mInnerView->getTranslation().y + mInnerView->getMaxHeight();
 
 	if (y < 0) { // Scrolling down
 		if (scrollBottom > getHeight()) {
-			mInnerView->offsetBy(0, y * scrollSpeed);
+			mInnerView->translateBy(vec2(0, y * scrollSpeed));
 		}
 	} else { // scrolling up 
-		if (mInnerView->getOffsetY() < 0) {
-			mInnerView->offsetBy(0, y * scrollSpeed);
+		if (mInnerView->getTranslation().y < 0) {
+			mInnerView->translateBy(vec2(0, y * scrollSpeed));
 		}
 	}
 
@@ -92,7 +92,7 @@ void ZScrollView::onScrollChange(double x, double y) {
 
     mScrollBar->setMaxHeight(scrollBarHeight);
     float max = viewHeight - scrollBarHeight;
-    float factor = -(mInnerView->getOffsetY()) / (innerHeight - getHeight());
+    float factor = -(mInnerView->getTranslation().y) / (innerHeight - getHeight());
     mScrollBar->setOffset(0, (max * factor));
 
 	invalidate();

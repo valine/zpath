@@ -286,6 +286,12 @@ class ZView {
 
     void bringToFront();
 
+    void setTranslation(vec2 translation);
+
+    vec2 getTranslation();
+
+    void translateBy(vec2 translation);
+
 private:
 
 		bool mNeedsRender = true;
@@ -405,6 +411,8 @@ private:
 
         bool mClipping = true;
 
+        vec2 mTranslation = vec2(0);
+
     void drawShadow();
 
     void setup(float maxWidth, float maxHeight, ZView *parent);
@@ -412,6 +420,7 @@ private:
     void cacheScale();
 
     void calculateBounds();
+
 };
 
 #endif
