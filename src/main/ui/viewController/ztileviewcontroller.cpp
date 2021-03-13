@@ -1,5 +1,4 @@
 #include <utility>
-#include <ui/zdropdown.h>
 
 //
 // Created by lukas on 3/10/21.
@@ -13,15 +12,17 @@ ZTileViewController::ZTileViewController(char **argv, std::function<ZViewControl
     mNames = std::move(names);
     mIsRoot = isRoot;
     mContent = content;
+    mControllers = vector<ZViewController*>(mNames.size(), nullptr);
 }
+
 
 ZTileViewController::ZTileViewController(string path, std::function<ZViewController *(int)> factory,
                                          vector<string> names, bool isRoot, ZViewController *content) : ZViewController(std::move(path)) {
-
     mControllerFactory = std::move(factory);
     mNames = std::move(names);
     mIsRoot = isRoot;
     mContent = content;
+    mControllers = vector<ZViewController*>(mNames.size(), nullptr);
 }
 
 void ZTileViewController::onLayoutFinished() {
@@ -34,24 +35,40 @@ void ZTileViewController::onLayoutFinished() {
     mContent->setDrawingEnabled(false);
     mContent->setOutlineType(outline);
     mContent->setLineWidth(2);
+    addSubView(mContent);
 
-    bool viewAdded = false;
-    for (ZView* view : getSubViews()) {
-        if (view == mContent) {
-            viewAdded = true;
-        }
-    }
+    mHandle = new ZView(vec2(40), highlight, this);
+    mHandle->setGravity(topRight);
+    mHandle->setElevation(0.8);
 
-    if (!viewAdded) {
-        addSubView(mContent);
-        mHandle = new ZView(vec2(40), highlight, this);
-        mHandle->setGravity(topRight);
-        mHandle->setElevation(0.8);
-    }
-
-    ZDropDown* mDropDown = new ZDropDown(200, 300, mNames, this);
+    mDropDown = new ZDropDown(200, 300, mNames, this);
     mDropDown->setGravity(bottomLeft);
     mDropDown->setYOffset(0);
+
+    mDropDown->setOnItemChange([this](int index){
+        for (ZViewController* controller : mControllers) {
+            if (controller != nullptr) {
+                controller->setVisibility(false);
+            }
+        }
+
+        if(mControllers.at(index) == nullptr) {
+            mControllers.at(index) = mControllerFactory(index);
+            mContent = mControllers.at(index);
+            mContent->setDrawingEnabled(false);
+            mContent->setOutlineType(outline);
+            mContent->setLineWidth(2);
+            addSubView(mContent);
+            getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+        } else {
+            mControllers.at(index)->setVisibility(true);
+            mContent = mControllers.at(index);
+        }
+
+        mHandle->bringToFront();
+        mDropDown->bringToFront();
+
+    });
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -230,6 +247,7 @@ void ZTileViewController::triggerSideSplit() {// Trigger split
 
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
     mHandle->setVisibility(false);
+    mDropDown->setVisibility(false);
 
     mSplitType = sideBySide;
     mDragType = tileDrag;
@@ -260,6 +278,7 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
 
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
     mHandle->setVisibility(false);
+    mDropDown->setVisibility(false);
 }
 
 void ZTileViewController::onGlobalMouseUp(int key) {

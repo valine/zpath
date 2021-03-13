@@ -17,8 +17,6 @@ ZTextField::ZTextField(ZView *parent)
 
     cursorToEnd();
     setBackgroundColor(grey);
-
-    setYOffset(120);
 }
 
 void ZTextField::cursorToEnd() {

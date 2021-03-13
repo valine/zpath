@@ -21,7 +21,7 @@ void ZPathViewController::onCreate() {
     auto* tab2 = new ZScrollView(300, fillParent);
     tab2->setName("Other");
 
-    auto tabView = new ZTabView(300, fillParent, {tab1, tab2}, this);
+    auto tabView = new ZTabView(150, fillParent, {tab1, tab2}, this);
     tabView->setGravity(ZView::topRight);
 
     auto* label = new ZLabel("Panel", tab1);

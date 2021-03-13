@@ -9,6 +9,7 @@
 static const int DRAG_THRESHOLD = 5;
 
 #include <ui/zviewcontroller.h>
+#include "zdropdown.h"
 
 class ZTileViewController : public ZViewController {
 public:
@@ -37,6 +38,8 @@ private:
 
     std::function<ZViewController*(int)> mControllerFactory = nullptr;
     vector<string> mNames;
+    vector<ZViewController*> mControllers;
+
     void onLayoutFinished() override;
 
     void onMouseEvent(int button, int action, int mods, int x, int y) override;
@@ -44,7 +47,7 @@ private:
     void onGlobalMouseUp(int key) override;
 
     ZView* mHandle = nullptr;
-
+    ZDropDown* mDropDown = nullptr;
     ZTileViewController* mLeftTile = nullptr;
     ZTileViewController* mRightTile = nullptr;
     ZTileViewController* mParentTile = nullptr;

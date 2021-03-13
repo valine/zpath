@@ -391,9 +391,10 @@ void ZLineChart::draw() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
 
     glViewport(0, 0, getWidth(), getHeight());
-
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
+
+
 
     // draw heat map. Heat map update is triggered by a second thread,
     // so check that everything is initialized before drawing.
@@ -448,7 +449,6 @@ void ZLineChart::draw() {
 
     // Draw graph lines
     glLineWidth(mLineWidth);
-    glDepthMask(false);
     for (int i = mPoints.size() - 1; i >= 0; i--) {
         mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
                                    vec4(vec3((float) i / mPoints.size()), 1.0));
@@ -457,6 +457,7 @@ void ZLineChart::draw() {
         glDrawElements(GL_LINES, mPointCount.at(i), GL_UNSIGNED_INT, nullptr);
     }
 
+    glBindVertexArray(0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ZView::draw();
 }

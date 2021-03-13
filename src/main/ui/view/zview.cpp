@@ -201,7 +201,7 @@ void ZView::setMouseDown(bool isDown) {
 }
 
 bool ZView::isMouseInBounds(ZView *view) const {
-    if (!view->getVisibility()) {
+    if (view == nullptr || !view->getVisibility()) {
         return false;
     }
     vec2 inner = view->getInnerTranslation();
