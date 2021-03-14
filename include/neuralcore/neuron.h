@@ -32,7 +32,7 @@ public:
     double mValue;
     string getName();
 
-    double mGrad = 1.5;
+    double mGrad = 1.0;
 
     void setType(Activation type);
     Activation getType();
@@ -97,6 +97,8 @@ public:
 
     void setAverageGrad(int index, double value);
 
+    void resetRunningAverage();
+
 private:
     vector<double> mWeights;
     vector<double> mPendingWeights;
@@ -122,6 +124,7 @@ private:
     double mInputVariance = 1.0;
 
     Activation mType = LINEAR;
+
 };
 
 

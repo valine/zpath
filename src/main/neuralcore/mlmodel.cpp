@@ -262,13 +262,14 @@ string MlModel::par(string input) {
 
 
 
-void  MlModel::resetWeights() {
+void  MlModel::resetNetwork() {
     for (vector<Neuron*> layer : mTrainable) {
         for (Neuron* node : layer) {
             for (uint i = 0; i < node->getWeights().size(); i++) {
                 node->setWeight(getInitialWeight(layer.size()), i);
                 node->setBias(0.0);
                 node->resetPending();
+                node->resetRunningAverage();
             }
         }
     }
@@ -392,9 +393,10 @@ void MlModel::setTrainingData(vector<pair<vector<double>, vector<double>>> data)
 }
 
 double MlModel::getInitialWeight(double height) {
-    double var = 1.0 / height;
+    double var = 5.0 / height;
     srand(mSeed++);
     double number = var * ((double) rand() / (double) RAND_MAX)  - (var / 2.0);
+    cout << number << endl;
     return number;
 }
 
@@ -417,8 +419,10 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
 
     int countOut = 0;
     for (double out : expectedOutput) {
-        double number = mDist(mGenerator);
-        out += number;
+
+
+//        double number = mDist(mGenerator);
+//        out += number;
         double expected = (out - mOutputNodes.at(countOut)->getMedian()) / mOutputNodes.at(countOut)->getVariance();
         mCostNodes.at(countOut)->setExpectedValue(expected);
         countOut++;
@@ -439,7 +443,7 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
 
                 for (unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
 
-                    double dw = node->computeDEDW(wi) + (pow(node->getWeights().at(wi), 1.0) * 0.00002) / mTrainingData.size();
+                    double dw = node->computeDEDW(wi) + (pow(node->getWeights().at(wi), 1.0)) / mTrainingData.size();
                     node->setAverageGrad(wi, node->getAverageGrads().at(wi) + dw * dw);
                     node->updatePendingWeight(-(mStep / (sqrt(node->getAverageGrads().at(wi)) + 1e-6)) * dw, wi);
                 }
@@ -469,6 +473,18 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
                     double dw = node->computeDEDW(wi);
                     node->setAverageGrad(wi, R * node->getAverageGrads().at(wi) + ((1.0 - R) * dw));
                     node->updatePendingWeight(( (-(mStep * node->getAverageGrads().at(wi)))), wi);
+                }
+            } else if (mOptimizer == GD) {
+                double db = node->computeDEDB();
+
+                node->setAverageBias(node->getAverageBias() + db * db);
+                node->updatePendingBias(-(mStep * (db / mMiniBatchSize)));
+
+                for (unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
+
+                    double dw = node->computeDEDW(wi) + (pow(node->getWeights().at(wi), 1.0)) / mTrainingData.size();
+                    node->setAverageGrad(wi, node->getAverageGrads().at(wi) + dw * dw);
+                    node->updatePendingWeight(-mStep  * (dw / mMiniBatchSize), wi);
                 }
             }
         }

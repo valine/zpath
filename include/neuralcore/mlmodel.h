@@ -45,7 +45,7 @@ public:
     vector<pair<vector<double>, vector<double>>> getTrainingData();
     static void trainNetwork(int epochCount, MlModel *model);
 
-    void resetWeights();
+    void resetNetwork();
     void setOptimizer(Optimizer mode);
 
     void percussiveMaintenance();

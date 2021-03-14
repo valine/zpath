@@ -336,6 +336,13 @@ void Neuron::resetPending() {
     resetPendingBias();
 }
 
+void Neuron::resetRunningAverage() {
+    mAverageBias = mGrad;
+    for (int i = 0; i < mAverageGradient.size(); i++) {
+        mAverageGradient.at(i) = mGrad;
+    }
+}
+
 void Neuron::applyPending() {
     mBias = mPendingBias;
     for (unsigned int i = 0; i < mWeights.size(); i++) {

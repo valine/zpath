@@ -379,7 +379,7 @@ public:
             case HEAT_MAP: return ivec2(3,3);
             case COMBINE: return ivec2(2,1);
             case SPLIT: return ivec2(1,2);
-            case NEURAL_CORE: return ivec2(4,3);
+            case NEURAL_CORE: return ivec2(5,3);
             case LAST:return ivec2(0,0);
         }
     }
@@ -407,10 +407,10 @@ public:
    const array<array<SocketType, 6>, 2> COMBINE_TYPE = {{{{VAR, VAR}},{{VAR}}}};
    const array<array<SocketType, 6>, 2> SPLIT_TYPE = {{{{VAR}},{{VAR, VAR}}}};
 
-    const array<array<SocketType, 6>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON}},{{VAR, CON, CON}}}};
+    const array<array<SocketType, 6>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON}},{{VAR, CON, CON}}}};
    const array<array<SocketType, 6>, 2> NONE_TYPE = {{}};
 
-   const array<array<SocketType, 6>, 2> getSocketType() {
+   const array<array<SocketType, 6>, 2> getSocketType() const {
         switch (mType) {
             case POLY: {
                 return POLY_TYPE;
@@ -592,6 +592,8 @@ public:
                 return {1.0, 1.0};
             case HEAT_MAP:
                 return {0.0, -1.0, 1.0};
+            case NEURAL_CORE:
+                return {0.0,0.0, 0.001, -5, 10.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -626,31 +628,33 @@ public:
             case LAPLACE: return {"", "", "Window Start", "Window Size", "Z Min", "Z Max"};
             case CHART_2D: return {"", "", "Resolution"};
             case HEAT_MAP: return {"", "Z Min", "Z Max"};
-            case NEURAL_CORE: return {"", "", "Window Start", "Window Width"};
+            case NEURAL_CORE: return {"", "", "Step Size", "Window Start", "Window Width"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
 
     vector<string> getButtonNames() {
        switch(mType) {
-           case NEURAL_CORE: return {"Train", "Stop"};
+           case NEURAL_CORE: return {"Train", "Stop", "Reset"};
            default: return {};
        }
    }
 
     void initializeNNModel() {
-        int width = 1;
-        vector<int> heights = {11};
+        vector<int> heights = {10};
+        int width = heights.size();
+
         int inputs = 1;
         int outputs = 1;
-        int batchSize = 30;
-        float stepSize = 0.0005;
-        MlModel::Optimizer optimizer = MlModel::ADAGRAD;
-        vector<Neuron::Activation> activationFunctions = {Neuron::SIGMOID};
+        int batchSize = 100;
+        float stepSize = 0.0001;
+        MlModel::Optimizer optimizer = MlModel::RMSPROP;
+        Neuron::Activation type = Neuron::SIGMOID;
+        vector<Neuron::Activation> activationFunctions = vector<Neuron::Activation>(width, type);
 
         mMlModel = new MlModel(width, heights, inputs, outputs,
                                batchSize, stepSize, optimizer, activationFunctions);
-        mMlModel->resetWeights();
+        mMlModel->resetNetwork();
     }
 
     function<void()> getButtonCallback(int index) {
@@ -666,15 +670,15 @@ public:
                             }
 
                             vector<pair<vector<double>, vector<double>>> trainingData;
-                            int samples = 100;
+                            int samples = 1000;
 
                             int socketIndex = 0;
                             int dimenIndex = 0;
 
                             auto fres = (float) samples;
 
-                            float start = -4.0;
-                            float windowSize = 8.0;
+                            float start = sumInputs(0.0, 3, 0);
+                            float windowSize = sumInputs(0.0, 4, 0);
 
                             for (int i = 0; i < samples; i++) {
                                 float t = (((float) i / fres) * windowSize) + start;
@@ -684,10 +688,13 @@ public:
                                 trainingData.push_back({{t}, {summedInput}});
                             }
 
+                            mMlModel->setStepSize(sumInputs(0.0, 2, 0));
                             mMlModel->setTrainingData(trainingData);
                             mMlModel->computeNormalization();
                             mMlModel->setTrainingCallback([this](){
                                 invalidateSingleNode();
+
+                                mMlModel->setStepSize(sumInputs(0.0, 2, 0));
                             });
                             mMlModel->trainNetworkAsync(10000);
                             invalidateSingleNode();
@@ -699,7 +706,13 @@ public:
                             mMlModel->requestStopTraining();
                         };
                     }
+                    case 2: {
+                        return [this]() {
+                            mMlModel->resetNetwork();
+                        };
+                    }
                     default:return nullptr;
+
                 }
 
             }
@@ -730,6 +743,8 @@ public:
             case SIN_C:
             case COS_C:
                 return 7;
+            case NEURAL_CORE:
+                return 3;
             default:
                 return 6;
         }
@@ -882,6 +897,20 @@ public:
             summedInput += singleInput.first->evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x))).at(
                     var).at(singleInput.second);
         }
+
+        if (inputSocket.empty()) {
+            if (getSocketType().at(0).at(socketIndex) == VAR) {
+                summedInput = x;
+            } else {
+                // By default constants have no imaginary component
+                if (var == REAL) {
+                    summedInput = mConstantValueInput.at(socketIndex);
+                } else {
+                    summedInput = 0.0;
+                }
+            }
+        }
+
         return summedInput;
     }
 
