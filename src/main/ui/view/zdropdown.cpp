@@ -34,6 +34,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 
     addSubView(mDrawer);
 
+    mNames = items;
     int index = 0;
     for (const string& item : items) {
         ZButton* button = new ZButton(item, mDrawer);
@@ -42,9 +43,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
         button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
         button->setClickMode(ZButton::ClickMode::upAndDown);
         button->setOnClick([this, item](ZView* sender){
-            mDrawer->setVisibility(false);
-            getParentView()->invalidate();
-            mTitle->setText(item);
+            selectItem(sender->getIndexTag());
 
             if (mOnItemChange != nullptr) {
                 mOnItemChange(sender->getIndexTag());
@@ -55,6 +54,12 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     }
 }
 
+void ZDropDown::selectItem(int index) {
+    mDrawer->setVisibility(false);
+    getParentView()->invalidate();
+    mTitle->setText(mNames.at(index));
+}
+
 void ZDropDown::setGravity(Gravity gravity) {
     ZView::setGravity(gravity);
 
@@ -62,7 +67,6 @@ void ZDropDown::setGravity(Gravity gravity) {
     mBackground->setGravity(gravity);
     mDrawer->setGravity(gravity);
 }
-
 
 void ZDropDown::draw() {
 	ZView::draw();
@@ -86,7 +90,7 @@ void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
                 mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
                 mDrawer->setYOffset(DEFAULT_OFFSET);
 			} else {
-                mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - DEFAULT_OFFSET,
+                mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (DEFAULT_OFFSET * 2),
                                                mDrawer->getInnerView()->getMaxHeight()));
                 mDrawer->setYOffset(DEFAULT_OFFSET);
 			}

@@ -5,9 +5,10 @@
 #include "ui/zdrawer.h"
 
 ZDrawer::ZDrawer(ZView *parent) : ZScrollView(20, fillParent, parent) {
-    setBackgroundColor(blue);
+    setBackgroundColor(bg);
     setElevation(0.5);
-    new ZView(vec2(200), red, this);
-    new ZView(vec2(100), green, this);
-    new ZView(vec2(200), yellow, this);
+
+    new ZView(vec2(200), grey, this);
+    new ZView(vec2(100), grey, this);
+    new ZView(vec2(200), grey, this);
 }

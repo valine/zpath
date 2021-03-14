@@ -367,6 +367,19 @@ void ZNodeView::setType(ZNodeView::Type type) {
         k = magnitude;
     }
 
+    int buttonIndex = 0;
+    for (const string& buttonName : getButtonNames()) {
+        int margin = 2;
+        ZButton* button = new ZButton(buttonName, this);
+        button->setMaxWidth(50);
+        button->setMaxHeight(20);
+        button->getLabel()->offsetBy(0, -3);
+        button->setXOffset(120 + ((button->getMaxWidth() + margin) * buttonIndex));
+        button->setOnClick(getButtonCallback(buttonIndex));
+        button->setElevation(1.0);
+        buttonIndex++;
+    }
+
 }
 
 vector<ZView *> ZNodeView::getSocketsIn() {

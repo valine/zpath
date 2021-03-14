@@ -28,8 +28,11 @@ ZTileViewController::ZTileViewController(string path, std::function<ZViewControl
 void ZTileViewController::onLayoutFinished() {
     ZViewController::onLayoutFinished();
 
+    int defaultController = 1;
+
     if (mContent == nullptr) {
-        mContent = mControllerFactory(1);
+        mContent = mControllerFactory(defaultController);
+        mControllers.at(defaultController) = mContent;
     }
 
     mContent->setDrawingEnabled(false);
@@ -44,6 +47,7 @@ void ZTileViewController::onLayoutFinished() {
     mDropDown = new ZDropDown(200, 300, mNames, this);
     mDropDown->setGravity(bottomLeft);
     mDropDown->setYOffset(0);
+    mDropDown->selectItem(defaultController);
 
     mDropDown->setOnItemChange([this](int index){
         for (ZViewController* controller : mControllers) {

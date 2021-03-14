@@ -31,13 +31,17 @@ public:
 
     void setGravity(Gravity gravity) override;
 
+    void selectItem(int index);
+
 private:
 	ZLabel* mTitle;
 	ZScrollView* mDrawer;
+	vector<string> mNames;
 	float mButtonHeight;
 
 	ZView* mBackground;
     std::function<void(int item)> mOnItemChange;
+
 };
 
 #endif

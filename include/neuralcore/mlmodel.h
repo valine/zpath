@@ -8,6 +8,8 @@
 #include <vector>
 #include "neuron.h"
 #include <random>
+#include <functional>
+#include <thread>
 
 class MlModel {
 public:
@@ -41,7 +43,7 @@ public:
 
     void setTrainingData(vector<pair<vector<double>, vector<double>>> data);
     vector<pair<vector<double>, vector<double>>> getTrainingData();
-    void trainNetwork(int epochCount);
+    static void trainNetwork(int epochCount, MlModel *model);
 
     void resetWeights();
     void setOptimizer(Optimizer mode);
@@ -62,6 +64,13 @@ public:
 
     void addNodeToLayer(int layer);
 
+    void setTrainingCallback(std::function<void()> callback);
+    void trainNetworkAsync(int epoch);
+
+    void requestStopTraining() {
+        mShouldStop = true;
+    }
+
 private:
     int mInputs = 1;
     int mOutputs = 1;
@@ -69,6 +78,9 @@ private:
     vector<int> mHiddenHeight;
     int mMiniBatchSize = 10;
     double mTotalCost = 0;
+
+    bool mShouldStop = false;
+
 
     std::default_random_engine mGenerator;
     std::normal_distribution<double> mDist;
@@ -87,6 +99,9 @@ private:
     int mSeed = time(0);
 
     vector<pair<vector<double>, vector<double>>> mTrainingData;
+    function<void()> mTrainingCallback = nullptr;
+
+    thread mTrainingThread;
 
     double getInitialWeight(double height);
 

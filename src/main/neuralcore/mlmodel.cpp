@@ -13,6 +13,7 @@
 #include <random>
 #include <algorithm>
 #include <neuralcore/csvutils.h>
+#include <functional>
 
 MlModel::MlModel(int width, vector<int> height, int inputs, int outputs, int miniBatchSize, double stepSize,
                  Optimizer optimizer, vector<Neuron::Activation> mTypes) {
@@ -290,30 +291,42 @@ void MlModel::computeNormalization() {
     computeNormalization(mTrainingData);
 }
 
-void MlModel::trainNetwork(int epochCount) {
+void MlModel::trainNetwork(int epochCount, MlModel *model) {
     for (int j = 0; j < epochCount; j++) {
-        mTotalCost = 0.0;
-        int batchCount = mTrainingData.size() / mMiniBatchSize;
+        model->mTotalCost = 0.0;
+        int batchCount = model->mTrainingData.size() / model->mMiniBatchSize;
 
 
         for (int b = 0; b < batchCount; b++) {
-            auto first = mTrainingData.cbegin() + (b * mMiniBatchSize);
-            auto last = mTrainingData.cbegin() + ((b + 1) * mMiniBatchSize);
+            auto first = model->mTrainingData.cbegin() + (b * model->mMiniBatchSize);
+            auto last = model->mTrainingData.cbegin() + ((b + 1) * model->mMiniBatchSize);
 
             auto miniBatch = vector<pair<vector<double>, vector<double>>> (first, last);
 
             //computeNormalization(miniBatch);
 
-            double lastCost = mTotalCost;
+            double lastCost = model->mTotalCost;
             for (const pair<vector<double>, vector<double>>& sample : miniBatch) {
-                trainSingle(sample.first, sample.second);
-                mTotalCost += getTotalCostNode()->compute() / mTrainingData.size();
+                model->trainSingle(sample.first, sample.second);
+                model->mTotalCost += model->getTotalCostNode()->compute() / model->mTrainingData.size();
             }
 
-            getTotalCostNode()->applyPending();
+            model->getTotalCostNode()->applyPending();
         }
 
+        if (model->mTrainingCallback != nullptr) {
+            model->mTrainingCallback();
+        }
+
+        if (model->mShouldStop) {
+            model->mShouldStop = false;
+            return;
+        }
     }
+}
+
+void MlModel::setTrainingCallback(function<void()> callback) {
+    mTrainingCallback = callback;
 }
 
 void MlModel::computeNormalization(const vector<pair<vector<double>, vector<double>>>& data) {
@@ -379,7 +392,7 @@ void MlModel::setTrainingData(vector<pair<vector<double>, vector<double>>> data)
 }
 
 double MlModel::getInitialWeight(double height) {
-    double var = 2.0 / height;
+    double var = 1.0 / height;
     srand(mSeed++);
     double number = var * ((double) rand() / (double) RAND_MAX)  - (var / 2.0);
     return number;
@@ -431,7 +444,7 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
                     node->updatePendingWeight(-(mStep / (sqrt(node->getAverageGrads().at(wi)) + 1e-6)) * dw, wi);
                 }
             } else if (mOptimizer == RMSPROP) {
-                double R = 0.95;
+                double R = 0.90;
                 double e = 1.e-2;
                 // Update Bias
                 double db = node->computeDEDB();
@@ -541,4 +554,9 @@ string MlModel::getTrainingPath() {
 vector<pair<vector<double>, vector<double>>>
 MlModel::getTrainingData() {
     return mTrainingData;
+}
+
+void MlModel::trainNetworkAsync(int epoch) {
+    mTrainingThread = thread(trainNetwork, epoch, this);
+    mTrainingThread.detach();
 }

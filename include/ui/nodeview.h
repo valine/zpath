@@ -92,6 +92,7 @@ public:
         COMBINE,
         SPLIT,
         HEAT_MAP,
+        NEURAL_CORE,
         LAST // Fake enum to allow easy iteration
     };
 
@@ -265,6 +266,8 @@ public:
                     return {{x.at(REAL).at(0),      chartBound.x, chartWidth},
                             {x.at(IMAG).at(0), chartBound.x, chartWidth}};
                 case FILE:
+                    return {{x.at(REAL).at(0), chartBound.x, chartWidth},
+                            {0,      chartBound.x, chartWidth}};
                     break;
                 case FFT: {
                     auto fft = computeFft(in.at(1), in.at(2), in.at(3));
@@ -311,6 +314,16 @@ public:
                 case SPLIT: {
                     return {{x.at(REAL).at(0), x.at(IMAG).at(0)}, {NAN, NAN}};
                 }
+                case NEURAL_CORE: {
+                    if (mMlModel == nullptr) {
+                        initializeNNModel();
+                    }
+
+                    mMlModel->setInput(x.at(REAL).at(1), 0);
+                    mMlModel->compute();
+
+                    return {{x.at(REAL).at(0), chartBound.x, chartWidth}, {(float) mMlModel->getOutputAt(0), chartBound.x, chartWidth}};
+                }
                 case LAST:
                     break;
             }
@@ -320,6 +333,8 @@ public:
 
         return output;
     }
+
+
 
     /**
      * First value is input count, second value is output count. If input count is zero node
@@ -364,6 +379,7 @@ public:
             case HEAT_MAP: return ivec2(3,3);
             case COMBINE: return ivec2(2,1);
             case SPLIT: return ivec2(1,2);
+            case NEURAL_CORE: return ivec2(4,3);
             case LAST:return ivec2(0,0);
         }
     }
@@ -390,6 +406,8 @@ public:
    const array<array<SocketType, 6>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
    const array<array<SocketType, 6>, 2> COMBINE_TYPE = {{{{VAR, VAR}},{{VAR}}}};
    const array<array<SocketType, 6>, 2> SPLIT_TYPE = {{{{VAR}},{{VAR, VAR}}}};
+
+    const array<array<SocketType, 6>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON}},{{VAR, CON, CON}}}};
    const array<array<SocketType, 6>, 2> NONE_TYPE = {{}};
 
    const array<array<SocketType, 6>, 2> getSocketType() {
@@ -474,6 +492,9 @@ public:
             case SPLIT: {
                 return SPLIT_TYPE;
             }
+            case NEURAL_CORE: {
+                return NEURAL_CORE_TYPE;
+            }
             case LAST: {
                 return NONE_TYPE;
             }
@@ -517,6 +538,7 @@ public:
             case HEAT_MAP:return "Heat Map";
             case COMBINE:return "Combine";
             case SPLIT:return "Split";
+            case NEURAL_CORE: return "Neural Network";
             case LAST:return "none";
         }
     }
@@ -534,6 +556,8 @@ public:
                 return vec2(200, 200);
             case LAPLACE:
                 return vec2(400, 400);
+            case NEURAL_CORE:
+                return vec2(250, 100);
             default:
                 return vec2(80, 100);
         }
@@ -602,9 +626,86 @@ public:
             case LAPLACE: return {"", "", "Window Start", "Window Size", "Z Min", "Z Max"};
             case CHART_2D: return {"", "", "Resolution"};
             case HEAT_MAP: return {"", "Z Min", "Z Max"};
+            case NEURAL_CORE: return {"", "", "Window Start", "Window Width"};
             default: vector<string>(MAX_INPUT_COUNT, "");
         }
     }
+
+    vector<string> getButtonNames() {
+       switch(mType) {
+           case NEURAL_CORE: return {"Train", "Stop"};
+           default: return {};
+       }
+   }
+
+    void initializeNNModel() {
+        int width = 1;
+        vector<int> heights = {11};
+        int inputs = 1;
+        int outputs = 1;
+        int batchSize = 30;
+        float stepSize = 0.0005;
+        MlModel::Optimizer optimizer = MlModel::ADAGRAD;
+        vector<Neuron::Activation> activationFunctions = {Neuron::SIGMOID};
+
+        mMlModel = new MlModel(width, heights, inputs, outputs,
+                               batchSize, stepSize, optimizer, activationFunctions);
+        mMlModel->resetWeights();
+    }
+
+    function<void()> getButtonCallback(int index) {
+        switch(mType) {
+            case NEURAL_CORE: {
+                switch (index) {
+                    case 0: {
+                        return [this](){
+                            // Train the network
+
+                            if (mMlModel == nullptr) {
+                                initializeNNModel();
+                            }
+
+                            vector<pair<vector<double>, vector<double>>> trainingData;
+                            int samples = 100;
+
+                            int socketIndex = 0;
+                            int dimenIndex = 0;
+
+                            auto fres = (float) samples;
+
+                            float start = -4.0;
+                            float windowSize = 8.0;
+
+                            for (int i = 0; i < samples; i++) {
+                                float t = (((float) i / fres) * windowSize) + start;
+                                float summedInput = sumInputs(t, socketIndex, dimenIndex);
+                                cout << t << ", " << summedInput << endl;
+
+                                trainingData.push_back({{t}, {summedInput}});
+                            }
+
+                            mMlModel->setTrainingData(trainingData);
+                            mMlModel->computeNormalization();
+                            mMlModel->setTrainingCallback([this](){
+                                invalidateSingleNode();
+                            });
+                            mMlModel->trainNetworkAsync(10000);
+                            invalidateSingleNode();
+                        };
+                    }
+
+                    case 1: {
+                        return [this]() {
+                            mMlModel->requestStopTraining();
+                        };
+                    }
+                    default:return nullptr;
+                }
+
+            }
+            default: return nullptr;
+        }
+   }
 
     vec4 getNodeColor(Type type) {
         switch (type) {
@@ -615,6 +716,8 @@ public:
             case Y:
             case Z:
                 return mVariableColor;
+            case NEURAL_CORE:
+                return mNNColor;
             default:
                 return vec4(1);
         }
@@ -851,7 +954,7 @@ public:
     //////////////////
     /// Neural core integration
 
-    MlModel* model = nullptr;
+    MlModel* mMlModel = nullptr;
 
 
 
@@ -893,6 +996,7 @@ private:
 
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
     vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
+    vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
     vector<int> mMagPrecision = {8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0};
 
     function<void(ZView* sender, ZNodeView* node, int socketIndex,

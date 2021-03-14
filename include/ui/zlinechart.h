@@ -105,7 +105,8 @@ private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener = nullptr;
 
-    mat4 mDefaultMat = ortho(-1.5f, 1.5f, 1.5f, -1.5f, -1.0f, 10.0f);
+    float defaultRange = 5.0;
+    mat4 mDefaultMat = ortho(-defaultRange, defaultRange, defaultRange, -defaultRange, -1.0f, 10.0f);
 
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
     vec2 mLastMouse = vec2(0);
