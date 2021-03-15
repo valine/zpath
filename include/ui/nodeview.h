@@ -628,7 +628,7 @@ public:
             case CHART_2D: return {"", "", "Resolution"};
             case HEAT_MAP: return {"", "Z Min", "Z Max"};
             case NEURAL_CORE: return {"", "", "Step Size", "Window Start", "Window Width", "Optimizer"};
-            default: vector<string>(MAX_INPUT_COUNT, " ");
+            default: return {" ", " ", " ", " ", " ", " "};
         }
     }
 
@@ -778,17 +778,17 @@ public:
         }
     }
 
-    static int getDefaultMagnitude(Type type) {
+    static vector<int> getDefaultMagnitude(Type type) {
         switch (type) {
             case SIN:
             case COS:
             case SIN_C:
             case COS_C:
-                return 7;
+                return {7};
             case NEURAL_CORE:
-                return 3;
+                return {0,0,3,6,6,1};
             default:
-                return 6;
+                return {6};
         }
     }
 

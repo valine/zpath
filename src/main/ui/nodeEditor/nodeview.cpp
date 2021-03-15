@@ -329,6 +329,12 @@ void ZNodeView::setType(ZNodeView::Type type) {
         }
     }
 
+
+    // Always set max height to be large enough to fit all sockets
+    setMaxHeight(std::max((int) mSocketsIn.at(socketCount.x - 1)->getOffsetY() +
+    SOCKET_SIZE + MIN_MARGIN, getMaxHeight()));
+
+
     if (getChartType(type) == LINE_2D) {
         mChart->setInputType(getChartType(getType()));
     } else {
@@ -366,9 +372,18 @@ void ZNodeView::setType(ZNodeView::Type type) {
         i++;
     }
 
-    int magnitude = getDefaultMagnitude(type);
+    vector<int> magnitude = getDefaultMagnitude(type);
+    int magIndex = 0;
     for (int & k : mConstantMagnitudeInput) {
-        k = magnitude;
+        if (magnitude.size() == 1) {
+            k = magnitude.at(0);
+        } else {
+            if (magIndex < magnitude.size()) {
+                k = magnitude.at(magIndex);
+            }
+        }
+
+        magIndex++;
     }
 
     int buttonIndex = 0;
