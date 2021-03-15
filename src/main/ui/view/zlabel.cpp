@@ -155,6 +155,10 @@ void ZLabel::drawText() {
             }
 
             mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
+
+            if (mLineIndices.empty()) {
+                mFirstLineWidth = x + w;
+            }
         }
 
         mLineIndices.push_back(mPoints.size());
@@ -231,4 +235,8 @@ void ZLabel::onSizeChange() {
     ZView::onSizeChange();
     mFrameInvalid = true;
     mTextInvalid = true;
+}
+
+float ZLabel::getFirstLineWidth() {
+    return mFirstLineWidth;
 }

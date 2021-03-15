@@ -43,6 +43,8 @@ public:
 
     int getLineHeight();
 
+    float getFirstLineWidth();
+
 private:
 
     unsigned int mFBO = -1;
@@ -57,6 +59,7 @@ private:
 
     bool mTextInvalid = true;
     bool mFrameInvalid = true;
+    float mFirstLineWidth = 0;
 
     /**
      * Character coordinates for setting cursor location
