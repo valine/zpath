@@ -6,7 +6,7 @@
 #define ZPATH_NODEVIEW_H
 
 static const int SOCKET_SIZE = 15;
-static const int MAX_INPUT_COUNT = 7;
+static const int MAX_INPUT_COUNT = 8;
 static const int MAX_OUTPUT_COUNT = 4;
 static const int CHART_RES_THRESHOLD = 4;
 static const int CHART_SIDE_MARGIN_WIDE = 20;
@@ -335,81 +335,33 @@ public:
         return output;
     }
 
-    /**
-     * First value is input count, second value is output count. If input count is zero node
-     * is an input node like a constant or number range. If output count is zero the node is
-     * an output node like a plot or label.
-     * @return Vector with node socket input and output count
-     */
-    ivec2 getSocketCount() {
-        switch (mType) {
-            case POLY: return ivec2(5, 3);
-            case SIN_C:
-            case SIN:return ivec2(3,3);
-            case COS:
-            case COS_C:return ivec2(3,3);
-            case TAN:
-            case TAN_C:return ivec2(1,3);
-            case ABS:return ivec2(1,3);
-            case EXP_C:
-            case EXP:return ivec2(1,3);
-            case SQRT:return ivec2(1,3);
-            case POW:return ivec2(2,3);
-            case GAUSSIAN:return ivec2(3,3);
-            case MORLET:return ivec2(5,3);
-            case ADD:return ivec2(2,3);
-            case SUBTRACT:return ivec2(2,3);
-            case MULTIPLY:return ivec2(2,3);
-            case DIVIDE:return ivec2(2,3);
-            case C:return ivec2(0,1);
-            case CI:return ivec2(0,1);
-            case X:return ivec2(0,3);
-            case Y:return ivec2(0,3);
-            case Z:return ivec2(0,3);
-            case FILE:return ivec2(0,1);
-            case FFT:return ivec2(4,3);
-            case IFFT:return ivec2(4,3);
-            case HARTLEY:return ivec2(4,3);
-            case LAPLACE:return ivec2(6,3);
-            case FIRST_DIFF:return ivec2(2,3);
-            case DOT:return ivec2(2,3);
-            case CROSS:return ivec2(4,4);
-            case CHART_2D: return ivec2(3,4);
-            case HEAT_MAP: return ivec2(3,3);
-            case COMBINE: return ivec2(2,1);
-            case SPLIT: return ivec2(1,2);
-            case NEURAL_CORE: return ivec2(6,3);
-            case LAST:return ivec2(0,0);
-        }
-    }
+   const array<array<SocketType, 8>, 2>  COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> POLY_TYPE =  {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> SQRT_TYPE =  {{{{VAR}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> POW_TYPE = {{{{VAR, VAR}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> GAUSSIAN_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> MORLET_TYPE = {{{{VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> DIVIDE_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> CI_TYPE = {{{{}},{{CON}}}};
+   const array<array<SocketType, 8>, 2> Y_TYPE = {{{{}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> Z_TYPE = {{{{}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> FILE_TYPE =  {{{{}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> IFFT_TYPE = {{{{VAR, VAR, CON, CON}},{{VAR, VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> FFT_TYPE ={{{{VAR, VAR, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> HARTLEY_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> LAPLACE_TYPE ={{{{VAR, VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> FIRST_DIFF_TYPE ={{{{VAR, VAR}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> DOT_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}},{{VAR, VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}},{{VAR, VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
+   const array<array<SocketType, 8>, 2> COMBINE_TYPE = {{{{VAR, VAR}},{{VAR}}}};
+   const array<array<SocketType, 8>, 2> SPLIT_TYPE = {{{{VAR}},{{VAR, VAR}}}};
 
-   const array<array<SocketType, 6>, 2>  COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> POLY_TYPE =  {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> SQRT_TYPE =  {{{{VAR}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> POW_TYPE = {{{{VAR, VAR}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> GAUSSIAN_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> MORLET_TYPE = {{{{VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> DIVIDE_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> CI_TYPE = {{{{}},{{CON}}}};
-   const array<array<SocketType, 6>, 2> Y_TYPE = {{{{}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> Z_TYPE = {{{{}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> FILE_TYPE =  {{{{}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> IFFT_TYPE = {{{{VAR, VAR, CON, CON}},{{VAR, VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> FFT_TYPE ={{{{VAR, VAR, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> HARTLEY_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> LAPLACE_TYPE ={{{{VAR, VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> FIRST_DIFF_TYPE ={{{{VAR, VAR}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> DOT_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}},{{VAR, VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}},{{VAR, VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> COMBINE_TYPE = {{{{VAR, VAR}},{{VAR}}}};
-   const array<array<SocketType, 6>, 2> SPLIT_TYPE = {{{{VAR}},{{VAR, VAR}}}};
+    const array<array<SocketType, 8>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM, ENUM}},{{VAR, CON, CON}}}};
+    const array<array<SocketType, 8>, 2> NONE_TYPE = {{}};
 
-    const array<array<SocketType, 6>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM}},{{VAR, CON, CON}}}};
-    const array<array<SocketType, 6>, 2> NONE_TYPE = {{}};
-
-    const array<array<SocketType, 6>, 2> getSocketType() const {
+    const array<array<SocketType, 8>, 2> getSocketType() const {
         switch (mType) {
             case POLY: {
                 return POLY_TYPE;
@@ -500,6 +452,159 @@ public:
         }
     }
 
+
+    /**
+     * First value is input count, second value is output count. If input count is zero node
+     * is an input node like a constant or number range. If output count is zero the node is
+     * an output node like a plot or label.
+     * @return Vector with node socket input and output count
+     */
+    ivec2 getSocketCount() {
+        switch (mType) {
+            case POLY: return ivec2(5, 3);
+            case SIN_C:
+            case SIN:return ivec2(3,3);
+            case COS:
+            case COS_C:return ivec2(3,3);
+            case TAN:
+            case TAN_C:return ivec2(1,3);
+            case ABS:return ivec2(1,3);
+            case EXP_C:
+            case EXP:return ivec2(1,3);
+            case SQRT:return ivec2(1,3);
+            case POW:return ivec2(2,3);
+            case GAUSSIAN:return ivec2(3,3);
+            case MORLET:return ivec2(5,3);
+            case ADD:return ivec2(2,3);
+            case SUBTRACT:return ivec2(2,3);
+            case MULTIPLY:return ivec2(2,3);
+            case DIVIDE:return ivec2(2,3);
+            case C:return ivec2(0,1);
+            case CI:return ivec2(0,1);
+            case X:return ivec2(0,3);
+            case Y:return ivec2(0,3);
+            case Z:return ivec2(0,3);
+            case FILE:return ivec2(0,1);
+            case FFT:return ivec2(4,3);
+            case IFFT:return ivec2(4,3);
+            case HARTLEY:return ivec2(4,3);
+            case LAPLACE:return ivec2(6,3);
+            case FIRST_DIFF:return ivec2(2,3);
+            case DOT:return ivec2(2,3);
+            case CROSS:return ivec2(4,4);
+            case CHART_2D: return ivec2(3,4);
+            case HEAT_MAP: return ivec2(3,3);
+            case COMBINE: return ivec2(2,1);
+            case SPLIT: return ivec2(1,2);
+            case NEURAL_CORE: return ivec2(7,3);
+            case LAST:return ivec2(0,0);
+        }
+    }
+
+
+    static vector<float> getDefaultInput(Type type) {
+        switch(type) {
+            case POLY: return {0.0, 0.0, 0.0, 0.0};
+            case ADD:
+            case SUBTRACT: return {0.0, 0.0};
+            case MULTIPLY:
+            case DIVIDE: return {1.0, 1.0};
+            case SIN:
+            case COS:
+            case SIN_C:
+            case COS_C:
+                return {0.0, 1.0, 1.0};
+            case GAUSSIAN:
+                // X, width, height
+                return {0.0, 1.0, 1.0};
+            case MORLET:
+                return {0.0, 1.0, 1.0, 0.0, 1.0};
+            case IFFT:return {0.0,0.0, 1.0, 1.0};
+            case FFT:
+            case HARTLEY:
+                return {0.0, 0.0, 0.0, 1.0};
+            case LAPLACE:
+                return {0.0, 0.0, 0.0, 1.0, -1.0, 1.0};
+            case CHART_2D:
+                return {0.0,0.0,100};
+            case DOT:
+                return {1.0, 1.0};
+            case HEAT_MAP:
+                return {0.0, -1.0, 1.0};
+            case NEURAL_CORE:
+                return {0.0,0.0, 0.05, -5, -1, 0, 0};
+            default:
+                return vector<float>(MAX_INPUT_COUNT, 0.0);
+        }
+    }
+
+    static vector<int> getDefaultMagnitude(Type type) {
+        switch (type) {
+            case SIN:
+            case COS:
+            case SIN_C:
+            case COS_C:
+                return {7};
+            case NEURAL_CORE:
+                return {0,0,5,6,6,1,0,0};
+            default:
+                return {6};
+        }
+    }
+
+
+
+    vector<string> getSocketNames() {
+        switch (mType) {
+            case POLY:return {"", "A", "BX", "CX^2", "DX^3"};
+            case ADD:
+            case SUBTRACT:
+            case MULTIPLY:
+            case DIVIDE: return {"", ""};
+            case SIN:
+            case COS:
+            case SIN_C:
+            case COS_C:return {"", "Frequency", "Height"};
+            case GAUSSIAN: return {"", "Width", "Height"};
+            case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
+            case IFFT:return {"", "", "Window Start", "Window Size"};
+            case HARTLEY:
+            case FFT: return {"", "", "Window Start", "Window Size"};
+            case LAPLACE: return {"", "", "Window Start", "Window Size", "Z Min", "Z Max"};
+            case CHART_2D: return {"", "", "Resolution"};
+            case HEAT_MAP: return {"", "Z Min", "Z Max"};
+            case NEURAL_CORE: return {"", "", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
+            default: return {" ", " ", " ", " ", " ", " "};
+        }
+    }
+
+    vector<string> getButtonNames() {
+       switch(mType) {
+           case NEURAL_CORE: return {"Train", "Stop", "Reset"};
+           default: return {};
+       }
+   }
+
+   vector<string> getEnumNames(int socketIndex) {
+
+        switch(mType) {
+            case NEURAL_CORE: {
+                switch (socketIndex) {
+                    case 5:
+                        return {"RMSProp", "Adagrad", "Momentum", "Grad Decent",};
+                    case 6:
+                        return {"TANH", "SIGMOID", "RELU"};
+                    default:
+                        return vector<string>(1, " ");
+                }
+
+            }
+            default:
+                return vector<string>(1, " ");
+        }
+
+    }
+
     static string getName(Type type) {
         switch (type) {
             case POLY:return "polynomial";
@@ -556,47 +661,12 @@ public:
             case LAPLACE:
                 return vec2(400, 400);
             case NEURAL_CORE:
-                return vec2(250, 100);
+                return vec2(300, 100);
             default:
                 return vec2(80, 100);
         }
     }
 
-    static vector<float> getDefaultInput(Type type) {
-        switch(type) {
-            case POLY: return {0.0, 0.0, 0.0, 0.0};
-            case ADD:
-            case SUBTRACT: return {0.0, 0.0};
-            case MULTIPLY:
-            case DIVIDE: return {1.0, 1.0};
-            case SIN:
-            case COS:
-            case SIN_C:
-            case COS_C:
-                return {0.0, 1.0, 1.0};
-            case GAUSSIAN:
-                // X, width, height
-                return {0.0, 1.0, 1.0};
-            case MORLET:
-                return {0.0, 1.0, 1.0, 0.0, 1.0};
-            case IFFT:return {0.0,0.0, 1.0, 1.0};
-            case FFT:
-            case HARTLEY:
-                return {0.0, 0.0, 0.0, 1.0};
-            case LAPLACE:
-                return {0.0, 0.0, 0.0, 1.0, -1.0, 1.0};
-            case CHART_2D:
-                return {0.0,0.0,100};
-            case DOT:
-                return {1.0, 1.0};
-            case HEAT_MAP:
-                return {0.0, -1.0, 1.0};
-            case NEURAL_CORE:
-                return {0.0,0.0, 0.001, -5, 10.0};
-            default:
-                return vector<float>(MAX_INPUT_COUNT, 0.0);
-        }
-    }
 
     static bool isOutputLabelVisible(Type type) {
         switch(type) {
@@ -608,57 +678,9 @@ public:
         }
     }
 
-    vector<string> getSocketNames() {
-        switch (mType) {
-            case POLY:return {"", "A", "BX", "CX^2", "DX^3"};
-            case ADD:
-            case SUBTRACT:
-            case MULTIPLY:
-            case DIVIDE: return {"", ""};
-            case SIN:
-            case COS:
-            case SIN_C:
-            case COS_C:return {"", "Frequency", "Height"};
-            case GAUSSIAN: return {"", "Width", "Height"};
-            case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
-            case IFFT:return {"", "", "Window Start", "Window Size"};
-            case HARTLEY:
-            case FFT: return {"", "", "Window Start", "Window Size"};
-            case LAPLACE: return {"", "", "Window Start", "Window Size", "Z Min", "Z Max"};
-            case CHART_2D: return {"", "", "Resolution"};
-            case HEAT_MAP: return {"", "Z Min", "Z Max"};
-            case NEURAL_CORE: return {"", "", "Step Size", "Window Start", "Window Width", "Optimizer"};
-            default: return {" ", " ", " ", " ", " ", " "};
-        }
-    }
-
-    vector<string> getButtonNames() {
-       switch(mType) {
-           case NEURAL_CORE: return {"Train", "Stop", "Reset"};
-           default: return {};
-       }
-   }
-
-   vector<string> getEnumNames(int socketIndex) {
-
-        switch(mType) {
-            case NEURAL_CORE: {
-                switch (socketIndex) {
-                    case 5:
-                        return {"RMSProp", "Adagrad", "Momentum", "Grad Decent",};
-                    default:
-                        return vector<string>(1, " ");
-                }
-
-            }
-            default:
-                return vector<string>(1, " ");
-        }
-
-    }
 
     void initializeNNModel() {
-        vector<int> heights = {3,3};
+        vector<int> heights = {4,3};
         int width = heights.size();
 
         int inputs = 1;
@@ -694,16 +716,40 @@ public:
 
                             auto fres = (float) samples;
 
-                            float start = sumInputs(0.0, 3, 0);
+                            float windowStart = sumInputs(0.0, 3, 0);
                             float windowSize = sumInputs(0.0, 4, 0);
 
+                            // When window size is less than zero use this nodes chart window size
+                            vec2 chartBound = mChart->getXBounds();
+                            float chartWidth = chartBound.y - chartBound.x;
+                            if (windowSize < 0) {
+                                windowSize = chartWidth;
+                                windowStart = chartBound.x;
+                            }
+
                             for (int i = 0; i < samples; i++) {
-                                float t = (((float) i / fres) * windowSize) + start;
+                                float t = (((float) i / fres) * windowSize) + windowStart;
                                 float summedInput = sumInputs(t, socketIndex, dimenIndex);
                                 trainingData.push_back({{t}, {summedInput}});
                             }
 
                             mMlModel->setStepSize(sumInputs(0.0, 2, 0));
+
+                            int activationIndex = sumInputs(0, 6, 0);
+                            switch (activationIndex) {
+                                case 0: {
+                                    mMlModel->setActivationFunction(Neuron::Activation::TANH);
+                                    break;
+                                }
+                                case 1: {
+                                    mMlModel->setActivationFunction(Neuron::Activation::SIGMOID);
+                                    break;
+                                }
+                                case 2: {
+                                    mMlModel->setActivationFunction(Neuron::Activation::RELU);
+                                    break;
+                                }
+                            }
 
                             int optmizerIndex = sumInputs(0, 5, 0);
                             setOptimizer(optmizerIndex);
@@ -713,8 +759,9 @@ public:
                             mMlModel->setTrainingCallback([this](){
                                 int optmizerIndex = sumInputs(0, 5, 0);
                                 setOptimizer(optmizerIndex);
-                                invalidateSingleNode();
                                 mMlModel->setStepSize(sumInputs(0.0, 2, 0));
+
+                                invalidateSingleNode();
                             });
                             mMlModel->trainNetworkAsync(10000);
                             invalidateSingleNode();
@@ -775,20 +822,6 @@ public:
                 return mNNColor;
             default:
                 return vec4(1);
-        }
-    }
-
-    static vector<int> getDefaultMagnitude(Type type) {
-        switch (type) {
-            case SIN:
-            case COS:
-            case SIN_C:
-            case COS_C:
-                return {7};
-            case NEURAL_CORE:
-                return {0,0,3,6,6,1};
-            default:
-                return {6};
         }
     }
 

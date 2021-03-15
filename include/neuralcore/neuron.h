@@ -43,6 +43,7 @@ public:
     virtual double activation(double input);
     virtual double activationPrime(double input, double regWeight);
 
+
     void setValue(double value);
     void addParent(Neuron *node, double weight);
     void addChild(Neuron* node);

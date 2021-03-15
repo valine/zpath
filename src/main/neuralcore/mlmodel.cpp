@@ -491,6 +491,14 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
 
 }
 
+void MlModel::setActivationFunction(Neuron::Activation activation) {
+    for (const vector<Neuron*>& layer : mTrainable) {
+        for (Neuron* node : layer) {
+            node->setType(activation);
+        }
+    }
+}
+
 Neuron* MlModel::getNodeAt(int w, int h) {
     int x = getWidth() - w - 1;
     return mLayers.at(x).at(h);

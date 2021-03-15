@@ -71,6 +71,8 @@ public:
         mShouldStop = true;
     }
 
+    void setActivationFunction(Neuron::Activation activation);
+
 private:
     int mInputs = 1;
     int mOutputs = 1;
