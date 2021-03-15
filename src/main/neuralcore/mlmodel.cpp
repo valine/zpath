@@ -492,10 +492,15 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
 }
 
 void MlModel::setActivationFunction(Neuron::Activation activation) {
+    int index = 0;
     for (const vector<Neuron*>& layer : mTrainable) {
-        for (Neuron* node : layer) {
-            node->setType(activation);
+        if (index != 0) {
+            for (Neuron *node : layer) {
+                node->setType(activation);
+            }
         }
+
+        index++;
     }
 }
 

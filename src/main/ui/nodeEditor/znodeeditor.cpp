@@ -22,6 +22,19 @@
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
 
+    vector<string> allTypes;
+    vector<vec4> allColors;
+    for (int i = 0; i != ZNodeView::Type::LAST; i++) {
+        auto type = static_cast<ZNodeView::Type>(i);
+        allTypes.push_back(ZNodeView::getName(type));
+    }
+
+    for (int i = 0; i != ZNodeView::Type::LAST; i++) {
+        auto type = static_cast<ZNodeView::Type>(i);
+        allColors.push_back(ZNodeView::getNodeColor(type));
+    }
+
+
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
@@ -48,14 +61,32 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(mLastType);
     });
 
-    auto* mDrawer = new ZDrawer(mHeader);
+    mDrawer = new ZDrawer(this, allTypes, allColors);
     mDrawer->setMarginTop(25);
+    mDrawer->setMarginBottom(25);
+    mDrawer->setOnItemSelected([this, allTypes](int index){
+        deselectAllNodes();
 
-    vector<string> allTypes;
-    for (int i = 0; i != ZNodeView::Type::LAST; i++) {
-        auto type = static_cast<ZNodeView::Type>(i);
-        allTypes.push_back(ZNodeView::getName(type));
-    }
+        vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getScale()) - mNodeContainer->getInnerTranslation();
+        vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop(), 0);
+        // startPosition.x = std::max((int) mDrawer->getWidth(), (int) startPosition.x);
+        startPosition.y -= 40;
+        startPosition.x -= 35;
+        auto type = static_cast<ZNodeView::Type>(index);
+        ZNodeView* node = addNode(type);
+        node->setOffset(startPosition);
+
+        selectNode(node);
+        mDragNode = node->getIndexTag();
+        node->setInitialPosition(startPosition);
+        enterGrabMode();
+        node->onWindowChange(getWindowWidth(), getWindowHeight());
+    });
+
+    mDrawer->setOnItemClicked([this, allTypes](int index){
+        auto type = static_cast<ZNodeView::Type>(index);
+        addNode(type);
+    });
 
     ZDropDown* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(150, 0);
@@ -809,7 +840,6 @@ void ZNodeEditor::onMouseUp(int button) {
     if (mBoxMode == BOX_SELECT_2) {
         updateBoxSelect();
     }
-
     exitBoxSelectMode();
 }
 
@@ -908,7 +938,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
     // Scrolling with shift key is used for zooming charts
-    if (!shiftKeyPressed()) {
+    if (!shiftKeyPressed() && !isMouseInBounds(mDrawer)) {
         float scaleDelta = 1.0 + (y / 5.0);
         vec2 originalScale = mNodeContainer->getRelativeScale();
         vec2 newScale = max(vec2(0.3), min(vec2(1.0), originalScale * vec2(scaleDelta)));

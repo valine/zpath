@@ -19,3 +19,14 @@ void ZLinearLayout::addSubView(ZView* view) {
 void ZLinearLayout::resetCursor() {
     mPos = 0;
 }
+
+void ZLinearLayout::refreshMargins() {
+    resetCursor();
+    for (ZView* view : getSubViews()) {
+        view->setYOffset(mPos);
+        int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
+        mPos += offset;
+    }
+
+    setMaxHeight(mPos);
+}

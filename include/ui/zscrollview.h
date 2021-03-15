@@ -25,7 +25,7 @@ public:
 	void setInnerViewWidth(int width);
 	void onWindowChange(int windowWidth, int windowHeight);
 
-    ZView *getInnerView();
+    ZLinearLayout *getInnerView();
 
     void scrollTo(int x, int y);
 

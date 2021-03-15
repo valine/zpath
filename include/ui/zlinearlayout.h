@@ -22,6 +22,8 @@ public:
 
     void resetCursor();
 
+    void refreshMargins();
+
 private:
 	int mPos = 0;
 

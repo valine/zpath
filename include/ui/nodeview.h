@@ -42,7 +42,8 @@ public:
     enum SocketType {
         CON,
         VAR,
-        ENUM
+        ENUM,
+        NN,
     };
 
     enum ChartResMode {
@@ -552,11 +553,9 @@ public:
         }
     }
 
-
-
     vector<string> getSocketNames() {
         switch (mType) {
-            case POLY:return {"", "A", "BX", "CX^2", "DX^3"};
+            case POLY:return {"X", "A", "BX", "CX^2", "DX^3"};
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
@@ -564,16 +563,16 @@ public:
             case SIN:
             case COS:
             case SIN_C:
-            case COS_C:return {"", "Frequency", "Height"};
-            case GAUSSIAN: return {"", "Width", "Height"};
-            case MORLET: return {"", "Width", "Height", "Offset", "Frequency"};
-            case IFFT:return {"", "", "Window Start", "Window Size"};
+            case COS_C:return {"X", "Frequency", "Height"};
+            case GAUSSIAN: return {"X", "Width", "Height"};
+            case MORLET: return {"X", "Width", "Height", "Offset", "Frequency"};
+            case IFFT:return {"X", "A", "Window Start", "Window Size"};
             case HARTLEY:
-            case FFT: return {"", "", "Window Start", "Window Size"};
-            case LAPLACE: return {"", "", "Window Start", "Window Size", "Z Min", "Z Max"};
-            case CHART_2D: return {"", "", "Resolution"};
-            case HEAT_MAP: return {"", "Z Min", "Z Max"};
-            case NEURAL_CORE: return {"", "", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
+            case FFT: return {"X", "A", "Window Start", "Window Size"};
+            case LAPLACE: return {"X", "A", "Window Start", "Window Size", "Z Min", "Z Max"};
+            case CHART_2D: return {"X", "A", "Resolution"};
+            case HEAT_MAP: return {"X", "Z Min", "Z Max"};
+            case NEURAL_CORE: return {"Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
             default: return {" ", " ", " ", " ", " ", " "};
         }
     }
@@ -667,7 +666,6 @@ public:
         }
     }
 
-
     static bool isOutputLabelVisible(Type type) {
         switch(type) {
             case C:
@@ -678,9 +676,8 @@ public:
         }
     }
 
-
     void initializeNNModel() {
-        vector<int> heights = {4,3};
+        vector<int> heights = {3,4};
         int width = heights.size();
 
         int inputs = 1;
@@ -809,17 +806,33 @@ public:
         }
     }
 
-    vec4 getNodeColor(Type type) {
+    static vec4 getSocketColor(SocketType type) {
+        const vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
+        const vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
+        const vec4 mEnumColor = vec4(0.038825, 0.538225, 0.048049, 1.000000);
+        const vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
+
+        switch (type) {
+            case CON: return mConstantColor;
+            case VAR: return mVariableColor;
+            case ENUM: return mEnumColor;
+            case NN: return mNNColor;
+
+        }
+    }
+
+    static vec4 getNodeColor(Type type) {
+
         switch (type) {
             case C:
             case CI:
-                return mConstantColor;
+                return getSocketColor(CON);
             case X:
             case Y:
             case Z:
-                return mVariableColor;
+                return getSocketColor(VAR);
             case NEURAL_CORE:
-                return mNNColor;
+                return getSocketColor(NN);
             default:
                 return vec4(1);
         }
@@ -1102,10 +1115,6 @@ private:
     vector<int> mConstantMagnitudeOutput = vector<int>(MAX_OUTPUT_COUNT, DEFAULT_MAGNITUDE);
     vector<int> mConstantMagnitudeInput = vector<int>(MAX_INPUT_COUNT, DEFAULT_MAGNITUDE);
 
-    vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
-    vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
-    vec4 mEnumColor = vec4(0.038825, 0.538225, 0.048049, 1.000000);
-    vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
     vector<int> mMagPrecision = {8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0};
 
     function<void(ZView* sender, ZNodeView* node, int socketIndex,

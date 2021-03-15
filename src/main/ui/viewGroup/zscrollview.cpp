@@ -64,7 +64,7 @@ void ZScrollView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
 }
 
-ZView* ZScrollView::getInnerView() {
+ZLinearLayout* ZScrollView::getInnerView() {
     return mInnerView;
 }
 

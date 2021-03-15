@@ -16,7 +16,7 @@ static const int BOX_SELECT = 1;
 static const int BOX_SELECT_2 = 2;
 
 
-static const int DEFAULT_NODE_X = 30;
+static const int DEFAULT_NODE_X = 110;
 static const int DEFAULT_NODE_Y = 10;
 static const int NODE_MARGIN = 10;
 
@@ -36,6 +36,7 @@ static const double SELECTED_ELEVATION = 1.0;
 #include <set>
 #include <mutex>
 #include <condition_variable>
+#include "zdrawer.h"
 
 
 class ZNodeEditor : public ZView {
@@ -64,6 +65,7 @@ private:
 
     ZView* mBoxSelect;
     ZCursorView* mCursorView;
+    ZDrawer* mDrawer;
     int mBoxMode = NO_BOX_SELECT;
 
     bool mGrab = false;

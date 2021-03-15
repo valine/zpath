@@ -301,13 +301,15 @@ void ZNodeView::setType(ZNodeView::Type type) {
         if (i >= socketCount.x) {
             mSocketsIn.at(i)->setVisibility(false);
         } else {
+
             if (i < socketCount.x) {
+                vec4 color = getSocketColor(socketType.at(0).at(i));
                 if (socketType.at(0).at(i) == VAR) {
-                    mSocketsIn.at(i)->setBackgroundColor(mVariableColor);
+                    mSocketsIn.at(i)->setBackgroundColor(color);
                 } else if (socketType.at(0).at(i) == CON) {
-                    mSocketsIn.at(i)->setBackgroundColor(mConstantColor);
+                    mSocketsIn.at(i)->setBackgroundColor(color);
                 } else if (socketType.at(0).at(i) == ENUM) {
-                    mSocketsIn.at(i)->setBackgroundColor(mEnumColor);
+                    mSocketsIn.at(i)->setBackgroundColor(color);
                 }
             }
         }
@@ -317,25 +319,25 @@ void ZNodeView::setType(ZNodeView::Type type) {
         if (i >= socketCount.y) {
             mSocketsOut.at(i)->setVisibility(false);
         } else {
+
             if (i < socketCount.y) {
+                vec4 color = getSocketColor(socketType.at(0).at(i)) - darkenVec;
                 if (socketType.at(1).at(i) == VAR) {
-                    mSocketsOut.at(i)->setBackgroundColor(mVariableColor - darkenVec);
+                    mSocketsOut.at(i)->setBackgroundColor(color);
                 } else if (socketType.at(0).at(i) == CON)  {
-                    mSocketsOut.at(i)->setBackgroundColor(mConstantColor - darkenVec);
+                    mSocketsOut.at(i)->setBackgroundColor(color);
                 } else if (socketType.at(0).at(i) == ENUM) {
-                    mSocketsOut.at(i)->setBackgroundColor(mEnumColor - darkenVec);
+                    mSocketsOut.at(i)->setBackgroundColor(color);
                 }
             }
         }
     }
-
 
     // Always set max height to be large enough to fit all sockets
     if (socketCount.x > 0) {
         setMaxHeight(std::max((int) mSocketsIn.at(socketCount.x - 1)->getOffsetY() +
                               SOCKET_SIZE + MIN_MARGIN, getMaxHeight()));
     }
-
 
     if (getChartType(type) == LINE_2D) {
         mChart->setInputType(getChartType(getType()));
@@ -654,43 +656,42 @@ void ZNodeView::updateLabelVisibility() {
 
 void ZNodeView::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
-    if (isMouseInBounds(this)) {
-        if (getRelativeMouse().x < SOCKET_SIZE + SOCKET_SIZE) {
-            int index = 0;
-            if (getSocketCount().x > 0) {
-                for (const string &name : getSocketNames()) {
 
-                    if (index >= mSocketInLabels.size()) {
-                        ZLabel *label = new ZLabel(name, this);
-                        label->setTextColor(darkGrey);
-                        label->setMaxWidth(100);
-                        label->setClippingEnabled(false);
-                        mSocketInLabels.push_back(label);
-                    }
+    vec2 mouse = getRelativeMouse();
+    int size = SOCKET_SIZE + SOCKET_SIZE;
+    if (mouse.x < size && mouse.x > -size && mouse.y > 0 && mouse.y < getHeight()) {
+        int index = 0;
+        if (getSocketCount().x > 0) {
+            for (const string &name : getSocketNames()) {
 
-                    mSocketInLabels.at(index)->drawText();
-                    mSocketInLabels.at(index)->setXOffset((int) -mSocketInLabels.at(index)->getFirstLineWidth());
-                    mSocketInLabels.at(index)->setYOffset((int) mSocketsIn.at(index)->getOffsetY());
-
-                    mSocketInLabels.at(index)->onWindowChange(getWindowWidth(), getWindowHeight());
-                    mSocketInLabels.at(index)->bringToFront();
-
-
-                    mSocketInLabels.at(index)->setVisibility(true);
-                    index++;
+                if (index >= mSocketInLabels.size()) {
+                    ZLabel *label = new ZLabel(name, this);
+                    label->setTextColor(darkGrey);
+                    label->setMaxWidth(100);
+                    label->setClippingEnabled(false);
+                    mSocketInLabels.push_back(label);
                 }
+
+                mSocketInLabels.at(index)->drawText();
+                mSocketInLabels.at(index)->setXOffset((int) -mSocketInLabels.at(index)->getFirstLineWidth());
+                mSocketInLabels.at(index)->setYOffset((int) mSocketsIn.at(index)->getOffsetY());
+
+                mSocketInLabels.at(index)->onWindowChange(getWindowWidth(), getWindowHeight());
+                mSocketInLabels.at(index)->bringToFront();
+
+
+                mSocketInLabels.at(index)->setVisibility(true);
+                index++;
             }
-        } else {
-            hideSocketLabels();
         }
+    } else {
+        hideSocketLabels();
     }
+
 }
 
 void ZNodeView::onGlobalMouseUp(int key) {
     ZView::onGlobalMouseUp(key);
-    if (getRelativeMouse().x >= SOCKET_SIZE + SOCKET_SIZE || getRelativeMouse().x < 0) {
-        hideSocketLabels();
-    }
 }
 
 void ZNodeView::hideSocketLabels() {
@@ -707,5 +708,4 @@ void ZNodeView::onMouseOver() {
 
 void ZNodeView::onMouseLeave() {
     ZView::onMouseLeave();
-    hideSocketLabels();
 }
