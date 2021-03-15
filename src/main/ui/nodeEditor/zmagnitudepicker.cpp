@@ -1,3 +1,7 @@
+#include <utility>
+
+#include <utility>
+
 //
 // Created by lukas on 11/28/20.
 //
@@ -37,24 +41,47 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mRangeContainer->setGravity(topLeft);
     mRangeContainer->setMargin(vec4(0));
 
-    int rangeWidth = MAG_WIDTH / mRangeStrings.size();
+
+}
+
+void ZMagnitudePicker::setRadioButtonNames(vector<string> names) {
+    mRadioButtonNames = std::move(names);
+    initializeRadioButtons();
+}
+
+void ZMagnitudePicker::initializeRadioButtons() {
+    int rangeWidth = MAG_WIDTH / mRadioButtonNames.size();
     int index = 0;
-    for (const string& range : mRangeStrings) {
-        ZLabel* label = new ZLabel(range, mRangeContainer);
-        label->setMaxWidth(rangeWidth);
-        label->setXOffset(rangeWidth * index);
-        label->setOutlineType(WireType::outline);
-        label->setMargin(vec4(0));
-        label->setTextColor(vec3(0));
-        mRangeLabels.push_back(label);
+    for (const string &range : mRadioButtonNames) {
+
+        if (index >= mRadioButtonLabels.size()) {
+            ZLabel *label = new ZLabel(range, mRangeContainer);
+            mRadioButtonLabels.push_back(label);
+        }
+
+        mRadioButtonLabels.at(index)->setText(range);
+        mRadioButtonLabels.at(index)->setOutlineType(outline);
+        mRadioButtonLabels.at(index)->setMargin(vec4(0));
+        mRadioButtonLabels.at(index)->setTextColor(vec3(0));
+
+        mRadioButtonLabels.at(index)->setMaxWidth(rangeWidth);
+        mRadioButtonLabels.at(index)->setXOffset(rangeWidth * index);
+
 
         if (index == mSelectedMagnitude) {
-            label->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
+            mRadioButtonLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
         } else {
-            label->setBackgroundColor(getBackgroundColor());
+            mRadioButtonLabels.at(index)->setBackgroundColor(getBackgroundColor());
         }
         index++;
     }
+
+    int labelIndex = 0;
+    for (ZLabel* label : mRadioButtonLabels) {
+        label->setVisibility(labelIndex < mRadioButtonNames.size());
+        labelIndex++;
+    }
+    onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZMagnitudePicker::setValue(float value) {
@@ -98,7 +125,7 @@ void ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, in
 }
 
 void ZMagnitudePicker::setValueChangedListener(function<void(int index, float value, bool isInput, int magIndex)> l) {
-    mListener = l;
+    mListener = std::move(l);
 }
 
 void ZMagnitudePicker::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
@@ -109,17 +136,20 @@ void ZMagnitudePicker::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int st
 void ZMagnitudePicker::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
 
-    if (isMouseInBounds(mSlider) && getVisibility()) {
-        mSlider->onMouseEvent(GLFW_MOUSE_BUTTON_1, GLFW_PRESS, 0, 0,0);
-    }
+    if (getVisibility() && !mRadioButtonLabels.empty()) {
+        if (isMouseInBounds(mSlider) && getVisibility()) {
+            mSlider->onMouseEvent(GLFW_MOUSE_BUTTON_1, GLFW_PRESS, 0, 0, 0);
+        }
 
-    if (y > mRangeLabels.at(0)->getTop() && y < mRangeLabels.at(0)->getBottom() && isMouseInBounds(this)) {
-        int index = 0;
-        for (ZLabel *label : mRangeLabels) {
-            if (isMouseInBounds(label)) {
-                selectMagnitude(index);
+        if (y > mRadioButtonLabels.at(0)->getTop() && y < mRadioButtonLabels.at(0)->getBottom() &&
+            isMouseInBounds(this)) {
+            int index = 0;
+            for (ZLabel *label : mRadioButtonLabels) {
+                if (isMouseInBounds(label)) {
+                    selectMagnitude(index);
+                }
+                index++;
             }
-            index++;
         }
     }
 }
@@ -129,13 +159,21 @@ void ZMagnitudePicker::setTitle(string name) {
 }
 
 void ZMagnitudePicker::selectMagnitude(int index) {
-    for (ZLabel *label : mRangeLabels) {
+    for (ZLabel *label : mRadioButtonLabels) {
         label->setBackgroundColor(getBackgroundColor());
     }
 
-    mRangeLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
+    mRadioButtonLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
     mSlider->setMaxValue(mRanges.at(index));
     mSlider->setMinValue(-mRanges.at(index));
     mSlider->setIncrement(mRanges.at(index) / 10000.0);
     mSelectedMagnitude = index;
+
+    if (mListener != nullptr) {
+        mListener(mSocketIndex, mSlider->getValue(), mIsInput, mSelectedMagnitude);
+    }
+}
+
+void ZMagnitudePicker::setSliderVisibility(bool visibility) {
+    mSlider->setVisibility(visibility);
 }

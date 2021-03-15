@@ -260,6 +260,56 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         mMagnitudePicker->setVisibility(true);
         mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
         mMagnitudePicker->setTitle(name);
+        mMagnitudePicker->setSliderVisibility(true);
+        mMagnitudePicker->setRadioButtonNames(mRadioButtonNames);
+        if (isInput) {
+            mMagnitudePicker->selectMagnitude(node->getInputMagnitude(index));
+        } else {
+            mMagnitudePicker->selectMagnitude(node->getOutputMagnitude(index));
+        }
+
+        mMagnitudePicker->setValueChangedListener([this, nodeView](int index, float value, bool isInput, int magIndex) {
+            if (!isInput) {
+                nodeView->setConstantValue(index, value, magIndex);
+            } else {
+                nodeView->setConstantValueInput(index, value, magIndex);
+            }
+
+        });
+        mMagnitudePicker->setValue(initialValue);
+    });
+
+    node->setShowEnumPickerListener([this, node](ZView *view, ZNodeView *nodeView,
+                                                int index, bool isInput, float initialValue, string name,
+                                                vector<string> enumNames) {
+        vec2 mouse = getRelativeMouse();
+
+
+        // This logic shows the popup slider window
+        float difference = (mMagnitudePicker->getWidth()) / 2.0;
+
+        double xpos = std::min(std::max(0.0, (double) (mouse.x - difference)),
+                               (double) getWidth() - mMagnitudePicker->getMaxWidth());
+        double ypos;
+
+        double margin = 10;
+        if (mouse.y - mMagnitudePicker->getMaxHeight() > 0) {
+            // Show above
+            ypos = mouse.y - (mMagnitudePicker->getMaxHeight() + margin);
+            mMagnitudePicker->setShowAbove(true);
+        } else {
+            // Show below
+            ypos = mouse.y + (view->getHeight() + margin);
+            mMagnitudePicker->setShowAbove(false);
+        }
+
+        mMagnitudePicker->setInputType(index, isInput);
+        mMagnitudePicker->setOffset(vec2(xpos, ypos));
+        mMagnitudePicker->setVisibility(true);
+        mMagnitudePicker->onWindowChange(getWindowWidth(), getWindowHeight());
+        mMagnitudePicker->setTitle(name);
+        mMagnitudePicker->setSliderVisibility(false);
+        mMagnitudePicker->setRadioButtonNames(enumNames);
 
         if (isInput) {
             mMagnitudePicker->selectMagnitude(node->getInputMagnitude(index));
@@ -277,6 +327,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         });
         mMagnitudePicker->setValue(initialValue);
     });
+
 
     node->resetInitialPosition();
     node->invalidateSingleNode();

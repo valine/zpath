@@ -304,8 +304,10 @@ void ZNodeView::setType(ZNodeView::Type type) {
             if (i < socketCount.x) {
                 if (socketType.at(0).at(i) == VAR) {
                     mSocketsIn.at(i)->setBackgroundColor(mVariableColor);
-                } else {
+                } else if (socketType.at(0).at(i) == CON) {
                     mSocketsIn.at(i)->setBackgroundColor(mConstantColor);
+                } else if (socketType.at(0).at(i) == ENUM) {
+                    mSocketsIn.at(i)->setBackgroundColor(mEnumColor);
                 }
             }
         }
@@ -318,8 +320,10 @@ void ZNodeView::setType(ZNodeView::Type type) {
             if (i < socketCount.y) {
                 if (socketType.at(1).at(i) == VAR) {
                     mSocketsOut.at(i)->setBackgroundColor(mVariableColor - darkenVec);
-                } else {
+                } else if (socketType.at(0).at(i) == CON)  {
                     mSocketsOut.at(i)->setBackgroundColor(mConstantColor - darkenVec);
+                } else if (socketType.at(0).at(i) == ENUM) {
+                    mSocketsOut.at(i)->setBackgroundColor(mEnumColor - darkenVec);
                 }
             }
         }
@@ -405,7 +409,12 @@ void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
                 if (isMouseInBounds(inputSocket) && mInputIndices.at(socketIndex).empty() &&
                         inputSocket->getVisibility() && getSocketType().at(0).at(socketIndex) == CON) {
                     mShowMagnitudeView(mOutputLabel, this, socketIndex, true,
-                            mConstantValueInput.at(socketIndex), getSocketName().at(socketIndex));
+                            mConstantValueInput.at(socketIndex), getSocketNames().at(socketIndex));
+                } else if (isMouseInBounds(inputSocket) && mInputIndices.at(socketIndex).empty() &&
+                       inputSocket->getVisibility() && getSocketType().at(0).at(socketIndex) == ENUM) {
+                    mShowEnumView(mOutputLabel, this, socketIndex, true,
+                                       mConstantValueInput.at(socketIndex),
+                                       getSocketNames().at(socketIndex), getEnumNames(socketIndex));
                 }
                 socketIndex++;
             }
@@ -422,6 +431,11 @@ void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
 void ZNodeView::setShowMagPickerListener(
         function<void(ZView *sender, ZNodeView *node, int index, bool isInput, float initialValue, string name)> onValueSelect) {
     mShowMagnitudeView = std::move(onValueSelect);
+}
+
+void ZNodeView::setShowEnumPickerListener(
+        function<void(ZView *sender, ZNodeView *node, int index, bool isInput, float initialValue, string name, vector<string> enumNames)> onValueSelect) {
+    mShowEnumView = std::move(onValueSelect);
 }
 
 void ZNodeView::setConstantValue(int index, float value, int magnitudeIndex) {
@@ -510,13 +524,15 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                         // Use the default input when nothing is connected to a constant socket
                         if (getSocketType().at(0).at(i) == VAR) {
                             summedInputs.at(d).at(i) = x.at(d).at(i);
-                        } else {
+                        } else if (getSocketType().at(0).at(i) == CON) {
                             // By default constants have no imaginary component
                             if (d == REAL) {
                                 summedInputs.at(d).at(i) = mConstantValueInput.at(i);
                             } else {
                                 summedInputs.at(d).at(i) = 0.0;
                             }
+                        } else if (getSocketType().at(0).at(i) == ENUM) {
+                            summedInputs.at(d).at(i) = mConstantMagnitudeInput.at(i);
                         }
                     }
                 }
@@ -616,5 +632,39 @@ void ZNodeView::updateLabelVisibility() {
         mXMaxLabel->setVisibility(true);
         mYMinLabel->setVisibility(true);
         mYMaxLabel->setVisibility(true);
+    }
+}
+
+void ZNodeView::onMouseOver() {
+    ZView::onMouseOver();
+
+    int index = 0;
+    if (getSocketCount().x > 0) {
+        for (const string &name : getSocketNames()) {
+
+            if (index >= mSocketInLabels.size()) {
+                ZLabel *label = new ZLabel(name, this);
+                label->setTextColor(darkGrey);
+                label->setMaxWidth(100);
+                label->setClippingEnabled(false);
+                label->setYOffset((int) mSocketsIn.at(index)->getOffsetY());
+                label->setXOffset(-label->getWidth());
+                label->onWindowChange(getWindowWidth(), getWindowHeight());
+                label->bringToFront();
+
+                mSocketInLabels.push_back(label);
+            }
+
+            mSocketInLabels.at(index)->setVisibility(true);
+            index++;
+        }
+    }
+}
+
+void ZNodeView::onMouseLeave() {
+    ZView::onMouseLeave();
+
+    for (ZLabel* label : mSocketInLabels) {
+        label->setVisibility(false);
     }
 }

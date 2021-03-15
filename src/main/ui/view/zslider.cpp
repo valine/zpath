@@ -227,7 +227,8 @@ void ZSlider::valueChanged(float offset) {
 	
 	float incValue = roundf(value / mIncrement) * mIncrement;
 
-	auto format = "%.2f";
+	
+	auto format = "%.4f";
 	auto size = std::snprintf(nullptr, 0, format, incValue);
 	std::string output(size, '\0');
 	std::sprintf(&output[0], format, incValue);

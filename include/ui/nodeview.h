@@ -41,7 +41,8 @@ public:
 
     enum SocketType {
         CON,
-        VAR
+        VAR,
+        ENUM
     };
 
     enum ChartResMode {
@@ -334,8 +335,6 @@ public:
         return output;
     }
 
-
-
     /**
      * First value is input count, second value is output count. If input count is zero node
      * is an input node like a constant or number range. If output count is zero the node is
@@ -379,7 +378,7 @@ public:
             case HEAT_MAP: return ivec2(3,3);
             case COMBINE: return ivec2(2,1);
             case SPLIT: return ivec2(1,2);
-            case NEURAL_CORE: return ivec2(5,3);
+            case NEURAL_CORE: return ivec2(6,3);
             case LAST:return ivec2(0,0);
         }
     }
@@ -407,10 +406,10 @@ public:
    const array<array<SocketType, 6>, 2> COMBINE_TYPE = {{{{VAR, VAR}},{{VAR}}}};
    const array<array<SocketType, 6>, 2> SPLIT_TYPE = {{{{VAR}},{{VAR, VAR}}}};
 
-    const array<array<SocketType, 6>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 6>, 2> NONE_TYPE = {{}};
+    const array<array<SocketType, 6>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM}},{{VAR, CON, CON}}}};
+    const array<array<SocketType, 6>, 2> NONE_TYPE = {{}};
 
-   const array<array<SocketType, 6>, 2> getSocketType() const {
+    const array<array<SocketType, 6>, 2> getSocketType() const {
         switch (mType) {
             case POLY: {
                 return POLY_TYPE;
@@ -609,7 +608,7 @@ public:
         }
     }
 
-    vector<string> getSocketName() {
+    vector<string> getSocketNames() {
         switch (mType) {
             case POLY:return {"", "A", "BX", "CX^2", "DX^3"};
             case ADD:
@@ -628,8 +627,8 @@ public:
             case LAPLACE: return {"", "", "Window Start", "Window Size", "Z Min", "Z Max"};
             case CHART_2D: return {"", "", "Resolution"};
             case HEAT_MAP: return {"", "Z Min", "Z Max"};
-            case NEURAL_CORE: return {"", "", "Step Size", "Window Start", "Window Width"};
-            default: vector<string>(MAX_INPUT_COUNT, "");
+            case NEURAL_CORE: return {"", "", "Step Size", "Window Start", "Window Width", "Optimizer"};
+            default: vector<string>(MAX_INPUT_COUNT, " ");
         }
     }
 
@@ -640,8 +639,26 @@ public:
        }
    }
 
+   vector<string> getEnumNames(int socketIndex) {
+
+        switch(mType) {
+            case NEURAL_CORE: {
+                switch (socketIndex) {
+                    case 5:
+                        return {"RMSProp", "Adagrad", "Momentum", "Grad Decent",};
+                    default:
+                        return vector<string>(1, " ");
+                }
+
+            }
+            default:
+                return vector<string>(1, " ");
+        }
+
+    }
+
     void initializeNNModel() {
-        vector<int> heights = {10};
+        vector<int> heights = {3,3};
         int width = heights.size();
 
         int inputs = 1;
@@ -649,7 +666,7 @@ public:
         int batchSize = 100;
         float stepSize = 0.0001;
         MlModel::Optimizer optimizer = MlModel::RMSPROP;
-        Neuron::Activation type = Neuron::SIGMOID;
+        Neuron::Activation type = Neuron::TANH;
         vector<Neuron::Activation> activationFunctions = vector<Neuron::Activation>(width, type);
 
         mMlModel = new MlModel(width, heights, inputs, outputs,
@@ -683,17 +700,20 @@ public:
                             for (int i = 0; i < samples; i++) {
                                 float t = (((float) i / fres) * windowSize) + start;
                                 float summedInput = sumInputs(t, socketIndex, dimenIndex);
-                                cout << t << ", " << summedInput << endl;
-
                                 trainingData.push_back({{t}, {summedInput}});
                             }
 
                             mMlModel->setStepSize(sumInputs(0.0, 2, 0));
+
+                            int optmizerIndex = sumInputs(0, 5, 0);
+                            setOptimizer(optmizerIndex);
+
                             mMlModel->setTrainingData(trainingData);
                             mMlModel->computeNormalization();
                             mMlModel->setTrainingCallback([this](){
+                                int optmizerIndex = sumInputs(0, 5, 0);
+                                setOptimizer(optmizerIndex);
                                 invalidateSingleNode();
-
                                 mMlModel->setStepSize(sumInputs(0.0, 2, 0));
                             });
                             mMlModel->trainNetworkAsync(10000);
@@ -719,6 +739,28 @@ public:
             default: return nullptr;
         }
    }
+
+    void setOptimizer(int optmizerIndex) const {
+        switch (optmizerIndex) {
+            case 0: {
+                mMlModel->setOptimizer(MlModel::RMSPROP);
+                break;
+            }
+            case 1: {
+                mMlModel->setOptimizer(MlModel::ADAGRAD);
+                break;
+            }
+            case 2: {
+                mMlModel->setOptimizer(MlModel::MOMENTUM);
+                break;
+            }
+            case 3: {
+                mMlModel->setOptimizer(MlModel::GD);
+                break;
+            }
+
+        }
+    }
 
     vec4 getNodeColor(Type type) {
         switch (type) {
@@ -901,13 +943,15 @@ public:
         if (inputSocket.empty()) {
             if (getSocketType().at(0).at(socketIndex) == VAR) {
                 summedInput = x;
-            } else {
+            } else if (getSocketType().at(0).at(socketIndex) == CON) {
                 // By default constants have no imaginary component
                 if (var == REAL) {
                     summedInput = mConstantValueInput.at(socketIndex);
                 } else {
                     summedInput = 0.0;
                 }
+            } else if (getSocketType().at(0).at(socketIndex) == ENUM) {
+                summedInput = mConstantMagnitudeInput.at(socketIndex);
             }
         }
 
@@ -985,17 +1029,19 @@ public:
 
     MlModel* mMlModel = nullptr;
 
-
-
-
     //////////
 
+    void
+    setShowEnumPickerListener(function<void(ZView *, ZNodeView *, int, bool, float, string, vector<string>)> onValueSelect);
 
 private:
     bool mInvalid = true;
 
     vector<ZView*> mSocketsIn;
     vector<ZView*> mSocketsOut;
+
+    vector<ZLabel*> mSocketInLabels;
+    vector<ZLabel*> mSockOutLabels;
 
     Type mType = ADD;
 
@@ -1025,11 +1071,16 @@ private:
 
     vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
     vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
+    vec4 mEnumColor = vec4(0.038825, 0.538225, 0.048049, 1.000000);
     vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
     vector<int> mMagPrecision = {8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0};
 
     function<void(ZView* sender, ZNodeView* node, int socketIndex,
             bool isInput, float initialValue, string name)> mShowMagnitudeView;
+
+    function<void(ZView* sender, ZNodeView* node, int socketIndex,
+                  bool isInput, float initialValue, string name, vector<string> enumNames)> mShowEnumView;
+
     function<void(ZNodeView* node)> mInvalidateListener;
 
     vector<complex<float>> mFftCache;
@@ -1050,6 +1101,11 @@ private:
     void setOutputLabel(float output) const;
 
     void updateChartHeatMap();
+
+    void onMouseOver() override;
+
+    void onMouseLeave() override;
+
 };
 
 

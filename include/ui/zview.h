@@ -266,6 +266,7 @@ class ZView {
         const vec4 yellow = vec4(1,1,0,1);
         const vec4 gold = vec4(1, 0.709230, 0, 1);
         const vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
+        const vec4 darkGrey = vec4(0.5, 0.5, 0.5, 1.0);
         const vec4 transparent = vec4(0);
         const vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
 

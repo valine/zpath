@@ -396,7 +396,6 @@ double MlModel::getInitialWeight(double height) {
     double var = 5.0 / height;
     srand(mSeed++);
     double number = var * ((double) rand() / (double) RAND_MAX)  - (var / 2.0);
-    cout << number << endl;
     return number;
 }
 
