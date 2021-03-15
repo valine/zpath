@@ -655,7 +655,7 @@ void ZNodeView::updateLabelVisibility() {
 void ZNodeView::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
     if (isMouseInBounds(this)) {
-        if (getRelativeMouse().x < SOCKET_SIZE + MIN_MARGIN) {
+        if (getRelativeMouse().x < SOCKET_SIZE + SOCKET_SIZE) {
             int index = 0;
             if (getSocketCount().x > 0) {
                 for (const string &name : getSocketNames()) {
@@ -688,7 +688,7 @@ void ZNodeView::onCursorPosChange(double x, double y) {
 
 void ZNodeView::onGlobalMouseUp(int key) {
     ZView::onGlobalMouseUp(key);
-    if (getRelativeMouse().x >= SOCKET_SIZE + MIN_MARGIN || getRelativeMouse().x < 0) {
+    if (getRelativeMouse().x >= SOCKET_SIZE + SOCKET_SIZE || getRelativeMouse().x < 0) {
         hideSocketLabels();
     }
 }
