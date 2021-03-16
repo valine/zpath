@@ -126,6 +126,16 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mYMaxLabel->setTextColor(boundColor);
 
     updateLabelVisibility();
+
+    for (int i = 0; i < MAX_INPUT_COUNT; i++) {
+        if (i >= mSocketInLabels.size()) {
+            ZLabel *label = new ZLabel("", this);
+            label->setTextColor(darkGrey);
+            label->setMaxWidth(100);
+            label->setClippingEnabled(false);
+            mSocketInLabels.push_back(label);
+        }
+    }
 }
 
 void ZNodeView::initializeEdges() {
@@ -659,39 +669,25 @@ void ZNodeView::onCursorPosChange(double x, double y) {
 
     vec2 mouse = getRelativeMouse();
     int size = SOCKET_SIZE + SOCKET_SIZE;
-    if (mouse.x < size && mouse.x > -size && mouse.y > 0 && mouse.y < getHeight()) {
+    if (mouse.x < size && mouse.x > -size && mouse.y > 0 && mouse.y < getMaxHeight()) {
         int index = 0;
         if (getSocketCount().x > 0) {
             for (const string &name : getSocketNames()) {
 
-                if (index >= mSocketInLabels.size()) {
-                    ZLabel *label = new ZLabel(name, this);
-                    label->setTextColor(darkGrey);
-                    label->setMaxWidth(100);
-                    label->setClippingEnabled(false);
-                    mSocketInLabels.push_back(label);
-                }
-
-                mSocketInLabels.at(index)->drawText();
+                mSocketInLabels.at(index)->setText(name);
                 mSocketInLabels.at(index)->setXOffset((int) -mSocketInLabels.at(index)->getFirstLineWidth());
                 mSocketInLabels.at(index)->setYOffset((int) mSocketsIn.at(index)->getOffsetY());
-
-                mSocketInLabels.at(index)->onWindowChange(getWindowWidth(), getWindowHeight());
-                mSocketInLabels.at(index)->bringToFront();
-
-
                 mSocketInLabels.at(index)->setVisibility(true);
                 index++;
             }
         }
+
+        onWindowChange(getWindowWidth(), getWindowHeight());
+        invalidate();
     } else {
         hideSocketLabels();
     }
 
-}
-
-void ZNodeView::onGlobalMouseUp(int key) {
-    ZView::onGlobalMouseUp(key);
 }
 
 void ZNodeView::hideSocketLabels() {
@@ -700,12 +696,4 @@ void ZNodeView::hideSocketLabels() {
             label->setVisibility(false);
         }
     }
-}
-
-void ZNodeView::onMouseOver() {
-    ZView::onMouseOver();
-}
-
-void ZNodeView::onMouseLeave() {
-    ZView::onMouseLeave();
 }

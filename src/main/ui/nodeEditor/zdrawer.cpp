@@ -54,8 +54,6 @@ void ZDrawer::onGlobalMouseUp(int key) {
 }
 void ZDrawer::onMouseEvent(int button, int action, int mods, int x, int y) {
     ZScrollView::onMouseEvent(button, action, mods, x, y);
-
-    cout << action << endl;
     if (action == GLFW_PRESS) {
         int index = 0;
         for (ZView* view : mButtons) {

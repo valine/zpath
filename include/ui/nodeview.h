@@ -1144,15 +1144,9 @@ private:
 
     void updateChartHeatMap();
 
-    void onMouseOver() override;
-
-    void onMouseLeave() override;
-
     void onCursorPosChange(double x, double y);
 
     void hideSocketLabels();
-
-    void onGlobalMouseUp(int key);
 };
 
 

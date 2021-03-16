@@ -65,8 +65,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mDrawer->setMarginTop(25);
     mDrawer->setMarginBottom(25);
     mDrawer->setOnItemSelected([this, allTypes](int index){
-        deselectAllNodes();
-
         vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getScale()) - mNodeContainer->getInnerTranslation();
         vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop(), 0);
         // startPosition.x = std::max((int) mDrawer->getWidth(), (int) startPosition.x);
@@ -80,7 +78,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         mDragNode = node->getIndexTag();
         node->setInitialPosition(startPosition);
         enterGrabMode();
-        node->onWindowChange(getWindowWidth(), getWindowHeight());
+
     });
 
     mDrawer->setOnItemClicked([this, allTypes](int index){
