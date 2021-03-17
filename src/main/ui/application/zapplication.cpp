@@ -4,6 +4,7 @@
 #include <thread>
 #include <utils/zsettingsstore.h>
 #include <zconf.h>
+#include "ui/stb_image.h"
 
 static void error_callback(int error, const char* description) {
     cout<< "GLFW error " << description << endl;
@@ -45,6 +46,14 @@ ZApplication::ZApplication(vector<ZViewController*> controllers, string name, bo
 
 ZApplication::ZApplication(vector<ZViewController*> controllers, string name, bool shouldPoll, int windowWidth, int windowHeight) {
     init(controllers, name, shouldPoll, windowWidth, windowHeight, nullptr);
+}
+
+
+ZApplication::ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth, int windowHeight,
+                           string icon) {
+    vector<ZViewController*> controllers = {controller};
+    init(controllers, std::move(name), shouldPoll, windowWidth, windowHeight, nullptr);
+    mIconPath = std::move(icon);
 }
 
 void
@@ -95,6 +104,19 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
 
     glfwSetWindowUserPointer(window, reinterpret_cast<void *>(app));
+
+    if (!app->mIconPath.empty()) {
+        int iconWidth, iconHeight, nrComponents;
+        string path = viewController->getResourcePath();
+        unsigned char *data = stbi_load(app->mIconPath.c_str(), &iconWidth, &iconHeight, &nrComponents, 0);
+
+        GLFWimage icons[1];
+        icons[0].pixels = data;
+        icons[0].width = iconWidth;
+        icons[0].height = iconHeight;
+        glfwSetWindowIcon(window, 1, icons);
+        stbi_image_free(data);
+    }
 
     glfwSetWindowSizeCallback(window,
                               [](GLFWwindow *window, int width, int height) {

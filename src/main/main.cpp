@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     }, {"3D Viewport", "Node Editor", "Text Editor"}, true, nullptr);
 
 
-    ZApplication(tiles, "zpath", false, 1200, 800);
+    ZApplication(tiles, "zpath", false, 1200, 800, "resources/icons/zpath.png");
 
     //ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, textEditor, view3d});
    // ZApplication(tabs, "zpath", false, 1200, 800);

@@ -14,6 +14,7 @@ public:
 	ZApplication(ZViewController* viewcontroller, string windowName);
 	ZApplication(ZViewController* controller, string name, bool shouldPoll);
 	ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight);
+    ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight, string icon);
 
 
     ZApplication(vector<ZViewController*> controllers);
@@ -32,6 +33,7 @@ public:
 	void setShouldPollEvents(bool);
 private:
 
+    string mIconPath = "";
     map<GLFWwindow*, ZViewController*> mWindows;
 	vector<ZViewController*> mViewControllers;
 	bool mShouldSwapBuffer = true;

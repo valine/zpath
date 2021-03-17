@@ -58,6 +58,8 @@ unsigned int ZTexture::loadTexture(char const * path){
 }
 
 
+
+
 unsigned int ZTexture::loadTexture(float* pixels, int width, int height){
     unsigned int textureID;
     glGenTextures(1, &textureID);

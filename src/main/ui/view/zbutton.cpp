@@ -33,7 +33,7 @@ void ZButton::draw() {
 	ZView::draw();
 }
 
-void ZButton::setOnClick(std::function<void(ZView* sender)> onClick) {
+void ZButton::setOnClick(std::function<void(ZButton* sender)> onClick) {
     mOnClick = std::move(onClick);
 }
 

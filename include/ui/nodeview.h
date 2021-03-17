@@ -27,6 +27,7 @@ using namespace std;
 #include <array>
 #include "zlabel.h"
 #include "neuralcore/mlmodel.h"
+#include "zbutton.h"
 
 class ZNodeView : public ZView {
 public:
@@ -596,7 +597,7 @@ public:
 
     vector<string> getButtonNames() {
        switch(mType) {
-           case NEURAL_CORE: return {"Train", "Stop", "Reset"};
+           case NEURAL_CORE: return {"Train", "Reset"};
            default: return {};
        }
    }
@@ -710,12 +711,12 @@ public:
         mMlModel->resetNetwork();
     }
 
-    function<void()> getButtonCallback(int index) {
+    function<void(ZButton* sender)> getButtonCallback(int index) {
         switch(mType) {
             case NEURAL_CORE: {
                 switch (index) {
                     case 0: {
-                        return [this](){
+                        return [this](ZButton* sender){
                             // Train the network
 
                             if (mMlModel == nullptr) {
@@ -798,19 +799,15 @@ public:
 
                             if (mMlModel->getTrainingInProgress())  {
                                 mMlModel->requestStopTraining();
+                                sender->setText("Train");
                             } else {
                                 mMlModel->trainNetworkAsync(10000);
+                                sender->setText("Stop");
                             }
                         };
                     }
-
                     case 1: {
-                        return [this]() {
-                            mMlModel->requestStopTraining();
-                        };
-                    }
-                    case 2: {
-                        return [this]() {
+                        return [this](ZButton* sender) {
                             mMlModel->resetNetwork();
                         };
                     }
