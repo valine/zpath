@@ -321,10 +321,27 @@ public:
                         initializeNNModel();
                     }
 
-                    mMlModel->setInput(x.at(REAL).at(1), 0);
-                    mMlModel->compute();
+                    float returnValue;
+                    if (mMlModel->getTrainingInProgress()) {
+                        vec2 thisChartBounds = mChart->getXBounds();
+                        float span = thisChartBounds.y - thisChartBounds.x;
+                        float inX = ((x.at(REAL).at(1) - thisChartBounds.x) / span) * mMlCache.size();
+                        if (span > 0) {
+                            int xIndex = 0;
+                            if (inX >= 0 && (inX) < mMlCache.size() && !mMlCache.empty()) {
+                                xIndex = (int) inX;
+                                complex<float> y = mMlCache.at(xIndex);
+                                returnValue = y.real();
+                            }
+                        }
 
-                    return {{x.at(REAL).at(0), chartBound.x, chartWidth}, {(float) mMlModel->getOutputAt(0), chartBound.x, chartWidth}};
+                    } else {
+                        mMlModel->setInput(x.at(REAL).at(1), 0);
+                        mMlModel->compute();
+                        returnValue = mMlModel->getOutputAt(0);
+                    }
+
+                    return {{x.at(REAL).at(0), chartBound.x, chartWidth}, {returnValue, chartBound.x, chartWidth}};
                 }
                 case LAST:
                     break;
@@ -677,12 +694,12 @@ public:
     }
 
     void initializeNNModel() {
-        vector<int> heights = {3,4};
+        vector<int> heights = {3,3,3};
         int width = heights.size();
 
         int inputs = 1;
         int outputs = 1;
-        int batchSize = 100;
+        int batchSize = 50;
         float stepSize = 0.0001;
         MlModel::Optimizer optimizer = MlModel::RMSPROP;
         Neuron::Activation type = Neuron::TANH;
@@ -706,7 +723,7 @@ public:
                             }
 
                             vector<pair<vector<double>, vector<double>>> trainingData;
-                            int samples = 1000;
+                            int samples = 200;
 
                             int socketIndex = 0;
                             int dimenIndex = 0;
@@ -758,10 +775,32 @@ public:
                                 setOptimizer(optmizerIndex);
                                 mMlModel->setStepSize(sumInputs(0.0, 2, 0));
 
-                                invalidateSingleNode();
+
+                                vec2 xBound = mChart->getXBounds();
+                                float span = xBound.y - xBound.x;
+                                float inc = span / mChart->getResolution();
+                                vector<vector<float>> job;
+                                for (float x = xBound.x; x < xBound.y; x += inc) {
+                                    job.push_back({x});
+
+                                }
+                                mMlModel->computeAsync(job, [this](vector<vector<float>> outputs){
+                                    mMlCache.clear();
+                                    for (vector<float> output : outputs) {
+                                        mMlCache.emplace_back(output.at(0), output.at(0));
+                                    }
+
+                                    invalidateSingleNode();
+                                });
+
+
                             });
-                            mMlModel->trainNetworkAsync(10000);
-                            invalidateSingleNode();
+
+                            if (mMlModel->getTrainingInProgress())  {
+                                mMlModel->requestStopTraining();
+                            } else {
+                                mMlModel->trainNetworkAsync(10000);
+                            }
                         };
                     }
 
@@ -1126,6 +1165,8 @@ private:
     function<void(ZNodeView* node)> mInvalidateListener;
 
     vector<complex<float>> mFftCache;
+    vector<complex<float>> mMlCache;
+
     vector<vector<float>> mLaplaceCache;
 
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;

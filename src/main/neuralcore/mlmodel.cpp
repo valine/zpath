@@ -293,6 +293,7 @@ void MlModel::computeNormalization() {
 }
 
 void MlModel::trainNetwork(int epochCount, MlModel *model) {
+    model->mTrainingInProgress = true;
     for (int j = 0; j < epochCount; j++) {
         model->mTotalCost = 0.0;
         int batchCount = model->mTrainingData.size() / model->mMiniBatchSize;
@@ -313,17 +314,53 @@ void MlModel::trainNetwork(int epochCount, MlModel *model) {
             }
 
             model->getTotalCostNode()->applyPending();
+
+            if (model->mTrainingCallback != nullptr) {
+                model->mTrainingCallback();
+            }
         }
 
-        if (model->mTrainingCallback != nullptr) {
-            model->mTrainingCallback();
-        }
 
         if (model->mShouldStop) {
             model->mShouldStop = false;
+            model->mTrainingInProgress = false;
             return;
         }
+
+        // Compute value
+        if (!model->mJobs.empty()) {
+            vector<vector<float>> jobOutputs;
+            for (vector<float> inputs : model->mJobs) {
+                int index = 0;
+                for (float input : inputs) {
+                    model->setInput(input, index);
+                    index++;
+                }
+
+                model->compute();
+
+                vector<float> outputs;
+                for (int i = 0; i < model->mOutputs; i++) {
+                    outputs.push_back(model->getOutputAt(i));
+                }
+
+                jobOutputs.push_back(outputs);
+            }
+
+
+            if (model->mJobsCallback != nullptr) {
+                model->mJobsCallback(jobOutputs);
+            }
+            model->mJobs.clear();
+        }
     }
+
+    model->mTrainingInProgress = false;
+}
+
+void MlModel::computeAsync(vector<vector<float>> input, function<void(vector<vector<float>>)> function) {
+    mJobs = std::move(input);
+    mJobsCallback = std::move(function);
 }
 
 void MlModel::setTrainingCallback(function<void()> callback) {
@@ -430,6 +467,8 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
     // Run inference
     computeAll();
 
+    float step = mStep;
+
     for (vector<Neuron*> layer : mTrainable) {
         for (Neuron* node : layer) {
 
@@ -438,52 +477,52 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
                 double db = node->computeDEDB();
 
                 node->setAverageBias(node->getAverageBias() + db * db);
-                node->updatePendingBias(-(mStep / (sqrt(node->getAverageBias()) + 1e-6)) * db);
+                node->updatePendingBias(-(step / (sqrt(node->getAverageBias()) + 1e-6)) * db);
 
                 for (unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
 
                     double dw = node->computeDEDW(wi) + (pow(node->getWeights().at(wi), 1.0)) / mTrainingData.size();
                     node->setAverageGrad(wi, node->getAverageGrads().at(wi) + dw * dw);
-                    node->updatePendingWeight(-(mStep / (sqrt(node->getAverageGrads().at(wi)) + 1e-6)) * dw, wi);
+                    node->updatePendingWeight(-(step / (sqrt(node->getAverageGrads().at(wi)) + 1e-6)) * dw, wi);
                 }
             } else if (mOptimizer == RMSPROP) {
-                double R = 0.90;
+                double R = 0.95;
                 double e = 1.e-2;
                 // Update Bias
                 double db = node->computeDEDB();
                 node->setAverageBias((R) * node->getAverageBias() + ((1.0 - R) * pow(db, 2)));
-                node->updatePendingBias(((-mStep * db) / sqrt(node->getAverageBias()  + e)));
+                node->updatePendingBias(((-step * db) / sqrt(node->getAverageBias()  + e)));
 
                 // Update weights
                 for (unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
                     double dw = node->computeDEDW(wi) + (pow(node->getWeights().at(wi), 2.0) * 0.1) / mTrainingData.size();
                     node->setAverageGrad(wi, (R) * node->getAverageGrads().at(wi) + ((1.0 - R) * pow(dw, 2)));
-                    node->updatePendingWeight(( (-(mStep * dw) / sqrt(node->getAverageGrads().at(wi) + e)) ), wi);
+                    node->updatePendingWeight(( (-(step * dw) / sqrt(node->getAverageGrads().at(wi) + e)) ), wi);
                 }
             } else if (mOptimizer == MOMENTUM) {
                 double R = 0.9;
                 // Update Bias
                 double db = node->computeDEDB();
                 node->setAverageBias((R) * node->getAverageBias() + ((1.0 - R) * db));
-                node->updatePendingBias(((-mStep * node->getAverageBias())));
+                node->updatePendingBias(((-step * node->getAverageBias())));
 
                 // Update weights
                 for (unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
                     double dw = node->computeDEDW(wi);
                     node->setAverageGrad(wi, R * node->getAverageGrads().at(wi) + ((1.0 - R) * dw));
-                    node->updatePendingWeight(( (-(mStep * node->getAverageGrads().at(wi)))), wi);
+                    node->updatePendingWeight(( (-(step * node->getAverageGrads().at(wi)))), wi);
                 }
             } else if (mOptimizer == GD) {
                 double db = node->computeDEDB();
 
                 node->setAverageBias(node->getAverageBias() + db * db);
-                node->updatePendingBias(-(mStep * (db / mMiniBatchSize)));
+                node->updatePendingBias(-(step * (db)));
 
                 for (unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
 
                     double dw = node->computeDEDW(wi) + (pow(node->getWeights().at(wi), 1.0)) / mTrainingData.size();
                     node->setAverageGrad(wi, node->getAverageGrads().at(wi) + dw * dw);
-                    node->updatePendingWeight(-mStep  * (dw / mMiniBatchSize), wi);
+                    node->updatePendingWeight(-step  * (dw ), wi);
                 }
             }
         }

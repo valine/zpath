@@ -52,6 +52,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mCursorView = new ZCursorView(mLineContainer);
     mCursorView->setVisibility(false);
+    mCursorView->setClippingEnabled(false);
 
     ZLineView* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
@@ -986,7 +987,7 @@ void ZNodeEditor::enterBoxSelect2nd() {
     mBoxMode = BOX_SELECT_2;
     mCursorView->setVisibility(false);
     mBoxSelect->setVisibility(true);
-    mBoxSelect->setOffset(getMouse() / mNodeContainer->getScale());
+    mBoxSelect->setOffset(getRelativeMouse() / mNodeContainer->getScale());
     mBoxSelect->setMaxWidth(0);
     mBoxSelect->setMaxHeight(0);
 }
@@ -1033,16 +1034,17 @@ void ZNodeEditor::onCursorPosChange(double x, double y) {
     // Draw giant giant cursor around mouse for box select mode
     if (mBoxMode == BOX_SELECT)  {
         mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
-        mCursorView->onWindowChange(getWidth(), getHeight());
+        mCursorView->onWindowChange(getWindowWidth(), getWindowHeight());
         mCursorView->getParentView()->invalidate();
         invalidate();
     } else if (mBoxMode == BOX_SELECT_2) {
 
-        vec2 mouse = getMouse() / mNodeContainer->getScale();
+        vec2 mouse = getRelativeMouse() / mNodeContainer->getScale();
         int mouseX = (int) mouse.x;
         int mouseY = (int) mouse.y;
         mBoxSelect->setMaxWidth(mouseX - (int) mBoxSelect->getOffsetX());
         mBoxSelect->setMaxHeight(mouseY - (int) mBoxSelect->getOffsetY());
+        mBoxSelect->setBackgroundColor(faded);
     }
 }
 

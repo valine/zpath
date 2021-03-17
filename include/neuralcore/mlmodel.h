@@ -71,8 +71,12 @@ public:
         mShouldStop = true;
     }
 
-    void setActivationFunction(Neuron::Activation activation);
+    bool getTrainingInProgress() {
+        return mTrainingInProgress;
+    }
 
+    void setActivationFunction(Neuron::Activation activation);
+    void computeAsync(vector<vector<float>> input, function<void(vector<vector<float>>)> function);
 private:
     int mInputs = 1;
     int mOutputs = 1;
@@ -82,6 +86,11 @@ private:
     double mTotalCost = 0;
 
     bool mShouldStop = false;
+    bool mTrainingInProgress = false;
+
+    // Compute jobs to be done during training
+    vector<vector<float>> mJobs;
+    function<void(vector<vector<float>>)> mJobsCallback;
 
 
     std::default_random_engine mGenerator;
@@ -112,7 +121,6 @@ private:
     string par(string input);
 
     string getActivationName(Neuron::Activation activation);
-
 
 };
 
