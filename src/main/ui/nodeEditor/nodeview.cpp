@@ -41,14 +41,9 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-
-
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
-
         socket->setClickable(false);
         mSocketsIn.push_back(socket);
-
-
     }
 
     // Add output sockets
@@ -334,12 +329,12 @@ void ZNodeView::setType(ZNodeView::Type type) {
         } else {
 
             if (i < socketCount.y) {
-                vec4 color = getSocketColor(socketType.at(0).at(i)) - darkenVec;
+                vec4 color = getSocketColor(socketType.at(1).at(i)) - darkenVec;
                 if (socketType.at(1).at(i) == VAR) {
                     mSocketsOut.at(i)->setBackgroundColor(color);
-                } else if (socketType.at(0).at(i) == CON)  {
+                } else if (socketType.at(1).at(i) == CON)  {
                     mSocketsOut.at(i)->setBackgroundColor(color);
-                } else if (socketType.at(0).at(i) == ENUM) {
+                } else if (socketType.at(1).at(i) == ENUM) {
                     mSocketsOut.at(i)->setBackgroundColor(color);
                 }
             }

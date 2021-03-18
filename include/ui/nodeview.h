@@ -42,11 +42,11 @@ public:
     void setInvalidateListener(function<void(ZNodeView *node)> listener);
 
     enum SocketType {
-        NONE,
         CON,
         VAR,
         ENUM,
         NN,
+        NONE,
     };
 
     enum ChartResMode {
@@ -440,7 +440,7 @@ public:
     array<array<SocketType, 8>, 2> COMBINE_TYPE = {{{{VAR, VAR}}, {{VAR}}}};
     array<array<SocketType, 8>, 2> SPLIT_TYPE = {{{{VAR}}, {{VAR, VAR}}}};
     array<array<SocketType, 8>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM, ENUM}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> NONE_TYPE = {{}};
+    array<array<SocketType, 8>, 2> NONE_TYPE = {{ {{NONE}}, {{NONE}} }};
 
     array<array<SocketType, 8>, 2> mSocketType = NONE_TYPE;
 
@@ -1009,7 +1009,7 @@ public:
                                         mMlCache.emplace_back(output.at(0), output.at(0));
                                     }
 
-                                    invalidateSingleNode();
+                                    invalidateNodeRecursive();
                                 });
 
 
