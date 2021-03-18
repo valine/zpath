@@ -101,7 +101,7 @@ public:
         LAST // Fake enum to allow easy iteration
     };
 
-    vector<vector<float>> compute(const vector<vector<float>> &x, Type type) {
+    vector<vector<float>> compute(vector<vector<float>> x, Type type) {
         vec2 chartBound = mChart->getXBounds();
         float chartWidth = chartBound.y - chartBound.x;
         vector<vector<float>> output;
@@ -119,8 +119,14 @@ public:
 
                     float out0 = (term3 * pow(in0, 3)) + (term2 * pow(in0, 2)) + (term1 * in0) + term0;
 
-                    return {{out0, chartBound.x, chartWidth},
-                            {0.0,  chartBound.x, chartWidth}};
+                    x.at(REAL).at(0) = out0;
+                    x.at(REAL).at(1) = chartBound.x;
+                    x.at(REAL).at(2) = chartWidth;
+
+                    x.at(IMAG).at(0) = 0.0;
+                    x.at(IMAG).at(1) = chartBound.x;
+                    x.at(IMAG).at(2) = chartWidth;
+                    return x;
                 }
                 case SIN: {
                     float in0 = x.at(REAL).at(0);
@@ -130,8 +136,15 @@ public:
                     float inI0 = x.at(IMAG).at(0);
                     float out0 = sin(in0 * in1) * in2;
                     float outI = sin(inI0 * in1) * in2;
-                    return {{out0, chartBound.x, chartWidth},
-                            {outI, chartBound.x, chartWidth}};
+
+                    x.at(REAL).at(0) = out0;
+                    x.at(REAL).at(1) = chartBound.x;
+                    x.at(REAL).at(2) = chartWidth;
+
+                    x.at(IMAG).at(0) = outI;
+                    x.at(IMAG).at(1) = chartBound.x;
+                    x.at(IMAG).at(2) = chartWidth;
+                    return x;
                 }
                 case COS: {
                     float in0 = x.at(REAL).at(0);
@@ -141,14 +154,33 @@ public:
                     float inI0 = x.at(IMAG).at(0);
                     float out0 = cos(in0 * in1) * in2;
                     float outI = cos(inI0 * in1) * in2;
-                    return {{out0, chartBound.x, chartWidth},
-                            {outI, chartBound.x, chartWidth}};
+
+                    x.at(REAL).at(0) = out0;
+                    x.at(REAL).at(1) = chartBound.x;
+                    x.at(REAL).at(2) = chartWidth;
+
+                    x.at(IMAG).at(0) = outI;
+                    x.at(IMAG).at(1) = chartBound.x;
+                    x.at(IMAG).at(2) = chartWidth;
+                    return x;
                 }
                 case TAN: {
-                    complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                    complex<float> out0 = tan(in0);
-                    return {{out0.real(), chartBound.x, chartWidth},
-                            {out0.imag(), chartBound.x, chartWidth}};
+                    float in0 = x.at(REAL).at(0);
+                    float in1 = x.at(REAL).at(1);
+                    float in2 = x.at(REAL).at(2);
+
+                    float inI0 = x.at(IMAG).at(0);
+                    float out0 = tan(in0 * in1) * in2;
+                    float outI = tan(inI0 * in1) * in2;
+
+                    x.at(REAL).at(0) = out0;
+                    x.at(REAL).at(1) = chartBound.x;
+                    x.at(REAL).at(2) = chartWidth;
+
+                    x.at(IMAG).at(0) = outI;
+                    x.at(IMAG).at(1) = chartBound.x;
+                    x.at(IMAG).at(2) = chartWidth;
+                    return x;
                 }
                 case SIN_C: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
@@ -258,15 +290,23 @@ public:
                             {{img, chartBound.x, chartWidth}}};
                 }
                 case C:
-                    return {{mConstantValueOutput},
-                            {0.0}};
-                    break;
+                    x.at(REAL) = mConstantValueOutput;
+                    x.at(IMAG).at(0) = 0;
+                    return x;
+
                 case CI:
-                    return {{0.0},
-                            {mConstantValueOutput}};
+                    x.at(REAL).at(0) = 0;
+                    x.at(IMAG) = mConstantValueOutput;
+                    return x;
                 case X:
-                    return {{x.at(REAL).at(0), chartBound.x, chartWidth},
-                            {0,                chartBound.x, chartWidth}};
+                    x.at(REAL).at(0) = x.at(REAL).at(0);
+                    x.at(REAL).at(1) = chartBound.x;
+                    x.at(REAL).at(2) = chartWidth;
+
+                    x.at(IMAG).at(0) = 0;
+                    x.at(IMAG).at(1) = chartBound.x;
+                    x.at(IMAG).at(2) = chartWidth;
+                    return x;
                 case Y:
                     return {{0,                chartBound.x, chartWidth},
                             {x.at(IMAG).at(0), chartBound.x, chartWidth}};
@@ -297,7 +337,9 @@ public:
                     // Static resolution for now
                     auto laplace = computeLaplace(x.at(REAL).at(1), x.at(IMAG).at(1), in.at(2), in.at(3),
                                                   mChart->getMaxResolution());
-                    return {{laplace.first}};
+
+                    x.at(REAL).at(0) = laplace.first;
+                    return x;
                 }
                 case FIRST_DIFF: {
                     float diff = computeFirstDifference(in.at(0), in.at(1));
@@ -1126,7 +1168,6 @@ public:
     }
 
     pair<float, float> computeLaplace(float x, float y, float start, float windowSize, int resolution) {
-
 
         vec2 xBounds = mChart->getXBounds();
         vec2 yBounds = mChart->getYBounds();
