@@ -404,8 +404,8 @@ public:
                         returnValue = mMlModel->getOutputAt(0);
                     }
 
-                    return {{x.at(REAL).at(0), chartBound.x, chartWidth},
-                            {returnValue,      chartBound.x, chartWidth}};
+                    return {{returnValue, chartBound.x, chartWidth},
+                            {x.at(REAL).at(0),      chartBound.x, chartWidth}};
                 }
                 case LAST:
                     break;
