@@ -353,8 +353,17 @@ public:
                     break;
                 case CHART_2D: {
                     mChart->setResolution(100);
-                    out = {in.at(0), in.at(1), chartBound.x, chartWidth};
-                    break;
+
+                    x.at(REAL).at(0) = in.at(0);
+                    x.at(REAL).at(1) = in.at(1);
+                    x.at(REAL).at(2) = chartBound.x;
+                    x.at(REAL).at(3) = chartWidth;
+
+                    x.at(IMAG).at(0) = 0.0;
+                    x.at(IMAG).at(1) = 0.0;
+                    x.at(IMAG).at(2) = 0.0;
+                    x.at(IMAG).at(3) = 0.0;
+                    return x;
                 }
 
                 case HEAT_MAP: {
