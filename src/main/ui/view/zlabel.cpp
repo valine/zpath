@@ -55,7 +55,7 @@ void ZLabel::updateFrameSize() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glBindTexture(GL_TEXTURE_2D, mTexBuffer);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWidth(), getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWidth() * mDP, getHeight() * mDP, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -73,7 +73,7 @@ void ZLabel::drawText() {
         return;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-    glViewport(0, 0, getWidth(), getHeight());
+    glViewport(0, 0, getWidth() * mDP, getHeight() * mDP);
 
     glClearColor(0,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -114,8 +114,8 @@ void ZLabel::drawText() {
         std::string::const_iterator c;
         for (c = mText.begin(); c != mText.end(); c++) {
             Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
-            GLfloat w = ch.Size.x;
-            GLfloat h = ch.Size.y;
+            int w = ch.Size.x;
+            int h = ch.Size.y;
 
             float lineOffset = vHeight - lineHeight;
             GLfloat xpos = x + ch.Bearing.x;
@@ -150,7 +150,7 @@ void ZLabel::drawText() {
                 // Render quad
                 glDrawArrays(GL_TRIANGLES, 0, 6);
                 // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-                x += (ch.Advance >> 6) *
+                x += (((float) ch.Advance) / 64.0) *
                      labelScale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
             }
 

@@ -10,10 +10,6 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
     mShader = new ZShader(ui_vs, ui_fs);
     mHeatShader = new ZShader(heat_vs, heat_fs);
 
-    glGenFramebuffers(1, &mFBO);
-    glGenTextures(1, &mTexBuffer);
-    glGenRenderbuffers(1, &mRBO);
-
     glGenTextures(1, &mFinalTexBuffer);
     glGenFramebuffers(1, &mFinalFBO);
     glGenRenderbuffers(1, &mFinalRBO);
@@ -132,7 +128,8 @@ void ZLineChart::updateHeatMap() {
     vector<float> pixels = mListener({(int) 0, (int) 0}, 0);
 
     glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, std::min(mResolution, mMaxResolution), std::min(mResolution, mMaxResolution), 0, GL_RED, GL_FLOAT, &pixels[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, std::min(mResolution, mMaxResolution),
+                 std::min(mResolution, mMaxResolution), 0, GL_RED, GL_FLOAT, &pixels[0]);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -244,23 +241,12 @@ void ZLineChart::updateFBOSize() {
 
     glEnable(GL_MULTISAMPLE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 8, GL_RGBA, width, height, GL_TRUE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, mRBO);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 8, GL_DEPTH_COMPONENT, width, height);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, mTexBuffer, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mTexBuffer);
-
     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
     glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glBindRenderbuffer(GL_RENDERBUFFER, mFinalRBO);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
@@ -388,8 +374,8 @@ void ZLineChart::draw() {
         updateData();
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-    glBindTexture(GL_TEXTURE_2D, mTexBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+    glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
     glViewport(0, 0, getWidth(), getHeight());
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -425,7 +411,7 @@ void ZLineChart::draw() {
     if (mInputType != HEAT_MAP) {
         // draw background grid
         mShader->setVec4("uColor", grey);
-        glLineWidth(1.0);
+        glLineWidth(2.0);
 
         glBindVertexArray(mVAO);
         glDrawElements(GL_LINES, mBGridVCount, GL_UNSIGNED_INT, nullptr);
@@ -439,14 +425,11 @@ void ZLineChart::draw() {
     glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mFinalFBO);
-    glBlitFramebuffer(0, 0, getWidth(), getHeight(), 0, 0, getWidth(), getHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
     // mat4 projection = mTmpTransform;
     mShader->setMat4("uVPMatrix", mTmpTransform);
 
     // Draw graph lines
-    glLineWidth(mLineWidth);
+    glLineWidth(2.0);
     for (int i = mPoints.size() - 1; i >= 0; i--) {
         mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
                                    vec4(vec3((float) i / mPoints.size()), 1.0));
@@ -493,7 +476,8 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
     if ((middleMouseIsDown() || mouseIsDown()) && shiftKeyPressed()) {
         if (state == mouseDrag) {
             vec2 d = (mLastMouse - positionInView) * vec2(2.0);
-            mTmpTransformIdentity = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransformIdentity;
+            mTmpTransformIdentity = translate(
+                    mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransformIdentity;
             mTmpTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransform;
             mTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTransform;
             needsRefresh = true;

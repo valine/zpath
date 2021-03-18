@@ -15,10 +15,10 @@ ZFontStore::ZFontStore() {
 }
 
 FT_Face ZFontStore::loadFont() {
-    return loadFont(mDefaultResource);
+    return loadFont(mDefaultResource, 0);
 }
 
-FT_Face ZFontStore::loadFont(string resourcePath) {
+FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
     if (mFonts.find(resourcePath) == mFonts.end()) {
 
         FT_Face face;
@@ -30,7 +30,7 @@ FT_Face ZFontStore::loadFont(string resourcePath) {
 
 
         // Set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 12);
+        FT_Set_Pixel_Sizes(face, 0, 12 * dp);
         mFonts.insert(make_pair(resourcePath, face));
 
         // Disable byte-alignment restriction
@@ -61,16 +61,16 @@ FT_Face ZFontStore::loadFont(string resourcePath) {
             // Set texture options
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             // Now store character for later use
 
 
             Character character = {
                     texture,
-                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                    (GLuint) face->glyph->advance.x
+                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows) / glm::ivec2(dp),
+                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top) / glm::ivec2(dp),
+                    (GLuint) face->glyph->advance.x / (int) dp
             };
             make_pair(c, resourcePath);
             string key = to_string(c) + resourcePath;

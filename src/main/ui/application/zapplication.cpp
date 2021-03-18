@@ -176,13 +176,24 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 
+
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+    int frameSizeW, frameSizeH;
+    glfwGetFramebufferSize(window, &frameSizeW, &frameSizeH);
+    float dpScale = (float) frameSizeW / (float) windowWidth;
+    viewController->onDpChange(dpScale);
+
     string resourceString = viewController->getResourcePath() + "resources/fonts/roboto/Roboto-Bold.ttf";
-    ZFontStore::getInstance().loadFont(resourceString);
+    ZFontStore::getInstance().loadFont(resourceString, dpScale);
     ZFontStore::getInstance().setDefaultResource(resourceString);
     ZSettingsStore::getInstance().setResourcePath(viewController->getResourcePath());
 
     glEnable(GL_MULTISAMPLE);
-    glEnable(GL_LINE_SMOOTH);
+
+    if (dpScale == 1) {
+        glEnable(GL_LINE_SMOOTH);
+    }
     glfwSwapInterval(0);
 
     glEnable(GL_BLEND);
@@ -200,14 +211,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glfwSwapBuffers(window);
 
     viewController->onCreate();
-
-    int windowWidth, windowHeight;
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
-
-    int frameSizeW, frameSizeH;
-    glfwGetFramebufferSize(window, &frameSizeW, &frameSizeH);
-    float dpScale = (float) frameSizeW / (float) windowWidth;
-    viewController->onDpChange(dpScale);
 
     viewController->onWindowChange(windowWidth, windowHeight);
     viewController->onLayoutFinished();

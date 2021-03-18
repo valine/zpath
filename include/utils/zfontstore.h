@@ -22,8 +22,8 @@ using namespace std;
 /// Holds all state information relevant to a character as loaded using FreeType
 struct Character {
     GLuint TextureID;   // ID handle of the glyph texture
-    glm::ivec2 Size;    // Size of glyph
-    glm::ivec2 Bearing;  // Offset from baseline to left/top of glyph
+    glm::vec2 Size;    // Size of glyph
+    glm::vec2 Bearing;  // Offset from baseline to left/top of glyph
     GLuint Advance;    // Horizontal offset to advance to next glyph
 };
 
@@ -35,7 +35,7 @@ public:
         // Instantiated on first use.
         return instance;
     }
-    FT_Face loadFont(string resoucePath);
+    FT_Face loadFont(string resourcePath, float dp);
     Character getCharacter(const string& resourcePath, GLchar);
 
     string getDefaultResource();

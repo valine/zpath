@@ -129,6 +129,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mMagnitudePicker = new ZMagnitudePicker(this);
     mMagnitudePicker->setVisibility(false);
 
+    addTestNodes();
 
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
@@ -192,7 +193,6 @@ void ZNodeEditor::addTestNodes() {
 
 void ZNodeEditor::onLayoutFinished() {
     ZView::onLayoutFinished();
-    addTestNodes();
 }
 
 /**

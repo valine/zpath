@@ -35,10 +35,10 @@ void ZRenderer::init() {
 
     glGenFramebuffers(1, &mMainFBOMS);
     glBindFramebuffer(GL_FRAMEBUFFER, mMainFBOMS);
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);  
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     glGenTextures(1, &mMainBufferMS);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mMainBufferMS);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSamples, GL_RGBA16F, mCamera->getWidth(), mCamera->getHeight(), GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSamples, GL_RGBA16F, mCamera->getWidth(), mCamera->getHeight(), GL_FALSE);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -348,8 +348,9 @@ void ZRenderer::renderMain() {
     float width = mCamera->getWidth();
     float height =  mCamera->getHeight();
 
+    float dp = mParentView->mDP;
     // Render to 16 bit frame buffer
-    glViewport(0,0, width, height);
+    glViewport(0,0, width * dp, height * dp);
 
     glBindFramebuffer(GL_FRAMEBUFFER, mMainFBOMS);
 

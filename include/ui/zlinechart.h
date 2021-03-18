@@ -119,11 +119,8 @@ private:
     vec2 mZBound = vec2(-1,1);
 
     // OpenGL buffers
-    unsigned int mFBO = -1;
     unsigned int mFinalFBO = -1;
-    unsigned int mTexBuffer = -1;
     unsigned int mFinalTexBuffer = -1;
-    unsigned int mRBO = -1;
     unsigned int mFinalRBO = -1;
 
     unsigned int mHeatVAO;
