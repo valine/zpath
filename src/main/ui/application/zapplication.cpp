@@ -203,6 +203,12 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+    int frameSizeW, frameSizeH;
+    glfwGetFramebufferSize(window, &frameSizeW, &frameSizeH);
+    float dpScale = (float) frameSizeW / (float) windowWidth;
+    viewController->onDpChange(dpScale);
+
     viewController->onWindowChange(windowWidth, windowHeight);
     viewController->onLayoutFinished();
     viewController->onWindowChange(windowWidth, windowHeight);

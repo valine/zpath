@@ -3,7 +3,7 @@ project(zpath)            # this sets the project name
 
 option(BUILD_LIB "help string describing option" OFF)
 
-option(COMPILE_DEPS "help string describing option" OFF)
+option(COMPILE_DEPS "help string describing option" ON)
 
 ###############################################################################
 ## file globbing ##############################################################
@@ -18,6 +18,7 @@ include_directories(include)
 ###############################################################################
 ## target definitions #########################################################
 ###############################################################################
+
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -96,7 +97,6 @@ if (COMPILE_DEPS)
   #
   #   png
   #
-
   set(zlib_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib")
   set(zlib_install_dir "${zlib_prefix}")
   set(zlib_cmake_args  "-DCMAKE_INSTALL_PREFIX=${zlib_install_dir}")
@@ -110,13 +110,16 @@ if (COMPILE_DEPS)
           LOG_DOWNLOAD ON
           )
   add_dependencies(zpath zlib)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/include)
 
+  set(PNG_ARM_NEON, off)
   set(png_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/png")
   set(png_install_dir "${png_prefix}")
   set(png_cmake_args  "-DCMAKE_INSTALL_PREFIX=${png_install_dir}")
+  list(APPEND png_cmake_args "-DPNG_ARM_NEON=off")
   externalproject_add(png
           PREFIX         ${png_prefix}
-          GIT_REPOSITORY git://git.code.sf.net/p/libpng/code
+          GIT_REPOSITORY https://github.com/glennrp/libpng.git
           UPDATE_COMMAND ""
           GIT_SHALLOW 1
           INSTALL_DIR    ${png_install_dir}
@@ -126,6 +129,8 @@ if (COMPILE_DEPS)
 
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build)
   add_dependencies(zpath png)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/include)
+
 
   #
   #   assimp
@@ -138,7 +143,6 @@ if (COMPILE_DEPS)
           GIT_REPOSITORY https://github.com/assimp/assimp.git
           UPDATE_COMMAND ""
           GIT_SHALLOW 1
-          GIT_TAG        v4.1.0
           INSTALL_DIR    ${assimp_install_dir}
           CMAKE_ARGS     ${assimp_cmake_args}
           LOG_DOWNLOAD ON
@@ -177,11 +181,11 @@ if (COMPILE_DEPS)
           PREFIX  ${freetype2b_prefix}
           GIT_REPOSITORY git://git.savannah.gnu.org/freetype/freetype2.git
           GIT_SHALLOW 1
-          CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${freetype2b_prefix} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DWITH_PNG=Off
-          UPDATE_COMMAND ""
-          INSTALL_COMMAND "")
+          CMAKE_ARGS -DPNG_ARM_NEON=OFF -DCMAKE_INSTALL_PREFIX=${freetype2b_prefix} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DWITH_PNG=Off
+          UPDATE_COMMAND "")
 
   add_dependencies(zpath freetype2b)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b/include)
 
 
 else(COMPILE_DEPS)
@@ -210,6 +214,8 @@ if (APPLE)
 
   if (COMPILE_DEPS)
 
+      find_package(BZIP2 REQUIRED)
+
     #    find_package(glfw3 3.2 REQUIRED)
     include_directories(/usr/local/include)
     find_library(COCOA_LIBRARY Cocoa REQUIRED)
@@ -220,13 +226,17 @@ if (APPLE)
     find_library(fr_coregraphics CoreGraphics)
 
     target_link_libraries (zpath
-            ${GLFW_LIBRARIES}
             ${OPENGL_LIBRARIES}
             ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+            "${glfw_install_dir}/lib/libglfw3.a"
             ${fr_coretext}
             ${fr_corefoundation}
             ${fr_coregraphics}
-            ${FREETYPE_LIBRARIES})
+            "${assimp_install_dir}/lib/libassimp.dylib"
+            "${png_install_dir}/lib/libpng16.a"
+            "${zlib_install_dir}/lib/libz.a"
+            "${BZIP2_LIBRARY}"
+            "${freetype2b_install_dir}/lib/libfreetyped.a")
 
   else(COMPILE_DEPS)
 

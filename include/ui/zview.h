@@ -73,6 +73,7 @@ class ZView {
         virtual void onCreate();
         virtual void onExit();
 
+        void onDpChange(float dp);
         virtual void onWindowChange(int windowWidth, int windowHeight);
         virtual void onMouseEvent(int button, int action, int mods, int sx, int sy);
         virtual void onCursorPosChange(double x, double y);
@@ -306,9 +307,10 @@ class ZView {
 
     void translateBy(vec2 translation);
 
+    float mDP = 1.0;
 private:
 
-		bool mNeedsRender = true;
+    bool mNeedsRender = true;
 		bool mVertsInvalid = false;
 
 		bool mCreateComplete = false;

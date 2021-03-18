@@ -249,7 +249,7 @@ void ZView::draw() {
             mVertsInvalid = false;
         }
 
-        glViewport(0, 0, mWindowWidth, mWindowHeight);
+        glViewport(0, 0, mWindowWidth * mDP, mWindowHeight * mDP);
 
         // Update scale, useful for zooming a view out
         mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -1.0f, 10.0f);
@@ -465,6 +465,13 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
     invalidate();
 }
 
+void ZView::onDpChange(float dp) {
+    mDP = dp;
+    for (ZView* view : mViews) {
+        view->onDpChange(dp);
+    }
+}
+
 // Called once before first draw
 void ZView::onLayoutFinished(){
     for (ZView* view : mViews) {
@@ -645,7 +652,7 @@ void ZView::addSubView(ZView *view) {
     mViews.push_back(view);
     view->setParentView(this);
     view->setRootView(mRootView);
-
+    view->onDpChange(mDP);
 
     if (mShader != nullptr) {
         view->setShader(mShader);

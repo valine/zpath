@@ -389,12 +389,10 @@ void ZLineChart::draw() {
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-
+    glBindTexture(GL_TEXTURE_2D, mTexBuffer);
     glViewport(0, 0, getWidth(), getHeight());
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-
-
 
     // draw heat map. Heat map update is triggered by a second thread,
     // so check that everything is initialized before drawing.
