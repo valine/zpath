@@ -498,15 +498,14 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x) {
 
 vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* root) {
     ivec2 size = getSocketCount();
-    vector<vector<float>> output;
     if (size.x == 0) {
-        output = compute(x, mType);
+        x = compute(x, mType);
     }
 
     if (size.x > 0) {
         vector<vector<float>> summedInputs = vector<vector<float>>(x.size(), vector<float>(MAX_INPUT_COUNT, 0));
         if (mInputIndices.empty()) {
-            return output;
+            return x;
         }
 
 
@@ -571,9 +570,9 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
             }
         }
 
-        output = compute(summedInputs, mType);
+        x = compute(summedInputs, mType);
     }
-    return output;
+    return x;
 
 }
 
