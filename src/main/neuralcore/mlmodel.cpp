@@ -267,7 +267,7 @@ void  MlModel::resetNetwork() {
         for (Neuron* node : layer) {
             for (uint i = 0; i < node->getWeights().size(); i++) {
                 node->setWeight(getInitialWeight(layer.size()), i);
-                node->setBias(0.0);
+                node->setBias(getInitialWeight(layer.size()));
                 node->resetPending();
                 node->resetRunningAverage();
             }

@@ -18,6 +18,7 @@ static const int LABEL_THRESHOLD_X = 160;
 static const int REAL = 0;
 static const int IMAG = 1;
 using namespace std;
+
 #include <vector>
 #include "zview.h"
 #include "zchart.h"
@@ -36,11 +37,12 @@ public:
 
     void setShowMagPickerListener(
             function<void(ZView *sender, ZNodeView *node, int socketIndex,
-                    bool isInput, float initialValue, string name)> onValueSelect);
+                          bool isInput, float initialValue, string name)> onValueSelect);
 
-    void setInvalidateListener(function<void(ZNodeView* node)> listener);
+    void setInvalidateListener(function<void(ZNodeView *node)> listener);
 
     enum SocketType {
+        NONE,
         CON,
         VAR,
         ENUM,
@@ -99,7 +101,7 @@ public:
         LAST // Fake enum to allow easy iteration
     };
 
-    vector<vector<float>> compute(const vector<vector<float>>& x, Type type) {
+    vector<vector<float>> compute(const vector<vector<float>> &x, Type type) {
         vec2 chartBound = mChart->getXBounds();
         float chartWidth = chartBound.y - chartBound.x;
         vector<vector<float>> output;
@@ -117,8 +119,8 @@ public:
 
                     float out0 = (term3 * pow(in0, 3)) + (term2 * pow(in0, 2)) + (term1 * in0) + term0;
 
-                    return {{out0,  chartBound.x, chartWidth},
-                            {0.0, chartBound.x, chartWidth}};
+                    return {{out0, chartBound.x, chartWidth},
+                            {0.0,  chartBound.x, chartWidth}};
                 }
                 case SIN: {
                     float in0 = x.at(REAL).at(0);
@@ -128,10 +130,10 @@ public:
                     float inI0 = x.at(IMAG).at(0);
                     float out0 = sin(in0 * in1) * in2;
                     float outI = sin(inI0 * in1) * in2;
-                    return {{out0,  chartBound.x, chartWidth},
+                    return {{out0, chartBound.x, chartWidth},
                             {outI, chartBound.x, chartWidth}};
                 }
-                case COS:{
+                case COS: {
                     float in0 = x.at(REAL).at(0);
                     float in1 = x.at(REAL).at(1);
                     float in2 = x.at(REAL).at(2);
@@ -139,7 +141,7 @@ public:
                     float inI0 = x.at(IMAG).at(0);
                     float out0 = cos(in0 * in1) * in2;
                     float outI = cos(inI0 * in1) * in2;
-                    return {{out0,  chartBound.x, chartWidth},
+                    return {{out0, chartBound.x, chartWidth},
                             {outI, chartBound.x, chartWidth}};
                 }
                 case TAN: {
@@ -153,15 +155,15 @@ public:
                     complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
                     complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
                     complex<float> out0 = sin(in0 * in1) * in2;
-                    return {{out0.real(),  chartBound.x, chartWidth},
+                    return {{out0.real(), chartBound.x, chartWidth},
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
-                case COS_C:{
+                case COS_C: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
                     complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
                     complex<float> out0 = cos(in0 * in1) * in2;
-                    return {{out0.real(),  chartBound.x, chartWidth},
+                    return {{out0.real(), chartBound.x, chartWidth},
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
                 case TAN_C: {
@@ -179,7 +181,7 @@ public:
                 case EXP: {
                     float comOut = exp(x.at(REAL).at(0));
                     float comOutI = exp(x.at(IMAG).at(0));
-                    return {{comOut, chartBound.x, chartWidth},
+                    return {{comOut,  chartBound.x, chartWidth},
                             {comOutI, chartBound.x, chartWidth}};
                 }
                 case EXP_C: {
@@ -188,7 +190,7 @@ public:
                     return {{comOut.real(), chartBound.x, chartWidth},
                             {comOut.imag(), chartBound.x, chartWidth}};
                 }
-                case SQRT:{
+                case SQRT: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> out0 = sqrt(in0);
                     return {{out0.real(), chartBound.x, chartWidth},
@@ -207,7 +209,7 @@ public:
                     complex<float> in2 = {x.at(REAL).at(2), 0};
                     complex<float> two = {2.0, 0};
                     complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
-                    return {{out0.real(),  chartBound.x, chartWidth},
+                    return {{out0.real(), chartBound.x, chartWidth},
                             {out0.imag(), chartBound.x, chartWidth}};
 
 
@@ -220,7 +222,7 @@ public:
                     auto imaginary = (float) (
                             sin(in.at(0) * in.at(4)) * // sinusoid
                             (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))));
-                    return {{real,  chartBound.x, chartWidth},
+                    return {{real,      chartBound.x, chartWidth},
                             {imaginary, chartBound.x, chartWidth}};
                 }
 
@@ -252,42 +254,49 @@ public:
 
                     float r = (c * a + b * e) / denom;
                     float img = (a * d - c * e) / denom;
-                    return {{r, chartBound.x, chartWidth}, {{img, chartBound.x, chartWidth}}};
+                    return {{r, chartBound.x, chartWidth},
+                            {{img, chartBound.x, chartWidth}}};
                 }
                 case C:
-                    return {{mConstantValueOutput}, {0.0}};
+                    return {{mConstantValueOutput},
+                            {0.0}};
                     break;
                 case CI:
-                    return {{0.0}, {mConstantValueOutput}};
+                    return {{0.0},
+                            {mConstantValueOutput}};
                 case X:
                     return {{x.at(REAL).at(0), chartBound.x, chartWidth},
-                            {0,      chartBound.x, chartWidth}};
+                            {0,                chartBound.x, chartWidth}};
                 case Y:
-                    return {{0,      chartBound.x, chartWidth},
+                    return {{0,                chartBound.x, chartWidth},
                             {x.at(IMAG).at(0), chartBound.x, chartWidth}};
                 case Z:
-                    return {{x.at(REAL).at(0),      chartBound.x, chartWidth},
+                    return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                             {x.at(IMAG).at(0), chartBound.x, chartWidth}};
                 case FILE:
                     return {{x.at(REAL).at(0), chartBound.x, chartWidth},
-                            {0,      chartBound.x, chartWidth}};
+                            {0,                chartBound.x, chartWidth}};
                     break;
                 case FFT: {
                     auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                    return  {{fft.first, chartWidth, in.at(3)}, {fft.second, chartWidth, in.at(3)}};
+                    return {{fft.first,  chartWidth, in.at(3)},
+                            {fft.second, chartWidth, in.at(3)}};
                 }
                 case IFFT: {
                     auto fft = computeInverseFft(in.at(1), in.at(2), in.at(3));
-                    return  {{fft.first, chartBound.x, chartWidth}, {fft.second, chartBound.x, chartWidth}};
+                    return {{fft.first,  chartBound.x, chartWidth},
+                            {fft.second, chartBound.x, chartWidth}};
                 }
                 case HARTLEY: {
                     auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                    return  {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartWidth, in.at(3)}, {0.0, chartWidth, in.at(3)}};
+                    return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartWidth, in.at(3)},
+                            {0.0,                                                chartWidth, in.at(3)}};
                 }
                 case LAPLACE: {
                     mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
                     // Static resolution for now
-                    auto laplace = computeLaplace(x.at(REAL).at(1), x.at(IMAG).at(1), in.at(2), in.at(3), mChart->getMaxResolution());
+                    auto laplace = computeLaplace(x.at(REAL).at(1), x.at(IMAG).at(1), in.at(2), in.at(3),
+                                                  mChart->getMaxResolution());
                     return {{laplace.first}};
                 }
                 case FIRST_DIFF: {
@@ -296,7 +305,8 @@ public:
                     break;
                 }
                 case DOT:
-                    return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)), vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
+                    return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)),
+                                 vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
                 case CROSS:
                     break;
                 case CHART_2D: {
@@ -315,7 +325,8 @@ public:
                             {x.at(REAL).at(1)}};
                 }
                 case SPLIT: {
-                    return {{x.at(REAL).at(0), x.at(IMAG).at(0)}, {NAN, NAN}};
+                    return {{x.at(REAL).at(0), x.at(IMAG).at(0)},
+                            {NAN, NAN}};
                 }
                 case NEURAL_CORE: {
                     if (mMlModel == nullptr) {
@@ -342,7 +353,8 @@ public:
                         returnValue = mMlModel->getOutputAt(0);
                     }
 
-                    return {{x.at(REAL).at(0), chartBound.x, chartWidth}, {returnValue, chartBound.x, chartWidth}};
+                    return {{x.at(REAL).at(0), chartBound.x, chartWidth},
+                            {returnValue,      chartBound.x, chartWidth}};
                 }
                 case LAST:
                     break;
@@ -354,123 +366,152 @@ public:
         return output;
     }
 
-   const array<array<SocketType, 8>, 2>  COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> POLY_TYPE =  {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> SQRT_TYPE =  {{{{VAR}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> POW_TYPE = {{{{VAR, VAR}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> GAUSSIAN_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> MORLET_TYPE = {{{{VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> DIVIDE_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> CI_TYPE = {{{{}},{{CON}}}};
-   const array<array<SocketType, 8>, 2> Y_TYPE = {{{{}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> Z_TYPE = {{{{}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> FILE_TYPE =  {{{{}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> IFFT_TYPE = {{{{VAR, VAR, CON, CON}},{{VAR, VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> FFT_TYPE ={{{{VAR, VAR, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> HARTLEY_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> LAPLACE_TYPE ={{{{VAR, VAR, CON, CON, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> FIRST_DIFF_TYPE ={{{{VAR, VAR}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> DOT_TYPE = {{{{CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}},{{VAR, VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}},{{VAR, VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}},{{VAR, CON, CON}}}};
-   const array<array<SocketType, 8>, 2> COMBINE_TYPE = {{{{VAR, VAR}},{{VAR}}}};
-   const array<array<SocketType, 8>, 2> SPLIT_TYPE = {{{{VAR}},{{VAR, VAR}}}};
+    array<array<SocketType, 8>, 2> COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> POLY_TYPE = {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> SQRT_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> POW_TYPE = {{{{VAR, VAR}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> GAUSSIAN_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> MORLET_TYPE = {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> DIVIDE_TYPE = {{{{CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> CI_TYPE = {{{{CON}}, {{CON}}}};
+    array<array<SocketType, 8>, 2> Y_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> Z_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> FILE_TYPE = {{{{}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> IFFT_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> FFT_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> HARTLEY_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> LAPLACE_TYPE = {{{{VAR, VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> FIRST_DIFF_TYPE = {{{{VAR, VAR}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> DOT_TYPE = {{{{CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}}, {{VAR, VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}}, {{VAR, VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> COMBINE_TYPE = {{{{VAR, VAR}}, {{VAR}}}};
+    array<array<SocketType, 8>, 2> SPLIT_TYPE = {{{{VAR}}, {{VAR, VAR}}}};
+    array<array<SocketType, 8>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM, ENUM}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> NONE_TYPE = {{}};
 
-    const array<array<SocketType, 8>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM, ENUM}},{{VAR, CON, CON}}}};
-    const array<array<SocketType, 8>, 2> NONE_TYPE = {{}};
+    array<array<SocketType, 8>, 2> mSocketType = NONE_TYPE;
 
-    const array<array<SocketType, 8>, 2> getSocketType() const {
-        switch (mType) {
-            case POLY: {
-                return POLY_TYPE;
-            }
-            case SIN:
-            case COS:
-            case SIN_C:
-            case COS_C: {
-                return COS_TYPE;
-            }
-            case TAN:
-            case TAN_C:
-            case ABS:
-            case EXP:
-            case EXP_C:
-            case SQRT:{
-                return SQRT_TYPE;
-            }
-            case POW: {
-                return POW_TYPE;
-            }
-            case GAUSSIAN: {
-                return GAUSSIAN_TYPE;
-            }
-            case MORLET: {
-                return MORLET_TYPE;
-            }
-            case ADD:
-            case SUBTRACT:
-            case MULTIPLY:
-            case DIVIDE: {
-                return DIVIDE_TYPE;
-            }
-            case C:
-            case CI: {
-                return CI_TYPE;
-            }
-            case X:
-            case Y: {
-                return Y_TYPE;
-            }
-            case Z: {
-                return Z_TYPE;
-            }
-            case FILE:{
-                return FILE_TYPE;
+    array<array<SocketType, 8>, 2> getSocketType() {
+        if (mSocketType.at(0).at(0) == NONE) {
+            switch (mType) {
+                case POLY: {
+                    mSocketType = POLY_TYPE;
+                    break;
                 }
-            case IFFT: {
-                return IFFT_TYPE;
-            }
-            case FFT: {
-                return FFT_TYPE;
-            }
-            case HARTLEY:{
-                return HARTLEY_TYPE;
-            }
-            case LAPLACE: {
-                return LAPLACE_TYPE;
-            }
-            case FIRST_DIFF: {
-                return FIRST_DIFF_TYPE;
-            }
-            case DOT: {
-                return DOT_TYPE;
-            }
-            case CROSS: {
-
-                return CROSS_TYPE;
-            }
-            case CHART_2D: {
-                return CHART_2D_TYPE;
-            }
-            case HEAT_MAP: {
-                return HEAT_MAP_TYPE;
-            }
-            case COMBINE: {
-                return COMBINE_TYPE;
-            }
-            case SPLIT: {
-                return SPLIT_TYPE;
-            }
-            case NEURAL_CORE: {
-                return NEURAL_CORE_TYPE;
-            }
-            case LAST: {
-                return NONE_TYPE;
+                case SIN:
+                case COS:
+                case SIN_C:
+                case COS_C: {
+                    mSocketType = COS_TYPE;
+                    break;
+                }
+                case TAN:
+                case TAN_C:
+                case ABS:
+                case EXP:
+                case EXP_C:
+                case SQRT: {
+                    mSocketType = SQRT_TYPE;
+                    break;
+                }
+                case POW: {
+                    mSocketType = POW_TYPE;
+                    break;
+                }
+                case GAUSSIAN: {
+                    mSocketType = GAUSSIAN_TYPE;
+                    break;
+                }
+                case MORLET: {
+                    mSocketType = MORLET_TYPE;
+                    break;
+                }
+                case ADD:
+                case SUBTRACT:
+                case MULTIPLY:
+                case DIVIDE: {
+                    mSocketType = DIVIDE_TYPE;
+                    break;
+                }
+                case C:
+                case CI: {
+                    mSocketType = CI_TYPE;
+                    break;
+                }
+                case X:
+                case Y: {
+                    mSocketType = Y_TYPE;
+                    break;
+                }
+                case Z: {
+                    mSocketType = Z_TYPE;
+                    break;
+                }
+                case FILE: {
+                    mSocketType = FILE_TYPE;
+                    break;
+                }
+                case IFFT: {
+                    mSocketType = IFFT_TYPE;
+                    break;
+                }
+                case FFT: {
+                    mSocketType = FFT_TYPE;
+                    break;
+                }
+                case HARTLEY: {
+                    mSocketType = HARTLEY_TYPE;
+                    break;
+                }
+                case LAPLACE: {
+                    mSocketType = LAPLACE_TYPE;
+                    break;
+                }
+                case FIRST_DIFF: {
+                    mSocketType = FIRST_DIFF_TYPE;
+                    break;
+                }
+                case DOT: {
+                    mSocketType = DOT_TYPE;
+                    break;
+                }
+                case CROSS: {
+                    mSocketType = CROSS_TYPE;
+                    break;
+                }
+                case CHART_2D: {
+                    mSocketType = CHART_2D_TYPE;
+                    break;
+                }
+                case HEAT_MAP: {
+                    mSocketType = HEAT_MAP_TYPE;
+                    break;
+                }
+                case COMBINE: {
+                    mSocketType = COMBINE_TYPE;
+                    break;
+                }
+                case SPLIT: {
+                    mSocketType = SPLIT_TYPE;
+                    break;
+                }
+                case NEURAL_CORE: {
+                    mSocketType = NEURAL_CORE_TYPE;
+                    break;
+                }
+                case LAST: {
+                    mSocketType = NONE_TYPE;
+                    break;
+                }
             }
         }
+
+        return mSocketType;
     }
 
+    ivec2 mSocketCount = ivec2(0);
 
     /**
      * First value is input count, second value is output count. If input count is zero node
@@ -479,55 +520,128 @@ public:
      * @return Vector with node socket input and output count
      */
     ivec2 getSocketCount() {
-        switch (mType) {
-            case POLY: return ivec2(5, 3);
-            case SIN_C:
-            case SIN:return ivec2(3,3);
-            case COS:
-            case COS_C:return ivec2(3,3);
-            case TAN:
-            case TAN_C:return ivec2(1,3);
-            case ABS:return ivec2(1,3);
-            case EXP_C:
-            case EXP:return ivec2(1,3);
-            case SQRT:return ivec2(1,3);
-            case POW:return ivec2(2,3);
-            case GAUSSIAN:return ivec2(3,3);
-            case MORLET:return ivec2(5,3);
-            case ADD:return ivec2(2,3);
-            case SUBTRACT:return ivec2(2,3);
-            case MULTIPLY:return ivec2(2,3);
-            case DIVIDE:return ivec2(2,3);
-            case C:return ivec2(0,1);
-            case CI:return ivec2(0,1);
-            case X:return ivec2(0,3);
-            case Y:return ivec2(0,3);
-            case Z:return ivec2(0,3);
-            case FILE:return ivec2(0,1);
-            case FFT:return ivec2(4,3);
-            case IFFT:return ivec2(4,3);
-            case HARTLEY:return ivec2(4,3);
-            case LAPLACE:return ivec2(6,3);
-            case FIRST_DIFF:return ivec2(2,3);
-            case DOT:return ivec2(2,3);
-            case CROSS:return ivec2(4,4);
-            case CHART_2D: return ivec2(3,4);
-            case HEAT_MAP: return ivec2(3,3);
-            case COMBINE: return ivec2(2,1);
-            case SPLIT: return ivec2(1,2);
-            case NEURAL_CORE: return ivec2(7,3);
-            case LAST:return ivec2(0,0);
+
+        if (mSocketCount == ivec2(0)) {
+            switch (mType) {
+                case POLY:
+                    mSocketCount = ivec2(5, 3);
+                    break;
+                case SIN_C:
+                case SIN:
+                    mSocketCount = ivec2(3, 3);
+                    break;
+                case COS:
+                case COS_C:
+                    mSocketCount = ivec2(3, 3);
+                    break;
+                case TAN:
+                case TAN_C:
+                    mSocketCount = ivec2(1, 3);
+                    break;
+                case ABS:
+                    mSocketCount = ivec2(1, 3);
+                    break;
+                case EXP_C:
+                case EXP:
+                    mSocketCount = ivec2(1, 3);
+                    break;
+                case SQRT:
+                    mSocketCount = ivec2(1, 3);
+                    break;
+                case POW:
+                    mSocketCount = ivec2(2, 3);
+                    break;
+                case GAUSSIAN:
+                    mSocketCount = ivec2(3, 3);
+                    break;
+                case MORLET:
+                    mSocketCount = ivec2(5, 3);
+                    break;
+                case ADD:
+                    mSocketCount = ivec2(2, 3);
+                    break;
+                case SUBTRACT:
+                    mSocketCount = ivec2(2, 3);
+                    break;
+                case MULTIPLY:
+                    mSocketCount = ivec2(2, 3);
+                    break;
+                case DIVIDE:
+                    mSocketCount = ivec2(2, 3);
+                    break;
+                case C:
+                    mSocketCount = ivec2(0, 1);
+                    break;
+                case CI:
+                    mSocketCount = ivec2(0, 1);
+                    break;
+                case X:
+                    mSocketCount = ivec2(0, 3);
+                    break;
+                case Y:
+                    mSocketCount = ivec2(0, 3);
+                    break;
+                case Z:
+                    mSocketCount = ivec2(0, 3);
+                    break;
+                case FILE:
+                    mSocketCount = ivec2(0, 1);
+                    break;
+                case FFT:
+                    mSocketCount = ivec2(4, 3);
+                    break;
+                case IFFT:
+                    mSocketCount = ivec2(4, 3);
+                    break;
+                case HARTLEY:
+                    mSocketCount = ivec2(4, 3);
+                    break;
+                case LAPLACE:
+                    mSocketCount = ivec2(6, 3);
+                    break;
+                case FIRST_DIFF:
+                    mSocketCount = ivec2(2, 3);
+                    break;
+                case DOT:
+                    mSocketCount = ivec2(2, 3);
+                    break;
+                case CROSS:
+                    mSocketCount = ivec2(4, 4);
+                    break;
+                case CHART_2D:
+                    mSocketCount = ivec2(3, 4);
+                    break;
+                case HEAT_MAP:
+                    mSocketCount = ivec2(3, 3);
+                    break;
+                case COMBINE:
+                    mSocketCount = ivec2(2, 1);
+                    break;
+                case SPLIT:
+                    mSocketCount = ivec2(1, 2);
+                    break;
+                case NEURAL_CORE:
+                    mSocketCount = ivec2(7, 3);
+                    break;
+                case LAST:
+                    mSocketCount = ivec2(0, 0);
+                    break;
+            }
         }
+
+        return mSocketCount;
     }
 
-
     static vector<float> getDefaultInput(Type type) {
-        switch(type) {
-            case POLY: return {0.0, 0.0, 0.0, 0.0};
+        switch (type) {
+            case POLY:
+                return {0.0, 0.0, 0.0, 0.0};
             case ADD:
-            case SUBTRACT: return {0.0, 0.0};
+            case SUBTRACT:
+                return {0.0, 0.0};
             case MULTIPLY:
-            case DIVIDE: return {1.0, 1.0};
+            case DIVIDE:
+                return {1.0, 1.0};
             case SIN:
             case COS:
             case SIN_C:
@@ -538,20 +652,21 @@ public:
                 return {0.0, 1.0, 1.0};
             case MORLET:
                 return {0.0, 1.0, 1.0, 0.0, 1.0};
-            case IFFT:return {0.0,0.0, 1.0, 1.0};
+            case IFFT:
+                return {0.0, 0.0, 1.0, 1.0};
             case FFT:
             case HARTLEY:
                 return {0.0, 0.0, 0.0, 1.0};
             case LAPLACE:
                 return {0.0, 0.0, 0.0, 1.0, -1.0, 1.0};
             case CHART_2D:
-                return {0.0,0.0,100};
+                return {0.0, 0.0, 100};
             case DOT:
                 return {1.0, 1.0};
             case HEAT_MAP:
                 return {0.0, -1.0, 1.0};
             case NEURAL_CORE:
-                return {0.0,0.0, 0.05, -5, -1, 0, 0};
+                return {0.0, 0.0, 0.05, -5, -1, 0, 0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -565,7 +680,7 @@ public:
             case COS_C:
                 return {7};
             case NEURAL_CORE:
-                return {0,0,5,6,6,1,0,0};
+                return {0, 0, 5, 6, 6, 1, 0, 0};
             default:
                 return {6};
         }
@@ -573,38 +688,52 @@ public:
 
     vector<string> getSocketNames() {
         switch (mType) {
-            case POLY:return {"X", "A", "BX", "CX^2", "DX^3"};
+            case POLY:
+                return {"X", "A", "BX", "CX^2", "DX^3"};
             case ADD:
             case SUBTRACT:
             case MULTIPLY:
-            case DIVIDE: return {"", ""};
+            case DIVIDE:
+                return {"", ""};
             case SIN:
             case COS:
             case SIN_C:
-            case COS_C:return {"X", "Frequency", "Height"};
-            case GAUSSIAN: return {"X", "Width", "Height"};
-            case MORLET: return {"X", "Width", "Height", "Offset", "Frequency"};
-            case IFFT:return {"X", "A", "Window Start", "Window Size"};
+            case COS_C:
+                return {"X", "Frequency", "Height"};
+            case GAUSSIAN:
+                return {"X", "Width", "Height"};
+            case MORLET:
+                return {"X", "Width", "Height", "Offset", "Frequency"};
+            case IFFT:
+                return {"X", "A", "Window Start", "Window Size"};
             case HARTLEY:
-            case FFT: return {"X", "A", "Window Start", "Window Size"};
-            case LAPLACE: return {"X", "A", "Window Start", "Window Size", "Z Min", "Z Max"};
-            case CHART_2D: return {"X", "A", "Resolution"};
-            case HEAT_MAP: return {"X", "Z Min", "Z Max"};
-            case NEURAL_CORE: return {"Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
-            default: return {" ", " ", " ", " ", " ", " "};
+            case FFT:
+                return {"X", "A", "Window Start", "Window Size"};
+            case LAPLACE:
+                return {"X", "A", "Window Start", "Window Size", "Z Min", "Z Max"};
+            case CHART_2D:
+                return {"X", "A", "Resolution"};
+            case HEAT_MAP:
+                return {"X", "Z Min", "Z Max"};
+            case NEURAL_CORE:
+                return {"Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
+            default:
+                return {" ", " ", " ", " ", " ", " "};
         }
     }
 
     vector<string> getButtonNames() {
-       switch(mType) {
-           case NEURAL_CORE: return {"Train", "Reset"};
-           default: return {};
-       }
-   }
+        switch (mType) {
+            case NEURAL_CORE:
+                return {"Train", "Reset"};
+            default:
+                return {};
+        }
+    }
 
-   vector<string> getEnumNames(int socketIndex) {
+    vector<string> getEnumNames(int socketIndex) {
 
-        switch(mType) {
+        switch (mType) {
             case NEURAL_CORE: {
                 switch (socketIndex) {
                     case 5:
@@ -624,48 +753,85 @@ public:
 
     static string getName(Type type) {
         switch (type) {
-            case POLY:return "polynomial";
-            case SIN:return "sin";
-            case COS:return "cos";
-            case TAN:return "tan";
-            case SIN_C:return "sin (complex)";
-            case COS_C:return "cos (complex)";
-            case TAN_C:return "tan (complex)";
-            case ABS:return "abs";
-            case EXP_C:return "exp (complex)";
-            case EXP:return "exp";
-            case SQRT:return "sqrt";
-            case POW:return "pow";
-            case GAUSSIAN:return "gaussian";
-            case MORLET:return "wavelet";
-            case ADD:return "+";
-            case SUBTRACT:return "-";
-            case MULTIPLY:return "*";
-            case DIVIDE:return "/";
-            case C:return "C";
-            case CI:return "C Imag";
-            case X:return "x";
-            case Y:return "y";
-            case Z:return "z (complex)";
-            case FILE:return "file";
-            case IFFT:return "Inverse FFT";
-            case FFT:return "FFT";
-            case HARTLEY:return "Hartley";
-            case LAPLACE:return "Laplace";
-            case FIRST_DIFF:return "1st diff";
-            case DOT:return "dot";
-            case CROSS:return "cross";
-            case CHART_2D:return "2D Chart";
-            case HEAT_MAP:return "Heat Map";
-            case COMBINE:return "Combine";
-            case SPLIT:return "Split";
-            case NEURAL_CORE: return "Neural Network";
-            case LAST:return "none";
+            case POLY:
+                return "polynomial";
+            case SIN:
+                return "sin";
+            case COS:
+                return "cos";
+            case TAN:
+                return "tan";
+            case SIN_C:
+                return "sin (complex)";
+            case COS_C:
+                return "cos (complex)";
+            case TAN_C:
+                return "tan (complex)";
+            case ABS:
+                return "abs";
+            case EXP_C:
+                return "exp (complex)";
+            case EXP:
+                return "exp";
+            case SQRT:
+                return "sqrt";
+            case POW:
+                return "pow";
+            case GAUSSIAN:
+                return "gaussian";
+            case MORLET:
+                return "wavelet";
+            case ADD:
+                return "+";
+            case SUBTRACT:
+                return "-";
+            case MULTIPLY:
+                return "*";
+            case DIVIDE:
+                return "/";
+            case C:
+                return "C";
+            case CI:
+                return "C Imag";
+            case X:
+                return "x";
+            case Y:
+                return "y";
+            case Z:
+                return "z (complex)";
+            case FILE:
+                return "file";
+            case IFFT:
+                return "Inverse FFT";
+            case FFT:
+                return "FFT";
+            case HARTLEY:
+                return "Hartley";
+            case LAPLACE:
+                return "Laplace";
+            case FIRST_DIFF:
+                return "1st diff";
+            case DOT:
+                return "dot";
+            case CROSS:
+                return "cross";
+            case CHART_2D:
+                return "2D Chart";
+            case HEAT_MAP:
+                return "Heat Map";
+            case COMBINE:
+                return "Combine";
+            case SPLIT:
+                return "Split";
+            case NEURAL_CORE:
+                return "Neural Network";
+            case LAST:
+                return "none";
         }
     }
 
     static vec2 getNodeSize(Type type) {
-        switch(type) {
+        switch (type) {
             case C:
             case CI:
                 return vec2(80, 20);
@@ -685,7 +851,7 @@ public:
     }
 
     static bool isOutputLabelVisible(Type type) {
-        switch(type) {
+        switch (type) {
             case C:
             case CI:
                 return true;
@@ -695,7 +861,7 @@ public:
     }
 
     void initializeNNModel() {
-        vector<int> heights = {3,3,3};
+        vector<int> heights = {3, 3, 3};
         int width = heights.size();
 
         int inputs = 1;
@@ -711,12 +877,12 @@ public:
         mMlModel->resetNetwork();
     }
 
-    function<void(ZButton* sender)> getButtonCallback(int index) {
-        switch(mType) {
+    function<void(ZButton *sender)> getButtonCallback(int index) {
+        switch (mType) {
             case NEURAL_CORE: {
                 switch (index) {
                     case 0: {
-                        return [this](ZButton* sender){
+                        return [this](ZButton *sender) {
                             // Train the network
 
                             if (mMlModel == nullptr) {
@@ -745,7 +911,8 @@ public:
                             for (int i = 0; i < samples; i++) {
                                 float t = (((float) i / fres) * windowSize) + windowStart;
                                 float summedInput = sumInputs(t, socketIndex, dimenIndex);
-                                trainingData.push_back({{t}, {summedInput}});
+                                trainingData.push_back({{t},
+                                                        {summedInput}});
                             }
 
                             mMlModel->setStepSize(sumInputs(0.0, 2, 0));
@@ -771,7 +938,7 @@ public:
 
                             mMlModel->setTrainingData(trainingData);
                             mMlModel->computeNormalization();
-                            mMlModel->setTrainingCallback([this](){
+                            mMlModel->setTrainingCallback([this]() {
                                 int optmizerIndex = sumInputs(0, 5, 0);
                                 setOptimizer(optmizerIndex);
                                 mMlModel->setStepSize(sumInputs(0.0, 2, 0));
@@ -785,7 +952,7 @@ public:
                                     job.push_back({x});
 
                                 }
-                                mMlModel->computeAsync(job, [this](vector<vector<float>> outputs){
+                                mMlModel->computeAsync(job, [this](vector<vector<float>> outputs) {
                                     mMlCache.clear();
                                     for (vector<float> output : outputs) {
                                         mMlCache.emplace_back(output.at(0), output.at(0));
@@ -797,7 +964,7 @@ public:
 
                             });
 
-                            if (mMlModel->getTrainingInProgress())  {
+                            if (mMlModel->getTrainingInProgress()) {
                                 mMlModel->requestStopTraining();
                                 sender->setText("Train");
                             } else {
@@ -807,18 +974,20 @@ public:
                         };
                     }
                     case 1: {
-                        return [this](ZButton* sender) {
+                        return [this](ZButton *sender) {
                             mMlModel->resetNetwork();
                         };
                     }
-                    default:return nullptr;
+                    default:
+                        return nullptr;
 
                 }
 
             }
-            default: return nullptr;
+            default:
+                return nullptr;
         }
-   }
+    }
 
     void setOptimizer(int optmizerIndex) const {
         switch (optmizerIndex) {
@@ -849,10 +1018,14 @@ public:
         const vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
 
         switch (type) {
-            case CON: return mConstantColor;
-            case VAR: return mVariableColor;
-            case ENUM: return mEnumColor;
-            case NN: return mNNColor;
+            case CON:
+                return mConstantColor;
+            case VAR:
+                return mVariableColor;
+            case ENUM:
+                return mEnumColor;
+            case NN:
+                return mNNColor;
 
         }
     }
@@ -876,23 +1049,30 @@ public:
 
     static ChartResMode getChartResolutionMode(Type type) {
         switch (type) {
-            default: return ADAPTIVE;
-            case IFFT: return ADAPTIVE;
+            default:
+                return ADAPTIVE;
+            case IFFT:
+                return ADAPTIVE;
             case CHART_2D:
             case FFT:
-            case HARTLEY:return STATIC;
+            case HARTLEY:
+                return STATIC;
         }
     }
 
     static ChartType getChartType(Type type) {
         switch (type) {
-            default: return LINE_1D_2X;
+            default:
+                return LINE_1D_2X;
             case HARTLEY:
             case FFT:
-            case IFFT:return LINE_1D_2X;
-            case CHART_2D: return LINE_2D;
+            case IFFT:
+                return LINE_1D_2X;
+            case CHART_2D:
+                return LINE_2D;
             case LAPLACE:
-            case HEAT_MAP: return IMAGE;
+            case HEAT_MAP:
+                return IMAGE;
         }
     }
 
@@ -980,7 +1160,7 @@ public:
 
                 float freq = ((float) mix(yBounds.x, yBounds.y, (float) fi / fres)) * 2.0 * M_PI;
                 float expo = ((float) mix(xBounds.x, xBounds.y, (float) ei / fres));
-                complex<float> sum = {0,0};
+                complex<float> sum = {0, 0};
 
                 for (int t = 0; t < resolution; t++) {
                     float time = ((t / fres) * windowSize) + start;
@@ -992,7 +1172,7 @@ public:
                 }
 
                 mLaplaceCache.at(ei).at(fi) = sum.real() / resolution;
-              //  mLaplaceCache.at(ei).at(fi) = sqrt(pow(sum.real(), 2.0) + pow(sum.imag(), 2.0)) / resolution;
+                //  mLaplaceCache.at(ei).at(fi) = sqrt(pow(sum.real(), 2.0) + pow(sum.imag(), 2.0)) / resolution;
             }
         }
 
@@ -1014,7 +1194,7 @@ public:
         return sum;
     }
 
-    float sumInputs(float x, int socketIndex, int var) const {
+    float sumInputs(float x, int socketIndex, int var) {
         float summedInput = 0.0;
         auto inputSocket = mInputIndices.at(socketIndex);
         for (auto singleInput : inputSocket) {
@@ -1058,7 +1238,7 @@ public:
         }
 
         pair<float, float> returnValue = {NAN, NAN};
-        uint xIndex =  (int) ((in * (mFftCache.size() - 1)) / windowSize);
+        uint xIndex = (int) ((in * (mFftCache.size() - 1)) / windowSize);
         if (xIndex >= 0 && !mFftCache.empty() && windowSize > 0 && xIndex < mFftCache.size()) {
 
             complex<float> y = mFftCache.at(xIndex);
@@ -1071,7 +1251,7 @@ public:
 
     vector<vector<float>> evaluate(vector<vector<float>> x);
 
-    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView* root);
+    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView *root);
 
     void setType(Type type);
 
@@ -1079,68 +1259,76 @@ public:
         return mType;
     }
 
-    vector<vector<pair<ZNodeView*, int>>> mInputIndices;
-    vector<vector<pair<ZNodeView*, int>>> mOutputIndices;
+    vector<vector<pair<ZNodeView *, int>>> mInputIndices;
+    vector<vector<pair<ZNodeView *, int>>> mOutputIndices;
 
-    vector<ZView*> getSocketsIn();
-    vector<ZView*> getSocketsOut();
+    vector<ZView *> getSocketsIn();
+
+    vector<ZView *> getSocketsOut();
 
     void updateChart();
+
     void onWindowChange(int windowWidth, int windowHeight) override;
+
     void setConstantValue(int index, float value, int magnitudeIndex);
+
     void setConstantValueInput(int index, float value, int magnitudeIndex);
 
     int getInputMagnitude(int index) {
-       return mConstantMagnitudeInput.at(index);
+        return mConstantMagnitudeInput.at(index);
     }
+
     int getOutputMagnitude(int index) {
         return mConstantMagnitudeOutput.at(index);
     }
 
     void invalidateSingleNode();
+
     void invalidateNodeRecursive();
 
     void initializeEdges();
 
     void copyParameters(ZNodeView *node);
+
     void setMaxWidth(int width) override;
 
 
     //////////////////
     /// Neural core integration
 
-    MlModel* mMlModel = nullptr;
+    MlModel *mMlModel = nullptr;
 
     //////////
 
     void
-    setShowEnumPickerListener(function<void(ZView *, ZNodeView *, int, bool, float, string, vector<string>)> onValueSelect);
+    setShowEnumPickerListener(
+            function<void(ZView *, ZNodeView *, int, bool, float, string, vector<string>)> onValueSelect);
 
 private:
     bool mInvalid = true;
 
-    vector<ZView*> mSocketsIn;
-    vector<ZView*> mSocketsOut;
+    vector<ZView *> mSocketsIn;
+    vector<ZView *> mSocketsOut;
 
-    vector<ZLabel*> mSocketInLabels;
-    vector<ZLabel*> mSockOutLabels;
+    vector<ZLabel *> mSocketInLabels;
+    vector<ZLabel *> mSockOutLabels;
 
     Type mType = ADD;
 
-    ZLabel* mOutputLabel;
-    ZLabel* mNameLabel;
+    ZLabel *mOutputLabel;
+    ZLabel *mNameLabel;
 
-    ZLabel* mXMinLabel;
-    ZLabel* mXMaxLabel;
-    ZLabel* mYMinLabel;
-    ZLabel* mYMaxLabel;
+    ZLabel *mXMinLabel;
+    ZLabel *mXMaxLabel;
+    ZLabel *mYMinLabel;
+    ZLabel *mYMaxLabel;
 
     /**
      * Number of line segments on the chart
      */
 
     // Todo: remove  these
-    ZLineChart* mChart;
+    ZLineChart *mChart;
     vector<vector<float>> mPointCache;
     vector<float> mPointCache1D;
 
@@ -1153,13 +1341,13 @@ private:
 
     vector<int> mMagPrecision = {8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0};
 
-    function<void(ZView* sender, ZNodeView* node, int socketIndex,
-            bool isInput, float initialValue, string name)> mShowMagnitudeView;
+    function<void(ZView *sender, ZNodeView *node, int socketIndex,
+                  bool isInput, float initialValue, string name)> mShowMagnitudeView;
 
-    function<void(ZView* sender, ZNodeView* node, int socketIndex,
+    function<void(ZView *sender, ZNodeView *node, int socketIndex,
                   bool isInput, float initialValue, string name, vector<string> enumNames)> mShowEnumView;
 
-    function<void(ZNodeView* node)> mInvalidateListener;
+    function<void(ZNodeView *node)> mInvalidateListener;
 
     vector<complex<float>> mFftCache;
     vector<complex<float>> mMlCache;
@@ -1169,9 +1357,11 @@ private:
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     void clearInvalidateNode();
+
     bool isInvalid();
 
     void updateChart1D();
+
     void updateChart2D();
 
     void updateLabelVisibility();
@@ -1186,10 +1376,6 @@ private:
 
     void hideSocketLabels();
 };
-
-
-
-
 
 
 #endif //ZPATH_NODEVIEW_H

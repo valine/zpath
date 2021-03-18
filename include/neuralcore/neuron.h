@@ -6,6 +6,7 @@
 #define NEURALCORE_NEURON_H
 
 
+static const double DEFAULT_BIAS = 0.01;
 
 #include "neuron.h"
 #include <vector>
@@ -105,7 +106,7 @@ private:
     vector<double> mPendingWeights;
     vector<double> mAverageGradient;
 
-    double mBias = 0.0;
+    double mBias = DEFAULT_BIAS;
     double mPendingBias = 0.0;
     double mAverageBias = mGrad;
 

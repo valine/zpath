@@ -159,33 +159,33 @@ vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
 
 void ZNodeEditor::addTestNodes() {
 
-   // ZNodeView *sin = addNode(ZNodeView::SIN);
-   // ZNodeView *exp = addNode(ZNodeView::COS);
+    ZNodeView *sin = addNode(ZNodeView::SIN);
+    ZNodeView *exp = addNode(ZNodeView::COS);
 
-//    ZNodeView *laplace = addNode(ZNodeView::LAPLACE);
-//
-//    connectNodes(0, 0, sin, laplace);
-//    connectNodes(0, 0, exp, laplace);
-//
-//    ZNodeView *x = addNode(ZNodeView::X);
-//    ZNodeView *c = addNode(ZNodeView::C);
-//    ZNodeView *s = addNode(ZNodeView::SIN);
-//    ZNodeView *co = addNode(ZNodeView::COS);
-//    ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
-//
-//    connectNodes(0, 0, c, s);
-//    connectNodes(0, 0, x, s);
-//    connectNodes(0, 0, x, co);
-//    connectNodes(0, 0, s, chart0);
-//    connectNodes(0, 1, co, chart0);
-//
-//    ZNodeView *lastChart = chart0;
-//    for (int i = 0; i < 2; i++) {
-//        ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
-//        connectNodes(0, 0, lastChart, chart1);
-//        connectNodes(1, 1, lastChart, chart1);
-//        lastChart = chart1;
-//    }
+    ZNodeView *laplace = addNode(ZNodeView::LAPLACE);
+
+    connectNodes(0, 0, sin, laplace);
+    connectNodes(0, 0, exp, laplace);
+
+    ZNodeView *x = addNode(ZNodeView::X);
+    ZNodeView *c = addNode(ZNodeView::C);
+    ZNodeView *s = addNode(ZNodeView::SIN);
+    ZNodeView *co = addNode(ZNodeView::COS);
+    ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
+
+    connectNodes(0, 0, c, s);
+    connectNodes(0, 0, x, s);
+    connectNodes(0, 0, x, co);
+    connectNodes(0, 0, s, chart0);
+    connectNodes(0, 1, co, chart0);
+
+    ZNodeView *lastChart = chart0;
+    for (int i = 0; i < 2; i++) {
+        ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
+        connectNodes(0, 0, lastChart, chart1);
+        connectNodes(1, 1, lastChart, chart1);
+        lastChart = chart1;
+    }
 
     updateLines();
 }
