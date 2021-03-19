@@ -33,44 +33,25 @@ void ZRenderer::init() {
     mShader->setInt("prefilterMap", 1);
     mShader->setInt("brdfLUT", 2);
 
-    glGenFramebuffers(1, &mMainFBOMS);
-    glBindFramebuffer(GL_FRAMEBUFFER, mMainFBOMS);
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-    glGenTextures(1, &mMainBufferMS);
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mMainBufferMS);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSamples, GL_RGBA16F, mCamera->getWidth(), mCamera->getHeight(), GL_FALSE);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glGenRenderbuffers(1, &mRenderBufferMS);
-    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBufferMS);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, mSamples, GL_DEPTH_COMPONENT, mCamera->getWidth(), mCamera->getHeight());
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, mMainBufferMS, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBufferMS);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "Main Framebuffer not complete!" << std::endl;
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+    float dp = mParentView->mDP;
     glGenFramebuffers(1, &mMainFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     glGenTextures(1, &mMainBuffer);
     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mCamera->getWidth(), mCamera->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mCamera->getWidth() * dp, mCamera->getHeight() * dp, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glGenRenderbuffers(1, &mRenderBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mCamera->getWidth(), mCamera->getHeight());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mCamera->getWidth() * dp, mCamera->getHeight() * dp);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mMainBuffer, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBuffer);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Main Framebuffer not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 
 
     // Create selection offscreen buffer
@@ -98,12 +79,11 @@ void ZRenderer::init() {
         glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
         glGenTextures(1, &mFinalBuffer);
         glBindTexture(GL_TEXTURE_2D, mFinalBuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mCamera->getWidth(), mCamera->getHeight(), 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, mCamera->getWidth() * dp, mCamera->getHeight() * dp, 0, GL_RGBA, GL_FLOAT, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mFinalBuffer, 0);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBufferMS);
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Final Framebuffer not complete!" << std::endl;
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -316,15 +296,9 @@ void ZRenderer::updateAnimations() {
 }
 
 void ZRenderer::recreateBuffers() {
-    float width = mCamera->getWidth();
-    float height =  mCamera->getHeight();
-
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mMainBufferMS);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSamples, GL_RGBA16F, width, height, GL_TRUE);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBufferMS);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, mSamples, GL_DEPTH_COMPONENT, width, height);
-
+    float dp = mParentView->mDP;
+    float width = mCamera->getWidth() * dp;
+    float height =  mCamera->getHeight() * dp;
 
     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -345,14 +319,14 @@ unsigned int ZRenderer::getMainTexture() {
 
 
 void ZRenderer::renderMain() {
-    float width = mCamera->getWidth();
-    float height =  mCamera->getHeight();
-
     float dp = mParentView->mDP;
-    // Render to 16 bit frame buffer
-    glViewport(0,0, width * dp, height * dp);
+    float width = mCamera->getWidth() * dp;
+    float height =  mCamera->getHeight() * dp;
 
-    glBindFramebuffer(GL_FRAMEBUFFER, mMainFBOMS);
+    // Render to 16 bit frame buffer
+    glViewport(0,0, width, height);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, mMainFBO);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -476,17 +450,10 @@ void ZRenderer::renderMain() {
             glDepthMask(true);
         }   
         objectIndex++;
-
-
     }
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, mMainFBOMS);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mMainFBO);
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
 
     onDrawFinshed();
 }
@@ -569,8 +536,9 @@ void ZRenderer::renderToScreen() {
         mHDRShader->setBool("hdr", true);
         mHDRShader->setFloat("exposure", mScene->getExposure());
 
+        float dp = mParentView->mDP;
         int yv = mParentView->getWindowHeight() - mParentView->getBottom();
-        glViewport(mParentView->getLeft(),yv,mParentView->getWidth(),mParentView->getHeight());
+        glViewport(mParentView->getLeft() * dp,yv * dp,mParentView->getWidth() * dp,mParentView->getHeight() * dp);
     
         renderQuad();
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -720,11 +688,6 @@ void ZRenderer::renderCube() {
 }
 
 void ZRenderer::onExit() {
-
-    glDeleteRenderbuffers( 1, &mRenderBufferMS);
-    glDeleteTextures( 1, &mMainBufferMS);
-    glDeleteFramebuffers( 1, &mMainFBOMS);
-
     glDeleteRenderbuffers( 1, &mSelectionRenderBuffer);
     glDeleteTextures( 1, &mSelectionBuffer);
     glDeleteFramebuffers( 1, &mSelectionFBO);
@@ -737,7 +700,7 @@ cout << "exit renderer" << endl;
 }
 
 unsigned int ZRenderer::getMainFBO() {
-    return mMainFBOMS;
+    return mMainFBO;
 }
 
 void ZRenderer::setAASamples(int samples) {

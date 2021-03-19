@@ -65,10 +65,6 @@ private:
 	ZCamera* mCamera;
 	ZMeshUtils meshUtils = ZMeshUtils();
 
-	unsigned int mMainFBOMS;
-	unsigned int mMainBufferMS;
-    unsigned int mRenderBufferMS;
-
     unsigned int mRenderBuffer;
     unsigned int mMainFBO;
     unsigned int mMainBuffer;

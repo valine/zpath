@@ -308,8 +308,8 @@ public:
                     x.at(IMAG).at(2) = chartWidth;
                     return x;
                 case Y:
-                    return {{0,                chartBound.x, chartWidth},
-                            {x.at(IMAG).at(0), chartBound.x, chartWidth}};
+                    return {{x.at(IMAG).at(0),chartBound.x, chartWidth},
+                            {0, chartBound.x, chartWidth}};
                 case Z:
                     return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                             {x.at(IMAG).at(0), chartBound.x, chartWidth}};
