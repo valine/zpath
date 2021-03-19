@@ -22,10 +22,15 @@ Z3DView::Z3DView(float maxWidth, float maxHeight, ZRenderer *renderer)
 
 void Z3DView::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
- 	if ((button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2) && action == GLFW_RELEASE && !altKeyPressed()) {
+ 	if ((button == GLFW_MOUSE_BUTTON_2) && action == GLFW_RELEASE && !altKeyPressed()) {
  		int index = mRenderer->getObjectIndexAtLocation(x - getLeft(), getTop() + getHeight() - 1 - y);
  		mRenderer->getScene()->setActiveObjectIndex(index);
  		invalidate();
+ 	} else if (action == GLFW_PRESS) {
+ 	    mInitialMouse = getMouse();
+ 	    mInitialRotSpin = mSpinRig->getRotationAngle();
+ 	    mInitialRotTilt = mTiltRig->getRotationAngle();
+ 	    mInitialTranslation = mSpinRig->getTranslation();
  	}
 }
 
@@ -54,24 +59,21 @@ void Z3DView::setWireMode(bool wiremode) {
 	
 void Z3DView::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
-	int deltaX = getLastX() - x;
-	int deltaY = getLastY() - y;
-	if ((middleMouseIsDown() || (mouseIsDown() && altKeyPressed())) && !shiftKeyPressed()) {
+	int deltaX = x - mInitialMouse.x;
+	int deltaY = y - mInitialMouse.y;
+	if ((middleMouseIsDown() || (mouseIsDown())) && !shiftKeyPressed()) {
 		//Orbit 
 
-		mSpinRig->rotateBy(deltaX);
-		mTiltRig->rotateBy(deltaY);
-
-		mRotationX += deltaX / 2;
-		mRotationY -= deltaY / 2;
+		mSpinRig->setRotationAngle(mInitialRotSpin - deltaX);
+		mTiltRig->setRotationAngle(mInitialRotTilt - deltaY);
 		invalidate();
-	} else if ((middleMouseIsDown() || (mouseIsDown() && altKeyPressed()))  && shiftKeyPressed()) {
+	} else if ((middleMouseIsDown() || (mouseIsDown()))  && shiftKeyPressed()) {
 		// Pan
 		double panSpeed = 0.02;
 		mat4 cameraMatrix = ZRenderUtils::getModelMatrix(mRenderer->getCamera(), nullptr);
 		vec4 rotation = vec4(deltaX * panSpeed, deltaY * -panSpeed, 0.0, 0.0);
 		rotation = cameraMatrix * rotation;
-		mSpinRig->translateBy(dvec3(rotation));
+		mSpinRig->setTranslation(mInitialTranslation - vec3(rotation));
 		invalidate();
 	}
 

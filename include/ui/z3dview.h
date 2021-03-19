@@ -53,6 +53,11 @@ private:
 
 	void setWireMode(bool);
 
+	vec2 mInitialMouse;
+	float mInitialRotTilt;
+	float mInitialRotSpin;
+	vec3 mInitialTranslation;
+
 	ZTexture* mBackground;
 
 };

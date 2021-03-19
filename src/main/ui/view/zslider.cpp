@@ -132,9 +132,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 
 	float scale = getScale().x;
 	if (mouseIsDown() && !shiftKeyPressed() && !altKeyPressed()) {
-
-		int deltaX = getMouseDragDelta().x;
-		float newOffset = mInitialThumb + (deltaX - mInitialOffset);
+		float newOffset = mInitialThumb + (x - mInitialOffset);
 
 		if (newOffset < 0) {
 			newOffset = 0;
