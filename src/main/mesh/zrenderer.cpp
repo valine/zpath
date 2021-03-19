@@ -319,13 +319,6 @@ void ZRenderer::recreateBuffers() {
     float width = mCamera->getWidth();
     float height =  mCamera->getHeight();
 
-    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, mMainBufferMS);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, mSamples, GL_RGBA16F, width, height, GL_TRUE);
-
-    glBindRenderbuffer(GL_RENDERBUFFER, mRenderBufferMS);
-    glRenderbufferStorageMultisample(GL_RENDERBUFFER, mSamples, GL_DEPTH_COMPONENT, width, height);
-
-
     glBindTexture(GL_TEXTURE_2D, mMainBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 

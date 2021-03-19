@@ -40,8 +40,6 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mRangeContainer = new ZView(fillParent, 30, this);
     mRangeContainer->setGravity(topLeft);
     mRangeContainer->setMargin(vec4(0));
-
-
 }
 
 void ZMagnitudePicker::setRadioButtonNames(vector<string> names) {

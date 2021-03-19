@@ -63,6 +63,8 @@ private:
 	ZLabel* mLabel;
 	float mIncrement = 0.01;
 	float mValue = 0.0;
+	float mInitialOffset = 0.0;
+	float mInitialThumb = 0.0;
 
 	bool mShowLabel = true;
 

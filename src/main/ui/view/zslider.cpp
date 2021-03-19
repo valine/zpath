@@ -112,6 +112,9 @@ void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
         }
 
         invalidate();
+ 	} else if (action == GLFW_PRESS) {
+        mInitialOffset = getMouse().x;
+        mInitialThumb = mThumb->getOffsetX();
  	}
 }
 
@@ -128,12 +131,10 @@ void ZSlider::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
 
 	float scale = getScale().x;
-	float lastX = getLastX() * scale;
 	if (mouseIsDown() && !shiftKeyPressed() && !altKeyPressed()) {
 
-		int deltaX = lastX - x;
-		int currentOffset = mThumb->getOffsetX();
-		float newOffset = currentOffset - deltaX;
+		int deltaX = getMouseDragDelta().x;
+		float newOffset = mInitialThumb + (deltaX - mInitialOffset);
 
 		if (newOffset < 0) {
 			newOffset = 0;
@@ -146,9 +147,8 @@ void ZSlider::onCursorPosChange(double x, double y) {
 		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && shiftKeyPressed() && !altKeyPressed()) {
-		double deltaX =  (x - lastX);
-		double currentOffset = mThumb->getOffsetX();
-		double newOffset = currentOffset + (deltaX * 0.1);
+        int deltaX = getMouseDragDelta().x;
+        float newOffset = mInitialThumb + 0.1 * (deltaX - mInitialOffset);
 
 		if (newOffset < 0) {
 			newOffset = 0;
@@ -161,11 +161,10 @@ void ZSlider::onCursorPosChange(double x, double y) {
 		mHighlight->setMaxWidth(newOffset + 1);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && !shiftKeyPressed() && altKeyPressed()) {
-		int deltaX =  lastX - x;
-		int currentOffset = mThumb->getOffsetX();
-		int newOffset = currentOffset - deltaX;
+        int deltaX = getMouseDragDelta().x;
+        float newOffset = mInitialThumb + (deltaX - mInitialOffset);
 
-		if (newOffset < 0) {
+        if (newOffset < 0) {
 			newOffset = 0;
 		} else if (newOffset > getWidth() - SLIDER_THUMB_SIZE) {
 			newOffset = getWidth() - SLIDER_THUMB_SIZE;
@@ -175,9 +174,9 @@ void ZSlider::onCursorPosChange(double x, double y) {
 		mThumb->setOffset(newOffset, yPosition);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && shiftKeyPressed() && altKeyPressed()) {
-		double deltaX =  (x - lastX);
-		double currentOffset = mThumb->getOffsetX();
-		double newOffset = currentOffset + (deltaX * 0.1);
+        int deltaX = getMouseDragDelta().x;
+        float newOffset = mInitialThumb + 0.1 * (deltaX - mInitialOffset);
+
 
 		if (newOffset < 0) {
 			newOffset = 0;
