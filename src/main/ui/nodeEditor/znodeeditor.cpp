@@ -64,7 +64,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mDrawer = new ZDrawer(this, allTypes, allColors);
     mDrawer->setMarginTop(25);
-    mDrawer->setMarginBottom(25);
     mDrawer->setOnItemSelected([this, allTypes](int index){
         vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getScale()) - mNodeContainer->getInnerTranslation();
         vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop(), 0);

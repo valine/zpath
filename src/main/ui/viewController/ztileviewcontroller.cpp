@@ -28,6 +28,7 @@ ZTileViewController::ZTileViewController(string path, std::function<ZViewControl
 void ZTileViewController::onLayoutFinished() {
     ZViewController::onLayoutFinished();
 
+    setBackgroundColor(darkerGrey);
     int defaultController = 1;
 
     if (mContent == nullptr) {
@@ -40,13 +41,14 @@ void ZTileViewController::onLayoutFinished() {
     mContent->setLineWidth(2);
     mContent->setYOffset(1);
     mContent->setXOffset(1);
+    mContent->setMarginBottom(BOTTOM_MARGIN);
     addSubView(mContent);
 
     mHandle = new ZView(vec2(30), this);
     mHandle->setGravity(topRight);
     mHandle->setBackgroundImage(new ZTexture(getResourcePath() + "resources/icons/tile.png"));
 
-    mDropDown = new ZDropDown(200, 300, mNames, this);
+    mDropDown = new ZDropDown(100, 300, mNames, this);
     mDropDown->setGravity(bottomLeft);
     mDropDown->setYOffset(0);
     mDropDown->selectItem(defaultController);
@@ -68,6 +70,9 @@ void ZTileViewController::onLayoutFinished() {
             mContent->setDrawingEnabled(false);
             mContent->setOutlineType(outline);
             mContent->setLineWidth(2);
+            mContent->setYOffset(1);
+            mContent->setXOffset(1);
+            mContent->setMarginBottom(BOTTOM_MARGIN);
             addSubView(mContent);
             getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         } else {
@@ -90,12 +95,11 @@ void ZTileViewController::onLayoutFinished() {
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
-    ZViewController::onMouseEvent(button, action, mods, x, y);
-
     if (action == GLFW_PRESS && mHandle != nullptr && mHandle->getVisibility() && isMouseInBounds(mHandle)) {
 
         ////////////// Step 1: enter corner drag mode
         mDragType = cornerDrag;
+        setConsumeClicks(true);
     } else if(action == GLFW_PRESS) {
         int index = 0;
         for (auto tile : mChildrenTiles) {
@@ -105,6 +109,7 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
                     mInitialBondary = mChildrenTiles.at(tile->mTileIndex + 1)->getOffsetX();
                     mDragType = tileDrag;
                     mDragIndex = tile->mTileIndex + 1;
+                    setConsumeClicks(true);
                     break;
                 }
             }
@@ -115,6 +120,7 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
                     mInitialBondary = mChildrenTiles.at(tile->mTileIndex - 1)->getOffsetY();
                     mDragType = tileDrag;
                     mDragIndex = tile->mTileIndex;
+                    setConsumeClicks(true);
                     break;
                 }
             }
@@ -122,6 +128,8 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
             index++;
         }
     }
+
+    ZViewController::onMouseEvent(button, action, mods, x, y);
 
     if (action == GLFW_RELEASE) {
         if (mDragType == pendingHorizontalJoin) {
@@ -152,14 +160,15 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
             }
         }
         mDragType = noDrag;
+        setConsumeClicks(false);
 
     }
+
+
 }
 
 void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
     ZView::onMouseDrag(absolute, start, delta, state, button);
-
-
         if (state == mouseDrag ) {
             if (mDragType == cornerDrag) {
 
@@ -239,7 +248,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
 
             }
         } else if (state == mouseUp) {
-            releaseFocus(getRootView());
+            setConsumeClicks(false);
             mDragType = noDrag;
             getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         }
@@ -370,7 +379,7 @@ void ZTileViewController::setTileIndex(int index) {
 
 void ZTileViewController::onGlobalMouseUp(int key) {
     ZViewController::onGlobalMouseUp(key);
-    releaseFocus(this);
+    setConsumeClicks(false);
     mDragType = noDrag;
     mJoinGuide->setVisibility(false);
 }
@@ -390,11 +399,6 @@ void ZTileViewController::resetController() {
         mDropDown->setVisibility(true);
         mHandle->bringToFront();
         mDropDown->bringToFront();
-        if (mParentTile == nullptr) {
-            mTileType = rootTile;
-        } else {
-            mTileType = mParentTile->mTileType;
-        }
     }
 }
 
@@ -473,8 +477,10 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
         ZTileViewController* leftTile;
         ZTileViewController* rightTile;
         if (mChildrenTiles.empty()) {
-            leftTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
-            rightTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+            leftTile = new ZTileViewController(getResourcePath(),
+                                               mControllerFactory, mNames, false, mContent);
+            rightTile = new ZTileViewController(getResourcePath(),
+                                                mControllerFactory, mNames, false, nullptr);
 
             addSubView(leftTile);
             addSubView(rightTile);

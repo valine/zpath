@@ -268,6 +268,7 @@ class ZView {
         const vec4 gold = vec4(1, 0.709230, 0, 1);
         const vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
         const vec4 darkGrey = vec4(0.5, 0.5, 0.5, 1.0);
+        const vec4 darkerGrey = vec4(0.04, 0.04, 0.05, 1.0);
         const vec4 transparent = vec4(0);
         const vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
 
@@ -306,6 +307,8 @@ class ZView {
     vec2 getTranslation();
 
     void translateBy(vec2 translation);
+
+    void setConsumeClicks(bool consume);
 
     float mDP = 1.0;
 private:
@@ -433,6 +436,8 @@ private:
 
         bool mMouseOver = false;
 
+        bool mConsumeClicks = false;
+
     void drawShadow();
 
     void setup(float maxWidth, float maxHeight, ZView *parent);
@@ -442,6 +447,9 @@ private:
     void calculateBounds();
 
     void addViewFromDraw(ZView *view);
+void setComsumeClicks();
+
+    void clearFocus();
 };
 
 #endif

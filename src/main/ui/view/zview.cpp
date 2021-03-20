@@ -73,25 +73,31 @@ void ZView::onCharacterInput(unsigned int character) {
     }
 }
 
+void ZView::setConsumeClicks(bool consume) {
+    mConsumeClicks = consume;
+}
+
 void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     vec2 scale = getScale();
     float sx = x / scale.x;
     float sy = y / scale.y;
 
     if (getVisibility() && isClickable()) {
-        for (int i = 0; i < mViews.size(); i++) {
-            if (mViews.size() > i) {
-                ZView* view = mViews.at(i);
-                if (view != nullptr) {
+        if (!mConsumeClicks) {
+            for (int i = 0; i < mViews.size(); i++) {
+                if (mViews.size() > i) {
+                    ZView *view = mViews.at(i);
+                    if (view != nullptr) {
 
-                    if (isMouseInBounds(view)) {
-                        view->onMouseEvent(button, action, mods, x, y);
-                    } else if (action == GLFW_RELEASE && view->anyMouseDown()) {
-                        view->onMouseEvent(button, action, mods, x, y);
-                    }
-                    if (action == GLFW_RELEASE) {
-                        view->onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-                                          vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp, button);
+                        if (isMouseInBounds(view)) {
+                            view->onMouseEvent(button, action, mods, x, y);
+                        } else if (action == GLFW_RELEASE && view->anyMouseDown()) {
+                            view->onMouseEvent(button, action, mods, x, y);
+                        }
+                        if (action == GLFW_RELEASE) {
+                            view->onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
+                                              vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp, button);
+                        }
                     }
                 }
             }
@@ -1158,8 +1164,17 @@ void ZView::removeView() {
     }
 }
 
+void ZView::clearFocus() {
+    for (ZView* view : mViews) {
+        view->clearFocus();
+    }
+
+    releaseFocus(this);
+}
+
 void ZView::removeSubView(ZView* view) {
     int index = 0;
+    clearFocus();
     for (ZView* aView : mViews) {
         if (aView == view) {
             removeSubView(index);
@@ -1212,5 +1227,9 @@ ZView::Gravity ZView::getGravity() {
 }
 
 void ZView::onMouseLeave() {
+
+}
+
+void ZView::setComsumeClicks() {
 
 }

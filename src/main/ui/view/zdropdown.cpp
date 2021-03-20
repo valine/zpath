@@ -101,10 +101,13 @@ void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
 			} else {
 			    releaseFocus(this);
 			}
+		} else {
+            releaseFocus(this);
 		}
 	}
 
 	if (action == GLFW_RELEASE) {
+
 		// if (y < mTitle->getBottom()) {
 		// 	mDrawer->setVisibility(!mDrawer->getVisibility());
 		// }

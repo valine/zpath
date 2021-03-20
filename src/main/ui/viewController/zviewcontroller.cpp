@@ -158,17 +158,31 @@ string ZViewController::getResourcePath() {
 }
 
 void ZViewController::requestFocus(ZView *view) {
-    mFocusedView = view;
-    onFocusChanged(mFocusedView);
+    if (getParentView() == nullptr || getParentView() == this) {
+        mFocusedView = view;
+        onFocusChanged(mFocusedView);
+    } else {
+        getParentView()->requestFocus(view);
+    }
+
 }
 
 bool ZViewController::isViewInFocus() {
-    return mFocusedView != nullptr;
+    if (getParentView() == nullptr || getParentView() == this) {
+        return mFocusedView != nullptr;
+    } else {
+        return getParentView()->isViewInFocus();
+    }
+
 }
 
 void ZViewController::releaseFocus(ZView *forView) {
-    if (mFocusedView == forView) {
-        mFocusedView = nullptr;
+    if (getParentView() == nullptr || getParentView() == this) {
+        if (mFocusedView == forView) {
+            mFocusedView = nullptr;
+        }
+    } else {
+        getParentView()->releaseFocus(forView);
     }
 }
 
