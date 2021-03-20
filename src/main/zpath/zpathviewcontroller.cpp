@@ -24,7 +24,8 @@ void ZPathViewController::onCreate() {
     auto tabView = new ZTabView(150, fillParent, {tab1, tab2}, this);
     tabView->setGravity(ZView::topRight);
 
-    auto* label = new ZLabel("Panel", tab1);
+    auto* label = new ZLabel("Controls", tab1);
+    label->setXOffset(10);
 
     // Button Example
     auto* gridButton = new ZButton("Toggle Grid View", tab1);
@@ -49,6 +50,13 @@ void ZPathViewController::onCreate() {
         mScene->setExposure(v);
     });
 
+    auto checkBox = new ZCheckbox("Background blur", tab1);
+    checkBox->setMarginTop(5);
+    checkBox->setOnCheck([this](ZView* sender, bool checked){
+        mScene->getWorld()->blurBackground(checked);
+    });
+
+    tab1->getInnerView()->refreshMargins();
     mTileView = new ZTiledView(mScene, ZView::fillParent,  ZView::fillParent, 1, 1, getResourcePath());
     mIsQuadView = false;
     mTileView->setOffset(tab1->getWidth(), 0);
