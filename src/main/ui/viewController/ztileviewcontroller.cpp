@@ -151,14 +151,10 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                     triggerSideSplit();
                 } else if (delta.x > DRAG_THRESHOLD) {
                     mDragType = pendingHorizontalJoin;
-                    mJoinGuide->setVisibility(true);
-                    mJoinGuide->bringToFront();
                 } else if (delta.y > DRAG_THRESHOLD) {
                     triggerOverUnderSplit();
                 } else if (delta.y < -DRAG_THRESHOLD) {
                     mDragType = pendingVerticalJoin;
-                    mJoinGuide->setVisibility(true);
-                    mJoinGuide->bringToFront();
                 }
             } else if (mDragType == tileDrag && isMouseInBounds(this)) {
 
@@ -208,10 +204,8 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
 
                     getRootView()->onWindowChange(bottomTile->getWindowWidth(), bottomTile->getWindowHeight());
                 }
-            }
-
-            else if (mDragType == pendingHorizontalJoin) {
-                if (isMouseInBounds(this)) {
+            } else if (mDragType == pendingHorizontalJoin) {
+                if (isMouseInBounds(this) &&  mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->getVisibility()) {
                     mJoinGuide->setVisibility(true);
                     if (mParentTile->mChildrenTiles.size() > mTileIndex + 1) {
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(false);
@@ -224,7 +218,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                 }
 
             } else if (mDragType == pendingVerticalJoin) {
-                    if (isMouseInBounds(this)) {
+                    if (isMouseInBounds(this) &&  mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->getVisibility()) {
                         mJoinGuide->setVisibility(true);
                         //  if (0 > mTileIndex - 1) {
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(false);
