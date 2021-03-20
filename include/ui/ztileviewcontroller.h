@@ -26,6 +26,8 @@ public:
     int cornerDrag = 0;
     int tileDrag = 1;
     int noDrag = -1;
+    int pendingHorizontalJoin = 6;
+    int pendingVerticalJoin = 7;
 
     int horizontalTile = 0;
     int verticalTile = 1;
@@ -57,6 +59,7 @@ private:
 
     ZView* mHandle = nullptr;
     ZDropDown* mDropDown = nullptr;
+    ZView* mJoinGuide;
 
     vector<ZTileViewController*> mChildrenTiles;
 //    ZTileViewController* mLeftTile = nullptr;

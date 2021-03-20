@@ -51,6 +51,10 @@ void ZTileViewController::onLayoutFinished() {
     mDropDown->setYOffset(0);
     mDropDown->selectItem(defaultController);
 
+    mJoinGuide = new ZView(fillParent,fillParent, this);
+    mJoinGuide->setBackgroundColor(vec4(0.1,0.1,0.1,0.4));
+    mJoinGuide->setVisibility(false);
+
     mDropDown->setOnItemChange([this](int index){
         for (ZViewController* controller : mControllers) {
             if (controller != nullptr) {
@@ -95,7 +99,7 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
     } else if(action == GLFW_PRESS) {
         int index = 0;
         for (auto tile : mChildrenTiles) {
-            if (mSplitType == sideBySide && (abs(tile->getRight() - x) < 10)) {
+            if (mSplitType == sideBySide && (abs(tile->getRight() - x) < 10) && !isMouseInBounds(tile->mHandle)) {
                 if (mChildrenTiles.size() > tile->mTileIndex + 1) {
                     mInitialBondary = mChildrenTiles.at(tile->mTileIndex + 1)->getOffsetX();
                     mDragType = tileDrag;
@@ -104,7 +108,8 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
                 }
             }
 
-            if (mSplitType == overUnder && (abs(tile->getBottom() - y) < 10)) {
+            if (mSplitType == overUnder && (abs(tile->getBottom() - y) < 10) &&
+                !isMouseInBounds(mChildrenTiles.at(tile->mTileIndex - 1))) {
                 if (tile->mTileIndex > 0) {
                     mInitialBondary = mChildrenTiles.at(tile->mTileIndex - 1)->getOffsetY();
                     mDragType = tileDrag;
@@ -115,92 +120,130 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
 
             index++;
         }
-
     }
 
     if (action == GLFW_RELEASE) {
+        if (mDragType == pendingHorizontalJoin) {
+            mJoinGuide->setVisibility(false);
+            if (mParentTile != nullptr) {
+                mParentTile->triggerSideJoinLeftToRight(mTileIndex);
+            }
+        } else if (mDragType == pendingVerticalJoin) {
+            mJoinGuide->setVisibility(false);
+            if (mParentTile != nullptr) {
+                mParentTile->triggerJoinBottomToTop(mTileIndex);
+            }
+        }
         mDragType = noDrag;
+
     }
 }
 
 void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
     ZView::onMouseDrag(absolute, start, delta, state, button);
 
-    if (state == mouseDrag && isMouseInBounds(this)) {
-        if (mDragType == cornerDrag) {
 
-            ///////////////Step 2: trigger split or join
-            if (delta.x < -DRAG_THRESHOLD) {
-                triggerSideSplit();
-            } else if (delta.x > DRAG_THRESHOLD) {
+        if (state == mouseDrag ) {
+            if (mDragType == cornerDrag && isMouseInBounds(this)) {
 
-                mDragType = noDrag;
-                if (mParentTile != nullptr) {
-                    mParentTile->triggerSideJoinLeftToRight(mTileIndex);
+                ///////////////Step 2: trigger split or join
+                if (delta.x < -DRAG_THRESHOLD) {
+                    triggerSideSplit();
+                } else if (delta.x > DRAG_THRESHOLD) {
+                    mDragType = pendingHorizontalJoin;
+                    mJoinGuide->setVisibility(true);
+                    mJoinGuide->bringToFront();
+                } else if (delta.y > DRAG_THRESHOLD) {
+                    triggerOverUnderSplit();
+                } else if (delta.y < -DRAG_THRESHOLD) {
+                    mDragType = pendingVerticalJoin;
+                    mJoinGuide->setVisibility(true);
+                    mJoinGuide->bringToFront();
                 }
-            } else if (delta.y > DRAG_THRESHOLD) {
-                triggerOverUnderSplit();
-            } else if (delta.y < -DRAG_THRESHOLD) {
-                mDragType = noDrag;
-                if (mParentTile != nullptr) {
-                    mParentTile->triggerJoinBottomToTop(mTileIndex);
+            } else if (mDragType == tileDrag && isMouseInBounds(this)) {
+
+                if (mSplitType == sideBySide) {
+                    auto leftTile = mChildrenTiles.at(mDragIndex - 1);
+                    auto rightTile = mChildrenTiles.at(mDragIndex);
+
+                    int bondary = mInitialBondary + (int) delta.x;
+
+                    int rightTileSize = fillParent;
+                    int leftTileSize = bondary - leftTile->getOffsetX();
+                    if (mChildrenTiles.size() > mDragIndex + 1) {
+                        rightTileSize = mChildrenTiles.at(mDragIndex + 1)->getOffsetX() - bondary;
+                    }
+
+                    rightTile->setXOffset(bondary);
+                    rightTile->setMaxWidth(rightTileSize);
+                    leftTile->setMaxWidth(leftTileSize);
+
+                    leftTile->onWindowChange(getWindowWidth(), getWindowHeight());
+
+                    rightTile->invalidate();
+                    leftTile->invalidate();
+
+                    rightTile->onWindowChange(rightTile->getWindowWidth(), rightTile->getWindowHeight());
+
+                } else if (mSplitType == overUnder) {
+                    auto bottomTile = mChildrenTiles.at(mDragIndex - 1);
+                    auto topTile = mChildrenTiles.at(mDragIndex);
+
+                    int bondary = mInitialBondary + (int) delta.y;
+
+                    int bottomTileSize = fillParent;
+                    int topTileSize = bondary - (topTile->getOffsetY());
+                    if (mDragIndex - 2 >= 0) {
+                        bottomTileSize = mChildrenTiles.at(mDragIndex - 2)->getOffsetY() - bondary;
+                    }
+
+                    bottomTile->setYOffset(bondary);
+                    bottomTile->setMaxHeight(bottomTileSize);
+                    topTile->setMaxHeight(topTileSize);
+
+                    topTile->onWindowChange(getWindowWidth(), getWindowHeight());
+
+                    bottomTile->invalidate();
+                    topTile->invalidate();
+
+                    getRootView()->onWindowChange(bottomTile->getWindowWidth(), bottomTile->getWindowHeight());
                 }
             }
-        } else if (mDragType == tileDrag) {
 
-            if (mSplitType == sideBySide) {
-                auto leftTile = mChildrenTiles.at(mDragIndex - 1);
-                auto rightTile = mChildrenTiles.at(mDragIndex);
-
-                int bondary = mInitialBondary + (int) delta.x;
-
-                int rightTileSize = fillParent;
-                int leftTileSize = bondary - leftTile->getOffsetX();
-                if (mChildrenTiles.size() > mDragIndex + 1) {
-                    rightTileSize = mChildrenTiles.at(mDragIndex + 1)->getOffsetX() - bondary;
+            else if (mDragType == pendingHorizontalJoin) {
+                if (isMouseInBounds(this)) {
+                    mJoinGuide->setVisibility(true);
+                    if (mParentTile->mChildrenTiles.size() > mTileIndex + 1) {
+                        mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(false);
+                    }
+                } else if (isMouseInBounds(mParentTile->mChildrenTiles.at(mTileIndex + 1))) {
+                    if (mParentTile->mChildrenTiles.size() > mTileIndex + 1) {
+                        mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(true);
+                    }
+                    mJoinGuide->setVisibility(false);
                 }
 
-                rightTile->setXOffset(bondary);
-                rightTile->setMaxWidth(rightTileSize);
-                leftTile->setMaxWidth(leftTileSize);
+            } else if (mDragType == pendingVerticalJoin) {
+                    if (isMouseInBounds(this)) {
+                        mJoinGuide->setVisibility(true);
+                        //  if (0 > mTileIndex - 1) {
+                        mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(false);
+                        // }
+                    } else if (isMouseInBounds(mParentTile->mChildrenTiles.at(mTileIndex + 1))) {
+                        //  if (0 > mTileIndex - 1) {
+                        mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(true);
+                        //  }
+                        mJoinGuide->setVisibility(false);
+                    }
 
-                leftTile->onWindowChange(getWindowWidth(), getWindowHeight());
-
-                rightTile->invalidate();
-                leftTile->invalidate();
-
-                rightTile->onWindowChange(rightTile->getWindowWidth(), rightTile->getWindowHeight());
-
-            } else if (mSplitType == overUnder) {
-                auto bottomTile = mChildrenTiles.at(mDragIndex - 1);
-                auto topTile = mChildrenTiles.at(mDragIndex);
-
-                int bondary = mInitialBondary + (int) delta.y;
-
-                int bottomTileSize = fillParent;
-                int topTileSize = bondary - (topTile->getOffsetY());
-                if (mDragIndex - 2 >= 0) {
-                    bottomTileSize =  mChildrenTiles.at(mDragIndex - 2)->getOffsetY() - bondary;
-                }
-
-                bottomTile->setYOffset(bondary);
-                bottomTile->setMaxHeight(bottomTileSize);
-                topTile->setMaxHeight(topTileSize);
-
-                topTile->onWindowChange(getWindowWidth(), getWindowHeight());
-
-                bottomTile->invalidate();
-                topTile->invalidate();
-
-                getRootView()->onWindowChange(bottomTile->getWindowWidth(), bottomTile->getWindowHeight());
             }
-
+        } else if (state == mouseUp) {
+            releaseFocus(getRootView());
+            mDragType = noDrag;
+            getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         }
-    } else if (state == mouseUp) {
-        releaseFocus(getRootView());
-        mDragType = noDrag;
-        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-    }
+
+
 }
 
 void ZTileViewController::insertChildAtIndexHorizontal(int index) {
@@ -250,7 +293,6 @@ void ZTileViewController::insertChildAtIndexVertical(int index) {
 
     mInitialBondary = mChildrenTiles.at(index - 1)->getOffsetY();
 }
-
 
 void ZTileViewController::updateIndices() {
     int index = 0;
@@ -320,8 +362,6 @@ void ZTileViewController::triggerSideSplit() {
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
 
 }
-
-
 
 /// Todo: fix later
 
@@ -417,6 +457,7 @@ void ZTileViewController::onGlobalMouseUp(int key) {
     ZViewController::onGlobalMouseUp(key);
     releaseFocus(this);
     mDragType = noDrag;
+    mJoinGuide->setVisibility(false);
 }
 
 void ZTileViewController::triggerSideJoin() {
@@ -456,6 +497,7 @@ void ZTileViewController::triggerSideJoinLeftToRight(int index) {
     resetController();
     updateIndices();
     onWindowChange(getWindowWidth(),getWindowHeight());
+    mDragType = noDrag;
 
 }
 
@@ -498,6 +540,7 @@ void ZTileViewController::triggerJoinBottomToTop(int index) {
     updateIndices();
 
     onWindowChange(getWindowWidth(),getWindowHeight());
+    mDragType = noDrag;
 }
 
 void ZTileViewController::triggerSideJoinRightToLeft() {
