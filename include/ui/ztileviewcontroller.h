@@ -77,9 +77,11 @@ private:
 
     void setTileIndex(int index);
 
-    void insertChildAtIndex(int index);
+    void insertChildAtIndexHorizontal(int index);
 
     void updateIndices();
+
+    void insertChildAtIndexVertical(int index);
 };
 
 
