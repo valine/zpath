@@ -390,6 +390,11 @@ void ZTileViewController::resetController() {
         mDropDown->setVisibility(true);
         mHandle->bringToFront();
         mDropDown->bringToFront();
+        if (mParentTile == nullptr) {
+            mTileType = rootTile;
+        } else {
+            mTileType = mParentTile->mTileType;
+        }
     }
 }
 
@@ -567,6 +572,8 @@ void ZTileViewController::triggerSideJoinRightToLeft(int index) {
         mChildrenTiles.at(index)->setXOffset(leftSide);
         mChildrenTiles.at(index)->setMaxWidth(width);
 
+        resetController();
+
     }
 }
 
@@ -618,6 +625,7 @@ void ZTileViewController::triggerJoinBottomToTop(int index) {
         }
 
         tileToResize->setMaxHeight(height);
+        resetController();
     }
 }
 
