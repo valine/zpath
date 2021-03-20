@@ -32,12 +32,16 @@ public:
     int horizontalTile = 0;
     int verticalTile = 1;
     int rootTile = 2;
+
+    int keepFirst = 9;
+    int keepSecond = 10;
 private:
 
     bool mIsRoot = false;
     int mDragType = noDrag;
     int mSplitType = sideBySide;
     int mDragIndex = 0;
+    int mJoinType = keepFirst;
 
     int mInitialBondary = 0;
     int mInitialSecond = 0;
@@ -67,13 +71,10 @@ private:
     ZTileViewController* mParentTile = nullptr;
     ZViewController* mContent = nullptr;
 
-    void triggerSideJoin();
     void triggerSideSplit();
     void triggerSideJoinLeftToRight(int index);
-    void triggerSideJoinRightToLeft();
+    void triggerSideJoinRightToLeft(int index);
     void triggerOverUnderSplit();
-
-    bool hasChildren();
 
 
     void setTileIndex(int index);
@@ -87,6 +88,12 @@ private:
     void triggerJoinBottomToTop(int index);
 
     void resetController();
+
+    void triggerJoinTopToBottom(int index);
+
+    void updateHorizontalJoinGuide();
+
+    void updateVerticalJoinGuide();
 };
 
 
