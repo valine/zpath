@@ -104,9 +104,11 @@ void ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
         ZView::onMouseEvent(button, action, mods, x, y);
     }
 
-    for (ZView* view : getSubViews()) {
-        if (action == GLFW_RELEASE) {
-            view->onGlobalMouseUp(button);
+    if (action == GLFW_RELEASE) {
+        for (int i = 0; i < getSubViews().size(); i++) {
+            if (getSubViews().size() > i) {
+                getSubViews().at(i)->onGlobalMouseUp(button);
+            }
         }
     }
 }

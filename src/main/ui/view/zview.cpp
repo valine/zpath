@@ -461,8 +461,10 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
         mMaxHeight = windowHeight;
     }
 
-    for (auto & mView : mViews) {
-        mView->onWindowChange(right, bottom);
+    for (int i = 0; i < mViews.size(); i++) {
+        if (i < mViews.size()) {
+            mViews.at(i)->onWindowChange(right, bottom);
+        }
     }
 
     invalidate();

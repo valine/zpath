@@ -134,19 +134,17 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                 triggerSideSplit();
             } else if (delta.x > DRAG_THRESHOLD) {
 
+                mDragType = noDrag;
                 if (mParentTile != nullptr) {
                     mParentTile->triggerSideJoinLeftToRight(mTileIndex);
                 }
-
-                mDragType = noDrag;
             } else if (delta.y > DRAG_THRESHOLD) {
                 triggerOverUnderSplit();
             } else if (delta.y < -DRAG_THRESHOLD) {
+                mDragType = noDrag;
                 if (mParentTile != nullptr) {
                     mParentTile->triggerJoinBottomToTop(mTileIndex);
                 }
-
-                mDragType = noDrag;
             }
         } else if (mDragType == tileDrag) {
 
@@ -442,7 +440,8 @@ void ZTileViewController::triggerSideJoin() {
 
 void ZTileViewController::triggerSideJoinLeftToRight(int index) {
 
-    if (index < mChildrenTiles.size() - 1) {
+    mDragType = noDrag;
+    if (mChildrenTiles.size() > index + 1) {
         removeSubView(mChildrenTiles.at(index + 1));
         mChildrenTiles.erase(mChildrenTiles.begin() + (index + 1));
         updateIndices();
@@ -454,12 +453,30 @@ void ZTileViewController::triggerSideJoinLeftToRight(int index) {
         mChildrenTiles.at(index)->setMaxWidth(width);
     }
 
+    resetController();
     updateIndices();
+    onWindowChange(getWindowWidth(),getWindowHeight());
+
+}
+
+void ZTileViewController::resetController() {
+    if (mChildrenTiles.size() == 1) {
+        ZViewController* content = mChildrenTiles.at(0)->mContent;
+        mChildrenTiles.at(0)->removeSubView(content);
+        removeSubView(mChildrenTiles.at(0));
+        mChildrenTiles.erase(mChildrenTiles.begin() + 0);
+        addSubView(content);
+        mHandle->setVisibility(true);
+        mDropDown->setVisibility(true);
+        mHandle->bringToFront();
+        mDropDown->bringToFront();
+    }
 }
 
 void ZTileViewController::triggerJoinBottomToTop(int index) {
 
-    if (index < mChildrenTiles.size() - 1) {
+    mDragType = noDrag;
+    if (mChildrenTiles.size() > index + 1) {
         removeSubView(mChildrenTiles.at(index + 1));
         mChildrenTiles.erase(mChildrenTiles.begin() + (index + 1));
         updateIndices();
@@ -477,7 +494,10 @@ void ZTileViewController::triggerJoinBottomToTop(int index) {
         mChildrenTiles.at(index)->setYOffset(offset);
     }
 
+    resetController();
     updateIndices();
+
+    onWindowChange(getWindowWidth(),getWindowHeight());
 }
 
 void ZTileViewController::triggerSideJoinRightToLeft() {

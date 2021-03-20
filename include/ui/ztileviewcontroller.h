@@ -82,6 +82,8 @@ private:
     void insertChildAtIndexVertical(int index);
 
     void triggerJoinBottomToTop(int index);
+
+    void resetController();
 };
 
 
