@@ -38,6 +38,8 @@ void ZTileViewController::onLayoutFinished() {
     mContent->setDrawingEnabled(false);
     mContent->setOutlineType(outline);
     mContent->setLineWidth(2);
+    mContent->setYOffset(1);
+    mContent->setXOffset(1);
     addSubView(mContent);
 
     mHandle = new ZView(vec2(40), highlight, this);
@@ -91,19 +93,29 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
         ////////////// Step 1: enter corner drag mode
         mDragType = cornerDrag;
     } else if(action == GLFW_PRESS) {
-//        if (mLeftTile != nullptr) {
-//            if (mSplitType == sideBySide && (abs(mLeftTile->getRight() - x) < 10)) {
-//                mInitialPosition = mLeftTile->getWidth();
-//                mInitialSecond = mRightTile->getWidth();
-//                mDragType = tileDrag;
-//            }
-//
-//            if (mSplitType == overUnder && (abs(mLeftTile->getBottom() - y) < 10)) {
-//                mInitialPosition = mRightTile->getHeight();
-//                mInitialSecond = mLeftTile->getHeight();
-//                mDragType = tileDrag;
-//            }
-//        }
+        int index = 0;
+        for (auto tile : mChildrenTiles) {
+            if (mSplitType == sideBySide && (abs(tile->getRight() - x) < 10)) {
+                if (mChildrenTiles.size() > tile->mTileIndex + 1) {
+                    mInitialBondary = mChildrenTiles.at(tile->mTileIndex + 1)->getOffsetX();
+                    mDragType = tileDrag;
+                    mDragIndex = tile->mTileIndex + 1;
+                    break;
+                }
+            }
+
+            if (mSplitType == overUnder && (abs(tile->getBottom() - y) < 10)) {
+                if (tile->mTileIndex > 0) {
+                    mInitialBondary = mChildrenTiles.at(tile->mTileIndex - 1)->getOffsetY();
+                    mDragType = tileDrag;
+                    mDragIndex = tile->mTileIndex;
+                    break;
+                }
+            }
+
+            index++;
+        }
+
     }
 
     if (action == GLFW_RELEASE) {
@@ -148,7 +160,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                 rightTile->setMaxWidth(rightTileSize);
                 leftTile->setMaxWidth(leftTileSize);
 
-                //leftTile->onWindowChange(getWindowWidth(), getWindowHeight());
+                leftTile->onWindowChange(getWindowWidth(), getWindowHeight());
 
                 rightTile->invalidate();
                 leftTile->invalidate();
@@ -167,13 +179,11 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                     bottomTileSize =  mChildrenTiles.at(mDragIndex - 2)->getOffsetY() - bondary;
                 }
 
-                topTile->setXOffset(10);
-
                 bottomTile->setYOffset(bondary);
                 bottomTile->setMaxHeight(bottomTileSize);
                 topTile->setMaxHeight(topTileSize);
 
-                //topTile->onWindowChange(getWindowWidth(), getWindowHeight());
+                topTile->onWindowChange(getWindowWidth(), getWindowHeight());
 
                 bottomTile->invalidate();
                 topTile->invalidate();
