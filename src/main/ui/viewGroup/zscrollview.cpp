@@ -74,15 +74,18 @@ void ZScrollView::onScrollChange(double x, double y) {
 	int scrollSpeed = 50;
 	double scrollBottom = mInnerView->getTranslation().y + mInnerView->getMaxHeight();
 
+	double distance = getHeight() - scrollBottom;
 	if (y < 0) { // Scrolling down
 		if (scrollBottom > getHeight()) {
-			mInnerView->translateBy(vec2(0, y * scrollSpeed));
+			mInnerView->translateBy(vec2(0, std::max(distance, y * scrollSpeed)));
 		}
 	} else { // scrolling up 
 		if (mInnerView->getTranslation().y < 0) {
-			mInnerView->translateBy(vec2(0, y * scrollSpeed));
+		    double current = mInnerView->getTranslation().y;
+			mInnerView->translateBy(vec2(0, std::min(-current, y * scrollSpeed)));
 		}
 	}
+
 
 	mInnerView->onWindowChange(getWidth(), getHeight());
 

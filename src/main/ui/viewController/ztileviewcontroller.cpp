@@ -88,10 +88,10 @@ void ZTileViewController::onLayoutFinished() {
     });
 
     mIndexLabel = new ZLabel("-1", this);
-    mIndexLabel->setBackgroundColor(red);
     mIndexLabel->setGravity(Gravity::bottomRight);
-    mIndexLabel->setYOffset(10);
-    mIndexLabel->setMaxWidth(30);
+    mIndexLabel->setYOffset(2);
+    mIndexLabel->setTextColor(grey);
+    mIndexLabel->setMaxWidth(15);
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -354,26 +354,26 @@ void ZTileViewController::setTileIndex(int index) {
 //    mIndexLabel->bringToFront();
 
     mTileIndex = index;
-    switch (index) {
-        case 0:
-            mIndexLabel->setBackgroundColor(red);
-            break;
-        case 1:
-            mIndexLabel->setBackgroundColor(blue);
-            break;
-        case 3:
-            mIndexLabel->setBackgroundColor(green);
-            break;
-        case 4:
-            mIndexLabel->setBackgroundColor(yellow);
-            break;
-        case 5:
-            mIndexLabel->setBackgroundColor(gold);
-            break;
-        default:
-            mIndexLabel->setBackgroundColor(white);
-            break;
-    }
+//    switch (index) {
+//        case 0:
+//            mIndexLabel->setBackgroundColor(red);
+//            break;
+//        case 1:
+//            mIndexLabel->setBackgroundColor(blue);
+//            break;
+//        case 3:
+//            mIndexLabel->setBackgroundColor(green);
+//            break;
+//        case 4:
+//            mIndexLabel->setBackgroundColor(yellow);
+//            break;
+//        case 5:
+//            mIndexLabel->setBackgroundColor(gold);
+//            break;
+//        default:
+//            mIndexLabel->setBackgroundColor(white);
+//            break;
+//    }
 
 }
 
