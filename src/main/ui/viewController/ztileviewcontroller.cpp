@@ -42,9 +42,9 @@ void ZTileViewController::onLayoutFinished() {
     mContent->setXOffset(1);
     addSubView(mContent);
 
-    mHandle = new ZView(vec2(40), highlight, this);
+    mHandle = new ZView(vec2(30), this);
     mHandle->setGravity(topRight);
-    mHandle->setElevation(0.8);
+    mHandle->setBackgroundImage(new ZTexture(getResourcePath() + "resources/icons/tile.png"));
 
     mDropDown = new ZDropDown(200, 300, mNames, this);
     mDropDown->setGravity(bottomLeft);
@@ -80,9 +80,9 @@ void ZTileViewController::onLayoutFinished() {
 
     mIndexLabel = new ZLabel("-1", this);
     mIndexLabel->setBackgroundColor(red);
-    mIndexLabel->setGravity(Gravity::bottomLeft);
-    mIndexLabel->setYOffset(200);
-    mIndexLabel->setMaxWidth(200);
+    mIndexLabel->setGravity(Gravity::bottomRight);
+    mIndexLabel->setYOffset(10);
+    mIndexLabel->setMaxWidth(30);
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -135,12 +135,18 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
             } else if (delta.x > DRAG_THRESHOLD) {
 
                 if (mParentTile != nullptr) {
-                    triggerSideJoin();
+                    mParentTile->triggerSideJoinLeftToRight(mTileIndex);
                 }
 
                 mDragType = noDrag;
             } else if (delta.y > DRAG_THRESHOLD) {
                 triggerOverUnderSplit();
+            } else if (delta.y < -DRAG_THRESHOLD) {
+                if (mParentTile != nullptr) {
+                    mParentTile->triggerJoinBottomToTop(mTileIndex);
+                }
+
+                mDragType = noDrag;
             }
         } else if (mDragType == tileDrag) {
 
@@ -293,7 +299,6 @@ void ZTileViewController::triggerSideSplit() {
         rightTile->setXOffset(getWidth());
         rightTile->setParentView(this);
         rightTile->mParentTile = this;
-        rightTile->mHandle->setBackgroundColor(red);
         rightTile->setTileIndex(1);
        // rightTile->mHandle->bringToFront();
         rightTile->mTileType = horizontalTile;
@@ -359,7 +364,6 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
         rightTile->setYOffset(0);
         rightTile->setParentView(this);
         rightTile->mParentTile = this;
-        rightTile->mHandle->setBackgroundColor(red);
         rightTile->setTileIndex(1);
         // rightTile->mHandle->bringToFront();
         rightTile->mTileType = verticalTile;
@@ -436,28 +440,44 @@ void ZTileViewController::triggerSideJoin() {
 //    }
 }
 
-ZTileViewController* ZTileViewController::getLeftMostChild() {
-//    if (hasChildren()) {
-//        return mLeftTile->getLeftMostChild();
-//    }
-//
-//    return this;
+void ZTileViewController::triggerSideJoinLeftToRight(int index) {
+
+    if (index < mChildrenTiles.size() - 1) {
+        removeSubView(mChildrenTiles.at(index + 1));
+        mChildrenTiles.erase(mChildrenTiles.begin() + (index + 1));
+        updateIndices();
+        int rightSide = mChildrenTiles.at(index)->getOffsetX();
+        int width = getWidth();
+        if (mChildrenTiles.size() > index + 1) {
+            width = mChildrenTiles.at(index + 1)->getOffsetX() - rightSide;
+        }
+        mChildrenTiles.at(index)->setMaxWidth(width);
+    }
+
+    updateIndices();
 }
 
-void ZTileViewController::triggerSideJoinLeftToRight() {
-//    if (mRightTile != nullptr) {
-//
-//        mLeftTile->removeSubView(mContent);
-//        mRightTile->setVisibility(false);
-//        mLeftTile->setVisibility(false);
-//        addSubView(mContent);
-//        mHandle->setVisibility(true);
-//        mHandle->bringToFront();
-//
-//        mInitialPosition = getWidth();
-//        mInitialSecond = 0;
-//        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-//    }
+void ZTileViewController::triggerJoinBottomToTop(int index) {
+
+    if (index < mChildrenTiles.size() - 1) {
+        removeSubView(mChildrenTiles.at(index + 1));
+        mChildrenTiles.erase(mChildrenTiles.begin() + (index + 1));
+        updateIndices();
+
+        int offset = 0;
+        int height = getHeight();
+        if (mChildrenTiles.size() > index + 1) {
+            offset = mChildrenTiles.at(index + 1)->getOffsetY() + mChildrenTiles.at(index + 1)->getMaxHeight();
+        }
+
+        if (index - 1 >= 0) {
+            height = mChildrenTiles.at(index - 1)->getOffsetY();
+        }
+        mChildrenTiles.at(index)->setMaxHeight(height);
+        mChildrenTiles.at(index)->setYOffset(offset);
+    }
+
+    updateIndices();
 }
 
 void ZTileViewController::triggerSideJoinRightToLeft() {

@@ -66,11 +66,9 @@ private:
 
     void triggerSideJoin();
     void triggerSideSplit();
-    void triggerSideJoinLeftToRight();
+    void triggerSideJoinLeftToRight(int index);
     void triggerSideJoinRightToLeft();
     void triggerOverUnderSplit();
-
-    ZTileViewController * getLeftMostChild();
 
     bool hasChildren();
 
@@ -82,6 +80,8 @@ private:
     void updateIndices();
 
     void insertChildAtIndexVertical(int index);
+
+    void triggerJoinBottomToTop(int index);
 };
 
 
