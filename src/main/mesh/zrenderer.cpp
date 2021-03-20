@@ -58,13 +58,16 @@ void ZRenderer::init() {
     glGenFramebuffers(1, &mSelectionFBO);
     glGenTextures(1, &mSelectionBuffer);
     glBindTexture(GL_TEXTURE_2D, mSelectionBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, mCamera->getWidth() * dp, mCamera->getHeight() * dp, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F,
+                 (float) mCamera->getWidth() * dp,
+                 (float) mCamera->getHeight() * dp, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glGenRenderbuffers(1, &mSelectionRenderBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, mSelectionRenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mCamera->getWidth() * dp, mCamera->getHeight() * dp);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, (float) mCamera->getWidth() * dp,
+                          (float) mCamera->getHeight() * dp);
 
     glBindFramebuffer(GL_FRAMEBUFFER, mSelectionFBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mSelectionBuffer, 0);
@@ -428,12 +431,19 @@ void ZRenderer::renderMain() {
         }
 
         if (mCamera->isManualView()) {
-            shader->setVec3("uCameraPosition", inverse(mCamera->getViewMatrix()) * vec4(0,0,0,1));
+            shader->setVec3("uCameraPosition",
+                            inverse(mCamera->getViewMatrix()) *
+                            vec4(0,0,0,1));
         } else {
             if (mCamera->isPerspective()) {
-                shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr) * vec4(0,0,0,1));
+                shader->setVec3("uCameraPosition",
+                                ZRenderUtils::getModelMatrix(mCamera, nullptr) *
+                                vec4(0,0,0,1));
             } else {
-             shader->setVec3("uCameraPosition", ZRenderUtils::getModelMatrix(mCamera, nullptr, vec3(0,0,50)) * vec4(0,0,0,1));
+             shader->setVec3("uCameraPosition",
+                             ZRenderUtils::getModelMatrix(mCamera, nullptr,
+                                                          vec3(0,0,50)) *
+                                                          vec4(0,0,0,1));
             }
         }
 
@@ -537,7 +547,8 @@ void ZRenderer::renderToScreen() {
 
         float dp = mParentView->mDP;
         int yv = mParentView->getWindowHeight() - mParentView->getBottom();
-        glViewport(mParentView->getLeft() * dp,yv * dp,mParentView->getWidth() * dp,mParentView->getHeight() * dp);
+        glViewport(mParentView->getLeft() * dp,yv * dp,
+                   mParentView->getWidth() * dp,mParentView->getHeight() * dp);
     
         renderQuad();
         glBindTexture(GL_TEXTURE_2D, 0);

@@ -83,10 +83,10 @@ void ZViewController::onWindowChange(int width, int height) {
     calculateBottom();
     calculateRight();
 
-    if (mDrawingEnabled) {
+    mParentWidth = width;
+    mParentHeight = height;
 
-        mParentWidth = width;
-        mParentHeight = height;
+    if (mDrawingEnabled) {
 
         setWindowWidth(width);
         setWindowHeight(height);

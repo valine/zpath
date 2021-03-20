@@ -72,28 +72,38 @@ void ZTileViewController::onLayoutFinished() {
         mHandle->bringToFront();
         mDropDown->bringToFront();
 
+        invalidate();
+
     });
+
+    mIndexLabel = new ZLabel("-1", this);
+    mIndexLabel->setBackgroundColor(red);
+    mIndexLabel->setGravity(Gravity::bottomLeft);
+    mIndexLabel->setYOffset(200);
+    mIndexLabel->setMaxWidth(200);
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
     ZViewController::onMouseEvent(button, action, mods, x, y);
 
-    if (action == GLFW_PRESS && mHandle != nullptr && isMouseInBounds(mHandle)) {
+    if (action == GLFW_PRESS && mHandle != nullptr && mHandle->getVisibility() && isMouseInBounds(mHandle)) {
+
+        ////////////// Step 1: enter corner drag mode
         mDragType = cornerDrag;
     } else if(action == GLFW_PRESS) {
-        if (mLeftTile != nullptr) {
-            if (mSplitType == sideBySide && (abs(mLeftTile->getRight() - x) < 10)) {
-                mInitialFirst = mLeftTile->getWidth();
-                mInitialSecond = mRightTile->getWidth();
-                mDragType = tileDrag;
-            }
-
-            if (mSplitType == overUnder && (abs(mLeftTile->getBottom() - y) < 10)) {
-                mInitialFirst = mRightTile->getHeight();
-                mInitialSecond = mLeftTile->getHeight();
-                mDragType = tileDrag;
-            }
-        }
+//        if (mLeftTile != nullptr) {
+//            if (mSplitType == sideBySide && (abs(mLeftTile->getRight() - x) < 10)) {
+//                mInitialPosition = mLeftTile->getWidth();
+//                mInitialSecond = mRightTile->getWidth();
+//                mDragType = tileDrag;
+//            }
+//
+//            if (mSplitType == overUnder && (abs(mLeftTile->getBottom() - y) < 10)) {
+//                mInitialPosition = mRightTile->getHeight();
+//                mInitialSecond = mLeftTile->getHeight();
+//                mDragType = tileDrag;
+//            }
+//        }
     }
 
     if (action == GLFW_RELEASE) {
@@ -107,7 +117,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
     if (state == mouseDrag && isMouseInBounds(this)) {
         if (mDragType == cornerDrag) {
 
-
+            ///////////////Step 2: trigger split or join
             if (delta.x < -DRAG_THRESHOLD) {
                 triggerSideSplit();
             } else if (delta.x > DRAG_THRESHOLD) {
@@ -123,24 +133,39 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
         } else if (mDragType == tileDrag) {
 
             if (mSplitType == sideBySide) {
-                int first = mInitialFirst + (int) delta.x;
-                mRightTile->setMaxWidth(fillParent);
-                mRightTile->setXOffset(first);
-                mLeftTile->setMaxWidth(first);
-                mLeftTile->invalidate();
-                mRightTile->invalidate();
+                auto leftTile = mChildrenTiles.at(mDragIndex - 1);
+                auto rightTile = mChildrenTiles.at(mDragIndex);
+
+                int bondary = mInitialBondary + (int) delta.x;
+
+                int rightTileSize = fillParent;
+                int leftTileSize = bondary - leftTile->getOffsetX();
+                if (mChildrenTiles.size() > mDragIndex + 1) {
+                    rightTileSize = mChildrenTiles.at(mDragIndex + 1)->getOffsetX() - bondary;
+                }
+
+                rightTile->setXOffset(bondary);
+                rightTile->setMaxWidth(rightTileSize);
+                leftTile->setMaxWidth(leftTileSize);
+
+                //leftTile->onWindowChange(getWindowWidth(), getWindowHeight());
+
+                rightTile->invalidate();
+                leftTile->invalidate();
+
+                rightTile->onWindowChange(rightTile->getWindowWidth(), rightTile->getWindowHeight());
 
             } else if (mSplitType == overUnder) {
                 int first = mInitialSecond + (int) delta.y;
-                mRightTile->setMaxHeight(fillParent);
-                mRightTile->setYOffset(first);
-                mLeftTile->setMaxHeight(first);
-                mLeftTile->invalidate();
-                mRightTile->invalidate();
+//                mRightTile->setMaxHeight(fillParent);
+//                mRightTile->setYOffset(first);
+//                mLeftTile->setMaxHeight(first);
+//                mLeftTile->invalidate();
+//                mRightTile->invalidate();
             }
 
-            mRightTile->onWindowChange(getWindowWidth(), getWindowHeight());
-            mLeftTile->onWindowChange(getWindowWidth(), getWindowHeight());
+          //  mRightTile->onWindowChange(getWindowWidth(), getWindowHeight());
+          //  mLeftTile->onWindowChange(getWindowWidth(), getWindowHeight());
         }
     } else if (state == mouseUp) {
         releaseFocus(getRootView());
@@ -148,141 +173,162 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
         getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
     }
 }
-void ZTileViewController::triggerSideJoin() {
 
-    if (mParentTile != nullptr) {
-        if (mParentTile->mLeftTile == this) {
-            ZTileViewController* leftMost = mParentTile->mRightTile->getLeftMostChild();
-            if (leftMost == mParentTile->mRightTile) {
-                mParentTile->triggerSideJoinLeftToRight();
-            } else {
-                leftMost->mParentTile->triggerSideJoinRightToLeft();
-            }
-        } else {
-            if (mParentTile->mParentTile != nullptr) {
-                mParentTile->mParentTile->triggerSideJoinRightToLeft();
+void ZTileViewController::insertChildAtIndex(int index) {
+    auto tile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+    addSubView(tile);
 
-            }
-        }
-    }
-}
-
-ZTileViewController* ZTileViewController::getLeftMostChild() {
-    if (hasChildren()) {
-        return mLeftTile->getLeftMostChild();
-    }
-
-    return this;
-}
-
-void ZTileViewController::triggerSideJoinLeftToRight() {
-    if (mRightTile != nullptr) {
-
-        mLeftTile->removeSubView(mContent);
-        mRightTile->setVisibility(false);
-        mLeftTile->setVisibility(false);
-        addSubView(mContent);
-        mHandle->setVisibility(true);
-        mHandle->bringToFront();
-
-        mInitialFirst = getWidth();
-        mInitialSecond = 0;
-        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-    }
-}
-
-void ZTileViewController::triggerSideJoinRightToLeft() {
-
-    // To fix this there needs to be more than left and right tiles
-    if (mRightTile != nullptr) {
-
-        ZViewController* secondContent = mRightTile->mContent;
-        mRightTile->removeSubView(secondContent);
-        mRightTile->setVisibility(false);
-        mLeftTile->setVisibility(false);
-        addSubView(secondContent);
-        mHandle->setVisibility(true);
-        mHandle->bringToFront();
-
-        mInitialFirst = getWidth();
-        mInitialSecond = 0;
-        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-    } else {
-        setVisibility(false);
-    }
-}
-
-bool ZTileViewController::hasChildren() {
-    return !(mRightTile == nullptr || !mRightTile->getVisibility());
-}
-
-void ZTileViewController::triggerSideSplit() {// Trigger split
-    removeSubView(mContent);
-
-    if (mLeftTile == nullptr) {
-        mLeftTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
-        mLeftTile->setDrawingEnabled(false);
-        addSubView(mLeftTile);
-    } else {
-        mLeftTile->addSubView(mContent);
-        mLeftTile->mHandle->bringToFront();
-    }
-    mLeftTile->mParentTile = this;
-    mLeftTile->setVisibility(true);
+    double offset = mChildrenTiles.at(index - 1)->getOffsetX() +  mChildrenTiles.at(index - 1)->getWidth();
+    tile->setDrawingEnabled(false);
+    tile->setVisibility(true);
+    tile->setMaxWidth(0);
+    tile->setXOffset(offset);
+    tile->mTileType = horizontalTile;
+    tile->mParentTile = this;
+   // tile->mHandle->bringToFront();
+    tile->mSplitType = sideBySide;
+    tile->mDragType = tileDrag;
+    mChildrenTiles.insert(mChildrenTiles.begin() + index, tile);
 
 
-    if (mRightTile == nullptr) {
-        mRightTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
-        mRightTile->setDrawingEnabled(false);
-        addSubView(mRightTile);
-    }
-
-    mRightTile->setVisibility(true);
-    mRightTile->mParentTile = this;
-    mRightTile->setBackgroundColor(red);
-
-
-    mRightTile->setMaxHeight(mLeftTile->getMaxHeight());
-    mRightTile->setMaxWidth(0);
-    mRightTile->setXOffset(getWidth());
-
-    mInitialFirst = getWidth();
-    mInitialSecond = 0;
-
-    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-    mHandle->setVisibility(false);
-    mDropDown->setVisibility(false);
+    updateIndices();
 
     mSplitType = sideBySide;
     mDragType = tileDrag;
+    mDragIndex = index;
+
+    mInitialBondary = mChildrenTiles.at(index - 1)->getOffsetX() + mChildrenTiles.at(index - 1)->getWidth();
+}
+
+void ZTileViewController::updateIndices() {
+    int index = 0;
+    for (auto tile : mChildrenTiles) {
+        tile->setTileIndex(index);
+        index++;
+    }
+}
+
+void ZTileViewController::triggerSideSplit() {
+
+    /////////////// Step 3: create views after split
+
+    // Check if this needs to be a root tile
+    if (mTileType != horizontalTile) {
+        removeSubView(mContent);
+
+        ZTileViewController* leftTile;
+        ZTileViewController* rightTile;
+        if (mChildrenTiles.empty()) {
+            leftTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
+            rightTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+
+            addSubView(leftTile);
+            addSubView(rightTile);
+        } else {
+            leftTile = mChildrenTiles.at(0);
+            rightTile = mChildrenTiles.at(1);
+        }
+
+        leftTile->setParentView(this);
+        leftTile->setDrawingEnabled(false);
+       // leftTile->mHandle->bringToFront();
+        leftTile->setVisibility(true);
+        leftTile->setTileIndex(0);
+        leftTile->mTileType = horizontalTile;
+        leftTile->mParentTile = this;
+        mChildrenTiles.push_back(leftTile);
+
+
+        rightTile->setDrawingEnabled(false);
+        rightTile->setVisibility(true);
+        rightTile->setMaxWidth(0);
+        rightTile->setXOffset(getWidth());
+        rightTile->setParentView(this);
+        rightTile->mParentTile = this;
+        rightTile->mHandle->setBackgroundColor(red);
+        rightTile->setTileIndex(1);
+       // rightTile->mHandle->bringToFront();
+        rightTile->mTileType = horizontalTile;
+
+        mChildrenTiles.push_back(rightTile);
+
+        mSplitType = sideBySide;
+        mDragType = tileDrag;
+        mDragIndex = 1;
+
+        mInitialBondary = getWidth();
+
+        mHandle->setVisibility(false);
+        mDropDown->setVisibility(false);
+
+    } else {
+        mParentTile->insertChildAtIndex(mTileIndex + 1);
+        mDragType = noDrag;
+    }
+
+    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+
 }
 
 
+
+/// Todo: fix later
+
 void ZTileViewController::triggerOverUnderSplit() {// Trigger split
 
-    mSplitType = overUnder;
-    mDragType = tileDrag;
+//    mSplitType = overUnder;
+//    mDragType = tileDrag;
+//
+//    mLeftTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
+//    mLeftTile->setDrawingEnabled(false);
+//    removeSubView(mContent);
+//    addSubView(mLeftTile);
+//    mLeftTile->setTileIndex(0);
+//
+//    mRightTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+//    mRightTile->setDrawingEnabled(false);
+//    mRightTile->setBackgroundColor(red);
+//    addSubView(mRightTile);
+//
+//    mRightTile->setMaxHeight(0);
+//    mRightTile->setMaxWidth(mLeftTile->getMaxWidth());
+//    mRightTile->setYOffset(getHeight());
+//    mRightTile->setTileIndex(1);
+//
+//    mInitialPosition = mLeftTile->getHeight();
+//    mInitialSecond = mRightTile->getHeight();
+//
+//    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+//    mHandle->setVisibility(false);
+//    mDropDown->setVisibility(false);
+}
 
-    mLeftTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
-    mLeftTile->setDrawingEnabled(false);
-    removeSubView(mContent);
-    addSubView(mLeftTile);
+void ZTileViewController::setTileIndex(int index) {
+   // mIndexLabel->setText(to_string(index));
+//    mIndexLabel->bringToFront();
 
-    mRightTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
-    mRightTile->setDrawingEnabled(false);
-    mRightTile->setBackgroundColor(red);
-    addSubView(mRightTile);
+    mTileIndex = index;
+    switch (index) {
+        case 0:
+            mIndexLabel->setBackgroundColor(red);
+            break;
+        case 1:
+            mIndexLabel->setBackgroundColor(blue);
+            break;
+        case 3:
+            mIndexLabel->setBackgroundColor(green);
+            break;
+        case 4:
+            mIndexLabel->setBackgroundColor(yellow);
+            break;
+        case 5:
+            mIndexLabel->setBackgroundColor(gold);
+            break;
+        default:
+            mIndexLabel->setBackgroundColor(white);
+            break;
+    }
 
-    mRightTile->setMaxHeight(0);
-    mRightTile->setMaxWidth(mLeftTile->getMaxWidth());
-    mRightTile->setYOffset(getHeight());
-
-    mInitialFirst = mLeftTile->getHeight();
-    mInitialSecond = mRightTile->getHeight();
-
-    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-    mHandle->setVisibility(false);
-    mDropDown->setVisibility(false);
 }
 
 void ZTileViewController::onGlobalMouseUp(int key) {
@@ -291,4 +337,71 @@ void ZTileViewController::onGlobalMouseUp(int key) {
     mDragType = noDrag;
 }
 
+void ZTileViewController::triggerSideJoin() {
+//
+//    if (mParentTile != nullptr) {
+//        if (mParentTile->mLeftTile == this) {
+//            ZTileViewController* leftMost = mParentTile->mRightTile->getLeftMostChild();
+//            if (leftMost == mParentTile->mRightTile) {
+//                mParentTile->triggerSideJoinLeftToRight();
+//            } else {
+//                leftMost->mParentTile->triggerSideJoinRightToLeft();
+//            }
+//        } else {
+//            if (mParentTile->mParentTile != nullptr) {
+//                mParentTile->mParentTile->triggerSideJoinRightToLeft();
+//
+//            }
+//        }
+//    }
+}
+
+ZTileViewController* ZTileViewController::getLeftMostChild() {
+//    if (hasChildren()) {
+//        return mLeftTile->getLeftMostChild();
+//    }
+//
+//    return this;
+}
+
+void ZTileViewController::triggerSideJoinLeftToRight() {
+//    if (mRightTile != nullptr) {
+//
+//        mLeftTile->removeSubView(mContent);
+//        mRightTile->setVisibility(false);
+//        mLeftTile->setVisibility(false);
+//        addSubView(mContent);
+//        mHandle->setVisibility(true);
+//        mHandle->bringToFront();
+//
+//        mInitialPosition = getWidth();
+//        mInitialSecond = 0;
+//        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+//    }
+}
+
+void ZTileViewController::triggerSideJoinRightToLeft() {
+
+//    // To fix this there needs to be more than left and right tiles
+//    if (mRightTile != nullptr) {
+//
+//        ZViewController* secondContent = mRightTile->mContent;
+//        mRightTile->removeSubView(secondContent);
+//        mRightTile->setVisibility(false);
+//        mLeftTile->setVisibility(false);
+//        addSubView(secondContent);
+//        mHandle->setVisibility(true);
+//        mHandle->bringToFront();
+//
+//        mInitialPosition = getWidth();
+//        mInitialSecond = 0;
+//        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+//    } else {
+//        setVisibility(false);
+//    }
+}
+
+bool ZTileViewController::hasChildren() {
+    //return !(mRightTile == nullptr || !mRightTile->getVisibility());
+}
 

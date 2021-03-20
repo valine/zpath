@@ -111,6 +111,7 @@ void ZMagnitudePicker::onGlobalMouseUp(int key) {
     }
 
     mSlider->setMouseDown(false);
+    mSliderClicked = false;
 }
 
 void ZMagnitudePicker::onMouseEvent(int button, int action, int mods, int sx, int sy) {
@@ -135,8 +136,9 @@ void ZMagnitudePicker::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
 
     if (getVisibility() && !mRadioButtonLabels.empty()) {
-        if (isMouseInBounds(mSlider) && getVisibility()) {
+        if (getVisibility() && !mSliderClicked) {
             mSlider->onMouseEvent(GLFW_MOUSE_BUTTON_1, GLFW_PRESS, 0, 0, 0);
+            mSliderClicked = true;
         }
 
         if (y > mRadioButtonLabels.at(0)->getTop() && y < mRadioButtonLabels.at(0)->getBottom() &&

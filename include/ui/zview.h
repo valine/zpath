@@ -413,6 +413,7 @@ private:
 		bool mAllowNegativeSize = false;
 		ZTexture* mBackgroundImage = nullptr;
 		vector<ZView*> mViews;
+		vector<ZView*> mPendingViews;
 		string mTag;
 		int mIndexTag{};
 
@@ -440,6 +441,7 @@ private:
 
     void calculateBounds();
 
+    void addViewFromDraw(ZView *view);
 };
 
 #endif

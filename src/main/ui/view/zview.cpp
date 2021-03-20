@@ -78,21 +78,21 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     float sx = x / scale.x;
     float sy = y / scale.y;
 
-
     if (getVisibility() && isClickable()) {
+        for (int i = 0; i < mViews.size(); i++) {
+            if (mViews.size() > i) {
+                ZView* view = mViews.at(i);
+                if (view != nullptr) {
 
-        for (ZView* view : mViews) {
-
-            if (view  != nullptr) {
-
-                if (isMouseInBounds(view)) {
-                    view->onMouseEvent(button, action, mods, x, y);
-                } else if (action == GLFW_RELEASE && view->anyMouseDown()) {
-                    view->onMouseEvent(button, action, mods, x, y);
-                }
-                if (action == GLFW_RELEASE) {
-                    view->onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-                                      vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp, button);
+                    if (isMouseInBounds(view)) {
+                        view->onMouseEvent(button, action, mods, x, y);
+                    } else if (action == GLFW_RELEASE && view->anyMouseDown()) {
+                        view->onMouseEvent(button, action, mods, x, y);
+                    }
+                    if (action == GLFW_RELEASE) {
+                        view->onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
+                                          vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp, button);
+                    }
                 }
             }
         }
@@ -186,11 +186,14 @@ void ZView::onCursorPosChange(double x, double y) {
         onMouseOver();
     }
 
-    for (auto & view : mViews) {
-        view->onCursorPosChange(x, y);
-        if (!isMouseInBounds(view) && view->mMouseOver) {
-            view->onMouseLeave();
-            view->mMouseOver = false;
+    for (int i = 0; i < mViews.size(); i++) {
+        if (mViews.size() > i) {
+            ZView* view = mViews.at(i);
+            view->onCursorPosChange(x, y);
+            if (!isMouseInBounds(view) && view->mMouseOver) {
+                view->onMouseLeave();
+                view->mMouseOver = false;
+            }
         }
 
     }

@@ -52,6 +52,7 @@ private:
     bool mIsInput = false;
     int mSocketIndex = 0;
     int mSelectedMagnitude = 6;
+    bool mSliderClicked = false;
 
     void initializeRadioButtons();
 

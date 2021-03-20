@@ -26,15 +26,24 @@ public:
     int cornerDrag = 0;
     int tileDrag = 1;
     int noDrag = -1;
+
+    int horizontalTile = 0;
+    int verticalTile = 1;
+    int rootTile = 2;
 private:
 
     bool mIsRoot = false;
     int mDragType = noDrag;
     int mSplitType = sideBySide;
+    int mDragIndex = 0;
 
-    int mInitialFirst = 0;
+    int mInitialBondary = 0;
     int mInitialSecond = 0;
 
+    int mTileType = rootTile;
+
+    int mTileIndex;
+    ZLabel* mIndexLabel;
 
     std::function<ZViewController*(int)> mControllerFactory = nullptr;
     vector<string> mNames;
@@ -48,8 +57,10 @@ private:
 
     ZView* mHandle = nullptr;
     ZDropDown* mDropDown = nullptr;
-    ZTileViewController* mLeftTile = nullptr;
-    ZTileViewController* mRightTile = nullptr;
+
+    vector<ZTileViewController*> mChildrenTiles;
+//    ZTileViewController* mLeftTile = nullptr;
+//    ZTileViewController* mRightTile = nullptr;
     ZTileViewController* mParentTile = nullptr;
     ZViewController* mContent = nullptr;
 
@@ -57,8 +68,6 @@ private:
     void triggerSideSplit();
     void triggerSideJoinLeftToRight();
     void triggerSideJoinRightToLeft();
-
-
     void triggerOverUnderSplit();
 
     ZTileViewController * getLeftMostChild();
@@ -66,6 +75,11 @@ private:
     bool hasChildren();
 
 
+    void setTileIndex(int index);
+
+    void insertChildAtIndex(int index);
+
+    void updateIndices();
 };
 
 
