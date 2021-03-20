@@ -210,7 +210,9 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                     if (mParentTile->mChildrenTiles.size() > mTileIndex + 1) {
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(false);
                     }
-                } else if (isMouseInBounds(mParentTile->mChildrenTiles.at(mTileIndex + 1))) {
+                }
+
+                if (isMouseInBounds(mParentTile->mChildrenTiles.at(mTileIndex + 1))) {
                     if (mParentTile->mChildrenTiles.size() > mTileIndex + 1) {
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(true);
                     }
@@ -223,7 +225,9 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                         //  if (0 > mTileIndex - 1) {
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(false);
                         // }
-                    } else if (isMouseInBounds(mParentTile->mChildrenTiles.at(mTileIndex + 1))) {
+                    }
+
+                    if (isMouseInBounds(mParentTile->mChildrenTiles.at(mTileIndex + 1))) {
                         //  if (0 > mTileIndex - 1) {
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->setVisibility(true);
                         //  }
