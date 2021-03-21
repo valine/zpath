@@ -311,6 +311,12 @@ class ZView {
     void setConsumeClicks(bool consume);
 
     float mDP = 1.0;
+
+    int getLocalTop();
+    int getLocalBottom();
+    int getLocalLeft();
+    int getLocalRight();
+
 private:
 
     bool mNeedsRender = true;

@@ -86,7 +86,6 @@ void ZScrollView::onScrollChange(double x, double y) {
 		}
 	}
 
-
 	mInnerView->onWindowChange(getWidth(), getHeight());
 
 	auto innerHeight = (float) mInnerView->getMaxHeight();

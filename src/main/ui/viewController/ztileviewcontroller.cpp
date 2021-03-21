@@ -194,52 +194,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                     }
                 }
             } else if (mDragType == tileDrag) {
-                if (mSplitType == sideBySide) {
-                    auto leftTile = mChildrenTiles.at(mDragIndex - 1);
-                    auto rightTile = mChildrenTiles.at(mDragIndex);
-
-                    int bondary = mInitialBondary + (int) delta.x;
-
-                    int rightTileSize = fillParent;
-                    int leftTileSize = bondary - leftTile->getOffsetX();
-                    if (mChildrenTiles.size() > mDragIndex + 1) {
-                        rightTileSize = mChildrenTiles.at(mDragIndex + 1)->getOffsetX() - bondary;
-                    }
-
-                    rightTile->setXOffset(bondary);
-                    rightTile->setMaxWidth(rightTileSize);
-                    leftTile->setMaxWidth(leftTileSize);
-
-                    leftTile->onWindowChange(getWindowWidth(), getWindowHeight());
-
-                    rightTile->invalidate();
-                    leftTile->invalidate();
-
-                    rightTile->onWindowChange(rightTile->getWindowWidth(), rightTile->getWindowHeight());
-
-                } else if (mSplitType == overUnder) {
-                    auto bottomTile = mChildrenTiles.at(mDragIndex - 1);
-                    auto topTile = mChildrenTiles.at(mDragIndex);
-
-                    int bondary = mInitialBondary + (int) delta.y;
-
-                    int bottomTileSize = fillParent;
-                    int topTileSize = bondary - (topTile->getOffsetY());
-                    if (mDragIndex - 2 >= 0) {
-                        bottomTileSize = mChildrenTiles.at(mDragIndex - 2)->getOffsetY() - bondary;
-                    }
-
-                    bottomTile->setYOffset(bondary);
-                    bottomTile->setMaxHeight(bottomTileSize);
-                    topTile->setMaxHeight(topTileSize);
-
-                    topTile->onWindowChange(getWindowWidth(), getWindowHeight());
-
-                    bottomTile->invalidate();
-                    topTile->invalidate();
-
-                    getRootView()->onWindowChange(bottomTile->getWindowWidth(), bottomTile->getWindowHeight());
-                }
+                onTileEdgeDrag(delta);
             } else if (mDragType == pendingHorizontalJoin) {
                 updateHorizontalJoinGuide();
 
@@ -252,8 +207,159 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
             mDragType = noDrag;
             getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         }
+}
+
+void ZTileViewController::onTileEdgeDrag(const vec2 &delta) {
+
+    int margin = 50;
+
+    if (mSplitType == sideBySide) {
+        auto leftTile = mChildrenTiles.at(mDragIndex - 1);
+        auto rightTile = mChildrenTiles.at(mDragIndex);
+
+        int max = getWidth() - margin;
+        if (mChildrenTiles.size() > mDragIndex + 1) {
+            max = getWidth() - ((mChildrenTiles.size() - mDragIndex) * margin);
+        }
+
+        int min = mDragIndex * margin;
+        int boundary = std::max(std::min(mInitialBondary + (int) delta.x, max), min);
+
+        int rightTileSize = fillParent;
+        int leftTileSize = boundary - leftTile->getOffsetX();
+        if (mChildrenTiles.size() > mDragIndex + 1) {
+            rightTileSize = mChildrenTiles.at(mDragIndex + 1)->getOffsetX() - boundary;
+        }
+
+        rightTile->setXOffset(boundary);
+        rightTile->setMaxWidth(rightTileSize);
+        leftTile->setMaxWidth(leftTileSize);
+
+        for (int i = mDragIndex + 1; i < mChildrenTiles.size(); i++) {
+            auto prevTile = mChildrenTiles.at(i - 1);
+            auto tile = mChildrenTiles.at(i);
+            int prevSide = prevTile->getOffsetX();
+            if (prevSide + margin > tile->getOffsetX() ) {
+                int maxOffset = getWidth() - margin;
+                if (mChildrenTiles.size() > i + 1) {
+                    maxOffset = getWidth() - ((mChildrenTiles.size() - i) * margin);
+                }
+
+                tile->setXOffset(std::min(maxOffset,prevSide + margin));
+                tile->onWindowChange(getWindowWidth(), getWindowHeight());
+                tile->invalidate();
+            }
+
+            int lastWidth = prevTile->getMaxWidth();
+            int width = tile->getOffsetX() - prevTile->getOffsetX();
+
+            if (width != lastWidth) {
+                prevTile->setMaxWidth(width);
+                prevTile->onWindowChange(getWindowWidth(), getWindowHeight());
+            }
+        }
+
+        for (int i = mDragIndex - 1; i >= 0; i--) {
+            auto prevTile = mChildrenTiles.at(i + 1);
+            auto tile = mChildrenTiles.at(i);
+
+            int prevSide = prevTile->getOffsetX();
+
+            bool needsWindow = false;
+            if (prevSide - margin < tile->getOffsetX()) {
+                int maxOffset = ((i) * margin);
+                tile->setXOffset(std::max(maxOffset, prevSide - margin));
+                needsWindow = true;
+            }
+
+            if (prevSide - margin < tile->getOffsetX() + tile->getMaxWidth()) {
+                int width = prevSide - tile->getOffsetX();
+                tile->setMaxWidth(width);
+                needsWindow = true;
+            }
+
+            if (needsWindow) {
+                tile->onWindowChange(getWindowWidth(), getWindowHeight());
+                tile->invalidate();
+            }
+        }
+
+        rightTile->invalidate();
+        leftTile->invalidate();
+
+        leftTile->onWindowChange(getWindowWidth(), getWindowHeight());
+        rightTile->onWindowChange(rightTile->getWindowWidth(), rightTile->getWindowHeight());
+
+    } else if (mSplitType == overUnder) {
+        auto bottomTile = mChildrenTiles.at(mDragIndex - 1);
+        auto topTile = mChildrenTiles.at(mDragIndex);
+
+        int max = (mChildrenTiles.size() - mDragIndex) * margin;
+        int min = getHeight() - ((mDragIndex) * margin);
+        int boundary = std::min(min, std::max(max, mInitialBondary + (int) delta.y));
+
+        int bottomTileSize = fillParent;
+        int topTileSize = boundary - (topTile->getOffsetY());
+        if (mDragIndex - 2 >= 0) {
+            bottomTileSize = mChildrenTiles.at(mDragIndex - 2)->getOffsetY() - boundary;
+        }
+
+        bottomTile->setYOffset(std::max(boundary, max));
+        bottomTile->setMaxHeight(std::max(margin, bottomTileSize));
+        topTile->setMaxHeight(std::max(margin, topTileSize));
+
+        for (int i = mDragIndex + 1; i < mChildrenTiles.size(); i++) {
+            auto upperTile = mChildrenTiles.at(i);
+            auto thisTile = mChildrenTiles.at(i - 1);
+            auto lowerTile = mChildrenTiles.at(i - 2);
+
+            int lowerTop = lowerTile->getLocalTop();
+            int max = (mChildrenTiles.size() - (i)) * margin;
+            if (lowerTop - margin < thisTile->getLocalTop()) {
+                upperTile->setMaxHeight( std::max(margin, (lowerTop -upperTile->getLocalTop()) - margin));
+                thisTile->setYOffset(std::max(max, lowerTop - margin));
+            }
+
+            lowerTile->onWindowChange(getWindowWidth(), getWindowHeight());
+            lowerTile->invalidate();
+
+            thisTile->onWindowChange(getWindowWidth(), getWindowHeight());
+            thisTile->invalidate();
+
+            upperTile->onWindowChange(getWindowWidth(), getWindowHeight());
+            upperTile->invalidate();
+        }
+
+        for (int i = mDragIndex - 1; i >= 0; i--) {
+
+            auto lowerTile = mChildrenTiles.at(i);
+            auto thisTile = mChildrenTiles.at(i + 1);
 
 
+            int height = fillParent;
+            if (i - 1 >= 0) {
+                auto bottomTile = mChildrenTiles.at(i - 1);
+                height = abs(lowerTile->getLocalTop() - bottomTile->getLocalTop());
+            }
+
+            if (thisTile->getLocalTop() + margin > lowerTile->getLocalTop()) {
+                lowerTile->setYOffset(thisTile->getLocalTop() + margin);
+                lowerTile->setMaxHeight(height);
+            }
+
+            lowerTile->onWindowChange(getWindowWidth(), getWindowHeight());
+            lowerTile->invalidate();
+
+
+        }
+
+        topTile->onWindowChange(getWindowWidth(), getWindowHeight());
+
+        bottomTile->invalidate();
+        topTile->invalidate();
+
+        getRootView()->onWindowChange(bottomTile->getWindowWidth(), bottomTile->getWindowHeight());
+    }
 }
 
 void ZTileViewController::updateVerticalJoinGuide() {
@@ -351,30 +457,7 @@ void ZTileViewController::updateIndices() {
 
 void ZTileViewController::setTileIndex(int index) {
     mIndexLabel->setText(to_string(index));
-//    mIndexLabel->bringToFront();
-
     mTileIndex = index;
-//    switch (index) {
-//        case 0:
-//            mIndexLabel->setBackgroundColor(red);
-//            break;
-//        case 1:
-//            mIndexLabel->setBackgroundColor(blue);
-//            break;
-//        case 3:
-//            mIndexLabel->setBackgroundColor(green);
-//            break;
-//        case 4:
-//            mIndexLabel->setBackgroundColor(yellow);
-//            break;
-//        case 5:
-//            mIndexLabel->setBackgroundColor(gold);
-//            break;
-//        default:
-//            mIndexLabel->setBackgroundColor(white);
-//            break;
-//    }
-
 }
 
 void ZTileViewController::onGlobalMouseUp(int key) {
@@ -402,7 +485,6 @@ void ZTileViewController::resetController() {
     }
 }
 
-
 //////////
 /// Split tiles
 void ZTileViewController::triggerSideSplit() {
@@ -416,8 +498,10 @@ void ZTileViewController::triggerSideSplit() {
         ZTileViewController* leftTile;
         ZTileViewController* rightTile;
         if (mChildrenTiles.empty()) {
-            leftTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, mContent);
-            rightTile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+            leftTile = new ZTileViewController(getResourcePath(),
+                                               mControllerFactory, mNames, false, mContent);
+            rightTile = new ZTileViewController(getResourcePath(),
+                                                mControllerFactory, mNames, false, nullptr);
 
             addSubView(leftTile);
             addSubView(rightTile);
@@ -528,8 +612,6 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
-
-
 //////////
 /// Join tiles
 void ZTileViewController::triggerSideJoinLeftToRight(int index) {
@@ -611,7 +693,6 @@ void ZTileViewController::triggerJoinTopToBottom(int index) {
         mDragType = noDrag;
     }
 }
-
 
 void ZTileViewController::triggerJoinBottomToTop(int index) {
     if (mSplitType == overUnder) {

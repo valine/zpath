@@ -652,6 +652,21 @@ void ZView::computeBounds() {
     }
 }
 
+int ZView::getLocalTop() {
+    return getOffsetY();
+}
+int ZView::getLocalBottom() {
+    return getOffsetY() + getMaxHeight();
+}
+
+int ZView::getLocalLeft() {
+    return getOffsetX();
+}
+
+int ZView::getLocalRight() {
+    return getOffsetX() + getMaxWidth();
+}
+
 void ZView::calculateBounds() {
     calculateLeft();
     calculateTop();

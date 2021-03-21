@@ -96,6 +96,8 @@ private:
     void updateHorizontalJoinGuide();
 
     void updateVerticalJoinGuide();
+
+    void onTileEdgeDrag(const vec2 &delta);
 };
 
 
