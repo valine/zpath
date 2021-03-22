@@ -110,7 +110,12 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
         cancelEdit();
     } else if (key == GLFW_KEY_ENTER && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        insertCharacter("\n");
+        if (mOnReturn == nullptr) {
+            insertCharacter("\n");
+        } else {
+            mOnReturn(getText());
+        }
+
     } else if (key == GLFW_KEY_TAB && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         //insertCharacter("\t");
 
@@ -135,25 +140,29 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
             updateCursorPosition();
         }
     } else if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        int currentLine = getLineIndex();
-        if (currentLine > 0) {
-            int lineIndex = getLineIndices().at(currentLine - 1);
-            int previousLineIndex = 0;
-            if (currentLine > 1) {
-                previousLineIndex = std::max(0, getLineIndices().at(currentLine - 2));
+        if (mOnReturn == nullptr) {
+            int currentLine = getLineIndex();
+            if (currentLine > 0) {
+                int lineIndex = getLineIndices().at(currentLine - 1);
+                int previousLineIndex = 0;
+                if (currentLine > 1) {
+                    previousLineIndex = std::max(0, getLineIndices().at(currentLine - 2));
+                }
+                mCursorIndex = std::min(lineIndex - 1, previousLineIndex + mCursorOffset);
+                updateCursorPosition();
             }
-            mCursorIndex = std::min(lineIndex - 1, previousLineIndex + mCursorOffset);
-            updateCursorPosition();
         }
     } else if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        int currentLine = getLineIndex();
-        if (currentLine < getLineIndices().size() - 1) {
-            int nextLineIndex = getLineIndices().size() - 1;
-            if (currentLine < getLineIndices().size()) {
-                nextLineIndex = std::max(0, getLineIndices().at(currentLine));
+        if (mOnReturn == nullptr) {
+            int currentLine = getLineIndex();
+            if (currentLine < getLineIndices().size() - 1) {
+                int nextLineIndex = getLineIndices().size() - 1;
+                if (currentLine < getLineIndices().size()) {
+                    nextLineIndex = std::max(0, getLineIndices().at(currentLine));
+                }
+                mCursorIndex = std::min(getLineIndices().at(currentLine + 1) - 1, nextLineIndex + mCursorOffset);
+                updateCursorPosition();
             }
-            mCursorIndex = std::min(getLineIndices().at(currentLine + 1) - 1, nextLineIndex + mCursorOffset);
-            updateCursorPosition();
         }
     }
 }

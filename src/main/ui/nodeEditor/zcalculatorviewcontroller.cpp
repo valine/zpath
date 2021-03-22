@@ -34,6 +34,10 @@ void ZCalculatorViewController::onCreate() {
     field->setOutlineType(WireType::outline);
     field->setGravity(Gravity::bottomRight);
     field->setMarginLeft(start);
+    field->setOnReturn([output, field](string content){
+        string result = CasUtil::get().evaluate(field->getText());
+        output->setText(CasUtil::get().evaluate(field->getText()));
+    });
     setBackgroundColor(bg);
 
     output->setYOffset(field->getOffsetY() + evaluate->getHeight() + margin);
@@ -41,6 +45,4 @@ void ZCalculatorViewController::onCreate() {
     output->setGravity(Gravity::bottomRight);
     output->setMaxWidth(field->getMaxWidth());
     output->setMarginLeft(start);
-
-
 }

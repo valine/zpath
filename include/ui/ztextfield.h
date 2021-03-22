@@ -19,6 +19,10 @@ public:
     void onKeyPress(int key, int scancode, int action, int mods) override;
     void onGlobalMouseUp(int key) override;
 
+    void setOnReturn(function<void(string)> listener) {
+        mOnReturn = listener;
+    }
+
 private:
 
     ZView* mCursor;
@@ -28,6 +32,7 @@ private:
     int mCursorOffset = 0;
     string mInitialText;
     bool mInFocus = false;
+    function<void(string content)> mOnReturn;
 
     string unicodeToStr(unsigned int codepoint) {
         std::string out;
