@@ -719,7 +719,7 @@ void ZNodeEditor::onMouseDown() {
 
             if (!isSocketDrag()) {
                 mDragType = NODE_DRAG;
-                mInitialSize = vec2(node->getWidth(), node->getHeight());
+                mInitialSize = vec2(node->getMaxWidth(), node->getMaxHeight());
             }
             break;
         }

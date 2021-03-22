@@ -9,14 +9,14 @@
 void ZCalculatorViewController::onCreate() {
     ZViewController::onCreate();
 
-    ZTextField* field = new ZTextField(this);
-    ZLabel* output = new ZLabel("Output", this);
+    auto* field = new ZTextField(this);
+    auto* output = new ZLabel("Output", this);
 
     int yOffset = 30;
     int start = 30;
     int buttonWidth = 100;
     int margin = 10;
-    ZButton* evaluate = new ZButton("Evaluate", this);
+    auto* evaluate = new ZButton("Evaluate", this);
     evaluate->setXOffset(start);
     evaluate->setBackgroundColor(highlight);
     evaluate->setYOffset(yOffset);
@@ -25,7 +25,6 @@ void ZCalculatorViewController::onCreate() {
     evaluate->setOnClick([output, field](){
         string result = CasUtil::get().evaluate(field->getText());
         output->setText(CasUtil::get().evaluate(field->getText()));
-        cout << result  << "from ui" << endl;
     });
 
     field->setOffset(start + buttonWidth + margin,yOffset);

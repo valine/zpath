@@ -31,16 +31,25 @@ void ZTileViewController::onLayoutFinished() {
     setBackgroundColor(darkerGrey);
     int defaultController = 1;
 
+    if (mParentTile != nullptr) {
+        defaultController = mParentTile->getIndexTag();
+    }
+
     if (mContent == nullptr) {
         mContent = mControllerFactory(defaultController);
         mControllers.at(defaultController) = mContent;
+    } else if (mParentTile != nullptr) {
+        defaultController = mParentTile->getIndexTag();
     }
 
+    setIndexTag(defaultController);
+
+    int boarder = 1;
     mContent->setDrawingEnabled(false);
     mContent->setOutlineType(outline);
     mContent->setLineWidth(2);
-    mContent->setYOffset(1);
-    mContent->setXOffset(1);
+    mContent->setYOffset(boarder);
+    mContent->setXOffset(boarder);
     mContent->setMarginBottom(BOTTOM_MARGIN);
     addSubView(mContent);
 
@@ -51,6 +60,7 @@ void ZTileViewController::onLayoutFinished() {
     mDropDown = new ZDropDown(100, 300, mNames, this);
     mDropDown->setGravity(bottomLeft);
     mDropDown->setYOffset(0);
+    mDropDown->setXOffset(boarder);
     mDropDown->selectItem(defaultController);
 
     mJoinGuide = new ZView(fillParent,fillParent, this);
@@ -80,6 +90,7 @@ void ZTileViewController::onLayoutFinished() {
             mContent = mControllers.at(index);
         }
 
+        setIndexTag(index);
         mHandle->bringToFront();
         mDropDown->bringToFront();
 
@@ -472,6 +483,8 @@ void ZTileViewController::onGlobalMouseUp(int key) {
  */
 void ZTileViewController::resetController() {
     if (mChildrenTiles.size() == 1) {
+        mDropDown->selectItem(mChildrenTiles.at(0)->getIndexTag());
+        setIndexTag(mChildrenTiles.at(0)->getIndexTag());
         ZViewController* content = mChildrenTiles.at(0)->mContent;
         mChildrenTiles.at(0)->removeSubView(content);
         removeSubView(mChildrenTiles.at(0));
@@ -482,6 +495,7 @@ void ZTileViewController::resetController() {
         mDropDown->setVisibility(true);
         mHandle->bringToFront();
         mDropDown->bringToFront();
+
     }
 }
 
@@ -502,6 +516,9 @@ void ZTileViewController::triggerSideSplit() {
                                                mControllerFactory, mNames, false, mContent);
             rightTile = new ZTileViewController(getResourcePath(),
                                                 mControllerFactory, mNames, false, nullptr);
+
+            leftTile->mParentTile = this;
+            rightTile->mParentTile = this;
 
             addSubView(leftTile);
             addSubView(rightTile);
@@ -565,6 +582,9 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
                                                mControllerFactory, mNames, false, mContent);
             rightTile = new ZTileViewController(getResourcePath(),
                                                 mControllerFactory, mNames, false, nullptr);
+
+            leftTile->mParentTile = this;
+            rightTile->mParentTile = this;
 
             addSubView(leftTile);
             addSubView(rightTile);
