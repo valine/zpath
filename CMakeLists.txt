@@ -278,7 +278,7 @@ if (APPLE)
             ${fr_coretext}
             ${fr_corefoundation}
             ${fr_coregraphics}
-            "${zdep_path}/assimp/libassimp.dylib"
+            "${zdep_path}/assimp/libassimp.a"
             "${zdep_path}/png/libpng16.a"
             "${zdep_path}/zlib/libz.a"
             "${zdep_path}/giac/libgiac.0.dylib"

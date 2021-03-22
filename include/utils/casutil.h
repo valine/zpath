@@ -32,7 +32,7 @@ public:
 
         cout << e << endl;
     }
-    
+
     static CasUtil& get(){
         static CasUtil instance; // Guaranteed to be destroyed.
         // Instantiated on first use.
