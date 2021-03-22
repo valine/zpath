@@ -18,8 +18,17 @@ using namespace std;
 
 class CasUtil {
 
-
 public:
+    string evaluate(string in) {
+        giac::context ct;
+        giac::gen e(in, &ct);
+        e = eval(e, 1, &ct);
+
+        string out;
+        stringstream stream(out);
+        stream << e << endl;
+        return stream.str();
+    }
 
     void testCompute() {
         giac::context ct;
@@ -29,7 +38,6 @@ public:
         string out;
         stringstream stream(out);
         stream << e << endl;
-
         cout << e << endl;
     }
 

@@ -10,7 +10,13 @@
 class ZCalculatorViewController : public ZViewController {
 
 
+public:
+    ZCalculatorViewController(char* argv[]) : ZViewController(argv) {}
+    ZCalculatorViewController(string path) : ZViewController(path) {}
+
+private:
     void onCreate() override;
+
 };
 
 

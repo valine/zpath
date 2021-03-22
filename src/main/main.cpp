@@ -19,6 +19,7 @@ using namespace std;
 #include <ui/ztextfield.h>
 #include <zpath/ztextviewcontroller.h>
 #include <ui/ztileviewcontroller.h>
+#include <ui/zcalculatorviewcontroller.h>
 
 
 int main(int argc, char* argv[]) {
@@ -35,7 +36,7 @@ int main(int argc, char* argv[]) {
     auto* textEditor = new ZTextViewController(argv);
     textEditor->setName("Text Editor");
 
-    ZTileViewController* tiles = new ZTileViewController(argv, [argv](int index) {
+    auto* tiles = new ZTileViewController(argv, [argv](int index) {
         ZViewController *controller = nullptr;
 
         switch (index) {
@@ -50,6 +51,9 @@ int main(int argc, char* argv[]) {
             case 2: {
                 controller = new ZTextViewController(argv);
                 return controller;
+            } case 3: {
+                controller = new ZCalculatorViewController(argv);
+                return controller;
             }
             default: {
                 controller = new ZViewController(argv);
@@ -57,7 +61,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-    }, {"3D Viewport", "Node Editor", "Text Editor"}, true, nullptr);
+    }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator"}, true, nullptr);
 
 
     ZApplication(tiles, "zpath", false, 1200, 800, "resources/icons/zpath.png");
