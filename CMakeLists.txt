@@ -3,7 +3,7 @@ project(zpath)            # this sets the project name
 
 option(BUILD_LIB "help string describing option" OFF)
 
-option(COMPILE_DEPS "help string describing option" ON)
+option(COMPILE_DEPS "help string describing option" OFF)
 
 ###############################################################################
 ## file globbing ##############################################################
@@ -240,11 +240,17 @@ if (APPLE)
 
   else(COMPILE_DEPS)
 
+      if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+          set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos")
+          set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
+      else()
+          set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos-arm")
+          set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
+      endif()
     find_package(BZIP2 REQUIRED)
     add_definitions(-D__APPLE__)
     remove_definitions(-DHAVE_GETTEXT)
-    set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos")
-    set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
+
     message(STATUS "${zdep_path}")
 
     include_directories(/usr/local/include)
@@ -278,6 +284,10 @@ if (APPLE)
             "${zdep_path}/giac/libgiac.0.dylib"
             ${BZIP2_LIBRARY}
             "${zdep_path}/freetype/libfreetyped.a")
+
+      add_custom_command(TARGET zpath PRE_BUILD
+              COMMAND ${CMAKE_COMMAND} -E copy_directory
+              "${zdep_path}/assimp/" $<TARGET_FILE_DIR:zpath>)
 
     add_custom_command (TARGET zpath
             POST_BUILD COMMAND "${CMAKE_INSTALL_NAME_TOOL}"
