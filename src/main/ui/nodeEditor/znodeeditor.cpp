@@ -28,12 +28,10 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         auto type = static_cast<ZNodeView::Type>(i);
         allTypes.push_back(ZNodeView::getName(type));
     }
-
     for (int i = 0; i != ZNodeView::Type::LAST; i++) {
         auto type = static_cast<ZNodeView::Type>(i);
         allColors.push_back(ZNodeView::getNodeColor(type));
     }
-
 
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
@@ -133,7 +131,14 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
 
-    ZNodeUtil::get().stringToGraph("test");
+    vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph("test");
+
+    for (auto node : evalNodes) {
+        mNodeContainer->addSubView(node);
+        addNodeToView(node);
+        node->invalidate();
+        updateLines();
+    }
 //
 //    auto* inputField = new ZTextField(mHeader);
 //    inputField->setGravity(ZView::bottomLeft);
@@ -246,6 +251,9 @@ void ZNodeEditor::addNodeToView(ZNodeView *node) {
     mNodeViews.push_back(node);
 
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
+    node->setMaxWidth(nodeSize.x);
+    node->setMaxHeight(nodeSize.y);
+
     node->setIndexTag(mNodeViews.size() - 1);
 
     vec2 scale = mNodeContainer->getScale();

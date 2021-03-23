@@ -32,6 +32,8 @@ public:
             auto type = static_cast<ZNodeView::Type>(i);
             mTypes.insert({ZNodeView::getName(type), type});
         }
+
+        mTypes.insert({"^", ZNodeView::Type::POW});
     }
 
     vector<ZNodeView *> stringToGraph(string input) {
@@ -99,30 +101,51 @@ public:
             opStack.pop();
         }
 
-
+        vector<ZNodeView*> allNodes;
+        stack<ZNodeView*> evalStack;
 
         while (!outQueue.empty()) {
 
             string symbol = outQueue.front();
             outQueue.pop();
-
             if (isNumber(symbol)) {
-                ZNodeView* constant = new ZNodeView(ZNodeView::Type::C);
-            }
+                auto* constant = new ZNodeView(ZNodeView::Type::C);
+                constant->setConstantValue(0, stof(symbol), 6);
+                evalStack.push(constant);
+                allNodes.push_back(constant);
+            } else {
+                if (mTypes.count(symbol) > 0) {
+                    ZNodeView::Type type = mTypes.at(symbol);
+                    auto node = new ZNodeView(type);
+                    allNodes.push_back(node);
 
-            cout << symbol << endl;
+                    auto node1 = evalStack.top();
+                    evalStack.pop();
+
+                    auto node0 = evalStack.top();
+                    evalStack.pop();
+
+                    connectNodes(0,0, node0, node);
+                    connectNodes(0,1, node1, node);
+
+                    evalStack.push(node);
+                }
+            }
         }
-        ZNodeView* nodeView;
 
         // Todo:
         // 1: Evaluate out queue
         // 2: Once evaluation works it should be more clear how to build a node structure
         // 3: Functions with 3+ arguments need to be handled differently
         // 4: After string to nodes works, implement nodes to string. This should be easier.
-        // 5: Add UI / keyboard shortcuts for symbolic operations 
+        // 5: Add UI / keyboard shortcuts for symbolic operations
 
+        return allNodes;
+    }
 
-        return vector<ZNodeView*>();
+    static void connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) {
+        firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
+        secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
     }
 
     static vector<string> getTokens(string input) {
