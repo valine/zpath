@@ -126,19 +126,32 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mMagnitudePicker = new ZMagnitudePicker(this);
     mMagnitudePicker->setVisibility(false);
 
+    ZTextField* evalField = new ZTextField(this);
+    evalField->setGravity(Gravity::bottomLeft);
+    evalField->setBackgroundColor(lightGrey);
+    evalField->setXOffset(mDrawer->getMaxWidth() + 10);
+    evalField->setMaxHeight(30);
+    evalField->setMargin(vec4(2));
+    evalField->setOnReturn([this](string value) {
+        vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
+       // vec2 pos = vec2(mNodeContainer->getWidth() - 50, mNodeContainer->getHeight() / 2);
+        for (auto node : evalNodes) {
+            mNodeContainer->addSubView(node);
+            addNodeToView(node, true);
+            node->invalidateSingleNode();
+           // node->setOffset(pos);
+        }
+
+        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+        updateLines();
+
+    });
    //da addTestNodes();
 
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
 
-    vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph("test");
 
-    for (auto node : evalNodes) {
-        mNodeContainer->addSubView(node);
-        addNodeToView(node);
-        node->invalidate();
-        updateLines();
-    }
 //
 //    auto* inputField = new ZTextField(mHeader);
 //    inputField->setGravity(ZView::bottomLeft);
@@ -195,6 +208,11 @@ void ZNodeEditor::addTestNodes() {
     updateLines();
 }
 
+void ZNodeEditor::onCreate() {
+    ZView::onCreate();
+
+}
+
 void ZNodeEditor::onLayoutFinished() {
     ZView::onLayoutFinished();
 }
@@ -241,13 +259,13 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     auto* node = new ZNodeView(nodeSize.x, nodeSize.y, mNodeContainer);
     node->setType(type);
 
-    addNodeToView(node);
+    addNodeToView(node, true);
 
 
     return node;
 }
 
-void ZNodeEditor::addNodeToView(ZNodeView *node) {
+void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     mNodeViews.push_back(node);
 
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
@@ -259,18 +277,18 @@ void ZNodeEditor::addNodeToView(ZNodeView *node) {
     vec2 scale = mNodeContainer->getScale();
     vec2 translation = mNodeContainer->getInnerTranslation();
 
-    node->setOffset(mAddNodePosition - translation);
-    node->setInitialPosition((mAddNodePosition - translation) - getMouseDragDelta());
-
-    if (mAddNodePosition.x + NODE_MARGIN + nodeSize.x >= getWidth() / scale.x) {
-        mAddNodePosition.x = DEFAULT_NODE_X;
-        mAddNodePosition.y += nodeSize.y + NODE_MARGIN;
-    } else {
-        mAddNodePosition.x += nodeSize.x + NODE_MARGIN;
+    if (autoPosition) {
+        node->setOffset(mAddNodePosition - translation);
+        if (mAddNodePosition.x + NODE_MARGIN + nodeSize.x >= getWidth() / scale.x) {
+            mAddNodePosition.x = DEFAULT_NODE_X;
+            mAddNodePosition.y += nodeSize.y + NODE_MARGIN;
+        } else {
+            mAddNodePosition.x += nodeSize.x + NODE_MARGIN;
+        }
     }
 
+    node->setInitialPosition(node->getOffset() - getMouseDragDelta());
     node->onWindowChange(getWidth(), getHeight());
-
     node->setInvalidateListener([this](ZNodeView* node){
         lock_guard<mutex> guard(mEvalMutex);
         mEvalSet.insert(node);

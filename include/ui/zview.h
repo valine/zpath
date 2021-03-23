@@ -268,6 +268,7 @@ class ZView {
         const vec4 gold = vec4(1, 0.709230, 0, 1);
         const vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
         const vec4 darkGrey = vec4(0.5, 0.5, 0.5, 1.0);
+        const vec4 lightGrey = vec4(0.7, 0.72, 0.75, 1.0);
         const vec4 darkerGrey = vec4(0.04, 0.04, 0.05, 1.0);
         const vec4 transparent = vec4(0);
         const vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
@@ -316,6 +317,8 @@ class ZView {
     int getLocalBottom();
     int getLocalLeft();
     int getLocalRight();
+
+    void calculateBounds();
 
 private:
 
@@ -450,12 +453,11 @@ private:
 
     void cacheScale();
 
-    void calculateBounds();
-
     void addViewFromDraw(ZView *view);
 void setComsumeClicks();
 
     void clearFocus();
+
 };
 
 #endif

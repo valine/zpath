@@ -36,12 +36,13 @@ public:
         mTypes.insert({"^", ZNodeView::Type::POW});
     }
 
-    vector<ZNodeView *> stringToGraph(string input) {
+    vector<ZNodeView *> stringToGraph(string testString) {
 
-        set<string> functions = {"max", "min", "sin", "cos", "tan"};
+        set<string> variables = {"x", "y", "z"};
+        set<string> functions = {"max", "min", "sin", "cos", "tan", "x"};
         set<string> operators = {"+", "-", "*", "/", "^"};
     //    string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
-        string testString = "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3";
+        //testString = "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3";
         /*
          * 3 4 2 * 1 5 - 2 3 ^ ^ / +
          * 3 8 -4 8
@@ -57,7 +58,7 @@ public:
 
         // Shunting-yard implementation
         for (const string& token : tokens) {
-            if (isNumber(token)) {
+            if (isNumber(token) || variables.count(token) > 0) {
                 outQueue.push(token);
             } else if (functions.count(token) > 0) {
                 opStack.push(token);
@@ -66,7 +67,7 @@ public:
                 // There is operator at top of operator stack
                 if (!opStack.empty()) {
                     int tokenPriority = getPriority(token);
-                    while (operators.count(opStack.top()) > 0 &&
+                    while (!opStack.empty() && operators.count(opStack.top()) > 0 &&
                             ((getPriority(opStack.top()) > tokenPriority) ||
                             (getPriority(opStack.top()) == tokenPriority && token != "^")) &&
                             opStack.top() != ")") {
@@ -89,7 +90,7 @@ public:
                     opStack.pop();
                 }
 
-                if (functions.count(opStack.top()) > 0) {
+                if (!opStack.empty() && functions.count(opStack.top()) > 0) {
                     outQueue.push(opStack.top());
                     opStack.pop();
                 }
@@ -113,6 +114,10 @@ public:
                 constant->setConstantValue(0, stof(symbol), 6);
                 evalStack.push(constant);
                 allNodes.push_back(constant);
+            } else if (symbol == "x"){
+                auto* var = new ZNodeView(ZNodeView::Type::X);
+                evalStack.push(var);
+                allNodes.push_back(var);
             } else {
                 if (mTypes.count(symbol) > 0) {
                     ZNodeView::Type type = mTypes.at(symbol);
@@ -140,6 +145,7 @@ public:
         // 4: After string to nodes works, implement nodes to string. This should be easier.
         // 5: Add UI / keyboard shortcuts for symbolic operations
 
+        //std::reverse(allNodes.begin(), allNodes.end());
         return allNodes;
     }
 
@@ -159,8 +165,13 @@ public:
 
         const char* delim = " ,+-*/^()";
 
-
         char* afterSplit = strtok(testArray, delim);
+
+        if (afterSplit - testArray + strlen(afterSplit) > 1) {
+            char d = fullInput[0];
+            tokens.emplace_back(string(1, d));
+        }
+
         tokens.emplace_back(string(afterSplit));
 
         while (afterSplit != nullptr) {
