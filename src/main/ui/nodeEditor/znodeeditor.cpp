@@ -232,11 +232,20 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
 ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
-
     vec2 nodeSize = ZNodeView::getNodeSize(type);
     auto* node = new ZNodeView(nodeSize.x, nodeSize.y, mNodeContainer);
+    node->setType(type);
+
+    addNodeToView(node);
+
+
+    return node;
+}
+
+void ZNodeEditor::addNodeToView(ZNodeView *node) {
     mNodeViews.push_back(node);
 
+    vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
     node->setIndexTag(mNodeViews.size() - 1);
 
     vec2 scale = mNodeContainer->getScale();
@@ -252,11 +261,10 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         mAddNodePosition.x += nodeSize.x + NODE_MARGIN;
     }
 
-    node->setType(type);
     node->onWindowChange(getWidth(), getHeight());
 
     node->setInvalidateListener([this](ZNodeView* node){
-        std::lock_guard<std::mutex> guard(mEvalMutex);
+        lock_guard<mutex> guard(mEvalMutex);
         mEvalSet.insert(node);
         mEvalConVar.notify_one();
     });
@@ -270,7 +278,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         float difference = (mMagnitudePicker->getWidth()) / 2.0;
 
         double xpos = std::min(std::max(0.0, (double) (mouse.x - difference)),
-                               (double) getWidth() - mMagnitudePicker->getMaxWidth());
+                          (double) getWidth() - mMagnitudePicker->getMaxWidth());
         double ypos;
 
         double margin = 10;
@@ -318,7 +326,7 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
         float difference = (mMagnitudePicker->getWidth()) / 2.0;
 
         double xpos = std::min(std::max(0.0, (double) (mouse.x - difference)),
-                               (double) getWidth() - mMagnitudePicker->getMaxWidth());
+                          (double) getWidth() - mMagnitudePicker->getMaxWidth());
         double ypos;
 
         double margin = 10;
@@ -361,8 +369,6 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     node->resetInitialPosition();
     node->invalidateSingleNode();
     deselectNode(node);
-
-    return node;
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){

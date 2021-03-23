@@ -15,7 +15,18 @@
 #include <iomanip>
 #include <mutex>
 
+ZNodeView::ZNodeView(ZNodeView::Type type) : ZView(10, 10){
+    init();
+    setType(type);
+}
+
+
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
+    init();
+
+}
+
+void ZNodeView::init() {
     mChart = new ZLineChart(fillParent, fillParent, this);
 
     mNameLabel = new ZLabel("Node", this);
@@ -28,9 +39,9 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     mOutputLabel->setOffset(vec2(20, 0));
     mOutputLabel->setMaxWidth(40);
     mOutputLabel->setYOffset(1);
-    mOutputLabel->setGravity(Gravity::topRight);
+    mOutputLabel->setGravity(topRight);
 
-    setOutlineType(WireType::outline);
+    setOutlineType(outline);
     setLineWidth(2.0);
 
     float yOffset = 3;
@@ -49,18 +60,17 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
     // Add output sockets
     for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-        socket->setGravity(Gravity::topRight);
+        socket->setGravity(topRight);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
         mSocketsOut.push_back(socket);
     }
 
     initializeEdges();
-    parent->invalidate();
 
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
 
-    mChart->setOffset(vec2(0,10));
+    mChart->setOffset(vec2(0, 10));
     mChart->setChartListener([this](vector<int> x, int lineIndex){
         // Can safely ignore line index for now
 
@@ -81,7 +91,7 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
             point.push_back(mPointCache.at(x.at(0)).at(1));
 
             return point;
-        } else if (getChartType(getType()) == ChartType::IMAGE) {
+        } else if (getChartType(getType()) == IMAGE) {
             return mPointCache1D;
         }
     });
@@ -488,6 +498,7 @@ void ZNodeView::setConstantValueInput(int index, float value, int magnitudeIndex
 
 
 vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x) {
+
     return evaluate(std::move(x), nullptr);
 }
 

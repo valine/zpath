@@ -33,34 +33,6 @@ using namespace std;
 class ZNodeView : public ZView {
 public:
 
-    ZNodeView(float maxWidth, float maxHeight, ZView *parent);
-
-    void setShowMagPickerListener(
-            function<void(ZView *sender, ZNodeView *node, int socketIndex,
-                          bool isInput, float initialValue, string name)> onValueSelect);
-
-    void setInvalidateListener(function<void(ZNodeView *node)> listener);
-
-    enum SocketType {
-        CON,
-        VAR,
-        ENUM,
-        NN,
-        NONE,
-    };
-
-    enum ChartResMode {
-        ADAPTIVE,
-        STATIC
-    };
-
-    enum ChartType {
-        LINE_1D,
-        LINE_1D_2X,
-        LINE_2D,
-        IMAGE
-    };
-
     enum Type {
         SIN,
         COS,
@@ -100,6 +72,36 @@ public:
         NEURAL_CORE,
         LAST // Fake enum to allow easy iteration
     };
+
+    ZNodeView(ZNodeView::Type type);
+    ZNodeView(float maxWidth, float maxHeight, ZView *parent);
+
+    void setShowMagPickerListener(
+            function<void(ZView *sender, ZNodeView *node, int socketIndex,
+                          bool isInput, float initialValue, string name)> onValueSelect);
+
+    void setInvalidateListener(function<void(ZNodeView *node)> listener);
+
+    enum SocketType {
+        CON,
+        VAR,
+        ENUM,
+        NN,
+        NONE,
+    };
+
+    enum ChartResMode {
+        ADAPTIVE,
+        STATIC
+    };
+
+    enum ChartType {
+        LINE_1D,
+        LINE_1D_2X,
+        LINE_2D,
+        IMAGE
+    };
+
 
     vector<vector<float>> compute(vector<vector<float>> x, Type type) {
         vec2 chartBound = mChart->getXBounds();
@@ -849,7 +851,7 @@ public:
             case Y:
                 return "y";
             case Z:
-                return "z (complex)";
+                return "z";
             case FILE:
                 return "file";
             case IFFT:
@@ -1425,6 +1427,8 @@ private:
     void onCursorPosChange(double x, double y);
 
     void hideSocketLabels();
+
+    void init();
 };
 
 

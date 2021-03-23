@@ -151,6 +151,8 @@ private:
     void resetCursor();
 
     vector<string> getNodeTypeNames(vector<ZNodeView::Type> types);
+
+    void addNodeToView(ZNodeView *node);
 };
 
 

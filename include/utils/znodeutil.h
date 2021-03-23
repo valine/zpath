@@ -15,6 +15,9 @@ using namespace std;
 
 class ZNodeUtil {
 
+private:
+
+    map<string, ZNodeView::Type> mTypes;
     //string graphToString(ZNodeView* node);
 
 public:
@@ -24,12 +27,25 @@ public:
         return instance;
     }
 
+    ZNodeUtil() {
+        for (int i = 0; i != ZNodeView::Type::LAST; i++) {
+            auto type = static_cast<ZNodeView::Type>(i);
+            mTypes.insert({ZNodeView::getName(type), type});
+        }
+    }
+
     vector<ZNodeView *> stringToGraph(string input) {
 
         set<string> functions = {"max", "min", "sin", "cos", "tan"};
         set<string> operators = {"+", "-", "*", "/", "^"};
     //    string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
         string testString = "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3";
+        /*
+         * 3 4 2 * 1 5 - 2 3 ^ ^ / +
+         * 3 8 -4 8
+         *
+         **/
+
         //string testString = "sin(max(2,3)/3*3.1415)";
 
         vector<string> tokens = getTokens(testString);
@@ -89,6 +105,10 @@ public:
 
             string symbol = outQueue.front();
             outQueue.pop();
+
+            if (isNumber(symbol)) {
+                ZNodeView* constant = new ZNodeView(ZNodeView::Type::C);
+            }
 
             cout << symbol << endl;
         }
