@@ -83,11 +83,11 @@ public:
     void setInvalidateListener(function<void(ZNodeView *node)> listener);
 
     enum SocketType {
+        NONE,
         CON,
         VAR,
         ENUM,
         NN,
-        NONE,
     };
 
     enum ChartResMode {

@@ -18,6 +18,7 @@ class ZNodeUtil {
 private:
 
     map<string, ZNodeView::Type> mTypes;
+    set<string> mFunctions;
     //string graphToString(ZNodeView* node);
 
 public:
@@ -31,6 +32,7 @@ public:
         for (int i = 0; i != ZNodeView::Type::LAST; i++) {
             auto type = static_cast<ZNodeView::Type>(i);
             mTypes.insert({ZNodeView::getName(type), type});
+            mFunctions.insert(ZNodeView::getName(type));
         }
 
         mTypes.insert({"^", ZNodeView::Type::POW});
@@ -39,7 +41,6 @@ public:
     vector<ZNodeView *> stringToGraph(string testString) {
 
         set<string> variables = {"x", "y", "z"};
-        set<string> functions = {"max", "min", "sin", "cos", "tan", "x"};
         set<string> operators = {"+", "-", "*", "/", "^"};
     //    string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
         //testString = "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3";
@@ -60,7 +61,7 @@ public:
         for (const string& token : tokens) {
             if (isNumber(token) || variables.count(token) > 0) {
                 outQueue.push(token);
-            } else if (functions.count(token) > 0) {
+            } else if (mFunctions.count(token) > 0) {
                 opStack.push(token);
             } else if (operators.count(token) > 0) {
 
@@ -90,7 +91,7 @@ public:
                     opStack.pop();
                 }
 
-                if (!opStack.empty() && functions.count(opStack.top()) > 0) {
+                if (!opStack.empty() && mFunctions.count(opStack.top()) > 0) {
                     outQueue.push(opStack.top());
                     opStack.pop();
                 }
@@ -119,19 +120,18 @@ public:
                     ZNodeView::Type type = mTypes.at(symbol);
                     auto node = new ZNodeView(type);
 
-                    if (node->getSocketCount().x > 0) {
-                        allNodes.push_back(node);
+                    int inputCount = getVarCount(node);
+                    if (inputCount > 0) {
 
-                        auto node1 = evalStack.top();
-                        evalStack.pop();
-
-                        auto node0 = evalStack.top();
-                        evalStack.pop();
-
-                        connectNodes(0,0, node0, node);
-                        connectNodes(0,1, node1, node);
+                        for (int si = 0; si < inputCount; si++) {
+                            auto node1 = evalStack.top();
+                            evalStack.pop();
+                            connectNodes(0, si, node1, node);
+                        }
 
                         evalStack.push(node);
+                        allNodes.push_back(node);
+
                     } else {
                         evalStack.push(node);
                         allNodes.push_back(node);
@@ -149,6 +149,32 @@ public:
 
         //std::reverse(allNodes.begin(), allNodes.end());
         return allNodes;
+    }
+
+    static int getVarCount(ZNodeView* node) {
+
+        if (node->getSocketCount().x == 0) {
+             return 0;
+        }
+
+        int count = 0;
+        int constantCount = 0;
+        for (ZNodeView::SocketType type : node->getSocketType().at(0)) {
+            if (type == ZNodeView::SocketType::VAR) {
+                count++;
+            }
+
+            if (type == ZNodeView::SocketType::CON) {
+                constantCount++;
+            }
+        }
+
+        if (count == 0) {
+            return constantCount;
+        }
+
+        return count;
+
     }
 
     static void connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) {
