@@ -91,6 +91,8 @@ private:
 
     ZNodeView::Type mLastType = ZNodeView::Type::SIN;
 
+    vector<int> mTmpNodeOffset;
+
     bool isSocketDrag();
 
     int getMouseOverNode();
@@ -156,6 +158,7 @@ private:
 
     void addNodeToView(ZNodeView *node, bool autoPosition);
 
+    void addNodeGraph(ZNodeView *root, vec2 position, int depth);
 };
 
 

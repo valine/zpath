@@ -155,7 +155,7 @@ public:
         // 4: After string to nodes works, implement nodes to string. This should be easier.
         // 5: Add UI / keyboard shortcuts for symbolic operations
 
-        //std::reverse(allNodes.begin(), allNodes.end());
+        std::reverse(allNodes.begin(), allNodes.end());
         return allNodes;
     }
 

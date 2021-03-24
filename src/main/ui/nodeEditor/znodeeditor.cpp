@@ -134,17 +134,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     evalField->setMargin(vec4(2));
     evalField->setOnReturn([this](string value) {
         vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
-       // vec2 pos = vec2(mNodeContainer->getWidth() - 50, mNodeContainer->getHeight() / 2);
-        for (auto node : evalNodes) {
-            mNodeContainer->addSubView(node);
-            addNodeToView(node, true);
-            node->invalidateSingleNode();
-           // node->setOffset(pos);
-        }
 
-        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-        updateLines();
-
+        vec2 pos = vec2(700, 100);
+        addNodeGraph(evalNodes.at(0), pos, 0);
     });
    //da addTestNodes();
 
@@ -164,6 +156,57 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 //    inputField2->setYOffset(25);
 //    inputField2->setBackgroundColor(grey);
 //    inputField2->setMaxWidth(120);
+}
+
+
+/**
+ * Add a graph to the node view. This is usually a list of pre-connected
+ * nodes
+ * @param nodes
+ */
+void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
+
+    if (depth == 0) {
+        mTmpNodeOffset.clear();
+    }
+    // First node from eval is always root
+    mNodeContainer->addSubView(root);
+    addNodeToView(root, false);
+    root->setOffset(position);
+    root->setInitialPosition(position);
+    root->invalidateSingleNode();
+
+    set<ZNodeView*> uniqueChildren;
+    vector<ZNodeView*> children;
+    vector<vector<pair<ZNodeView *, int>>> inputIndices = root->mInputIndices;
+
+    for (const vector<pair<ZNodeView *, int>>& socketInputs : inputIndices) {
+       // std::reverse(socketInputs.begin(), socketInputs.end());
+        for (pair<ZNodeView*, int> input : socketInputs) {
+            ZNodeView* child = input.first;
+
+            if (uniqueChildren.count(child) == 0) {
+                uniqueChildren.insert(child);
+                children.push_back(child);
+            }
+        }
+    }
+
+    int margin = 10;
+    if (mTmpNodeOffset.size() <= depth && !children.empty()) {
+        mTmpNodeOffset.push_back(position.y);
+    }
+    for (ZNodeView* node : children) {
+        vec2 nodeSize = node->getNodeSize(node->getType());
+        addNodeGraph(node, vec2(position.x, mTmpNodeOffset.at(depth)) - (vec2(nodeSize.x, 0) + vec2(margin, 0)), depth + 1);
+        mTmpNodeOffset.at(depth) += nodeSize.y + margin;
+    }
+
+    if (depth == 0) {
+        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+        updateLines();
+    }
+
 }
 
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
@@ -507,7 +550,7 @@ void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last
 
     // Reindex node views
     int index = 0;
-    for (ZNodeView *nv : mNodeViews) {
+    for (ZNodeView *nv : mNodeViews){
         nv->setIndexTag(index);
         index++;
     }
