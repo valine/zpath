@@ -114,6 +114,7 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
             insertCharacter("\n");
         } else {
             mOnReturn(getText());
+            applyEdit();
         }
 
     } else if (key == GLFW_KEY_TAB && (action == GLFW_PRESS || action == GLFW_REPEAT)) {

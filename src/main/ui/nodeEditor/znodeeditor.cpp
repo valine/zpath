@@ -126,16 +126,16 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mMagnitudePicker = new ZMagnitudePicker(this);
     mMagnitudePicker->setVisibility(false);
 
-    ZTextField* evalField = new ZTextField(this);
-    evalField->setGravity(Gravity::bottomLeft);
-    evalField->setBackgroundColor(lightGrey);
-    evalField->setXOffset(mDrawer->getMaxWidth() + 10);
-    evalField->setMaxHeight(30);
-    evalField->setMargin(vec4(2));
-    evalField->setOnReturn([this](string value) {
+    mExpressionField = new ZTextField(this);
+    mExpressionField->setGravity(Gravity::bottomLeft);
+    mExpressionField->setBackgroundColor(lightGrey);
+    mExpressionField->setXOffset(mDrawer->getMaxWidth() + 10);
+    mExpressionField->setMaxHeight(30);
+    mExpressionField->setMargin(vec4(2));
+    mExpressionField->setOnReturn([this](string value) {
         vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
 
-        vec2 pos = vec2(700, 100);
+        vec2 pos = vec2(700, 300);
         addNodeGraph(evalNodes.at(0), pos, 0);
     });
    //da addTestNodes();
@@ -195,14 +195,28 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
     int margin = 10;
     if (mTmpNodeOffset.size() <= depth && !children.empty()) {
         mTmpNodeOffset.push_back(position.y);
+        mTmpNodes.push_back(vector<ZNodeView*>());
     }
     for (ZNodeView* node : children) {
         vec2 nodeSize = node->getNodeSize(node->getType());
         addNodeGraph(node, vec2(position.x, mTmpNodeOffset.at(depth)) - (vec2(nodeSize.x, 0) + vec2(margin, 0)), depth + 1);
         mTmpNodeOffset.at(depth) += nodeSize.y + margin;
+        mTmpNodes.at(depth).push_back(node);
     }
 
     if (depth == 0) {
+        for (vector<ZNodeView*> layer : mTmpNodes) {
+            if (!layer.empty()) {
+                int span = layer.at(layer.size() - 1)->getLocalBottom() - layer.at(0)->getLocalTop();
+                int center = layer.at(0)->getLocalTop() + (span / 2);
+                int rootCenter = ((root->getLocalBottom() - root->getLocalTop()) / 2);
+                int offset = (center - position.y) - rootCenter;
+                for (ZNodeView *node : layer) {
+                    node->setYOffset(node->getOffsetY() - offset);
+                }
+            }
+        }
+
         getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         updateLines();
     }
@@ -1000,6 +1014,10 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
             deselectAllNodes();
         }
         invalidate();
+    }
+
+    else if (key == GLFW_KEY_SLASH && action == GLFW_RELEASE) {
+        mExpressionField->setInFocus();
     }
 
     else if (key == GLFW_KEY_D && shiftKeyPressed() && action == GLFW_PRESS) {

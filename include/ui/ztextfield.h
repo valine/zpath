@@ -24,6 +24,8 @@ public:
         mOnReturn = listener;
     }
 
+    void setInFocus();
+
 private:
 
     ZView* mCursor;
@@ -56,7 +58,6 @@ private:
     }
 
 
-    void setInFocus();
 
     void cancelEdit();
 

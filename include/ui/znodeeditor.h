@@ -5,7 +5,6 @@
 #ifndef ZPATH_ZNODEEDITOR_H
 #define ZPATH_ZNODEEDITOR_H
 
-
 static const int NO_SELECTION = -1;
 static const int SOCKET_DRAG_IN = -2;
 static const int SOCKET_DRAG_OUT = -3;
@@ -37,6 +36,8 @@ static const double SELECTED_ELEVATION = 1.0;
 #include <mutex>
 #include <condition_variable>
 #include "zdrawer.h"
+#include "ui/ztextfield.h"
+
 
 
 class ZNodeEditor : public ZView {
@@ -92,6 +93,8 @@ private:
     ZNodeView::Type mLastType = ZNodeView::Type::SIN;
 
     vector<int> mTmpNodeOffset;
+    vector<vector<ZNodeView*>> mTmpNodes;
+    ZTextField* mExpressionField;
 
     bool isSocketDrag();
 
