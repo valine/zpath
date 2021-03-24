@@ -42,6 +42,14 @@ public:
 
         set<string> variables = {"x", "y", "z"};
         set<string> operators = {"+", "-", "*", "/", "^"};
+
+        for(string var : variables) {
+            mFunctions.erase(var);
+        }
+
+        for (string op : operators) {
+            mFunctions.erase(op);
+        }
     //    string testString = "3 + 4(10.0014 +2*2)+ max(1,2)";
         //testString = "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3";
         /*
