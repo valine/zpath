@@ -114,26 +114,28 @@ public:
                 constant->setConstantValue(0, stof(symbol), 6);
                 evalStack.push(constant);
                 allNodes.push_back(constant);
-            } else if (symbol == "x"){
-                auto* var = new ZNodeView(ZNodeView::Type::X);
-                evalStack.push(var);
-                allNodes.push_back(var);
             } else {
                 if (mTypes.count(symbol) > 0) {
                     ZNodeView::Type type = mTypes.at(symbol);
                     auto node = new ZNodeView(type);
-                    allNodes.push_back(node);
 
-                    auto node1 = evalStack.top();
-                    evalStack.pop();
+                    if (node->getSocketCount().x > 0) {
+                        allNodes.push_back(node);
 
-                    auto node0 = evalStack.top();
-                    evalStack.pop();
+                        auto node1 = evalStack.top();
+                        evalStack.pop();
 
-                    connectNodes(0,0, node0, node);
-                    connectNodes(0,1, node1, node);
+                        auto node0 = evalStack.top();
+                        evalStack.pop();
 
-                    evalStack.push(node);
+                        connectNodes(0,0, node0, node);
+                        connectNodes(0,1, node1, node);
+
+                        evalStack.push(node);
+                    } else {
+                        evalStack.push(node);
+                        allNodes.push_back(node);
+                    }
                 }
             }
         }
@@ -156,6 +158,19 @@ public:
 
     static vector<string> getTokens(string input) {
         vector<string> tokens;
+        set<string> variables = {"x", "y", "z"};
+
+        // Correct for multiplication shorthand
+        for (int i = 1; i < input.size(); i++) {
+            string prev =  input.substr(i-1, 1);
+            string current =  input.substr(i, 1);
+            bool isVar = variables.count(current) > 0;
+            bool previousIsNotOp = variables.count(prev) > 0 || isNumber(prev);
+
+            if (isVar && previousIsNotOp) {
+                input.insert(i, "*");
+            }
+        }
 
         input.erase(std::remove_if(input.begin(), input.end(), ::isspace), input.end());
 
@@ -169,7 +184,9 @@ public:
 
         if (afterSplit - testArray + strlen(afterSplit) > 1) {
             char d = fullInput[0];
-            tokens.emplace_back(string(1, d));
+            if (d == '(' || d == ')') {
+                tokens.emplace_back(string(1, d));
+            }
         }
 
         tokens.emplace_back(string(afterSplit));

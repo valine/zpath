@@ -6,6 +6,7 @@
 #define ZPATH_ZTEXTFIELD_H
 
 
+#include <functional>
 #include "zlabel.h"
 
 class ZTextField : public ZLabel {
