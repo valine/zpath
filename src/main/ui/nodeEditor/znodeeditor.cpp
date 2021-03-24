@@ -168,6 +168,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
 
     if (depth == 0) {
         mTmpNodeOffset.clear();
+        mTmpNodes.clear();
     }
     // First node from eval is always root
     mNodeContainer->addSubView(root);
@@ -192,7 +193,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         }
     }
 
-    int margin = 10;
+    int margin = 20;
     if (mTmpNodeOffset.size() <= depth && !children.empty()) {
         mTmpNodeOffset.push_back(position.y);
         mTmpNodes.push_back(vector<ZNodeView*>());
