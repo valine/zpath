@@ -815,15 +815,15 @@ public:
             case TAN:
                 return "tan";
             case SIN_C:
-                return "sin (complex)";
+                return "sini";
             case COS_C:
-                return "cos (complex)";
+                return "cosi";
             case TAN_C:
-                return "tan (complex)";
+                return "tani";
             case ABS:
                 return "abs";
             case EXP_C:
-                return "exp (complex)";
+                return "expi";
             case EXP:
                 return "exp";
             case SQRT:
@@ -843,9 +843,9 @@ public:
             case DIVIDE:
                 return "/";
             case C:
-                return "C";
+                return "c";
             case CI:
-                return "C Imag";
+                return "ci";
             case X:
                 return "x";
             case Y:
@@ -855,29 +855,29 @@ public:
             case FILE:
                 return "file";
             case IFFT:
-                return "Inverse FFT";
+                return "ifft";
             case FFT:
-                return "FFT";
+                return "fft";
             case HARTLEY:
-                return "Hartley";
+                return "hartley";
             case LAPLACE:
-                return "Laplace";
+                return "laplace";
             case FIRST_DIFF:
-                return "1st diff";
+                return "diff";
             case DOT:
                 return "dot";
             case CROSS:
                 return "cross";
             case CHART_2D:
-                return "2D Chart";
+                return "chart2d";
             case HEAT_MAP:
-                return "Heat Map";
+                return "heat";
             case COMBINE:
-                return "Combine";
+                return "combine";
             case SPLIT:
-                return "Split";
+                return "split";
             case NEURAL_CORE:
-                return "Neural Network";
+                return "neural";
             case LAST:
                 return "none";
         }

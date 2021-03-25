@@ -161,7 +161,7 @@ public:
                         for (int si = 0; si < inputCount; si++) {
                             auto node1 = evalStack.top();
                             evalStack.pop();
-                            connectNodes(0, si, node1, node);
+                            connectNodes(0, inputCount - si - 1, node1, node);
                         }
 
                         evalStack.push(node);

@@ -521,8 +521,8 @@ void ZNodeEditor::deleteSelectedConnections() {
 }
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
-    deleteConnections(node);
     node->setVisibility(false);
+
     updateLines();
 }
 
@@ -561,17 +561,17 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 
 void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
     deleteConnections(node);
-    remove(mNodeViews, node->getIndexTag());
 
-   // mNodeContainer->removeSubView(node);
-    ZNodeUtil::get().submitForRecycle(node);
-    // Reindex node views
+    remove(mNodeViews, node->getIndexTag());
     int index = 0;
     for (ZNodeView *nv : mNodeViews){
         nv->setIndexTag(index);
         index++;
     }
 
+   // mNodeContainer->removeSubView(node);
+    ZNodeUtil::get().submitForRecycle(node);
+    // Reindex node views
     invalidate();
 }
 

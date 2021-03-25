@@ -611,9 +611,11 @@ void ZNodeView::clearInvalidateNode() {
  */
 void ZNodeView::invalidateSingleNode() {
     //setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
-    mInvalid = true;
-    if (mInvalidateListener != nullptr) {
-        mInvalidateListener(this);
+    if (getVisibility()) {
+        mInvalid = true;
+        if (mInvalidateListener != nullptr) {
+            mInvalidateListener(this);
+        }
     }
 }
 
