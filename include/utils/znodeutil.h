@@ -227,12 +227,12 @@ public:
 
             } else if (token == ")") {
                 // Could handle mismatched parentheses here, but not doing that for now.
-                while(opStack.top() != "(") {
+                while(!opStack.empty() && opStack.top() != "(") {
                     outQueue.push(opStack.top());
                     opStack.pop();
                 }
 
-                if (opStack.top() == "(") {
+                if (!opStack.empty() && opStack.top() == "(") {
                     opStack.pop();
                 }
 
