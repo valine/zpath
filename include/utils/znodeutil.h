@@ -75,8 +75,10 @@ public:
             string first = to_string(root->getConstantInput(0));
             string second = to_string(root->getConstantInput(1));
 
+            expression += "(";
+
             if (root->mInputIndices.at(0).size() == 0) {
-                expression = first;
+                expression += first;
             }
             bool firstSocketMultiInput = root->mInputIndices.at(0).size() > 1;
             if (firstSocketMultiInput) {
@@ -118,6 +120,8 @@ public:
             if (secondSocketMultiInput) {
                 expression += ")";
             }
+
+            expression += ")";
 
             return expression;
         }
