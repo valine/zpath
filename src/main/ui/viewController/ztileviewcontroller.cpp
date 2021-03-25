@@ -387,6 +387,8 @@ void ZTileViewController::updateVerticalJoinGuide() {
         mJoinGuide->setVisibility(false);
         mParentTile->mJoinType = keepSecond;
     }
+
+    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZTileViewController::updateHorizontalJoinGuide() {
@@ -408,6 +410,9 @@ void ZTileViewController::updateHorizontalJoinGuide() {
         mJoinGuide->setVisibility(false);
         mParentTile->mJoinType = keepFirst;
     }
+
+    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+
 }
 
 void ZTileViewController::insertChildAtIndexHorizontal(int index) {

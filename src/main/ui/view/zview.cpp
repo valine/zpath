@@ -346,7 +346,7 @@ void ZView::drawShadow() {
        // mShadowView->setBackgroundColor(blue);
     }
 
-    if (mShadowView != nullptr) {
+    if (mShadowView != nullptr && mShadowView->mParentView != nullptr) {
         if ((abs((mShadowView->getMaxWidth() - shadowRadius) - getWidth()) > 1 ||
             abs((mShadowView->getMaxHeight() - shadowRadius) - getHeight()) > 1) && getWidth() > 1 && getHeight() > 1) {
             ZShadowRenderer::get().updateShadow(mShadowView->mBackgroundImage->getID(), getWidth(), getHeight(), shadowRadius);
@@ -468,7 +468,7 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
     }
 
     for (int i = 0; i < mViews.size(); i++) {
-        if (i < mViews.size()) {
+        if (i < mViews.size() && mViews.at(i)->getVisibility()) {
             mViews.at(i)->onWindowChange(right, bottom);
         }
     }
@@ -675,6 +675,10 @@ void ZView::calculateBounds() {
 }
 
 void ZView::addSubView(ZView *view) {
+    if (view->getParentView() != nullptr && view->getParentView() != view &&
+            view->getParentView() != this) {
+        view->getParentView()->removeSubView(view);
+    }
     mViews.push_back(view);
     view->setParentView(this);
     view->setRootView(mRootView);
@@ -692,7 +696,6 @@ void ZView::addSubView(ZView *view) {
 
     view->onLayoutFinished();
     cacheScale();
-
     calculateBounds();
 }
 

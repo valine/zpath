@@ -214,6 +214,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
                 int offset = (center - position.y) - rootCenter;
                 for (ZNodeView *node : layer) {
                     node->setYOffset(node->getOffsetY() - offset);
+                    node->setInitialPosition(node->getOffset());
                 }
             }
         }
@@ -293,11 +294,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
                 node->updateChart();
             } else {
                 editor->removeNodeAsync(node);
-
                 {
                     std::lock_guard<std::mutex> guard(editor->mEvalMutex);
                     editor->mEvalSet.erase(node);
-                    node->removeView();
                     editor->updateLines();
                 }
             }
@@ -314,12 +313,12 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
     vec2 nodeSize = ZNodeView::getNodeSize(type);
-    auto* node = new ZNodeView(nodeSize.x, nodeSize.y, mNodeContainer);
-    node->setType(type);
 
+    ZNodeView* node = ZNodeUtil::get().newNode(type);
+    mNodeContainer->addSubView(node);
     addNodeToView(node, true);
 
-
+    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
     return node;
 }
 
@@ -328,7 +327,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
 
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
     node->setMaxWidth(nodeSize.x);
-    node->setMaxHeight(nodeSize.y);
 
     node->setIndexTag(mNodeViews.size() - 1);
 
@@ -337,6 +335,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
 
     if (autoPosition) {
         node->setOffset(mAddNodePosition - translation);
+        node->setInitialPosition((node->getOffset()));
         if (mAddNodePosition.x + NODE_MARGIN + nodeSize.x >= getWidth() / scale.x) {
             mAddNodePosition.x = DEFAULT_NODE_X;
             mAddNodePosition.y += nodeSize.y + NODE_MARGIN;
@@ -522,6 +521,7 @@ void ZNodeEditor::deleteSelectedConnections() {
 }
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
+    deleteConnections(node);
     node->setVisibility(false);
     updateLines();
 }
@@ -563,6 +563,8 @@ void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last
     deleteConnections(node);
     remove(mNodeViews, node->getIndexTag());
 
+   // mNodeContainer->removeSubView(node);
+    ZNodeUtil::get().submitForRecycle(node);
     // Reindex node views
     int index = 0;
     for (ZNodeView *nv : mNodeViews){

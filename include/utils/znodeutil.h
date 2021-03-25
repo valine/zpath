@@ -21,11 +21,38 @@ private:
     set<string> mFunctions;
     //string graphToString(ZNodeView* node);
 
+
+    /**
+     * Pull from delete nodes instead of creating new one
+     */
+    queue<ZNodeView*> mDeleteNodes;
+
 public:
     static ZNodeUtil& get(){
         static ZNodeUtil instance; // Guaranteed to be destroyed.
         // Instantiated on first use.
         return instance;
+    }
+
+    ZNodeView* newNode(ZNodeView::Type type) {
+        ZNodeView* node;
+        if (!mDeleteNodes.empty()) {
+            node = mDeleteNodes.front();
+            node->setVisibility(true);
+            mDeleteNodes.pop();
+            node->setType(type);
+
+            cout << "recycled node" << endl;
+        } else {
+            node = new ZNodeView(type);
+            cout << "new node" << endl;
+        }
+
+        return node;
+    }
+
+    void submitForRecycle(ZNodeView* node) {
+        mDeleteNodes.push(node);
     }
 
     ZNodeUtil() {
@@ -119,14 +146,14 @@ public:
             string symbol = outQueue.front();
             outQueue.pop();
             if (isNumber(symbol)) {
-                auto* constant = new ZNodeView(ZNodeView::Type::C);
+                auto* constant = get().newNode(ZNodeView::Type::C);
                 constant->setConstantValue(0, stof(symbol), 6);
                 evalStack.push(constant);
                 allNodes.push_back(constant);
             } else {
                 if (mTypes.count(symbol) > 0) {
                     ZNodeView::Type type = mTypes.at(symbol);
-                    auto node = new ZNodeView(type);
+                    auto node = get().newNode(type);
 
                     int inputCount = getVarCount(node);
                     if (inputCount > 0) {

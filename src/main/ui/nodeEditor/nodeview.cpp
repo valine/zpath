@@ -31,8 +31,6 @@ void ZNodeView::init() {
 
     mNameLabel = new ZLabel("Node", this);
     mNameLabel->setTextColor(black);
-    mNameLabel->setXOffset(22);
-    mNameLabel->setYOffset(1);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
 
     mOutputLabel = new ZLabel("", this);
@@ -67,8 +65,6 @@ void ZNodeView::init() {
     }
 
     initializeEdges();
-
-    mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
 
     mChart->setOffset(vec2(0, 10));
     mChart->setChartListener([this](vector<int> x, int lineIndex){
@@ -320,6 +316,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsIn.at(i)->setVisibility(false);
         } else {
 
+            mSocketsIn.at(i)->setVisibility(true);
             if (i < socketCount.x) {
                 vec4 color = getSocketColor(socketType.at(0).at(i));
                 if (socketType.at(0).at(i) == VAR) {
@@ -338,6 +335,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsOut.at(i)->setVisibility(false);
         } else {
 
+            mSocketsOut.at(i)->setVisibility(true);
             if (i < socketCount.y) {
                 vec4 color = getSocketColor(socketType.at(1).at(i)) - darkenVec;
                 if (socketType.at(1).at(i) == VAR) {
@@ -352,9 +350,12 @@ void ZNodeView::setType(ZNodeView::Type type) {
     }
 
     // Always set max height to be large enough to fit all sockets
+    setMaxWidth(getNodeSize(mType).x);
     if (socketCount.x > 0) {
         setMaxHeight(std::max((int) mSocketsIn.at(socketCount.x - 1)->getOffsetY() +
-                              SOCKET_SIZE + MIN_MARGIN, getMaxHeight()));
+                              SOCKET_SIZE + MIN_MARGIN, (int) getNodeSize(mType).y));
+    } else {
+        setMaxHeight(getNodeSize(mType).y);
     }
 
     if (getChartType(type) == LINE_2D) {
@@ -371,6 +372,12 @@ void ZNodeView::setType(ZNodeView::Type type) {
         setOutputLabel(mConstantValueOutput.at(0));
         mOutputLabel->setBackgroundColor(getNodeColor(mType));
     }
+
+
+    mNameLabel->setXOffset(22);
+    mNameLabel->setYOffset(1);
+    mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
+
 
     if (getSocketCount().x == 0) {
         mNameLabel->setXOffset(MIN_MARGIN);
