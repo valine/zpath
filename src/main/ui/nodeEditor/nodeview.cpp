@@ -493,6 +493,14 @@ void ZNodeView::setConstantValue(int index, float value, int magnitudeIndex) {
     }
 }
 
+float ZNodeView::getConstantValue(int index) {
+    return  mConstantValueOutput.at(index);
+}
+
+float ZNodeView::getConstantInput(int index) {
+    return mConstantValueInput.at(index);
+}
+
 void ZNodeView::setConstantValueInput(int index, float value, int magnitudeIndex) {
     if (index >= mConstantValueInput.size()) {
         mOutputLabel->setText("Bad input");

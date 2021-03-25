@@ -1352,9 +1352,12 @@ public:
 
     //////////
 
-    void
-    setShowEnumPickerListener(
+    void setShowEnumPickerListener(
             function<void(ZView *, ZNodeView *, int, bool, float, string, vector<string>)> onValueSelect);
+
+    float getConstantValue(int index);
+
+    float getConstantInput(int index);
 
 private:
     bool mInvalid = true;
@@ -1429,6 +1432,7 @@ private:
     void hideSocketLabels();
 
     void init();
+
 };
 
 

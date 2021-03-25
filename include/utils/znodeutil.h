@@ -65,6 +65,112 @@ public:
         mTypes.insert({"^", ZNodeView::Type::POW});
     }
 
+    string graphToString(ZNodeView* root) {
+
+        string expression;
+        set<string> operators = {"+", "-", "*", "/", "^"};
+
+        // Is arithmetic operator
+        if (operators.count(root->getName(root->getType())) > 0) {
+            string first = to_string(root->getConstantInput(0));
+            string second = to_string(root->getConstantInput(1));
+
+            if (root->mInputIndices.at(0).size() == 0) {
+                expression = first;
+            }
+            bool firstSocketMultiInput = root->mInputIndices.at(0).size() > 1;
+            if (firstSocketMultiInput) {
+                expression += "(";
+            }
+            int index = 0;
+            for (pair<ZNodeView *, int> input : root->mInputIndices.at(0)) {
+                ZNodeView *child = input.first;
+                expression += graphToString(child);
+                if (index < root->mInputIndices.at(0).size() - 1) {
+                    expression += " + ";
+                }
+
+                index++;
+            }
+            if (firstSocketMultiInput) {
+                expression += ")";
+            }
+
+            expression += " " + root->getName(root->getType()) + " ";
+
+            if (root->mInputIndices.at(1).size() == 0) {
+                expression += second;
+            }
+            bool secondSocketMultiInput = root->mInputIndices.at(1).size() > 1;
+            if (secondSocketMultiInput) {
+                expression += "(";
+            }
+            index = 0;
+            for (pair<ZNodeView *, int> input : root->mInputIndices.at(1)) {
+                ZNodeView *child = input.first;
+                expression += graphToString(child);
+                if (index < root->mInputIndices.at(1).size() - 1) {
+                    expression += " + ";
+                }
+
+                index++;
+            }
+            if (secondSocketMultiInput) {
+                expression += ")";
+            }
+
+            return expression;
+        }
+
+        // Node is a constant
+        if (root->getType() == ZNodeView::Type::C) {
+            auto format = "%.2f";
+            auto size = std::snprintf(nullptr, 0, format, root->getConstantValue(0));
+            std::string output(size, '\0');
+            std::sprintf(&output[0], format, root->getConstantValue(0));
+            return output;
+        }
+
+        expression = root->getName(root->getType());
+        array<ZNodeView::SocketType,8> inputType = root->getSocketType().at(0);
+
+        // Node is a variable
+        if (root->getSocketCount().x == 0) {
+            return expression;
+        }
+
+
+        // Node is function
+        expression += "(";
+        int varCount = getVarCount(root);
+        for (int socketIndex = 0; socketIndex < varCount; socketIndex++) {
+
+            // No inputs for socket
+            if (root->mInputIndices.at(socketIndex).empty()) {
+                expression += "x";
+            } else {
+                int index = 0;
+                for (pair<ZNodeView *, int> input : root->mInputIndices.at(socketIndex)) {
+                    ZNodeView *child = input.first;
+                    expression += graphToString(child);
+                    if (index < root->mInputIndices.at(socketIndex).size() - 1) {
+                        expression += " + ";
+                    }
+
+                    index++;
+                }
+            }
+
+            if (socketIndex < varCount - 1) {
+                expression += ", ";
+            }
+
+        }
+
+        expression += ")";
+        return expression;
+    }
+
     vector<ZNodeView *> stringToGraph(string testString) {
 
         set<string> variables = {"x", "y", "z"};

@@ -586,6 +586,7 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
         mLastSelected = node;
         mSelectedNodes.insert(node);
 
+        mExpressionField->setText(ZNodeUtil::get().graphToString(node));
     }
 }
 
