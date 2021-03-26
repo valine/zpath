@@ -141,6 +141,9 @@ public:
                 }
                 expression += graphToString(child);
 
+                if (index < root->mInputIndices.at(1).size() - 1) {
+                    expression += " + ";
+                }
                 if (needParen) {
                     expression += ")";
                 }
