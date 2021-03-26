@@ -15,7 +15,7 @@ static const int BOX_SELECT = 1;
 static const int BOX_SELECT_2 = 2;
 
 
-static const int DEFAULT_NODE_X = 110;
+static const int DEFAULT_NODE_X = 10;
 static const int DEFAULT_NODE_Y = 10;
 static const int NODE_MARGIN = 10;
 
