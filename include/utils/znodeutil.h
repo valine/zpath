@@ -65,6 +65,19 @@ public:
         mTypes.insert({"^", ZNodeView::Type::POW});
     }
 
+    int getNodePriority(ZNodeView* node) {
+        set<string> operators = {"+", "-", "*", "/", "^"};
+
+        string name = node->getName(node->getType());
+        // Is arithmetic operator
+        if (operators.count(name) > 0) {
+            return getPriority(name);
+        }
+        return 5;
+    }
+
+
+
     string graphToString(ZNodeView* root) {
 
         string expression;
@@ -74,8 +87,6 @@ public:
         if (operators.count(root->getName(root->getType())) > 0) {
             string first = to_string(root->getConstantInput(0));
             string second = to_string(root->getConstantInput(1));
-
-            expression += "(";
 
             if (root->mInputIndices.at(0).size() == 0) {
                 expression += first;
@@ -87,7 +98,18 @@ public:
             int index = 0;
             for (pair<ZNodeView *, int> input : root->mInputIndices.at(0)) {
                 ZNodeView *child = input.first;
+
+                bool needParen = getNodePriority(root) > getNodePriority(child);
+                // Recursive
+                if (needParen) {
+                    expression += "(";
+                }
                 expression += graphToString(child);
+
+                if (needParen) {
+                    expression += ")";
+                }
+
                 if (index < root->mInputIndices.at(0).size() - 1) {
                     expression += " + ";
                 }
@@ -110,9 +132,17 @@ public:
             index = 0;
             for (pair<ZNodeView *, int> input : root->mInputIndices.at(1)) {
                 ZNodeView *child = input.first;
+
+                // Recursive
+                bool needParen = getNodePriority(root) > getNodePriority(child);
+                // Recursive
+                if (needParen) {
+                    expression += "(";
+                }
                 expression += graphToString(child);
-                if (index < root->mInputIndices.at(1).size() - 1) {
-                    expression += " + ";
+
+                if (needParen) {
+                    expression += ")";
                 }
 
                 index++;
@@ -120,9 +150,6 @@ public:
             if (secondSocketMultiInput) {
                 expression += ")";
             }
-
-            expression += ")";
-
             return expression;
         }
 
@@ -176,6 +203,9 @@ public:
     }
 
     vector<ZNodeView *> stringToGraph(string testString) {
+        if (testString.empty()) {
+            return vector<ZNodeView*>();
+        }
 
         set<string> variables = {"x", "y", "z"};
         set<string> operators = {"+", "-", "*", "/", "^"};
@@ -198,6 +228,10 @@ public:
         //string testString = "sin(max(2,3)/3*3.1415)";
 
         vector<string> tokens = getTokens(testString);
+
+        if (tokens.empty()) {
+            return vector<ZNodeView*>();
+        }
 
         stack<string> opStack;
         queue<string> outQueue;
@@ -269,15 +303,25 @@ public:
                     if (inputCount > 0) {
 
                         for (int si = 0; si < inputCount; si++) {
-                            auto node1 = evalStack.top();
-                            evalStack.pop();
-                            connectNodes(0, inputCount - si - 1, node1, node);
+                            int socketIndex = inputCount - si - 1;
+                            if (!evalStack.empty()) {
+                                auto node1 = evalStack.top();
+                                evalStack.pop();
+
+                               // if (node1->getType() != ZNodeView::Type::X) {
+                               connectNodes(0, socketIndex, node1, node);
+                                //}
+                                //else {
+                               //     submitForRecycle(node1);
+                               // }
+                            }
                         }
 
                         evalStack.push(node);
                         allNodes.push_back(node);
 
                     } else {
+                        // X is default so no need to add a redundant node
                         evalStack.push(node);
                         allNodes.push_back(node);
                     }

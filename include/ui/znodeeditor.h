@@ -145,7 +145,7 @@ private:
 
     void exitGrabMode();
 
-    void removeNodeAsync(ZNodeView *node);
+    void deleteNodeAsync(ZNodeView *node);
 
     void deleteConnections(ZNodeView *node);
 
@@ -162,6 +162,8 @@ private:
     void addNodeToView(ZNodeView *node, bool autoPosition);
 
     void addNodeGraph(ZNodeView *root, vec2 position, int depth);
+
+    void deleteNodeRecursive(ZNodeView *root);
 };
 
 

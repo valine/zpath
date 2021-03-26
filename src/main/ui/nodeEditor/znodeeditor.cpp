@@ -133,10 +133,25 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mExpressionField->setMaxHeight(30);
     mExpressionField->setMargin(vec4(2));
     mExpressionField->setOnReturn([this](string value) {
-        vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
+       // vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
+       // vec2 pos = vec2(700, 300);
+       // addNodeGraph(evalNodes.at(0), pos, 0);
+    });
 
+    mExpressionField->setOnTextChange([this](string value) {
+        for (ZNodeView* node : mSelectedNodes) {
+            deleteNodeRecursive(node);
+        }
+
+        mSelectedNodes.clear();
+
+        vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
         vec2 pos = vec2(700, 300);
-        addNodeGraph(evalNodes.at(0), pos, 0);
+
+        if (!evalNodes.empty()) {
+            addNodeGraph(evalNodes.at(0), pos, 0);
+        }
+
     });
    //da addTestNodes();
 
@@ -171,11 +186,15 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         mTmpNodes.clear();
     }
     // First node from eval is always root
-    mNodeContainer->addSubView(root);
     addNodeToView(root, false);
     root->setOffset(position);
     root->setInitialPosition(position);
     root->invalidateSingleNode();
+
+    if (depth == 0) {
+        deselectAllNodes();
+        selectNode(root);
+    }
 
     set<ZNodeView*> uniqueChildren;
     vector<ZNodeView*> children;
@@ -221,10 +240,34 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
 
         getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         updateLines();
+
     }
 
 }
 
+void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
+    set<ZNodeView*> uniqueChildren;
+    vector<ZNodeView*> children;
+    vector<vector<pair<ZNodeView *, int>>> inputIndices = root->mInputIndices;
+
+    for (const vector<pair<ZNodeView *, int>>& socketInputs : inputIndices) {
+        // std::reverse(socketInputs.begin(), socketInputs.end());
+        for (pair<ZNodeView*, int> input : socketInputs) {
+            ZNodeView* child = input.first;
+
+            if (uniqueChildren.count(child) == 0) {
+                uniqueChildren.insert(child);
+                children.push_back(child);
+            }
+        }
+    }
+
+    for (ZNodeView* node : uniqueChildren) {
+        deleteNodeRecursive(node);
+    }
+
+    deleteNode(root);
+}
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
     vector<string> names;
     for (ZNodeView::Type type : types) {
@@ -293,7 +336,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
                 }
                 node->updateChart();
             } else {
-                editor->removeNodeAsync(node);
+                editor->deleteNodeAsync(node);
                 {
                     std::lock_guard<std::mutex> guard(editor->mEvalMutex);
                     editor->mEvalSet.erase(node);
@@ -315,7 +358,6 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     vec2 nodeSize = ZNodeView::getNodeSize(type);
 
     ZNodeView* node = ZNodeUtil::get().newNode(type);
-    mNodeContainer->addSubView(node);
     addNodeToView(node, true);
 
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
@@ -323,6 +365,12 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 }
 
 void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
+    if (node->getParentView() != mNodeContainer) {
+        mNodeContainer->addSubView(node);
+    }
+
+    node->setVisibility(true);
+
     mNodeViews.push_back(node);
 
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
@@ -521,9 +569,8 @@ void ZNodeEditor::deleteSelectedConnections() {
 }
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
+    node->invalidateSingleNode();
     node->setVisibility(false);
-
-    updateLines();
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
@@ -559,9 +606,9 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
         node->invalidateSingleNode();
 }
 
-void ZNodeEditor::removeNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
+void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
+    node->setVisibility(false);
     deleteConnections(node);
-
     remove(mNodeViews, node->getIndexTag());
     int index = 0;
     for (ZNodeView *nv : mNodeViews){
@@ -586,7 +633,9 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
         mLastSelected = node;
         mSelectedNodes.insert(node);
 
-        mExpressionField->setText(ZNodeUtil::get().graphToString(node));
+        if (!mExpressionField->isViewInFocus()) {
+            mExpressionField->setText(ZNodeUtil::get().graphToString(node));
+        }
     }
 }
 
@@ -609,6 +658,10 @@ void ZNodeEditor::deselectAllNodes() {
 
     for (ZNodeView* oldNode : nodes) {
         deselectNode(oldNode);
+    }
+
+    if (!mExpressionField->isViewInFocus()) {
+        mExpressionField->setText("");
     }
 }
 
@@ -746,7 +799,8 @@ void ZNodeEditor::onMouseDown() {
             // the quick select feature to connect a single
             // node to multiple nodes easily.
             if (mBoxMode == NO_BOX_SELECT && !rightMouseIsDown()) {
-                if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed()) {
+                if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed() &&
+                    !isMouseInBounds(mExpressionField)) {
                     deselectAllNodes();
                 }
 
@@ -821,7 +875,7 @@ void ZNodeEditor::onMouseDown() {
         i--;
     }
 
-    if (!mouseOverNode && mouseIsDown()) {
+    if (!mouseOverNode && mouseIsDown() && !isMouseInBounds(mExpressionField)) {
         deselectAllNodes();
     }
 

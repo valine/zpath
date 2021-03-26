@@ -899,7 +899,7 @@ public:
             case NEURAL_CORE:
                 return vec2(300, 100);
             default:
-                return vec2(80, 100);
+                return vec2(80, 70);
         }
     }
 

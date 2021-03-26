@@ -675,11 +675,11 @@ void ZView::calculateBounds() {
 }
 
 void ZView::addSubView(ZView *view) {
+    mViews.push_back(view);
     if (view->getParentView() != nullptr && view->getParentView() != view &&
             view->getParentView() != this) {
         view->getParentView()->removeSubView(view);
     }
-    mViews.push_back(view);
     view->setParentView(this);
     view->setRootView(mRootView);
     view->onDpChange(mDP);

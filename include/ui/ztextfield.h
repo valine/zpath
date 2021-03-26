@@ -24,6 +24,10 @@ public:
         mOnReturn = listener;
     }
 
+    void setOnTextChange(function<void(string)> listener) {
+        mOnTextChange = listener;
+    }
+
     void setInFocus();
 
 private:
@@ -36,6 +40,7 @@ private:
     string mInitialText;
     bool mInFocus = false;
     function<void(string content)> mOnReturn;
+    function<void(string)> mOnTextChange;
 
     string unicodeToStr(unsigned int codepoint) {
         std::string out;
@@ -56,8 +61,6 @@ private:
         }
         return out;
     }
-
-
 
     void cancelEdit();
 

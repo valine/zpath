@@ -51,6 +51,7 @@ void ZTextField::insertCharacter(string str) {
     mCursorIndex++;
     updateCursorPosition();
     updateCursorOffset();
+    mOnTextChange(getText());
 }
 
 void ZTextField::updateCursorPosition() {
@@ -80,6 +81,10 @@ void ZTextField::deleteCharacter() {
             setText(std::move(text));
             drawText();
             updateCursorPosition();
+
+            if (mOnTextChange != nullptr) {
+                mOnTextChange(getText());
+            }
         }
     }
 }
