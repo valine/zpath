@@ -241,7 +241,6 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         if (node->getOffsetX() - margin < 0) {
             mTmpNodeOffsetX = std::min(mTmpNodeOffsetX, (int) node->getOffsetX() - margin);
         }
-
     }
 
     if (!children.empty()) {
@@ -257,7 +256,6 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         if (((position.y - margin) - top) < 0) {
             yOffset = ((position.y - margin) + rootCenter) - top;
         }
-        cout << top << endl;
 
         root->setYOffset(root->getOffsetY() - (yOffset));
         root->setXOffset(root->getOffsetX() - mTmpNodeOffsetX);
