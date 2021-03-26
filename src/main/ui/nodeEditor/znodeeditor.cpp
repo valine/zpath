@@ -139,6 +139,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     });
 
     mExpressionField->setOnTextChange([this](string value) {
+
         for (ZNodeView* node : mSelectedNodes) {
             deleteNodeRecursive(node);
         }
@@ -634,7 +635,11 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
         mSelectedNodes.insert(node);
 
         if (!mExpressionField->isViewInFocus()) {
-            mExpressionField->setText(ZNodeUtil::get().graphToString(node));
+            if (mSelectedNodes.size() == 1) {
+                mExpressionField->setText(ZNodeUtil::get().graphToString(node));
+            } else {
+                mExpressionField->setText("");
+            }
         }
     }
 }
