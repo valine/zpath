@@ -36,6 +36,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
+    mNodeContainer->setXOffset(100);
     
     mHeader = new ZView(fillParent, fillParent, this);
 
@@ -140,6 +141,13 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mExpressionField->setOnTextChange([this](string value) {
 
+        int margin = 20;
+        vec2 pos = vec2(margin, margin);
+        if (mSelectedNodes.size() == 1) {
+            ZNodeView* aNode =(*mSelectedNodes.begin());
+            pos = aNode->getOffset();
+        }
+
         for (ZNodeView* node : mSelectedNodes) {
             deleteNodeRecursive(node);
         }
@@ -147,7 +155,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         mSelectedNodes.clear();
 
         vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
-        vec2 pos = vec2(700, 300);
 
         if (!evalNodes.empty()) {
             addNodeGraph(evalNodes.at(0), pos, 0);
@@ -183,8 +190,10 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
 
     if (depth == 0) {
-        mTmpNodeOffset.clear();
+        mTmpNodeOffsetYR.clear();
         mTmpNodes.clear();
+        mTmpNodeOffsetX = 0;
+        mTmpNodeOffsetY = 0;
     }
     // First node from eval is always root
     addNodeToView(root, false);
@@ -214,18 +223,45 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
     }
 
     int margin = 20;
-    if (mTmpNodeOffset.size() <= depth && !children.empty()) {
-        mTmpNodeOffset.push_back(position.y);
+    if (mTmpNodeOffsetYR.size() <= depth && !children.empty()) {
+        mTmpNodeOffsetYR.push_back(position.y);
         mTmpNodes.push_back(vector<ZNodeView*>());
     }
+
+    if (root->getOffsetX() < 0) {
+        mTmpNodeOffsetX = std::min(mTmpNodeOffsetX, (int) position.x);
+    }
+
     for (ZNodeView* node : children) {
         vec2 nodeSize = node->getNodeSize(node->getType());
-        addNodeGraph(node, vec2(position.x, mTmpNodeOffset.at(depth)) - (vec2(nodeSize.x, 0) + vec2(margin, 0)), depth + 1);
-        mTmpNodeOffset.at(depth) += nodeSize.y + margin;
+        addNodeGraph(node, vec2(position.x, mTmpNodeOffsetYR.at(depth)) - (vec2(nodeSize.x, 0) + vec2(margin, 0)), depth + 1);
+        mTmpNodeOffsetYR.at(depth) += nodeSize.y + margin;
         mTmpNodes.at(depth).push_back(node);
+
+        if (node->getOffsetX() - margin < 0) {
+            mTmpNodeOffsetX = std::min(mTmpNodeOffsetX, (int) node->getOffsetX() - margin);
+        }
+
+    }
+
+    if (!children.empty()) {
+        auto layer = mTmpNodes.at(depth);
+        int span = layer.at(layer.size() - 1)->getLocalBottom() - layer.at(0)->getLocalTop();
+        mTmpNodeOffsetY = std::max(mTmpNodeOffsetY, (int) span);
     }
 
     if (depth == 0) {
+        int yOffset = 0;
+        int rootCenter = ((root->getMaxHeight()) / 2);
+        int top = (mTmpNodeOffsetY / 2);
+        if (((position.y - margin) - top) < 0) {
+            yOffset = ((position.y - margin) + rootCenter) - top;
+        }
+        cout << top << endl;
+
+        root->setYOffset(root->getOffsetY() - (yOffset));
+        root->setXOffset(root->getOffsetX() - mTmpNodeOffsetX);
+        root->setInitialPosition(root->getOffset());
         for (vector<ZNodeView*> layer : mTmpNodes) {
             if (!layer.empty()) {
                 int span = layer.at(layer.size() - 1)->getLocalBottom() - layer.at(0)->getLocalTop();
@@ -233,7 +269,8 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
                 int rootCenter = ((root->getLocalBottom() - root->getLocalTop()) / 2);
                 int offset = (center - position.y) - rootCenter;
                 for (ZNodeView *node : layer) {
-                    node->setYOffset(node->getOffsetY() - offset);
+                    node->setXOffset(node->getOffsetX() - mTmpNodeOffsetX);
+                    node->setYOffset(node->getOffsetY() - (offset + yOffset));
                     node->setInitialPosition(node->getOffset());
                 }
             }

@@ -92,7 +92,10 @@ private:
 
     ZNodeView::Type mLastType = ZNodeView::Type::SIN;
 
-    vector<int> mTmpNodeOffset;
+    int mTmpNodeOffsetY = 0;
+    int mTmpNodeOffsetX = 0;
+    vector<int> mTmpNodeOffsetYR;
+
     vector<vector<ZNodeView*>> mTmpNodes;
     ZTextField* mExpressionField;
 

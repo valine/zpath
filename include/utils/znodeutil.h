@@ -21,7 +21,6 @@ private:
     set<string> mFunctions;
     //string graphToString(ZNodeView* node);
 
-
     /**
      * Pull from delete nodes instead of creating new one
      */
@@ -41,11 +40,8 @@ public:
             node->setVisibility(true);
             mDeleteNodes.pop();
             node->setType(type);
-
-            cout << "recycled node" << endl;
         } else {
             node = new ZNodeView(type);
-            cout << "new node" << endl;
         }
 
         return node;
