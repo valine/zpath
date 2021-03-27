@@ -410,9 +410,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     }
 
     node->setVisibility(true);
-
     mNodeViews.push_back(node);
-
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
     node->setMaxWidth(nodeSize.x);
 
@@ -1005,6 +1003,10 @@ void ZNodeEditor::onMouseUp(int button) {
 
     for (ZNodeView* node : mNodeViews) {
         node->resetInitialPosition();
+    }
+
+    if (!isMouseInBounds(mExpressionField)) {
+        releaseFocus(mExpressionField);
     }
 
     // If not shift select and user did not drag,
