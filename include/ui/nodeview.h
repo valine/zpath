@@ -172,8 +172,8 @@ public:
                     float in2 = x.at(REAL).at(2);
 
                     float inI0 = x.at(IMAG).at(0);
-                    float out0 = tan(in0 * in1) * in2;
-                    float outI = tan(inI0 * in1) * in2;
+                    float out0 = tan(in0);
+                    float outI = tan(inI0);
 
                     x.at(REAL).at(0) = out0;
                     x.at(REAL).at(1) = chartBound.x;
