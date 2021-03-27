@@ -575,7 +575,8 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                     for (int d = 0; d < summedInputs.size(); d++) {
                         // Use the default input when nothing is connected to a constant socket
                         if (getSocketType().at(0).at(i) == VAR) {
-                            summedInputs.at(d).at(i) = x.at(d).at(i);
+                            summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
+                            summedInputs.at(IMAG).at(i) = 0;
                         } else if (getSocketType().at(0).at(i) == CON) {
                             // By default constants have no imaginary component
                             if (d == REAL) {

@@ -37,11 +37,7 @@ public:
         SIN,
         COS,
         TAN,
-        SIN_C,
-        COS_C,
-        TAN_C,
         EXP,
-        EXP_C,
         SQRT,
         POW,
         ABS,
@@ -131,60 +127,6 @@ public:
                     return x;
                 }
                 case SIN: {
-                    float in0 = x.at(REAL).at(0);
-                    float in1 = x.at(REAL).at(1);
-                    float in2 = x.at(REAL).at(2);
-
-                    float inI0 = x.at(IMAG).at(0);
-                    float out0 = sin(in0 * in1) * in2;
-                    float outI = sin(inI0 * in1) * in2;
-
-                    x.at(REAL).at(0) = out0;
-                    x.at(REAL).at(1) = chartBound.x;
-                    x.at(REAL).at(2) = chartWidth;
-
-                    x.at(IMAG).at(0) = outI;
-                    x.at(IMAG).at(1) = chartBound.x;
-                    x.at(IMAG).at(2) = chartWidth;
-                    return x;
-                }
-                case COS: {
-                    float in0 = x.at(REAL).at(0);
-                    float in1 = x.at(REAL).at(1);
-                    float in2 = x.at(REAL).at(2);
-
-                    float inI0 = x.at(IMAG).at(0);
-                    float out0 = cos(in0 * in1) * in2;
-                    float outI = cos(inI0 * in1) * in2;
-
-                    x.at(REAL).at(0) = out0;
-                    x.at(REAL).at(1) = chartBound.x;
-                    x.at(REAL).at(2) = chartWidth;
-
-                    x.at(IMAG).at(0) = outI;
-                    x.at(IMAG).at(1) = chartBound.x;
-                    x.at(IMAG).at(2) = chartWidth;
-                    return x;
-                }
-                case TAN: {
-                    float in0 = x.at(REAL).at(0);
-                    float in1 = x.at(REAL).at(1);
-                    float in2 = x.at(REAL).at(2);
-
-                    float inI0 = x.at(IMAG).at(0);
-                    float out0 = tan(in0);
-                    float outI = tan(inI0);
-
-                    x.at(REAL).at(0) = out0;
-                    x.at(REAL).at(1) = chartBound.x;
-                    x.at(REAL).at(2) = chartWidth;
-
-                    x.at(IMAG).at(0) = outI;
-                    x.at(IMAG).at(1) = chartBound.x;
-                    x.at(IMAG).at(2) = chartWidth;
-                    return x;
-                }
-                case SIN_C: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
                     complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
@@ -192,7 +134,7 @@ public:
                     return {{out0.real(), chartBound.x, chartWidth},
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
-                case COS_C: {
+                case COS: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
                     complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
@@ -200,7 +142,7 @@ public:
                     return {{out0.real(), chartBound.x, chartWidth},
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
-                case TAN_C: {
+                case TAN: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> out0 = tan(in0);
                     return {{out0.real(), chartBound.x, chartWidth},
@@ -213,12 +155,6 @@ public:
                             {out0.imag(), chartBound.x, chartWidth}};
                 }
                 case EXP: {
-                    float comOut = exp(x.at(REAL).at(0));
-                    float comOutI = exp(x.at(IMAG).at(0));
-                    return {{comOut,  chartBound.x, chartWidth},
-                            {comOutI, chartBound.x, chartWidth}};
-                }
-                case EXP_C: {
                     complex<float> comIn = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> comOut = exp(comIn);
                     return {{comOut.real(), chartBound.x, chartWidth},
@@ -245,8 +181,6 @@ public:
                     complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
                     return {{out0.real(), chartBound.x, chartWidth},
                             {out0.imag(), chartBound.x, chartWidth}};
-
-
                 }
                 case MORLET: {
                     auto real = (float) (
@@ -454,17 +388,13 @@ public:
                     break;
                 }
                 case SIN:
-                case COS:
-                case SIN_C:
-                case COS_C: {
+                case COS: {
                     mSocketType = COS_TYPE;
                     break;
                 }
                 case TAN:
-                case TAN_C:
                 case ABS:
                 case EXP:
-                case EXP_C:
                 case SQRT: {
                     mSocketType = SQRT_TYPE;
                     break;
@@ -579,22 +509,18 @@ public:
                 case POLY:
                     mSocketCount = ivec2(5, 3);
                     break;
-                case SIN_C:
                 case SIN:
                     mSocketCount = ivec2(3, 3);
                     break;
                 case COS:
-                case COS_C:
                     mSocketCount = ivec2(3, 3);
                     break;
                 case TAN:
-                case TAN_C:
                     mSocketCount = ivec2(1, 3);
                     break;
                 case ABS:
                     mSocketCount = ivec2(1, 3);
                     break;
-                case EXP_C:
                 case EXP:
                     mSocketCount = ivec2(1, 3);
                     break;
@@ -697,8 +623,6 @@ public:
                 return {1.0, 1.0};
             case SIN:
             case COS:
-            case SIN_C:
-            case COS_C:
                 return {0.0, 1.0, 1.0};
             case GAUSSIAN:
                 // X, width, height
@@ -729,8 +653,6 @@ public:
         switch (type) {
             case SIN:
             case COS:
-            case SIN_C:
-            case COS_C:
                 return {7};
             case NEURAL_CORE:
                 return {0, 0, 5, 6, 6, 1, 0, 0};
@@ -750,8 +672,6 @@ public:
                 return {"", ""};
             case SIN:
             case COS:
-            case SIN_C:
-            case COS_C:
                 return {"X", "Frequency", "Height"};
             case GAUSSIAN:
                 return {"X", "Width", "Height"};
@@ -814,16 +734,8 @@ public:
                 return "cos";
             case TAN:
                 return "tan";
-            case SIN_C:
-                return "sini";
-            case COS_C:
-                return "cosi";
-            case TAN_C:
-                return "tani";
             case ABS:
                 return "abs";
-            case EXP_C:
-                return "expi";
             case EXP:
                 return "exp";
             case SQRT:
@@ -1247,29 +1159,29 @@ public:
     }
 
     float sumInputs(float x, int socketIndex, int var) {
-        float summedInput = 0.0;
+        float summedInputs = 0.0;
         auto inputSocket = mInputIndices.at(socketIndex);
         for (auto singleInput : inputSocket) {
-            summedInput += singleInput.first->evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x))).at(
+            summedInputs += singleInput.first->evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x))).at(
                     var).at(singleInput.second);
         }
 
         if (inputSocket.empty()) {
             if (getSocketType().at(0).at(socketIndex) == VAR) {
-                summedInput = x;
+                summedInputs = x;
             } else if (getSocketType().at(0).at(socketIndex) == CON) {
                 // By default constants have no imaginary component
                 if (var == REAL) {
-                    summedInput = mConstantValueInput.at(socketIndex);
+                    summedInputs = mConstantValueInput.at(socketIndex);
                 } else {
-                    summedInput = 0.0;
+                    summedInputs = 0.0;
                 }
             } else if (getSocketType().at(0).at(socketIndex) == ENUM) {
-                summedInput = mConstantMagnitudeInput.at(socketIndex);
+                summedInputs = mConstantMagnitudeInput.at(socketIndex);
             }
         }
 
-        return summedInput;
+        return summedInputs;
     }
 
     pair<float, float> computeInverseFft(float in, float fftRes, float windowSize) {

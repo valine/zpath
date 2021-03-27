@@ -198,6 +198,7 @@ else(COMPILE_DEPS)
           GIT_REPOSITORY https://github.com/valine/zpath-deps.git
           GIT_SHALLOW 1
           BUILD_COMMAND ""
+          UPDATE_COMMAND ""
           INSTALL_COMMAND ""
           LOG_DOWNLOAD ON)
   add_dependencies(zpath zdep)

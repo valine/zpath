@@ -95,27 +95,15 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     vector<ZNodeView::Type> complexTypes = {
             ZNodeView::Type::Z,
-            ZNodeView::Type::SIN_C,
-            ZNodeView::Type::COS_C,
-            ZNodeView::Type::TAN_C,
-            ZNodeView::Type::EXP_C,};
-    ZDropDown* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
-    complexDropdown->setOffset(250, 0);
-    complexDropdown->setTitle("Complex");
-    complexDropdown->setOnItemChange([this, complexTypes](int index){
-        ZNodeView::Type type = complexTypes.at(index);
-        addNode(type);
-    });
-
-    vector<ZNodeView::Type> realTypes = {
             ZNodeView::Type::SIN,
             ZNodeView::Type::COS,
-            ZNodeView::Type::TAN,};
-    ZDropDown* real2d = new ZDropDown(100,800, getNodeTypeNames(realTypes), mHeader);
-    real2d->setOffset(350, 0);
-    real2d->setTitle("2D Real");
-    real2d->setOnItemChange([this, realTypes](int index){
-        ZNodeView::Type type = realTypes.at(index);
+            ZNodeView::Type::TAN,
+            ZNodeView::Type::EXP,};
+    ZDropDown* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
+    complexDropdown->setOffset(250, 0);
+    complexDropdown->setTitle("Trig");
+    complexDropdown->setOnItemChange([this, complexTypes](int index){
+        ZNodeView::Type type = complexTypes.at(index);
         addNode(type);
     });
 
