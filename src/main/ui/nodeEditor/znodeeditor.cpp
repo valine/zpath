@@ -65,7 +65,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mDrawer->setMarginTop(25);
     mDrawer->setOnItemSelected([this, allTypes](int index){
         vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getScale()) - mNodeContainer->getInnerTranslation();
-        vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop(), 0);
+        vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop() - mDrawer->getMaxWidth(), 0);
         // startPosition.x = std::max((int) mDrawer->getWidth(), (int) startPosition.x);
         startPosition.y -= 40;
         startPosition.x -= 35;
@@ -1133,7 +1133,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
     // Scrolling with shift key is used for zooming charts
-    if (!shiftKeyPressed() && !isMouseInBounds(mDrawer)) {
+    if (!shiftKeyPressed() && !isMouseInBounds(mDrawer)){
         float scaleDelta = 1.0 + (y / 5.0);
         vec2 originalScale = mNodeContainer->getRelativeScale();
         vec2 newScale = max(vec2(0.3), min(vec2(1.0), originalScale * vec2(scaleDelta)));
