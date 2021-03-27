@@ -129,10 +129,14 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mExpressionField = new ZTextField(this);
     mExpressionField->setGravity(Gravity::bottomLeft);
-    mExpressionField->setBackgroundColor(lightGrey);
+    mExpressionField->setBackgroundColor(grey);
+    mExpressionField->setMaxWidth(360);
     mExpressionField->setXOffset(mDrawer->getMaxWidth() + 10);
-    mExpressionField->setMaxHeight(30);
+    mExpressionField->setOutlineType(WireType::outline);
+    mExpressionField->setMaxHeight(20);
     mExpressionField->setMargin(vec4(2));
+    mExpressionField->setElevation(1.0);
+    mExpressionField->setMargin(vec4(20));
     mExpressionField->setOnReturn([this](string value) {
        // vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
        // vec2 pos = vec2(700, 300);
