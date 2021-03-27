@@ -201,7 +201,6 @@ void ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) 
 
 }
 
-
 void ZTextField::onGlobalMouseUp(int key) {
     ZView::onGlobalMouseUp(key);
     if (!isMouseInBounds(this)) {

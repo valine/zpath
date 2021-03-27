@@ -11,9 +11,6 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 
     mBackground = new ZView(200, 25, this);
     mBackground->setBackgroundColor(grey);
-
-
-    //setBackgroundColor(vec4(1,0,1,1));
     mButtonHeight = maxHeight;
 
     mTitle = new ZLabel("Dropdown", this);
@@ -37,7 +34,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     mNames = items;
     int index = 0;
     for (const string& item : items) {
-        ZButton* button = new ZButton(item, mDrawer);
+        auto* button = new ZButton(item, mDrawer);
         button->setIndexTag(index);
         button->setBackgroundColor(vec4(0,0,0,0));
         button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
@@ -105,13 +102,6 @@ void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
             releaseFocus(this);
 		}
 	}
-
-	if (action == GLFW_RELEASE) {
-
-		// if (y < mTitle->getBottom()) {
-		// 	mDrawer->setVisibility(!mDrawer->getVisibility());
-		// }
-	}
 }
 
 void ZDropDown::onKeyPress(int key, int scancode, int action, int mods) {
@@ -121,15 +111,10 @@ void ZDropDown::onKeyPress(int key, int scancode, int action, int mods) {
 
 int ZDropDown::getMaxHeight() {
 	ZView::getMaxHeight();
-//	return mButtonHeight;
 }
 	
 void ZDropDown::onCursorPosChange(double x, double y)  {
 	 ZView::onCursorPosChange(x, y);
-	// if (mouseIsDown()) {
-	// 	int deltaX =  x - getMouseDownX();
-	// 	int deltaY = y - getMouseDownY();
-	// }
 }
 
 void ZDropDown::onScrollChange(double x, double y) {

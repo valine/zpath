@@ -24,9 +24,6 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	addSubView(mLabel);
 
 	setClickable(true);
-	//ZLabel* label = new ZLabel(maxWidth, maxHeight, "roboto/Roboto-Regular.ttf", resourcePath);
-	//label->setMargin(0,0,0,0);
-	//addSubView(label);
 }
 
 ZCheckbox::ZCheckbox(string label, ZView *parent)  :
@@ -152,11 +149,6 @@ void ZCheckbox::onKeyPress(int key, int scancode, int action, int mods) {
 
 void ZCheckbox::onCursorPosChange(double x, double y)  {
 	 ZView::onCursorPosChange(x, y);
-
-	// if (mouseIsDown()) {
-	// 	int deltaX =  x - getMouseDownX();
-	// 	int deltaY = y - getMouseDownY();
-	// }
 }
 
 void ZCheckbox::setListener(ZCheckboxListener* l) {

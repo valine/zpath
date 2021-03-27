@@ -133,8 +133,6 @@ void Z3DView::draw() {
     for (ZView* view : getSubViews()) {
         view->draw();
     }
-
-
     //glDepthMask(true);
     //glEnable(GL_DEPTH_TEST);
 }   

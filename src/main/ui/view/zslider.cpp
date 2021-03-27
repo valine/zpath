@@ -223,8 +223,6 @@ void ZSlider::valueChanged(float offset) {
 	float value = ((mMaxValue - mMinValue) * factor) + mMinValue;
 	
 	float incValue = roundf(value / mIncrement) * mIncrement;
-
-	
 	auto format = "%.4f";
 	auto size = std::snprintf(nullptr, 0, format, incValue);
 	std::string output(size, '\0');
@@ -245,7 +243,6 @@ void ZSlider::valueChanged(float offset) {
         mSlideListener(this, incValue, false);
 	}
 	invalidate();
-
 }
 
 void ZSlider::setMaxValue(float max) {

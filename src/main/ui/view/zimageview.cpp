@@ -22,10 +22,5 @@ void ZImageView::onKeyPress(int key, int scancode, int action, int mods) {
 	
 void ZImageView::onCursorPosChange(double x, double y)  {
 	// ZView::onCursorPosChange(x, y);
-
-	// if (mouseIsDown()) {
-	// 	int deltaX =  x - getMouseDownX();
-	// 	int deltaY = y - getMouseDownY();
-	// }
 }
 

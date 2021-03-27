@@ -34,15 +34,6 @@ void Z2DSlider::setTextColor(vec3 color) {
 
 void Z2DSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
- 	if (action == GLFW_RELEASE) {
-
- 	    // todo value
- 	    float value = 0.0;
-
-//        if (mSlideListener != nullptr) {
-//            mSlideListener(this, value, true);
-//        }
- 	}
 }
 
 void Z2DSlider::onCursorPosChange(double x, double y) {

@@ -19,8 +19,6 @@ private:
 
     map<string, ZNodeView::Type> mTypes;
     set<string> mFunctions;
-    //string graphToString(ZNodeView* node);
-
     /**
      * Pull from delete nodes instead of creating new one
      */
@@ -72,8 +70,6 @@ public:
         return 5;
     }
 
-
-
     string graphToString(ZNodeView* root) {
 
         string expression;
@@ -81,8 +77,8 @@ public:
 
         // Is arithmetic operator
         if (operators.count(root->getName(root->getType())) > 0) {
-            string first = to_string(root->getConstantInput(0));
-            string second = to_string(root->getConstantInput(1));
+            string first = floatToString(root->getConstantInput(0));
+            string second = floatToString(root->getConstantInput(1));
 
             if (root->mInputIndices.at(0).size() == 0) {
                 expression += first;
@@ -154,11 +150,8 @@ public:
 
         // Node is a constant
         if (root->getType() == ZNodeView::Type::C) {
-            auto format = "%.2f";
-            auto size = std::snprintf(nullptr, 0, format, root->getConstantValue(0));
-            std::string output(size, '\0');
-            std::sprintf(&output[0], format, root->getConstantValue(0));
-            return output;
+
+            return floatToString(root->getConstantValue(0));
         }
 
         expression = root->getName(root->getType());
@@ -337,6 +330,14 @@ public:
 
         std::reverse(allNodes.begin(), allNodes.end());
         return allNodes;
+    }
+
+    static string floatToString(float value) {
+        auto format = "%.2f";
+        auto size = std::snprintf(nullptr, 0, format, value);
+        std::string output(size, '\0');
+        std::sprintf(&output[0], format, value);
+        return output;
     }
 
     static int getVarCount(ZNodeView* node) {

@@ -6,8 +6,6 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, string resourcePath,
     init(maxWidth, maxHeight, titles);
 }
 
-
-
 ZRadioButton::ZRadioButton(string label, vector<string> titles, ZView *parent) :
     ZView(10000, 45) {
     init(10000, 45, titles);
