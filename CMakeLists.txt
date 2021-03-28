@@ -275,6 +275,24 @@ if (APPLE)
     include_directories(${zdep_path}/giac/include/)
     include_directories(${zdep_path}/giac/include/other)
 
+  if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+      target_link_libraries (zpath
+              ${OPENGL_LIBRARIES}
+              ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
+              "${zdep_path}/glfw/libglfw3.a"
+              ${fr_coretext}
+              ${fr_corefoundation}
+              ${fr_coregraphics}
+              "${zdep_path}/assimp/libassimp.a"
+              "${zdep_path}/png/libpng16.a"
+              "${zdep_path}/zlib/libz.a"
+              "${zdep_path}/giac/libgiac.0.dylib"
+              ${BZIP2_LIBRARY}
+              "${zdep_path}/freetype/libfreetyped.a")
+
+  else()
+
+
       add_custom_command(TARGET zpath PRE_BUILD
               COMMAND ${CMAKE_COMMAND} -E tar xzf ${zdep_path}/giac/libgiac.a.zip
               DEPENDS  ${zdep_path}/giac/libgiac.a.zip
@@ -322,6 +340,8 @@ if (APPLE)
             POST_BUILD COMMAND "${CMAKE_INSTALL_NAME_TOOL}"
             "-change" "/usr/local/lib/libgiac.0.dylib" "@executable_path/../deps/zdep/src/zdep/macos/giac/libgiac.0.dylib"
             "$<TARGET_FILE:zpath>" VERBATIM)
+
+  endif()
 
   endif()
 
