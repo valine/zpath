@@ -244,8 +244,6 @@ double Neuron::computeDEDB() {
     return derivative;
 }
 
-
-
 void Neuron::setName(string name) {
     mName = name;
 }

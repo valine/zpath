@@ -51,7 +51,10 @@ void ZTextField::insertCharacter(string str) {
     mCursorIndex++;
     updateCursorPosition();
     updateCursorOffset();
-    mOnTextChange(getText());
+
+    if (mOnTextChange != nullptr) {
+        mOnTextChange(getText());
+    }
 }
 
 void ZTextField::updateCursorPosition() {

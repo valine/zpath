@@ -247,8 +247,11 @@ if (APPLE)
       else()
           set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos-arm")
           set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
+
+
       endif()
     find_package(BZIP2 REQUIRED)
+      find_package(BLAS REQUIRED)
     add_definitions(-D__APPLE__)
     remove_definitions(-DHAVE_GETTEXT)
 
@@ -272,18 +275,43 @@ if (APPLE)
     include_directories(${zdep_path}/giac/include/)
     include_directories(${zdep_path}/giac/include/other)
 
-    target_link_libraries (zpath
+      add_custom_command(TARGET zpath PRE_BUILD
+              COMMAND ${CMAKE_COMMAND} -E tar xzf ${zdep_path}/giac/libgiac.a.zip
+              DEPENDS  ${zdep_path}/giac/libgiac.a.zip
+              COMMENT "Unpacking libgiac.a.zip"
+              VERBATIM)
+
+
+      set(CURL_LIBRARY "-lcurl")
+      find_package(CURL REQUIRED)
+      include_directories(${CURL_INCLUDE_DIR})
+
+      find_package(Iconv REQUIRED)
+      include_directories(${Iconv_INCLUDE_DIRS})
+
+
+      target_link_libraries (zpath
             ${OPENGL_LIBRARIES}
             ${COCOA_LIBRARY} ${COREVID_LIBRARY} ${IOKIT_LIBRARY}
             "${zdep_path}/glfw/libglfw3.a"
             ${fr_coretext}
             ${fr_corefoundation}
             ${fr_coregraphics}
+              ${BZIP2_LIBRARY}
+              ${BLAS_LIBRARIES}
+              ${CURL_LIBRARIES}
+              ${Iconv_LIBRARIES}
             "${zdep_path}/assimp/libassimp.a"
             "${zdep_path}/png/libpng16.a"
             "${zdep_path}/zlib/libz.a"
-            "${zdep_path}/giac/libgiac.0.dylib"
-            ${BZIP2_LIBRARY}
+              "${zdep_path}/giac/libsamplerate.a"
+              "${zdep_path}/giac/libcocoa.a"
+              "${zdep_path}/giac/libintl.a"
+              "${zdep_path}/giac/libmpfr.a"
+              "${zdep_path}/giac/libpari.a"
+              "${zdep_path}/giac/libgmp.a"
+              "${zdep_path}/giac/libgsl.a"
+            "${zdep_path}/giac/libgiac.a"
             "${zdep_path}/freetype/libfreetyped.a")
 
       add_custom_command(TARGET zpath PRE_BUILD
