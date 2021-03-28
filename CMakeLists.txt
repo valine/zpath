@@ -301,7 +301,7 @@ if (APPLE)
 
             add_dependencies(unzipGiac zdep)
             add_dependencies(zpath unzipGiac)
-            
+
             set(CURL_LIBRARY "-lcurl")
             find_package(CURL REQUIRED)
             include_directories(${CURL_INCLUDE_DIR})
@@ -428,17 +428,50 @@ endif(WIN32)
 ###############################################################################
 ## packaging ##################################################################
 ###############################################################################
+set(CPACK_PACKAGE_NAME "ZPath")
+set(CPACK_PACKAGE_VERSION "0.5")
 
-install (TARGETS zpath
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin)
+SET(CPACK_PACKAGE_VERSION_MAJOR "0")
+SET(CPACK_PACKAGE_VERSION_MINOR "5")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
 
-SET(CPACK_OUTPUT_FILE_PREFIX packages)
-set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 
-set(CPACK_PACKAGE_NAME "Zpath")
-set(CPACK_PACKAGE_VERSION "0.3")
-set(CPACK_MONOLITHIC_INSTALL 1)
+set(CPACK_MONOLITHIC_INSTALL 0)
+
+if (APPLE)
+
+    set(CPACK_GENERATOR "DragNDrop")
+
+    set(prefix "${PROJECT_NAME}.app/Contents")
+    set(INSTALL_RUNTIME_DIR "${prefix}/MacOS")
+    set(CPACK_BUNDLE_NAME "ZPath")
+    set(INSTALL_CMAKE_DIR "${prefix}/Resources")
+
+    install(TARGETS ${PROJECT_NAME}
+            BUNDLE DESTINATION . COMPONENT Runtime
+            RUNTIME DESTINATION ${INSTALL_RUNTIME_DIR} COMPONENT Runtime
+            )
+
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/resources" DESTINATION "${INSTALL_RUNTIME_DIR}")
+
+
+    set(APPS "\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
+
+    include(InstallRequiredSystemLibraries)
+
+elseif(LINUX)
+
+    install (TARGETS zpath
+            ARCHIVE DESTINATION lib
+            LIBRARY DESTINATION lib
+            RUNTIME DESTINATION bin)
+
+    SET(CPACK_OUTPUT_FILE_PREFIX packages)
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+
+
+endif()
+
+
 
 include(CPack)
