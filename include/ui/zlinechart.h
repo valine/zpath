@@ -101,6 +101,8 @@ public:
         mMaxResolution = res;
     }
 
+    void resetZoom();
+
 private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener = nullptr;

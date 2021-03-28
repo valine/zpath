@@ -505,12 +505,23 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
         if (state == mouseDrag) {
 
             if (positionInView.x < minPos.x) {
+                if (sampleScale.x == 0) {
+                    mTmpTransformIdentity = mat4(1);
+                    mTransform = mat4(1);
+                    resetZoom();
+                    return;
+                }
+
                 percent.x = 0.01 / sampleScale.x;
             } else {
                 mLastMouse.x = positionInView.x;
             }
 
             if (positionInView.y < minPos.y) {
+                if (sampleScale.y == 0) {
+                    resetZoom();
+                    return;
+                }
                 percent.y = 0.01 / sampleScale.y;
             } else {
                 mLastMouse.y = positionInView.y;
@@ -533,6 +544,11 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
     if (needsRefresh && mInvalidateListener != nullptr) {
         mInvalidateListener();
     }
+}
+
+void ZLineChart::resetZoom() {
+    mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+    mTransform = mDefaultMat;
 }
 
 void ZLineChart::onScrollChange(double x, double y) {
