@@ -168,11 +168,8 @@ void ZRadioButton::computeBounds() {
 			tile->setMaxWidth(width);
 			tile->setMaxHeight(getHeight() - labelMargin);
 			tile->setOffset(i * (width + mSpacing), labelMargin);
-
 		}
 	}
-
-
 }
 
 void ZRadioButton::draw() {
