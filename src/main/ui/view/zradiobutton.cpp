@@ -149,7 +149,6 @@ void ZRadioButton::computeBounds() {
 		labelMargin = 0;
 	}
 
-
 	if (mIsVertical) {
 		for (uint i = 0; i < mTitles.size(); i++) {
 			int width = getWidth() / mTitles.size();

@@ -440,12 +440,25 @@ set(CPACK_MONOLITHIC_INSTALL 0)
 
 if (APPLE)
 
+    set(RESOURCE_FILES
+            ${CMAKE_SOURCE_DIR}/resources/icons/zpath-alt.icns)
+
+    set_target_properties(zpath PROPERTIES
+            MACOSX_BUNDLE TRUE
+            MACOSX_FRAMEWORK_IDENTIFIER com.valine.zpath
+            RESOURCE "${RESOURCE_FILES}")
+
+    set(MACOSX_BUNDLE TRUE)
     set(CPACK_GENERATOR "DragNDrop")
 
     set(prefix "${PROJECT_NAME}.app/Contents")
     set(INSTALL_RUNTIME_DIR "${prefix}/MacOS")
     set(CPACK_BUNDLE_NAME "ZPath")
-    set(INSTALL_CMAKE_DIR "${prefix}/Resources")
+
+    set(CPACK_BUNDLE_ICON "zpath-alt.icns")
+    SET(MACOSX_BUNDLE_ICON_FILE "${CPACK_BUNDLE_ICON}")
+    set(CPACK_DMG_VOLUME_NAME "ZPath-${CPACK_PACKAGE_VERSION}")
+    SET_SOURCE_FILES_PROPERTIES(${CPACK_BUNDLE_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
     install(TARGETS ${PROJECT_NAME}
             BUNDLE DESTINATION . COMPONENT Runtime
@@ -454,9 +467,7 @@ if (APPLE)
 
     install(DIRECTORY "${CMAKE_SOURCE_DIR}/resources" DESTINATION "${INSTALL_RUNTIME_DIR}")
 
-
     set(APPS "\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.app")
-
     include(InstallRequiredSystemLibraries)
 
 elseif(LINUX)
