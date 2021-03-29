@@ -290,6 +290,11 @@ if (APPLE)
                     ${BZIP2_LIBRARY}
                     "${zdep_path}/freetype/libfreetyped.a")
 
+            add_custom_command (TARGET zpath
+                    POST_BUILD COMMAND "${CMAKE_INSTALL_NAME_TOOL}"
+                    "-change" "/usr/local/lib/libgiac.0.dylib" "@executable_path/../deps/zdep/src/zdep/macos/giac/libgiac.0.dylib"
+                    "$<TARGET_FILE:zpath>" VERBATIM)
+
         else()
 
             add_custom_target( unzipGiac ALL)
@@ -333,14 +338,6 @@ if (APPLE)
                     "${zdep_path}/giac/libgiac.a"
                     "${zdep_path}/freetype/libfreetyped.a")
 
-            add_custom_command(TARGET zpath PRE_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                    "${zdep_path}/assimp/" $<TARGET_FILE_DIR:zpath>)
-
-            add_custom_command (TARGET zpath
-                    POST_BUILD COMMAND "${CMAKE_INSTALL_NAME_TOOL}"
-                    "-change" "/usr/local/lib/libgiac.0.dylib" "@executable_path/../deps/zdep/src/zdep/macos/giac/libgiac.0.dylib"
-                    "$<TARGET_FILE:zpath>" VERBATIM)
 
         endif()
 
