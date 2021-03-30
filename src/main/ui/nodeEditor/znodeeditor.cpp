@@ -943,7 +943,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
     }
 
     if ((middleMouseIsDown() && (!shiftKeyPressed() || mDragNode == NO_SELECTION)) ||
-        ((mouseIsDown() && altKeyPressed() && mDragNode == NO_SELECTION) && !isViewInFocus())) {
+        ((altKeyPressed() && mDragNode == NO_SELECTION) && !isViewInFocus())) {
         for (ZNodeView* node : mNodeViews) {
             if (node->getVisibility()) {
                 node->setOffset(
@@ -989,9 +989,7 @@ void ZNodeEditor::onMouseUp(int button) {
         }
     }
 
-    for (ZNodeView* node : mNodeViews) {
-        node->resetInitialPosition();
-    }
+    resetNodeInitialPosition();
 
     if (!isMouseInBounds(mExpressionField)) {
         releaseFocus(mExpressionField);
@@ -1020,6 +1018,12 @@ void ZNodeEditor::onMouseUp(int button) {
         updateBoxSelect();
     }
     exitBoxSelectMode();
+}
+
+void ZNodeEditor::resetNodeInitialPosition() {
+    for (ZNodeView* node : mNodeViews) {
+        node->resetInitialPosition();
+    }
 }
 
 bool ZNodeEditor::wasMouseDrag() {
@@ -1115,6 +1119,11 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     else if (key == GLFW_KEY_D && shiftKeyPressed() && action == GLFW_PRESS) {
         duplicateSelectedNodes();
     }
+
+    else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT)) {
+        mInitialOffset = getMouse();
+        resetNodeInitialPosition();
+    }
 }
 
 void ZNodeEditor::onScrollChange(double x, double y) {
@@ -1203,8 +1212,7 @@ void ZNodeEditor::updateBoxSelect() {
 
 void ZNodeEditor::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
-
-    if (mGrab || anyMouseDown()) {
+    if (mGrab || anyMouseDown() || altKeyPressed()) {
         if (!mMagnitudePicker->getVisibility()) {
             onMouseMove(vec2(x, y) / mNodeContainer->getScale(),
                     vec2(x - mInitialOffset.x, y - mInitialOffset.y) / mNodeContainer->getScale());

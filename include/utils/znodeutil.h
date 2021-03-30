@@ -425,6 +425,8 @@ public:
                 tokens.emplace_back(string(1, d));
             }
         }
+        
+        free(fullInput);
 
         return tokens;
     }

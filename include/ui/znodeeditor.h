@@ -167,6 +167,8 @@ private:
     void addNodeGraph(ZNodeView *root, vec2 position, int depth);
 
     void deleteNodeRecursive(ZNodeView *root);
+
+    void resetNodeInitialPosition();
 };
 
 
