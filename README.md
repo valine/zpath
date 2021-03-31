@@ -37,6 +37,16 @@ cmake ..
 msbuild ALL_BUILD.vsfx
 ```
 
+### To build on MacOS
+Install CMake and XCode
+
+From Terminal
+cd zpath
+mkdir build && cd build 
+camke -DCMAKE_INSTALL_PREFIX=/Applications ..
+make
+
+
 ### UI Examples
 ```
 // Button example

@@ -28,7 +28,6 @@ if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
 
-
 if (BUILD_LIB)
     add_library(zpath STATIC ${sources} ${headers})
     target_compile_options(zpath PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-std=c++14>)
@@ -451,7 +450,7 @@ if (APPLE)
     set(prefix "${PROJECT_NAME}.app/Contents")
     set(INSTALL_RUNTIME_DIR "${prefix}/MacOS")
     set(CPACK_BUNDLE_NAME "ZPath")
-    set(CMAKE_XCODE_ATTRIBUTE_INSTALL_PATH, "/usr/lib")
+    set(CMAKE_XCODE_ATTRIBUTE_INSTALL_PATH, "/Applications/")
     set(CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER "--deep")
 
     set(CPACK_BUNDLE_ICON "zpath-alt.icns")
