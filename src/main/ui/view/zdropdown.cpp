@@ -54,7 +54,14 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 void ZDropDown::selectItem(int index) {
     mDrawer->setVisibility(false);
     getParentView()->invalidate();
-    mTitle->setText(mNames.at(index));
+
+    if (mDynamicTitle) {
+        mTitle->setText(mNames.at(index));
+    }
+}
+
+void ZDropDown::setDynamicTitle(bool dynamic) {
+    mDynamicTitle = dynamic;
 }
 
 void ZDropDown::setGravity(Gravity gravity) {

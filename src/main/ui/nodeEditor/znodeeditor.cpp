@@ -85,9 +85,10 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
-    ZDropDown* dropDown = new ZDropDown(100,800, allTypes, mHeader);
+    auto* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(150, 0);
     dropDown->setTitle("All Nodes");
+    dropDown->setDynamicTitle(false);
     dropDown->setOnItemChange([this](int index){
         auto type = static_cast<ZNodeView::Type>(index);
         addNode(type);
@@ -99,12 +100,24 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             ZNodeView::Type::COS,
             ZNodeView::Type::TAN,
             ZNodeView::Type::EXP,};
-    ZDropDown* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
+    auto* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
     complexDropdown->setOffset(250, 0);
     complexDropdown->setTitle("Trig");
+    complexDropdown->setDynamicTitle(false);
     complexDropdown->setOnItemChange([this, complexTypes](int index){
         ZNodeView::Type type = complexTypes.at(index);
         addNode(type);
+    });
+
+    auto* viewDropDown = new ZDropDown(100,800, {"Snap to Nodes"}, mHeader);
+    viewDropDown->setOffset(350, 0);
+    viewDropDown->setTitle("View");
+    viewDropDown->setDynamicTitle(false);
+    viewDropDown->setOnItemChange([this](int index){
+        // Center view
+        if (index == 0) {
+            snapViewToNodes();
+        }
     });
 
 
@@ -171,6 +184,33 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 //    inputField2->setYOffset(25);
 //    inputField2->setBackgroundColor(grey);
 //    inputField2->setMaxWidth(120);
+}
+
+/**
+ * Centers existing nodes in view
+ */
+void ZNodeEditor::snapViewToNodes() {
+    if (!mNodeViews.empty()) {
+        vec2 minPos = mNodeViews.at(0)->getOffset();
+        vec2 maxPos = mNodeViews.at(0)->getOffset() + mNodeViews.at(0)->getSize();
+
+        for (ZNodeView *node : mNodeViews) {
+            minPos = min(node->getOffset(), minPos);
+            maxPos = max(node->getOffset() + (node->getSize()), maxPos);
+        }
+
+        vec2 center = (maxPos - minPos) / vec2(2);
+        vec2 viewCenter = (vec2(mNodeContainer->getWidth(),
+                                mNodeContainer->getHeight()) * mNodeContainer->getScale()) / vec2(2);
+        vec2 offset = viewCenter - center;
+
+        for (ZNodeView *node : mNodeViews) {
+            node->setOffset((node->getOffset() - minPos) + offset);
+        }
+
+        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+
+    }
 }
 
 
@@ -376,8 +416,10 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
             editor->mMagnitudePicker->invalidate();
         }
         glfwPostEmptyEvent();
-        std::unique_lock<std::mutex> lck(editor->mEvalMutex);
-        editor->mEvalConVar.wait(lck);
+        {
+            std::unique_lock<std::mutex> lck(editor->mEvalMutex);
+            editor->mEvalConVar.wait(lck);
+        }
     }
 }
 
@@ -421,9 +463,11 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setInitialPosition(node->getOffset() - getMouseDragDelta());
     node->onWindowChange(getWidth(), getHeight());
     node->setInvalidateListener([this](ZNodeView* node){
-        lock_guard<mutex> guard(mEvalMutex);
-        mEvalSet.insert(node);
-        mEvalConVar.notify_one();
+        {
+            lock_guard<mutex> guard(mEvalMutex);
+            mEvalConVar.notify_one();
+            mEvalSet.insert(node);
+        }
     });
 
     node->setShowMagPickerListener([this, node](ZView *view, ZNodeView *nodeView,
@@ -1131,9 +1175,12 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
     // Scrolling with shift key is used for zooming charts
     if (!shiftKeyPressed() && !isMouseInBounds(mDrawer)){
+        float maxScale = 0.3;
+        float minScale = 1.0;
         float scaleDelta = 1.0 + (y / 5.0);
         vec2 originalScale = mNodeContainer->getRelativeScale();
-        vec2 newScale = max(vec2(0.3), min(vec2(1.0), originalScale * vec2(scaleDelta)));
+        vec2 newScale = max(vec2(maxScale), min(vec2(minScale), originalScale * vec2(scaleDelta)));
+
 
         vec2 initialPos = mNodeContainer->getInnerTranslation();
         vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
@@ -1149,13 +1196,18 @@ void ZNodeEditor::onScrollChange(double x, double y) {
         vec2 delta = (offset) / newScale;
 
         int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
-        mNodeContainer->setYOffset(margin);
-        mNodeContainer->setInnerTranslation(delta);
+
+        if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
+                !(newScale.y == maxScale && originalScale.y == maxScale)) {
+            mNodeContainer->setYOffset(margin);
+            mNodeContainer->setInnerTranslation(delta);
+        }
         mNodeContainer->onWindowChange(getWidth(), getHeight());
 
         updateLines();
         mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
         getParentView()->getParentView()->getParentView()->invalidate();
+
     }
 }
 

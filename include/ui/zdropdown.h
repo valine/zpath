@@ -32,6 +32,7 @@ public:
     void setGravity(Gravity gravity) override;
 
     void selectItem(int index);
+    void setDynamicTitle(bool dynamic);
 
 private:
 	ZLabel* mTitle;
@@ -39,6 +40,7 @@ private:
 	vector<string> mNames;
 	float mButtonHeight;
 
+	bool mDynamicTitle = true;
 	ZView* mBackground;
     std::function<void(int item)> mOnItemChange;
 

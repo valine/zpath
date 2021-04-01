@@ -169,6 +169,8 @@ private:
     void deleteNodeRecursive(ZNodeView *root);
 
     void resetNodeInitialPosition();
+
+    void snapViewToNodes();
 };
 
 
