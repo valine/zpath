@@ -396,25 +396,29 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
     bool shouldRun = true;
 
     while(shouldRun) {
+        set<ZNodeView*> nodesToUpdate;
         while (!editor->mEvalSet.empty()) {
-            ZNodeView *node = *editor->mEvalSet.begin();
-            if (node->getVisibility()) {{
-                    std::lock_guard<std::mutex> guard(editor->mEvalMutex);
-                    editor->mEvalSet.erase(node);
-                }
-                node->updateChart();
-            } else {
-                editor->deleteNodeAsync(node);
-                {
-                    std::lock_guard<std::mutex> guard(editor->mEvalMutex);
-                    editor->mEvalSet.erase(node);
+            {
+                ZNodeView *node = *editor->mEvalSet.begin();
+
+                if (node->getVisibility()) {
+                    nodesToUpdate.insert(node);
+                } else {
+                    editor->deleteNodeAsync(node);
                     editor->updateLines();
                 }
-            }
 
-            editor->mLineContainer->invalidate();
-            editor->mMagnitudePicker->invalidate();
+                std::lock_guard<std::mutex> guard(editor->mEvalMutex);
+                editor->mEvalSet.erase(node);
+            }
         }
+
+        if (editor->mLineContainer != nullptr) {
+            for (ZNodeView* node : nodesToUpdate) {
+                node->updateChart();
+            }
+        }
+
         glfwPostEmptyEvent();
         {
             std::unique_lock<std::mutex> lck(editor->mEvalMutex);
@@ -465,8 +469,9 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setInvalidateListener([this](ZNodeView* node){
         {
             lock_guard<mutex> guard(mEvalMutex);
-            mEvalConVar.notify_one();
             mEvalSet.insert(node);
+            mEvalConVar.notify_one();
+
         }
     });
 

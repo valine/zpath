@@ -632,7 +632,6 @@ void ZNodeView::invalidateSingleNode() {
  * Invalidate this node and all child nodes
  */
 void ZNodeView::invalidateNodeRecursive() {
-    ZView::invalidate();
     invalidateSingleNode();
 
     for (const vector<pair<ZNodeView*, int>>& outputSocket : mOutputIndices) {

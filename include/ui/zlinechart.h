@@ -146,7 +146,6 @@ private:
     int mBGridVCount = 0;
 
     vector<unsigned int> mPoints;
-    vector<unsigned int> mEdges;
     vector<unsigned int> mPointCount;
     ZShader* mShader;
     ZShader* mHeatShader;

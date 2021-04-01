@@ -258,7 +258,6 @@ void ZLineChart::updateFBOSize() {
 
 void ZLineChart::updateChart2D() {
     vector<float> verts;
-    vector<int> edges;
 
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
         vector<float> output;
@@ -268,11 +267,6 @@ void ZLineChart::updateChart2D() {
             verts.push_back(output.at(1));
             verts.push_back(0);
             verts.push_back(0);
-
-            if (i != mResolution - 1) {
-                edges.push_back(i);
-                edges.push_back(i + 1);
-            }
         }
 
         // Initialize buffers
@@ -282,32 +276,23 @@ void ZLineChart::updateChart2D() {
             mLineVAO.push_back(vao);
 
 
-            mPointCount.push_back(edges.size());
+            mPointCount.push_back(verts.size());
             unsigned int lineBuffer;
             glGenBuffers(1, &lineBuffer);
             mPoints.push_back(lineBuffer);
-
-            unsigned int edgeBuffer;
-            glGenBuffers(1, &edgeBuffer);
-            mEdges.push_back(edgeBuffer);
 
             glBindVertexArray(vao);
             glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
             glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
             glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
                                   sizeof(float) * 4, nullptr);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
             glBindVertexArray(0);
         } else {
-            mPointCount.at(lineIndex) = edges.size();
+            mPointCount.at(lineIndex) = verts.size();
         }
 
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
         glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
     }
 
 }
@@ -315,19 +300,12 @@ void ZLineChart::updateChart2D() {
 void ZLineChart::updateChart1D() {
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
         vector<float> verts;
-        vector<int> edges;
-
         for (uint i = 0; i < mResolution; i++) {
             vector<float> y = mListener({(int) i}, lineIndex);
             verts.push_back(((float) i / (float) (mResolution - 1)));
             verts.push_back(y.at(0));
             verts.push_back(0);
             verts.push_back(0);
-
-            if (i != mResolution - 1) {
-                edges.push_back(i);
-                edges.push_back(i + 1);
-            }
         }
 
         // Initialize buffers
@@ -337,33 +315,25 @@ void ZLineChart::updateChart1D() {
             glGenVertexArrays(1, &vao);
             mLineVAO.push_back(vao);
 
-            mPointCount.push_back(edges.size());
+            mPointCount.push_back(verts.size());
             unsigned int lineBuffer;
             glGenBuffers(1, &lineBuffer);
             mPoints.push_back(lineBuffer);
 
-            unsigned int edgeBuffer;
-            glGenBuffers(1, &edgeBuffer);
-            mEdges.push_back(edgeBuffer);
 
             glBindVertexArray(vao);
             glBindBuffer(GL_ARRAY_BUFFER, lineBuffer);
             glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
             glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
                                   sizeof(float) * 4, nullptr);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeBuffer);
             glBindVertexArray(0);
 
         } else {
-            mPointCount.at(lineIndex) = edges.size();
+            mPointCount.at(lineIndex) = verts.size();
         }
 
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
         glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdges.at(lineIndex));
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
     }
 }
 
@@ -433,9 +403,8 @@ void ZLineChart::draw() {
     for (int i = mPoints.size() - 1; i >= 0; i--) {
         mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
                                    vec4(vec3((float) i / mPoints.size()), 1.0));
-
         glBindVertexArray(mLineVAO.at(i));
-        glDrawElements(GL_LINES, mPointCount.at(i), GL_UNSIGNED_INT, nullptr);
+        glDrawArrays(GL_LINE_STRIP, 0, (mPointCount.at(i) / 4));
     }
 
     glBindVertexArray(0);
