@@ -397,6 +397,9 @@ public:
 
         char* afterSplit = strtok(testArray, delim);
 
+        if (afterSplit == nullptr) {
+            return vector<string>();
+        }
         if (afterSplit - testArray + strlen(afterSplit) > 1) {
             char d = fullInput[0];
             if (d == '(' || d == ')') {
