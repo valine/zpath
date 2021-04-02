@@ -106,29 +106,6 @@ private:
         init();
     }
 
-    ZShader* mShader;
-    ZShader* mBlurShader;
-
-    unsigned int mFBO;
-    unsigned int mTexBuffer;
-
-    unsigned int mVAO;
-    unsigned int mVertBuffer;
-    unsigned int mEdgeBuffer;
-
-    // Shader code
-    const string shadow_vs =
-#include "shaders/shadow.vs"
-    ;
-
-    const string shadow_fs =
-#include "shaders/shadow.fs"
-    ;
-
-    const string shadow_blur_fs =
-#include "shaders/shadowblur.fs"
-    ;
-
     void init() {
         // Mesh buffers
         vector<float> verts = {0, 0, 0, 0,
@@ -167,6 +144,29 @@ private:
         mShader = new ZShader(shadow_vs, shadow_fs);
         mBlurShader = new ZShader(shadow_vs, shadow_blur_fs);
     }
+
+    ZShader* mShader;
+    ZShader* mBlurShader;
+
+    unsigned int mFBO;
+    unsigned int mTexBuffer;
+
+    unsigned int mVAO;
+    unsigned int mVertBuffer;
+    unsigned int mEdgeBuffer;
+
+    // Shader code
+    const string shadow_vs =
+#include "shaders/shadow.vs"
+    ;
+
+    const string shadow_fs =
+#include "shaders/shadow.fs"
+    ;
+
+    const string shadow_blur_fs =
+#include "shaders/shadowblur.fs"
+    ;
 
 };
 

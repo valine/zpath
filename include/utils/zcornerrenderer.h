@@ -5,22 +5,93 @@
 #ifndef ZPATH_ZCORNERRENDERER_H
 #define ZPATH_ZCORNERRENDERER_H
 
+#include "ui/zshader.h"
+#include <vector>
 
 class ZCornerRenderer {
 
 
 public:
 
-    void draw() {
+    /**
+     * Returns texture ID
+     * @return Texture ID
+     */
+    int draw(int width, int height, int radius) {
 
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+        glBindTexture(GL_TEXTURE_2D, mTexBuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexBuffer, 0);
 
+        vector<float> verts;
+        int res = 35;
+
+        verts.push_back(0);
+        verts.push_back(0);
+        verts.push_back(0);
+
+        for (int i = 0; i < res; i++) {
+            float x = (float) i / (float) res;
+            float fx = (float) pow(-1 * (-1 * pow(x,4.0) + 1), 0.25);
+
+            verts.push_back(x);
+            verts.push_back(fx);
+            verts.push_back(0);
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, mVertBuffer);
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
     }
 
 private:
 
+    ZShader* mShader;
+
+    unsigned int mFBO;
+    unsigned int mTexBuffer;
+
+    unsigned int mVAO;
+    unsigned int mVertBuffer;
+    unsigned int mEdgeBuffer;
+
+    // Shader code
+    const string vertex =
+#include "shaders/shadow.vs"
+    ;
+
+    const string fragment =
+#include "shaders/shadow.fs"
+    ;
 
     void init() {
 
+        vector<int> edges;
+        glGenBuffers(1, &mVertBuffer);
+        glGenBuffers(1, &mEdgeBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+
+        // Vertex array object
+        glGenVertexArrays(1, &mVAO);
+        glBindVertexArray(mVAO);
+        unsigned int posLocation = 0;
+        int vertexCount = 4;
+        glBindBuffer(GL_ARRAY_BUFFER, mVertBuffer);
+        glEnableVertexAttribArray(posLocation);
+        glVertexAttribPointer(posLocation, 4, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * vertexCount, nullptr);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeBuffer);
+        glBindVertexArray(0);
+
+        // Frame buffer and texture
+        glGenFramebuffers(1, &mFBO);
+        glGenTextures(1, &mTexBuffer);
+
+        mShader = new ZShader(vertex, fragment);
     }
 };
 
