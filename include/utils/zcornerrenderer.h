@@ -26,7 +26,7 @@ public:
      * Returns texture ID
      * @return Texture ID
      */
-    unsigned int draw(int width, int height, int radius, unsigned int texID) {
+    unsigned int draw(int width, int height, float radius, unsigned int texID) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glBindTexture(GL_TEXTURE_2D, texID);
@@ -39,6 +39,7 @@ public:
         mShader->use();
         mat4 matrix = glm::ortho(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0);
         mShader->setMat4("uMatrix", matrix);
+        mShader->setFloat("uRadius", radius);
 
         glViewport(0,0, width, height);
         glClearColor(0.0, 0.0, 0.0, 0.0);

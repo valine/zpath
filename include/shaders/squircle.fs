@@ -5,8 +5,10 @@ in vec4 vPos;
 
 out vec4 fragColor;
 
+uniform float uRadius;
+
 void main() {
-    float val = pow(vPos.x, 4) + pow(vPos.y, 4.0);
+    float val = pow(abs(vPos.x), uRadius) + pow(abs(vPos.y), uRadius);
     float isOn = float(val < 1.0);
    	fragColor.r = 1.0;
    	fragColor.g = 1.0;
