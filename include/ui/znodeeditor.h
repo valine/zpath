@@ -172,7 +172,7 @@ private:
 
     void snapViewToNodes();
 
-    void testCorners() const;
+    void testCorners();
 };
 
 

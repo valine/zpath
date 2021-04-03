@@ -6,6 +6,7 @@
 #define ZPATH_ZCORNERRENDERER_H
 
 #include "ui/zshader.h"
+#include "ui/ztexture.h"
 #include <vector>
 
 class ZCornerRenderer {
@@ -13,37 +14,42 @@ class ZCornerRenderer {
 
 public:
 
+    ZTexture* createTexture(int viewWidth, int viewHeight, float radius) {
+        unsigned int texBuffer;
+        glGenTextures(1, &texBuffer);
+        draw(viewWidth, viewHeight, radius, texBuffer);
+
+        auto* tex = new ZTexture(texBuffer);
+        return tex;
+    }
     /**
      * Returns texture ID
      * @return Texture ID
      */
-    int draw(int width, int height, int radius) {
+    unsigned int draw(int width, int height, int radius, unsigned int texID) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-        glBindTexture(GL_TEXTURE_2D, mTexBuffer);
+        glBindTexture(GL_TEXTURE_2D, texID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexBuffer, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texID, 0);
 
-        vector<float> verts;
-        int res = 35;
+        glBindVertexArray(mVAO);
+        mShader->use();
+        mat4 matrix = glm::ortho(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0);
+        mShader->setMat4("uMatrix", matrix);
 
-        verts.push_back(0);
-        verts.push_back(0);
-        verts.push_back(0);
+        glViewport(0,0, width, height);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        for (int i = 0; i < res; i++) {
-            float x = (float) i / (float) res;
-            float fx = (float) pow(-1 * (-1 * pow(x,4.0) + 1), 0.25);
+        int triangles = 2;
+        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
-            verts.push_back(x);
-            verts.push_back(fx);
-            verts.push_back(0);
-        }
-
-        glBindBuffer(GL_ARRAY_BUFFER, mVertBuffer);
-        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindVertexArray(0);
+        return texID;
     }
 
 
@@ -64,7 +70,6 @@ private:
     ZShader* mShader;
 
     unsigned int mFBO;
-    unsigned int mTexBuffer;
 
     unsigned int mVAO;
     unsigned int mVertBuffer;
@@ -80,9 +85,16 @@ private:
     ;
 
     void init() {
+        vector<float> verts = {-1, -1, 0, 0,
+                               1, -1, 1, 0,
+                               -1, 1, 0, 1,
+                               1, 1, 1, 1};
+        vector<int> edges = {0,2,1, 1,2,3};
 
-        vector<int> edges;
         glGenBuffers(1, &mVertBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mVertBuffer);
+        glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
         glGenBuffers(1, &mEdgeBuffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
@@ -102,8 +114,6 @@ private:
 
         // Frame buffer and texture
         glGenFramebuffers(1, &mFBO);
-        glGenTextures(1, &mTexBuffer);
-
         mShader = new ZShader(vertex, fragment);
     }
 };
