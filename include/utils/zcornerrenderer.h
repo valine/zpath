@@ -14,7 +14,7 @@ class ZCornerRenderer {
 
 public:
 
-    ZTexture* createTexture(int viewWidth, int viewHeight, float radius) {
+    ZTexture* createTexture(int viewWidth, int viewHeight, vec4 radius) {
         unsigned int texBuffer;
         glGenTextures(1, &texBuffer);
         draw(viewWidth, viewHeight, radius, texBuffer);
@@ -26,7 +26,7 @@ public:
      * Returns texture ID
      * @return Texture ID
      */
-    unsigned int draw(int width, int height, float radius, unsigned int texID) {
+    unsigned int draw(int width, int height, vec4 radius, unsigned int texID) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glBindTexture(GL_TEXTURE_2D, texID);
@@ -39,7 +39,7 @@ public:
         mShader->use();
         mat4 matrix = glm::ortho(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0);
         mShader->setMat4("uMatrix", matrix);
-        mShader->setFloat("uRadius", radius);
+        mShader->setVec4("uRadius", radius);
 
         mShader->setFloat("uWidth", width);
         mShader->setFloat("uHeight", height);
@@ -85,7 +85,7 @@ private:
     ;
 
     const string fragment =
-#include "shaders/squircle.fs"
+#include "shaders/squircle.glsl"
     ;
 
     void init() {

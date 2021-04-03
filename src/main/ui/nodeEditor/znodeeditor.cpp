@@ -182,28 +182,31 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 void ZNodeEditor::testCorners() {
     for (int i = 0; i < 3; i++) {
 
-        float rad = i + 25;
+        float rad = i + 10;
         auto corner = new ZView(200, 200, this);
         corner->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
         corner->setMarginLeft(120);
         corner->setBackgroundColor(blue);
 
-        corner->setBackgroundImage(
-                ZCornerRenderer::get().createTexture(200, 200, rad));
+        vec4 radius = vec4(rad, rad, rad, 30);
 
-        auto corner1 = new ZView(100, 300, this);
+        corner->setBackgroundImage(
+                ZCornerRenderer::get().
+                createTexture(200, 200, vec4(rad, 0, 10, 30)));
+
+        auto corner1 = new ZView(300, 100, this);
         corner1->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
         corner1->setMarginLeft(120 + corner->getLocalRight() + BUTTON_MARGIN);
         corner1->setBackgroundColor(green);
         corner1->setBackgroundImage(
-                ZCornerRenderer::get().createTexture(100, 300, rad));
+                ZCornerRenderer::get().createTexture(300, 100, radius));
 
         auto corner2 = new ZView(50, 50, this);
         corner2->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
         corner2->setMarginLeft(120 + corner->getLocalRight() + corner1->getLocalRight() + 2 * BUTTON_MARGIN);
         corner2->setBackgroundColor(red);
         corner2->setBackgroundImage(
-                ZCornerRenderer::get().createTexture(50, 50, rad));
+                ZCornerRenderer::get().createTexture(50, 50, radius));
 
     }
 }
