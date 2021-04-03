@@ -171,6 +171,8 @@ private:
     void resetNodeInitialPosition();
 
     void snapViewToNodes();
+
+    void testCorners() const;
 };
 
 

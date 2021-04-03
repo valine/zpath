@@ -17,6 +17,7 @@
 #include <utils/znodeutil.h>
 #include <ui/ztextfield.h>
 #include <ui/zdrawer.h>
+#include <utils/zcornerrenderer.h>
 #include "ui/znodeeditor.h"
 
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -166,24 +167,43 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         }
 
     });
+
+
    //da addTestNodes();
 
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
 
+    testCorners();
 
-//
-//    auto* inputField = new ZTextField(mHeader);
-//    inputField->setGravity(ZView::bottomLeft);
-//    inputField->setYOffset(50);
-//    inputField->setBackgroundColor(grey);
-//    inputField->setMaxWidth(120);
-//
-//    auto* inputField2 = new ZTextField(mHeader);
-//    inputField2->setGravity(ZView::bottomLeft);
-//    inputField2->setYOffset(25);
-//    inputField2->setBackgroundColor(grey);
-//    inputField2->setMaxWidth(120);
+
+}
+
+void ZNodeEditor::testCorners() const {
+    for (int i = 0; i < 3; i++) {
+
+        auto corner = new ZView(200, 200, this);
+        corner->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
+        corner->setMarginLeft(120);
+        corner->setBackgroundColor(blue);
+        corner->setBackgroundImage(
+                new ZTexture(ZCornerRenderer::get().draw(200,200, i * 10)));
+
+        auto corner1 = new ZView(100, 100, this);
+        corner1->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
+        corner1->setMarginLeft(120 + corner->getLocalRight() + BUTTON_MARGIN);
+        corner1->setBackgroundColor(green);
+        corner1->setBackgroundImage(
+                new ZTexture(ZCornerRenderer::get().draw(100,100, i * 10)));
+
+        auto corner2 = new ZView(50, 50, this);
+        corner2->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
+        corner2->setMarginLeft(120 + corner->getLocalRight() + corner1->getLocalRight() + 2 * BUTTON_MARGIN);
+        corner2->setBackgroundColor(red);
+        corner2->setBackgroundImage(
+                new ZTexture(ZCornerRenderer::get().draw(50,50, i * 10)));
+
+    }
 }
 
 /**

@@ -46,7 +46,20 @@ public:
         glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
     }
 
+
+    static ZCornerRenderer& get(){
+        static ZCornerRenderer instance; // Guaranteed to be destroyed.
+        // Instantiated on first use.
+        return instance;
+    }
+
+
 private:
+
+
+    ZCornerRenderer() {
+        init();
+    }
 
     ZShader* mShader;
 
@@ -63,7 +76,7 @@ private:
     ;
 
     const string fragment =
-#include "shaders/shadow.fs"
+#include "shaders/squircle.fs"
     ;
 
     void init() {
