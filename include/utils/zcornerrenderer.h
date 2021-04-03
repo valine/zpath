@@ -41,6 +41,9 @@ public:
         mShader->setMat4("uMatrix", matrix);
         mShader->setFloat("uRadius", radius);
 
+        mShader->setFloat("uWidth", width);
+        mShader->setFloat("uHeight", height);
+
         glViewport(0,0, width, height);
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
