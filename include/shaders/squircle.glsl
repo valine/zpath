@@ -35,11 +35,12 @@ void main() {
                 (bottomRight * isBottom * isRight) +
                 (bottomLeft * isBottom * isLeft);
 
-    float isOn = float(val <= 1);
-    float outline = float(val <= 1 && val >= 0.5);
-   	fragColor.r = mix(0.5, 1.0, outline);
-   	fragColor.g = 1.0;
-   	fragColor.b = 1.0;
+    float isOn = float(abs(val) <= 1.0);
+
+    float intensity = val;
+   	fragColor.r = intensity;
+   	fragColor.g = intensity;
+   	fragColor.b = intensity;
    	fragColor.a = isOn;
 }
 )"

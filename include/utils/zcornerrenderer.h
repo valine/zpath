@@ -28,6 +28,9 @@ public:
      */
     unsigned int draw(int width, int height, vec4 radius, unsigned int texID) {
 
+
+        glEnable(GL_MULTISAMPLE);
+
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glBindTexture(GL_TEXTURE_2D, texID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);

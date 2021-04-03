@@ -66,6 +66,8 @@ public:
         SPLIT,
         HEAT_MAP,
         NEURAL_CORE,
+        SIGMOID,
+        TANH,
         LAST // Fake enum to allow easy iteration
     };
 
@@ -97,7 +99,6 @@ public:
         LINE_2D,
         IMAGE
     };
-
 
     vector<vector<float>> compute(vector<vector<float>> x, Type type) {
         vec2 chartBound = mChart->getXBounds();
@@ -160,6 +161,19 @@ public:
                     return {{comOut.real(), chartBound.x, chartWidth},
                             {comOut.imag(), chartBound.x, chartWidth}};
                 }
+                case SIGMOID: {
+                    float in =x.at(REAL).at(0);
+                    float out = 1.0 / (1.0 + exp(-in));
+                    return {{out, chartBound.x, chartWidth},
+                            {0.0, chartBound.x, chartWidth}};
+                }
+                case TANH: {
+                    float in =x.at(REAL).at(0);
+                    float out = tanh(in);
+                    return {{out, chartBound.x, chartWidth},
+                            {0.0, chartBound.x, chartWidth}};
+                }
+
                 case SQRT: {
                     complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
                     complex<float> out0 = sqrt(in0);
@@ -395,6 +409,8 @@ public:
                 case TAN:
                 case ABS:
                 case EXP:
+                case SIGMOID:
+                case TANH:
                 case SQRT: {
                     mSocketType = SQRT_TYPE;
                     break;
@@ -522,6 +538,8 @@ public:
                     mSocketCount = ivec2(1, 3);
                     break;
                 case EXP:
+                case TANH:
+                case SIGMOID:
                     mSocketCount = ivec2(1, 3);
                     break;
                 case SQRT:
@@ -790,6 +808,10 @@ public:
                 return "split";
             case NEURAL_CORE:
                 return "neural";
+            case SIGMOID:
+                return "sigmoid";
+            case TANH:
+                return "tanh";
             case LAST:
                 return "none";
         }
@@ -1006,6 +1028,8 @@ public:
             case Z:
                 return getSocketColor(VAR);
             case NEURAL_CORE:
+            case TANH:
+            case SIGMOID:
                 return getSocketColor(NN);
             default:
                 return vec4(1);
