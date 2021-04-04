@@ -1,7 +1,9 @@
+#include <utils/zimageutil.h>
 #include "ui/ztexture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "ui/stb_image.h"
+#include "utils/zfontstore.h"
 
 ZTexture::ZTexture(string path) {
     mTextureID = loadTexture(path.c_str());
@@ -13,6 +15,8 @@ ZTexture::ZTexture(int id) {
 
 ZTexture::ZTexture(float* pixels, int width, int height) {
     mTextureID = loadTexture(pixels, width, height);
+    mWidth = width;
+    mHeight = height;
 }
 
 uint ZTexture::getID() {
@@ -54,6 +58,9 @@ unsigned int ZTexture::loadTexture(char const * path){
         stbi_image_free(data);
     }
 
+    mWidth = width;
+    mHeight = height;
+
     return textureID;
 }
 
@@ -75,6 +82,13 @@ unsigned int ZTexture::loadTexture(float* pixels, int width, int height){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+    mWidth = width;
+    mHeight = height;
     delete[] pixels;
     return textureID;
+}
+
+void ZTexture::save() {
+    string path = "/Users/lukas/Desktop/debug.png";
+    ZUtil::saveGlTex(path.c_str(), mTextureID, mWidth, mHeight);
 }

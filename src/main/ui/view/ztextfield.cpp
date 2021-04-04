@@ -17,6 +17,8 @@ ZTextField::ZTextField(ZView *parent)
 
     cursorToEnd();
     setBackgroundColor(grey);
+
+  //  setCornerRadius(10);
 }
 
 void ZTextField::cursorToEnd() {

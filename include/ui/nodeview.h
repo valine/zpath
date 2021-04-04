@@ -1369,6 +1369,7 @@ private:
 
     void init();
 
+    void draw();
 };
 
 

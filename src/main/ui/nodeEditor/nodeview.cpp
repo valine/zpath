@@ -52,6 +52,7 @@ void ZNodeView::init() {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
+        socket->setCornerRadius(SOCKET_SIZE / 2);
         mSocketsIn.push_back(socket);
     }
 
@@ -61,6 +62,7 @@ void ZNodeView::init() {
         socket->setGravity(topRight);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
+        socket->setCornerRadius(SOCKET_SIZE / 2);
         mSocketsOut.push_back(socket);
     }
 
@@ -137,6 +139,7 @@ void ZNodeView::init() {
             mSocketInLabels.push_back(label);
         }
     }
+
 }
 
 void ZNodeView::initializeEdges() {
@@ -608,6 +611,10 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
         }
         invalidateSingleNode();
     }
+}
+
+void ZNodeView::draw() {
+    ZView::draw();
 }
 
 void ZNodeView::clearInvalidateNode() {

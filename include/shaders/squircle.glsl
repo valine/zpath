@@ -6,8 +6,13 @@ in vec4 vPos;
 out vec4 fragColor;
 
 uniform vec4 uRadius;
+uniform vec4 uColor;
 uniform float uWidth;
 uniform float uHeight;
+
+float sigmoid(float x) {
+    return 1.0 / (1.0 + exp(-x));
+}
 
 void main() {
     float vposx = abs(vPos.x);
@@ -35,12 +40,13 @@ void main() {
                 (bottomRight * isBottom * isRight) +
                 (bottomLeft * isBottom * isLeft);
 
-    float isOn = float(abs(val) <= 1.0);
+    float falloff = 80.0;
+    float isOn = float((1.0 - sigmoid((abs(val) - 1.0) * falloff)));
 
-    float intensity = val;
-   	fragColor.r = intensity;
-   	fragColor.g = intensity;
-   	fragColor.b = intensity;
+    float intensity = 1.0;
+   	fragColor.r = uColor.r;
+   	fragColor.g = uColor.g;
+   	fragColor.b = uColor.b;
    	fragColor.a = isOn;
 }
 )"

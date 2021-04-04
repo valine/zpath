@@ -14,21 +14,21 @@ class ZCornerRenderer {
 
 public:
 
-    ZTexture* createTexture(int viewWidth, int viewHeight, vec4 radius) {
+    ZTexture* createTexture(int viewWidth, int viewHeight, vec4 color, vec4 radius) {
         unsigned int texBuffer;
         glGenTextures(1, &texBuffer);
-        draw(viewWidth, viewHeight, radius, texBuffer);
+        draw(viewWidth, viewHeight, radius, color, texBuffer);
 
         auto* tex = new ZTexture(texBuffer);
+        tex->mWidth = viewWidth;
+        tex->mHeight = viewHeight;
         return tex;
     }
     /**
      * Returns texture ID
      * @return Texture ID
      */
-    unsigned int draw(int width, int height, vec4 radius, unsigned int texID) {
-
-
+    unsigned int draw(int width, int height, vec4 radius, vec4 color, unsigned int texID) {
         glEnable(GL_MULTISAMPLE);
 
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
@@ -44,6 +44,7 @@ public:
         mShader->setMat4("uMatrix", matrix);
         mShader->setVec4("uRadius", radius);
 
+        mShader->setVec4("uColor", color);
         mShader->setFloat("uWidth", width);
         mShader->setFloat("uHeight", height);
 
@@ -56,6 +57,7 @@ public:
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glBindVertexArray(0);
+
         return texID;
     }
 

@@ -26,8 +26,12 @@ public:
 	void updateTexture(float* pixels, int width, int height);
 	void setID(int);
 
+	void save();
+
+    int mWidth = 0;
+    int mHeight = 0;
 private:
-	uint mTextureID; 
+	uint mTextureID;
 };
 
 #endif

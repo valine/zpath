@@ -1,5 +1,6 @@
 #include <utils/zsettingsstore.h>
 #include <ui/zviewcontroller.h>
+#include <utils/zcornerrenderer.h>
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
@@ -272,7 +273,13 @@ void ZView::draw() {
         }
 
         drawShadow();
-        if (backgroundColor.a > 0) {
+
+//        if (glm::length(mCornerRadius) > 0) {
+//            //updateRoundedRect();
+//        } else
+
+
+        if (backgroundColor.a > 0 && length(mCornerRadius) == 0) {
             mShader->use();
             glUniformMatrix4fv(glGetUniformLocation(mShader->mID, "uVPMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMat));
 
@@ -302,7 +309,21 @@ void ZView::draw() {
                 glBindVertexArray(mVAO);
                 glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
             }
+        } else if (mRoundedRect != nullptr) {
+            mImageShader->use();
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, mRoundedRect->getID());
+
+            // Update scale, useful for zooming a view out
+            glUniformMatrix4fv(glGetUniformLocation(mImageShader->mID, "uVPMatrix"), 1,
+                               GL_FALSE, glm::value_ptr(scaleMat));
+
+            glBindVertexArray(mVAO);
+            glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
         }
+
+
 
         if (mBackgroundImage != nullptr) {
             mImageShader->use();
@@ -318,6 +339,7 @@ void ZView::draw() {
             glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
         }
 
+
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -330,6 +352,24 @@ void ZView::draw() {
     }
 }
 
+void ZView::updateRoundedRect() {
+    if (length(mCornerRadius) > 0) {
+        if (mRoundedRect == nullptr) {
+            auto tex = ZCornerRenderer::get().
+                    createTexture(getWidth() * mDP, getHeight() * mDP,
+                                  getBackgroundColor(), mCornerRadius);
+            mRoundedRect = tex;
+        } else {
+            ZCornerRenderer::get().
+                    draw(getWidth() * mDP, getHeight() * mDP,
+                         mCornerRadius,
+                         getBackgroundColor(), mRoundedRect->getID());
+        }
+    }
+
+
+
+}
 void ZView::drawShadow() {
     float shadowRadius = 30 * mElevation;
     float offset = -5 * mElevation;
@@ -794,7 +834,7 @@ void ZView::setMaxHeight(int height) {
 }
 
 void ZView::onSizeChange() {
-
+    updateRoundedRect();
 }
 
 bool ZView::anyMouseDown() {

@@ -320,6 +320,16 @@ class ZView {
 
     void calculateBounds();
 
+    void setCornerRadius(vec4 radius) {
+        mCornerRadius = radius;
+        updateRoundedRect();
+    }
+
+    void setCornerRadius(float radius) {
+        mCornerRadius = vec4(radius);
+        updateRoundedRect();
+    }
+
 private:
 
     bool mNeedsRender = true;
@@ -424,6 +434,7 @@ private:
 
 		bool mAllowNegativeSize = false;
 		ZTexture* mBackgroundImage = nullptr;
+		ZTexture* mRoundedRect = nullptr;
 		vector<ZView*> mViews;
 		vector<ZView*> mPendingViews;
 		string mTag;
@@ -447,6 +458,7 @@ private:
 
         bool mConsumeClicks = false;
 
+        vec4 mCornerRadius = vec4(0);
     void drawShadow();
 
     void setup(float maxWidth, float maxHeight, ZView *parent);
@@ -458,6 +470,7 @@ void setComsumeClicks();
 
     void clearFocus();
 
+    void updateRoundedRect();
 };
 
 #endif

@@ -174,7 +174,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
 
-    testCorners();
+//    testCorners();
 
 
 }
@@ -187,26 +187,21 @@ void ZNodeEditor::testCorners() {
         corner->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
         corner->setMarginLeft(120);
         corner->setBackgroundColor(blue);
-
+        corner->setCornerRadius(10);
         vec4 radius = vec4(rad, rad, rad, 30);
-
-        corner->setBackgroundImage(
-                ZCornerRenderer::get().
-                createTexture(200, 200, vec4(rad, 0, 10, 30)));
 
         auto corner1 = new ZView(300, 100, this);
         corner1->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
         corner1->setMarginLeft(120 + corner->getLocalRight() + BUTTON_MARGIN);
         corner1->setBackgroundColor(green);
-        corner1->setBackgroundImage(
-                ZCornerRenderer::get().createTexture(300, 100, radius));
+        corner1->setCornerRadius(radius);
+
 
         auto corner2 = new ZView(50, 50, this);
         corner2->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
         corner2->setMarginLeft(120 + corner->getLocalRight() + corner1->getLocalRight() + 2 * BUTTON_MARGIN);
         corner2->setBackgroundColor(red);
-        corner2->setBackgroundImage(
-                ZCornerRenderer::get().createTexture(50, 50, radius));
+        corner2->setCornerRadius(radius);
 
     }
 }
@@ -472,7 +467,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     mNodeViews.push_back(node);
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
     node->setMaxWidth(nodeSize.x);
-
     node->setIndexTag(mNodeViews.size() - 1);
 
     vec2 scale = mNodeContainer->getScale();
@@ -599,6 +593,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
 
     node->resetInitialPosition();
     node->invalidateSingleNode();
+    node->setCornerRadius(10);
     deselectNode(node);
 }
 
