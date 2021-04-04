@@ -187,7 +187,7 @@ void ZNodeEditor::testCorners() {
         corner->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
         corner->setMarginLeft(120);
         corner->setBackgroundColor(blue);
-        corner->setCornerRadius(10);
+        corner->setCornerRadius(5);
         vec4 radius = vec4(rad, rad, rad, 30);
 
         auto corner1 = new ZView(300, 100, this);
@@ -593,7 +593,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
 
     node->resetInitialPosition();
     node->invalidateSingleNode();
-    node->setCornerRadius(10);
+    node->setCornerRadius(5);
     deselectNode(node);
 }
 

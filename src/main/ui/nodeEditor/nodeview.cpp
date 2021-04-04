@@ -329,7 +329,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
                 }
             }
 
-            mSocketsIn.at(i)->setCornerRadius(vec4(2, SOCKET_SIZE, SOCKET_SIZE, 2));
+            mSocketsIn.at(i)->setCornerRadius(vec4(2, SOCKET_SIZE / 2, SOCKET_SIZE / 2, 2));
         }
     }
     vec4 darkenVec = vec4(0.5,0.4,0.4,0.0);
@@ -351,15 +351,14 @@ void ZNodeView::setType(ZNodeView::Type type) {
             }
         }
 
-        mSocketsOut.at(i)->setCornerRadius(SOCKET_SIZE / 2);
-        mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_SIZE, 3, 3, SOCKET_SIZE));
+        mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_SIZE / 2, 2, 2, SOCKET_SIZE / 2));
     }
 
     // Always set max height to be large enough to fit all sockets
     setMaxWidth(getNodeSize(mType).x);
     if (socketCount.x > 0) {
         setMaxHeight(std::max((int) mSocketsIn.at(socketCount.x - 1)->getOffsetY() +
-                              SOCKET_SIZE + MIN_MARGIN, (int) getNodeSize(mType).y));
+                              SOCKET_SIZE + CHART_TOP_MARGIN, (int) getNodeSize(mType).y));
     } else {
         setMaxHeight(getNodeSize(mType).y);
     }

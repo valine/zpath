@@ -357,12 +357,12 @@ void ZView::updateRoundedRect() {
         if (mRoundedRect == nullptr) {
             auto tex = ZCornerRenderer::get().
                     createTexture(getWidth() * mDP, getHeight() * mDP,
-                                  getBackgroundColor(), mCornerRadius);
+                                  getBackgroundColor(), mCornerRadius * mDP);
             mRoundedRect = tex;
         } else {
             ZCornerRenderer::get().
                     draw(getWidth() * mDP, getHeight() * mDP,
-                         mCornerRadius,
+                         mCornerRadius * mDP,
                          getBackgroundColor(), mRoundedRect->getID());
         }
     }
