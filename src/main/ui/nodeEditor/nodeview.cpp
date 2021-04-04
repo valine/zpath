@@ -52,7 +52,6 @@ void ZNodeView::init() {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
-        socket->setCornerRadius(SOCKET_SIZE / 2);
         mSocketsIn.push_back(socket);
     }
 
@@ -62,7 +61,6 @@ void ZNodeView::init() {
         socket->setGravity(topRight);
         socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
-        socket->setCornerRadius(SOCKET_SIZE / 2);
         mSocketsOut.push_back(socket);
     }
 
@@ -330,6 +328,8 @@ void ZNodeView::setType(ZNodeView::Type type) {
                     mSocketsIn.at(i)->setBackgroundColor(color);
                 }
             }
+
+            mSocketsIn.at(i)->setCornerRadius(SOCKET_SIZE / 2);
         }
     }
     vec4 darkenVec = vec4(0.5,0.4,0.4,0.0);
@@ -350,6 +350,8 @@ void ZNodeView::setType(ZNodeView::Type type) {
                 }
             }
         }
+
+        mSocketsOut.at(i)->setCornerRadius(SOCKET_SIZE / 2);
     }
 
     // Always set max height to be large enough to fit all sockets
@@ -375,7 +377,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
         setOutputLabel(mConstantValueOutput.at(0));
         mOutputLabel->setBackgroundColor(getNodeColor(mType));
     }
-
 
     mNameLabel->setXOffset(22);
     mNameLabel->setYOffset(1);

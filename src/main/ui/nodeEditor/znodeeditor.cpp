@@ -54,7 +54,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mCursorView->setVisibility(false);
     mCursorView->setClippingEnabled(false);
 
-    ZLineView* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
+    auto* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
     // Button example
     auto* addNodeBtn = new ZButton("Add node", mHeader);
@@ -131,7 +131,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mExpressionField = new ZTextField(this);
     mExpressionField->setGravity(Gravity::bottomLeft);
-    mExpressionField->setBackgroundColor(grey);
+    mExpressionField->setBackgroundColor(white);
     mExpressionField->setMaxWidth(360);
     mExpressionField->setXOffset(mDrawer->getMaxWidth() + 10);
     mExpressionField->setOutlineType(WireType::outline);
