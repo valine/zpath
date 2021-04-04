@@ -42,7 +42,7 @@ void ZNodeView::init() {
     setOutlineType(outline);
     setLineWidth(2.0);
 
-    float yOffset = 3;
+    float yOffset = 6;
     float margin = 10;
 
     // Add input sockets
@@ -329,7 +329,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
                 }
             }
 
-            mSocketsIn.at(i)->setCornerRadius(SOCKET_SIZE / 2);
+            mSocketsIn.at(i)->setCornerRadius(vec4(2, SOCKET_SIZE, SOCKET_SIZE, 2));
         }
     }
     vec4 darkenVec = vec4(0.5,0.4,0.4,0.0);
@@ -352,6 +352,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
         }
 
         mSocketsOut.at(i)->setCornerRadius(SOCKET_SIZE / 2);
+        mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_SIZE, 3, 3, SOCKET_SIZE));
     }
 
     // Always set max height to be large enough to fit all sockets
