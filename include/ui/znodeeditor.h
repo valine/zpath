@@ -65,6 +65,7 @@ private:
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
     ZMagnitudePicker* mMagnitudePicker;
+    ZButton* mLaplaceBtn;
 
     ZView* mBoxSelect;
     ZCursorView* mCursorView;

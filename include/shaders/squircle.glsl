@@ -17,20 +17,28 @@ float sigmoid(float x) {
 }
 
 void main() {
-    float vposx = abs(vPos.x);
-    float vposy = abs(vPos.y);
 
-    float topLeft = pow(vposx, uWidth / uRadius.x) +
-                    pow(vposy, uHeight / uRadius.x);
+    float minDimen = min(uWidth, uHeight);
+    float spanX = max(0.0, (uWidth - uHeight)) / uWidth;
+    float spanY = max(0.0, (uHeight - uWidth)) / uHeight;
 
-    float topRight = pow(vposx, uWidth / uRadius.y) +
-                     pow(vposy, uHeight / uRadius.y);
+    float vposx = max(0.0, abs(vPos.x) - spanX) / (1.0 - spanX);
+    //float vposx = abs(vPos.x);
+    float vposy =  max(0.0, abs(vPos.y) - spanY) / (1.0 - spanY);
 
-    float bottomRight = pow(vposx, uWidth / uRadius.z) +
-                     pow(vposy, uHeight / uRadius.z);
 
-    float bottomLeft = pow(vposx, uWidth / uRadius.w) +
-                        pow(vposy, uHeight / uRadius.w);
+    float topLeft = pow(vposx, minDimen / uRadius.x) +
+                    pow(vposy, minDimen / uRadius.x);
+
+    float topRight = pow(vposx, minDimen / uRadius.y) +
+                     pow(vposy, minDimen / uRadius.y);
+
+    float bottomRight = pow(vposx, minDimen / uRadius.z) +
+                        pow(vposy, minDimen / uRadius.z);
+
+    float bottomLeft = pow(vposx, minDimen / uRadius.w) +
+                       pow(vposy, minDimen / uRadius.w);
+
 
     float isTop = (vPos.y + 1.0) / 2.0;
     float isLeft = (-vPos.x + 1.0) / 2.0;

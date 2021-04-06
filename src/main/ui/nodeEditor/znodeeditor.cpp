@@ -86,6 +86,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
+
+
     auto* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(150, 0);
     dropDown->setTitle("All Nodes");
@@ -124,6 +126,21 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
+
+    mLaplaceBtn = new ZButton("Laplace", this);
+    mLaplaceBtn->setGravity(topRight);
+    mLaplaceBtn->setMaxWidth(100);
+    mLaplaceBtn->setMaxHeight(25);
+    mLaplaceBtn->setCornerRadius(   12.5);
+    mLaplaceBtn->setBackgroundColor(highlight);
+    mLaplaceBtn->setHighlighColor(highlight);
+    mLaplaceBtn->getLabel()->setTextColor(white);
+    mLaplaceBtn->setYOffset(30);
+    mLaplaceBtn->setXOffset(10);
+    mLaplaceBtn->setOnClick([this](){
+
+    });
+
 
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(this);
@@ -738,8 +755,7 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
 
 void ZNodeEditor::deselectNode(ZNodeView* node) {
     if (node->getVisibility()) {
-        node->setOutlineColor(grey);
-        node->setLineWidth(2.0);
+        node->setOutlineColor(transparent);
         node->setElevation(DEFAULT_ELEVATION);
         if (mSelectedNodes.count(node) != 0) {
             mSelectedNodes.erase(node);
