@@ -50,7 +50,7 @@ void ZNodeView::init() {
 
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-        socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
+        socket->setOffset(2, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
         mSocketsIn.push_back(socket);
     }
@@ -59,7 +59,7 @@ void ZNodeView::init() {
     for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
         socket->setGravity(topRight);
-        socket->setOffset(0, yOffset + i * (SOCKET_SIZE + margin));
+        socket->setOffset(2, yOffset + i * (SOCKET_SIZE + margin));
         socket->setClickable(false);
         mSocketsOut.push_back(socket);
     }
@@ -376,7 +376,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     if (isOutputLabelVisible(mType)) {
         setOutputLabel(mConstantValueOutput.at(0));
-        mOutputLabel->setBackgroundColor(getNodeColor(mType));
+    //    mOutputLabel->setBackgroundColor(getNodeColor(mType));
     }
 
     mNameLabel->setXOffset(22);
