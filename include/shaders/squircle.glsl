@@ -9,6 +9,8 @@ uniform vec4 uRadius;
 uniform vec4 uColor;
 uniform float uWidth;
 uniform float uHeight;
+uniform float uLineWidth;
+uniform vec4 uOutlineColor;
 
 float sigmoid(float x) {
     return 1.0 / (1.0 + exp(-x));
@@ -41,12 +43,16 @@ void main() {
                 (bottomLeft * isBottom * isLeft);
 
     float falloff = 80.0;
+    float lineWidth = uLineWidth / uWidth;
+    float width = 1.0 - pow(lineWidth, 1.0 / (uRadius.x));
     float isOn = float((1.0 - sigmoid((abs(val) - 1.0) * falloff)));
+    float outline = float((1.0 - sigmoid((abs(val) - width) * falloff)));
 
+    vec4 color = mix(uOutlineColor, uColor, outline);
     float intensity = 1.0;
-   	fragColor.r = uColor.r;
-   	fragColor.g = uColor.g;
-   	fragColor.b = uColor.b;
+   	fragColor.r = color.r;
+   	fragColor.g = color.g;
+   	fragColor.b = color.b;
    	fragColor.a = isOn;
 }
 )"

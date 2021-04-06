@@ -357,13 +357,13 @@ void ZView::updateCornerRadius() {
         if (mRoundedRect == nullptr) {
             auto tex = ZCornerRenderer::get().
                     createTexture(getWidth() * mDP, getHeight() * mDP,
-                                  getBackgroundColor(), mCornerRadius * mDP);
+                                  getBackgroundColor(), mOutlineColor, mLineWidth, mCornerRadius * mDP);
             mRoundedRect = tex;
         } else {
             ZCornerRenderer::get().
                     draw(getWidth() * mDP, getHeight() * mDP,
                          mCornerRadius * mDP,
-                         getBackgroundColor(), mRoundedRect, false);
+                         getBackgroundColor(), mOutlineColor, mLineWidth, mRoundedRect, false);
         }
     }
 }
@@ -1125,6 +1125,7 @@ void ZView::setInitialPosition(vec2 position) {
 
 void ZView::setOutlineColor(vec4 color) {
     mOutlineColor = color;
+    updateCornerRadius();
 }
 
 vec2 ZView::getScale() {

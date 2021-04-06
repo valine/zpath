@@ -356,7 +356,7 @@ private:
 
 		vec4 mBackgroundColor = vec4(0);
         vec4 mHighlightColor = vec4(0);
-		vec4 mOutlineColor = red;
+		vec4 mOutlineColor = transparent;
 		bool mShowHighlight = false;
 
 		GLuint mVAO = 0;
@@ -449,7 +449,7 @@ private:
         vec2 mInitialPosition{};
         string mName;
 
-        float mLineWidth = 2.0;
+        float mLineWidth = 0.0;
 
         bool mClipping = true;
         vec2 mTranslation = vec2(0);

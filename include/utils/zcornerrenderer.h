@@ -15,11 +15,11 @@ class ZCornerRenderer {
 
 public:
 
-    ZTexture* createTexture(int viewWidth, int viewHeight, vec4 color, vec4 radius) {
+    ZTexture* createTexture(int viewWidth, int viewHeight, vec4 color, vec4 outlineColor, float lineWidth, vec4 radius) {
         unsigned int texBuffer;
         glGenTextures(1, &texBuffer);
         auto* tex = new ZTexture(texBuffer);
-        draw(viewWidth, viewHeight, radius, color, tex, true);
+        draw(viewWidth, viewHeight, radius, color, outlineColor, lineWidth, tex, true);
         tex->mWidth = viewWidth;
         tex->mHeight = viewHeight;
         return tex;
@@ -29,8 +29,9 @@ public:
      * Returns texture ID
      * @return Texture ID
      */
-    unsigned int draw(int width, int height, vec4 radius, vec4 color, ZTexture* texture, bool cacheResult) {
-        long key = getKey(width, height, radius, color, vec4(0), 0);
+    unsigned int draw(int width, int height, vec4 radius, vec4 color, vec4 outlineColor,
+                      float lineWidth, ZTexture* texture, bool cacheResult) {
+        long key = getKey(width, height, radius, color, outlineColor, lineWidth);
         if (mTextureMap.find(key) != mTextureMap.end()) {
             int cached = mTextureMap.at(key);
             texture->setID(cached);
@@ -60,6 +61,14 @@ public:
             mShader->setVec4("uColor", color);
             mShader->setFloat("uWidth", width);
             mShader->setFloat("uHeight", height);
+            mShader->setVec4("uOutlineColor", outlineColor);
+
+            if (outlineColor.a == 0) {
+                mShader->setFloat("uLineWidth", 0);
+            } else {
+                mShader->setFloat("uLineWidth", lineWidth);
+            }
+
 
             glViewport(0,0, width, height);
             glClearColor(0.0, 0.0, 0.0, 0.0);
