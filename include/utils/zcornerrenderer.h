@@ -8,6 +8,7 @@
 #include "ui/zshader.h"
 #include "ui/ztexture.h"
 #include <vector>
+#include <unordered_map>
 
 class ZCornerRenderer {
 
@@ -17,48 +18,66 @@ public:
     ZTexture* createTexture(int viewWidth, int viewHeight, vec4 color, vec4 radius) {
         unsigned int texBuffer;
         glGenTextures(1, &texBuffer);
-        draw(viewWidth, viewHeight, radius, color, texBuffer);
-
         auto* tex = new ZTexture(texBuffer);
+        draw(viewWidth, viewHeight, radius, color, tex, true);
         tex->mWidth = viewWidth;
         tex->mHeight = viewHeight;
         return tex;
     }
+
     /**
      * Returns texture ID
      * @return Texture ID
      */
-    unsigned int draw(int width, int height, vec4 radius, vec4 color, unsigned int texID) {
-        glEnable(GL_MULTISAMPLE);
+    unsigned int draw(int width, int height, vec4 radius, vec4 color, ZTexture* texture, bool cacheResult) {
+        long key = getKey(width, height, radius, color, vec4(0), 0);
+        if (mTextureMap.find(key) != mTextureMap.end()) {
+            int cached = mTextureMap.at(key);
+            texture->setID(cached);
+            return cached;
+        } else {
+            glEnable(GL_MULTISAMPLE);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-        glBindTexture(GL_TEXTURE_2D, texID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texID, 0);
+            if (mKeyMap.find(texture->getID()) != mKeyMap.end()) {
+                unsigned int texBuffer;
+                glGenTextures(1, &texBuffer);
+                texture->setID(texBuffer);
+            }
 
-        glBindVertexArray(mVAO);
-        mShader->use();
-        mat4 matrix = glm::ortho(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0);
-        mShader->setMat4("uMatrix", matrix);
-        mShader->setVec4("uRadius", radius);
+            glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+            glBindTexture(GL_TEXTURE_2D, texture->getID());
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture->getID(), 0);
 
-        mShader->setVec4("uColor", color);
-        mShader->setFloat("uWidth", width);
-        mShader->setFloat("uHeight", height);
+            glBindVertexArray(mVAO);
+            mShader->use();
+            mat4 matrix = glm::ortho(-1.0, 1.0, 1.0, -1.0, 1.0, -1.0);
+            mShader->setMat4("uMatrix", matrix);
+            mShader->setVec4("uRadius", radius);
 
-        glViewport(0,0, width, height);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT);
+            mShader->setVec4("uColor", color);
+            mShader->setFloat("uWidth", width);
+            mShader->setFloat("uHeight", height);
 
-        int triangles = 2;
-        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+            glViewport(0,0, width, height);
+            glClearColor(0.0, 0.0, 0.0, 0.0);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindVertexArray(0);
+            int triangles = 2;
+            glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
-        return texID;
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindVertexArray(0);
+
+            if (cacheResult) {
+                mTextureMap.insert({key, texture->getID()});
+                mKeyMap.insert({texture->getID(), key});
+            }
+        }
+
+        return 0;
     }
 
 
@@ -75,6 +94,40 @@ private:
     ZCornerRenderer() {
         init();
     }
+
+    vector<float> mTmpVec = vector<float>(16);
+    long getKey(int width, int height, vec4 radius, vec4 color, vec4 outline, float oWidth) {
+        mTmpVec.at(0) = width;
+        mTmpVec.at(1) = height;
+        mTmpVec.at(2) = radius.x;
+        mTmpVec.at(3) = radius.y;
+        mTmpVec.at(4) = radius.z;
+        mTmpVec.at(5) = radius.a;
+
+        mTmpVec.at(6) = color.x;
+        mTmpVec.at(7) = color.y;
+        mTmpVec.at(8) = color.z;
+        mTmpVec.at(9) = color.a;
+
+        mTmpVec.at(10) = outline.x;
+        mTmpVec.at(11) = outline.y;
+        mTmpVec.at(12) = outline.z;
+        mTmpVec.at(13) = outline.a;
+
+        mTmpVec.at(15) = oWidth;
+
+        unsigned long hashValue = 0;
+
+        for (int i = 0; i < mTmpVec.size(); i++) {
+            int multiple = 500;
+            int intValue = (int) (floor(mTmpVec.at(i) * 100));
+            hashValue += (intValue * (long) pow(multiple, i));
+        }
+        return hashValue;
+    }
+
+    unordered_map<long, unsigned int> mTextureMap;
+    unordered_map<unsigned int, long> mKeyMap;
 
     ZShader* mShader;
 

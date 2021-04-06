@@ -462,7 +462,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     if (node->getParentView() != mNodeContainer) {
         mNodeContainer->addSubView(node);
     }
-
+    node->setCornerRadius(5);
     node->setVisibility(true);
     mNodeViews.push_back(node);
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
@@ -484,7 +484,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     }
 
     node->setInitialPosition(node->getOffset() - getMouseDragDelta());
-    node->onWindowChange(getWidth(), getHeight());
     node->setInvalidateListener([this](ZNodeView* node){
         {
             lock_guard<mutex> guard(mEvalMutex);
@@ -593,7 +592,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
 
     node->resetInitialPosition();
     node->invalidateSingleNode();
-    node->setCornerRadius(5);
     deselectNode(node);
 }
 

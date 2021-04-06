@@ -42,7 +42,7 @@ void ZNodeView::init() {
     setOutlineType(outline);
     setLineWidth(2.0);
 
-    float yOffset = 6;
+    float yOffset = 3;
     float margin = 10;
 
     // Add input sockets
@@ -255,7 +255,8 @@ void ZNodeView::updateChart1D() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float factor = (float) i / (float) chartRes;
         float x = mix(xBounds.x, xBounds.y, factor);
-        vector<vector<float>> fx = evaluate(vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x)));
+        vector<vector<float>> fx = evaluate(
+                vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x)));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -660,9 +661,12 @@ void ZNodeView::setInvalidateListener(function<void(ZNodeView *node)> listener) 
 }
 
 void ZNodeView::setMaxWidth(int width) {
+    float original = getMaxWidth();
     ZView::setMaxWidth(width);
-
     updateLabelVisibility();
+    if (abs(original - width) < 0.01) {
+        onSizeChange();
+    }
 }
 
 void ZNodeView::copyParameters(ZNodeView* node) {

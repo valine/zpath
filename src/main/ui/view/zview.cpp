@@ -275,7 +275,7 @@ void ZView::draw() {
         drawShadow();
 
 //        if (glm::length(mCornerRadius) > 0) {
-//            //updateRoundedRect();
+//            //updateCornerRadius();
 //        } else
 
 
@@ -352,7 +352,7 @@ void ZView::draw() {
     }
 }
 
-void ZView::updateRoundedRect() {
+void ZView::updateCornerRadius() {
     if (length(mCornerRadius) > 0) {
         if (mRoundedRect == nullptr) {
             auto tex = ZCornerRenderer::get().
@@ -363,12 +363,9 @@ void ZView::updateRoundedRect() {
             ZCornerRenderer::get().
                     draw(getWidth() * mDP, getHeight() * mDP,
                          mCornerRadius * mDP,
-                         getBackgroundColor(), mRoundedRect->getID());
+                         getBackgroundColor(), mRoundedRect, false);
         }
     }
-
-
-
 }
 void ZView::drawShadow() {
     float shadowRadius = 30 * mElevation;
@@ -804,14 +801,23 @@ vector<ZView*> ZView::getSubViews() {
     return mViews;
 }
 
+
 void ZView::setBackgroundColor(float color[4]) {
     mBackgroundColor = vec4(color[0], color[1], color[2], color[3]);
     invalidate();
+
+    if (length(mCornerRadius) > 0) {
+        updateCornerRadius();
+    }
 }
 
 void ZView::setBackgroundColor(vec4 color) {
     mBackgroundColor = color;
     invalidate();
+
+    if (length(mCornerRadius) > 0) {
+        updateCornerRadius();
+    }
 }
 
 vec4 ZView::getBackgroundColor() {
@@ -834,7 +840,7 @@ void ZView::setMaxHeight(int height) {
 }
 
 void ZView::onSizeChange() {
-    updateRoundedRect();
+    updateCornerRadius();
 }
 
 bool ZView::anyMouseDown() {

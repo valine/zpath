@@ -322,12 +322,12 @@ class ZView {
 
     void setCornerRadius(vec4 radius) {
         mCornerRadius = radius;
-        updateRoundedRect();
+        computeBounds();
     }
 
     void setCornerRadius(float radius) {
         mCornerRadius = vec4(radius);
-        updateRoundedRect();
+        computeBounds();
     }
 
 private:
@@ -470,7 +470,7 @@ void setComsumeClicks();
 
     void clearFocus();
 
-    void updateRoundedRect();
+    void updateCornerRadius();
 };
 
 #endif

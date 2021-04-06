@@ -17,7 +17,7 @@ ZDrawer::ZDrawer(ZView *parent, vector<string> names, vector<vec4> colors) : ZSc
 
     int buttonIndex = 0;
     for (const string& name : mNames) {
-        ZButton* button = new ZButton(name, this);
+        auto* button = new ZButton(name, this);
         mButtons.push_back(button);
 
         button->setBackgroundColor(mColors.at(buttonIndex));
@@ -25,6 +25,7 @@ ZDrawer::ZDrawer(ZView *parent, vector<string> names, vector<vec4> colors) : ZSc
         button->setMarginTop(BUTTON_MARGIN);
         button->setMarginLeft(BUTTON_MARGIN);
         button->setMarginRight(BUTTON_MARGIN);
+        button->setCornerRadius(5);
         buttonIndex++;
     }
 
