@@ -49,6 +49,8 @@ public:
 
     ZLabel *getLabel();
 
+    void setBackgroundColor(vec4 color);
+
 private:
 int debug;
 	ZLabel* mLabel;
@@ -63,6 +65,7 @@ int debug;
 
     void onMouseOver() override;
     void onMouseLeave() override;
+
 };
 
 #endif

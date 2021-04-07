@@ -73,7 +73,7 @@ void ZNodeView::init() {
         if (getChartType(getType()) == LINE_1D || getChartType(getType()) == LINE_1D_2X) {
             if (mPointCache.empty()) {
                 return vector<float>(1, 0);
-            } else if (mPointCache.size() - 1 < x.at(0) || mPointCache.at(x.at(0)).empty()) {
+            } else if (x.empty() || mPointCache.size() - 1 < x.at(0) || mPointCache.at(x.at(0)).empty()) {
                 return vector<float>(1, 0);
             }
             return vector<float>(1, mPointCache.at(x.at(0)).at(lineIndex));

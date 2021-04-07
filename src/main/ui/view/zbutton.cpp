@@ -12,7 +12,6 @@ ZButton::ZButton(float maxWidth, float maxHeight) :
 	mLabel->setOffset(10, (maxHeight - 16) / 2);
 	mLabel->setText("Button");
 	mLabel->setGravity(ZView::topLeft);
-	mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
 	addSubView(mLabel);
 }
 
@@ -21,12 +20,13 @@ ZButton::ZButton(string label, ZView *parent) :
     mLabel = new ZLabel(std::move(label), this);
 
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     mLabel->setOffset(10, (getMaxHeight() - 16) / 2);
 
+    setCornerRadius(   12.5);
+    setBackgroundColor(highlight);
+
     setMargin(BTN_MARGIN, BTN_MARGIN, BTN_MARGIN, BTN_MARGIN);
-    setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
-    setHighlighColor(ZSettingsStore::getInstance().getBaseColor() + vec4(0.1,0.1,0.1,0.0));
+    setHighlighColor(highlight + vec4(0.1,0.1,0.1,0.0));
 }
 
 void ZButton::draw() {
@@ -117,4 +117,15 @@ void ZButton::setClickMode(ClickMode clickMode) {
 
 void ZButton::setOnClick(std::function<void()> onClick) {
     mOnClickSimple = std::move(onClick);
+}
+
+void ZButton::setBackgroundColor(vec4 color) {
+    ZView::setBackgroundColor(color);
+
+    vec3 color3 = vec3(color.r,color.g,color.b);
+    if (glm::length(color3) < 0.8 && color.a != 0) {
+        mLabel->setTextColor(white);
+    } else {
+        mLabel->setTextColor(black);
+    }
 }

@@ -12,8 +12,8 @@
 
 ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent) {
 
+    setCornerRadius(10);
     setBackgroundColor(base);
-
     setElevation(1.0);
 
     // Slider example
@@ -21,7 +21,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     float max = 1.0;
     mSlider = new ZSlider("", min, max, 0.0, this);
     //mSlider->setShowLabel(false);
-    mSlider->setMargin(vec4(0));
+    mSlider->setMargin(vec4(3));
     mSlider->setYOffset(0);
     mSlider->setMaxHeight(20);
     mSlider->setGravity(bottomLeft);
@@ -36,6 +36,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
 
     mName = new ZLabel("", this);
     mName->setYOffset(25);
+    mName->setXOffset(5);
 
     mRangeContainer = new ZView(fillParent, 30, this);
     mRangeContainer->setGravity(topLeft);
@@ -61,10 +62,12 @@ void ZMagnitudePicker::initializeRadioButtons() {
         mRadioButtonLabels.at(index)->setOutlineType(outline);
         mRadioButtonLabels.at(index)->setMargin(vec4(0));
         mRadioButtonLabels.at(index)->setTextColor(vec3(0));
+        mRadioButtonLabels.at(index)->setLineWidth(2);
+        mRadioButtonLabels.at(index)->setOutlineColor(grey);
+        mRadioButtonLabels.at(index)->setCornerRadius(vec4(2,2,2,2));
 
         mRadioButtonLabels.at(index)->setMaxWidth(rangeWidth);
         mRadioButtonLabels.at(index)->setXOffset(rangeWidth * index);
-
 
         if (index == mSelectedMagnitude) {
             mRadioButtonLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());

@@ -279,7 +279,7 @@ void ZView::draw() {
 //        } else
 
 
-        if (backgroundColor.a > 0 && length(mCornerRadius) == 0) {
+        if (length(mCornerRadius) < 0.01) {
             mShader->use();
             glUniformMatrix4fv(glGetUniformLocation(mShader->mID, "uVPMatrix"), 1, GL_FALSE, glm::value_ptr(scaleMat));
 
@@ -380,6 +380,7 @@ void ZView::drawShadow() {
         //mShadowView->setVisibility(false);
         mShadowView->setBackgroundImage(shadow);
         mShadowView->setOffset(offset, offset);
+        mShadowView->setGravity(topLeft);
        // mShadowView->setBackgroundColor(blue);
     }
 
@@ -389,6 +390,7 @@ void ZView::drawShadow() {
             ZShadowRenderer::get().updateShadow(mShadowView->mBackgroundImage->getID(), getWidth(), getHeight(), shadowRadius);
             mShadowView->setMaxWidth(getWidth() + shadowRadius);
             mShadowView->setMaxHeight(getHeight() + shadowRadius);
+            mShadowView->setOffset(offset, offset);
         }
 
         if (getWidth() > 1 && getHeight() > 1) {

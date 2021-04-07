@@ -129,12 +129,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mLaplaceBtn = new ZButton("Laplace", this);
     mLaplaceBtn->setGravity(topRight);
-    mLaplaceBtn->setMaxWidth(100);
+    mLaplaceBtn->setMaxWidth(70);
     mLaplaceBtn->setMaxHeight(25);
-    mLaplaceBtn->setCornerRadius(   vec4(12.5, 12.5, 0.0,0.0));
-    mLaplaceBtn->setBackgroundColor(highlight);
-    mLaplaceBtn->setHighlighColor(highlight);
-    mLaplaceBtn->getLabel()->setTextColor(white);
     mLaplaceBtn->setYOffset(30);
     mLaplaceBtn->setXOffset(10);
     mLaplaceBtn->setOnClick([this](){

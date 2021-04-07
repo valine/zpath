@@ -10,7 +10,7 @@
 ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
     mBackground = new ZView(200, 25, this);
-    mBackground->setBackgroundColor(grey);
+    mBackground->setBackgroundColor(lightGrey);
     mButtonHeight = maxHeight;
 
     mTitle = new ZLabel("Dropdown", this);
@@ -36,8 +36,8 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     for (const string& item : items) {
         auto* button = new ZButton(item, mDrawer);
         button->setIndexTag(index);
+        button->setCornerRadius(0);
         button->setBackgroundColor(vec4(0,0,0,0));
-        button->getLabel()->setTextColor(ZSettingsStore::get().getBaseTextColor());
         button->setClickMode(ZButton::ClickMode::upAndDown);
         button->setOnClick([this, item](ZView* sender){
             selectItem(sender->getIndexTag());

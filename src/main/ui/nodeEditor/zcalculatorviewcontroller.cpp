@@ -15,18 +15,23 @@ void ZCalculatorViewController::onCreate() {
     int yOffset = 30;
     int start = 30;
     int buttonWidth = 100;
-    int margin = 10;
+    int margin = 0;
     auto* evaluate = new ZButton("Evaluate", this);
+    float cr = evaluate->getMaxHeight() / 2;
     evaluate->setXOffset(start);
+    evaluate->setCornerRadius(vec4(0,cr,cr,0));
     evaluate->setBackgroundColor(highlight);
     evaluate->setYOffset(yOffset);
     evaluate->setMaxWidth(buttonWidth);
+    evaluate->setElevation(1.0);
+    evaluate->getLabel()->setTextColor(white);
     evaluate->setGravity(Gravity::bottomRight);
     evaluate->setOnClick([output, field](){
         string result = CasUtil::get().evaluate(field->getText());
         output->setText(CasUtil::get().evaluate(field->getText()));
     });
 
+    field->setCornerRadius(vec4(cr,0,0,cr));
     field->setOffset(start + buttonWidth + margin,yOffset);
     field->setMaxWidth(start + buttonWidth + margin + 150);
     field->setMaxHeight(evaluate->getMaxHeight());
@@ -40,7 +45,7 @@ void ZCalculatorViewController::onCreate() {
     });
     setBackgroundColor(bg);
 
-    output->setYOffset(field->getOffsetY() + evaluate->getHeight() + margin);
+    output->setYOffset(field->getOffsetY() + evaluate->getHeight() + 10);
     output->setXOffset(evaluate->getLocalRight() + margin);
     output->setGravity(Gravity::bottomRight);
     output->setMaxWidth(field->getMaxWidth());
