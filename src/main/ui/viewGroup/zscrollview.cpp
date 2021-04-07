@@ -17,7 +17,7 @@ void ZScrollView::init() {
 	mScrollBar = new ZView(7,100);
 	addSubView(mScrollBar);
 	mScrollBar->setOffset(3,0);
-	mScrollBar->setBackgroundColor(vec4(0.5,0.5,0.5,1));
+	mScrollBar->setBackgroundColor(vec4(0.5,0.5,0.5,0.3));
 	mScrollBar->setGravity(ZView::topRight);
 
 	mInnerView = new ZLinearLayout(getWidth(), getHeight());

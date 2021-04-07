@@ -131,7 +131,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mLaplaceBtn->setGravity(topRight);
     mLaplaceBtn->setMaxWidth(100);
     mLaplaceBtn->setMaxHeight(25);
-    mLaplaceBtn->setCornerRadius(   12.5);
+    mLaplaceBtn->setCornerRadius(   vec4(12.5, 12.5, 0.0,0.0));
     mLaplaceBtn->setBackgroundColor(highlight);
     mLaplaceBtn->setHighlighColor(highlight);
     mLaplaceBtn->getLabel()->setTextColor(white);

@@ -49,17 +49,17 @@ void ZNodeView::init() {
     auto socketType = getSocketType();
 
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
-        auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
-        socket->setOffset(2, yOffset + i * (SOCKET_SIZE + margin));
+        auto* socket = new ZView(SOCKET_WIDTH, SOCKET_HEIGHT, this);
+        socket->setOffset(2, yOffset + i * (SOCKET_HEIGHT + margin));
         socket->setClickable(false);
         mSocketsIn.push_back(socket);
     }
 
     // Add output sockets
     for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
-        auto* socket = new ZView(SOCKET_SIZE, SOCKET_SIZE, this);
+        auto* socket = new ZView(SOCKET_WIDTH, SOCKET_HEIGHT, this);
         socket->setGravity(topRight);
-        socket->setOffset(2, yOffset + i * (SOCKET_SIZE + margin));
+        socket->setOffset(2, yOffset + i * (SOCKET_HEIGHT + margin));
         socket->setClickable(false);
         mSocketsOut.push_back(socket);
     }
@@ -330,7 +330,13 @@ void ZNodeView::setType(ZNodeView::Type type) {
                 }
             }
 
-            mSocketsIn.at(i)->setCornerRadius(vec4(2, SOCKET_SIZE / 2, SOCKET_SIZE / 2, 2));
+            // First socket round corner a little more
+            if (i == 0) {
+                mSocketsIn.at(i)->setCornerRadius(vec4(3, SOCKET_HEIGHT / 2, SOCKET_HEIGHT / 2, 0));
+            } else {
+                mSocketsIn.at(i)->setCornerRadius(vec4(0, SOCKET_HEIGHT / 2, SOCKET_HEIGHT / 2, 0));
+            }
+
         }
     }
     vec4 darkenVec = vec4(0.5,0.4,0.4,0.0);
@@ -352,14 +358,21 @@ void ZNodeView::setType(ZNodeView::Type type) {
             }
         }
 
-        mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_SIZE / 2, 2, 2, SOCKET_SIZE / 2));
+        // First socket round corner a little more
+        if (i == 0) {
+            mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_HEIGHT / 2, 3, 0, SOCKET_HEIGHT / 2));
+        } else {
+
+            mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_HEIGHT / 2, 0, 0, SOCKET_HEIGHT / 2));
+        }
+
     }
 
     // Always set max height to be large enough to fit all sockets
     setMaxWidth(getNodeSize(mType).x);
     if (socketCount.x > 0) {
         setMaxHeight(std::max((int) mSocketsIn.at(socketCount.x - 1)->getOffsetY() +
-                              SOCKET_SIZE + CHART_TOP_MARGIN, (int) getNodeSize(mType).y));
+                              SOCKET_HEIGHT + CHART_TOP_MARGIN, (int) getNodeSize(mType).y));
     } else {
         setMaxHeight(getNodeSize(mType).y);
     }
@@ -705,7 +718,7 @@ void ZNodeView::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
 
     vec2 mouse = getRelativeMouse();
-    int size = SOCKET_SIZE + SOCKET_SIZE;
+    int size = SOCKET_HEIGHT + SOCKET_HEIGHT;
     if (mouse.x < size && mouse.x > -size && mouse.y > 0 && mouse.y < getMaxHeight()) {
         int index = 0;
         if (getSocketCount().x > 0) {

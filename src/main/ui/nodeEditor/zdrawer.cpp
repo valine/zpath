@@ -25,7 +25,8 @@ ZDrawer::ZDrawer(ZView *parent, vector<string> names, vector<vec4> colors) : ZSc
         button->setMarginTop(BUTTON_MARGIN);
         button->setMarginLeft(BUTTON_MARGIN);
         button->setMarginRight(BUTTON_MARGIN);
-        button->setCornerRadius(5);
+        button->setCornerRadius(vec4(0,button->getMaxHeight() / 2,
+                                     button->getMaxHeight() / 2, 0));
         buttonIndex++;
     }
 

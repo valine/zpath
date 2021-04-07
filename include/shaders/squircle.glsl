@@ -39,11 +39,12 @@ void main() {
     float bottomLeft = pow(vposx, minDimen / uRadius.w) +
                        pow(vposy, minDimen / uRadius.w);
 
+    float cornerFalloff = 0.5;
 
-    float isTop = (vPos.y + 1.0) / 2.0;
-    float isLeft = (-vPos.x + 1.0) / 2.0;
-    float isBottom = (-vPos.y + 1.0) / 2.0;
-    float isRight = (vPos.x + 1.0) / 2.0;
+    float isTop = float(vPos.y > 0.0);
+    float isLeft = float(vPos.x < 0.0);
+    float isBottom = 1.0 - isTop;
+    float isRight = 1.0 - isLeft;
 
     float val = (topLeft * isTop * isLeft) +
                 (topRight * isTop * isRight) +

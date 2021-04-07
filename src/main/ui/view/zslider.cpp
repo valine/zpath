@@ -6,18 +6,21 @@ ZSlider::ZSlider(float maxWidth, float maxHeight, string label):
 ZView(maxWidth, maxHeight) {
 	float lineHeight = SLIDER_THUMB_SIZE;
 	mLine = new ZView(getWidth(), lineHeight);
+    mLine->setCornerRadius(SLIDER_THUMB_SIZE / 2);
 	mLine->setOffset(0,getHeight() / 2 - (lineHeight / 2));
 	mLine->setBackgroundColor(ZSettingsStore::getInstance().getInactiveColor());
 	mLine->setGravity(ZView::bottomLeft);
 	addSubView(mLine);
 
 	mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
+    mHighlight->setCornerRadius(SLIDER_THUMB_SIZE / 2);
 	setFillColor(ZSettingsStore::getInstance().getHighlightColor());
 	mHighlight->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
 	mHighlight->setGravity(ZView::bottomLeft);
 	addSubView(mHighlight);
 
 	mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
+    mThumb->setCornerRadius(2);
 	mThumb->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
 	mThumb->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
 	mThumb->setGravity(ZView::bottomLeft);
@@ -47,18 +50,25 @@ ZView(ZView::fillParent, 50, parent){
     setBackgroundColor(parent->getBackgroundColor());
     float lineHeight = SLIDER_THUMB_SIZE;
     mLine = new ZView(getWidth(), lineHeight);
+    mLine->setCornerRadius(SLIDER_THUMB_SIZE / 2);
     mLine->setOffset(0, Y_OFFSET - (lineHeight / 2));
     mLine->setBackgroundColor(ZSettingsStore::getInstance().getInactiveColor());
     mLine->setGravity(ZView::bottomLeft);
     addSubView(mLine);
 
+    float cr = SLIDER_THUMB_SIZE / 2;
     mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
+    mHighlight->setCornerRadius(vec4(cr, 0,0, cr));
+
     setFillColor(ZSettingsStore::getInstance().getHighlightColor());
     mHighlight->setOffset(0, Y_OFFSET - (SLIDER_THUMB_SIZE / 2));
     mHighlight->setGravity(ZView::bottomLeft);
     addSubView(mHighlight);
 
     mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
+    mThumb->setCornerRadius(SLIDER_THUMB_SIZE / 2);
+    mThumb->setLineWidth(0.0);
+    mThumb->setOutlineColor(transparent);
     mThumb->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
     mThumb->setOffset(0, Y_OFFSET - (SLIDER_THUMB_SIZE / 2));
     mThumb->setGravity(ZView::bottomLeft);
@@ -94,13 +104,15 @@ void ZSlider::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
  	if (action == GLFW_RELEASE) {
 
-		float offset = mThumb->getOffsetX();
+        float cr = (SLIDER_THUMB_SIZE / 2);
+
+        float offset = mThumb->getOffsetX();
 		float maxOffset = (float) (getWidth() - SLIDER_THUMB_SIZE);
 		float factor = (float) offset / maxOffset;
 		float value = ((mMaxValue - mMinValue) * factor) + mMinValue;
 		float incValue = roundf(value / mIncrement) * mIncrement;
  
- 		mHighlight->setMaxWidth(mThumb->getOffsetX() + 1);
+ 		mHighlight->setMaxWidth(mThumb->getOffsetX() + 1 + cr);
 
  		mValue = incValue;
  		if (mListener != nullptr) {
@@ -130,6 +142,7 @@ void ZSlider::onKeyPress(int key, int scancode, int action, int mods) {
 void ZSlider::onCursorPosChange(double x, double y) {
 	ZView::onCursorPosChange(x, y);
 
+	float cr = (SLIDER_THUMB_SIZE / 2);
 	float scale = getScale().x;
 	if (mouseIsDown() && !shiftKeyPressed() && !altKeyPressed()) {
 		float newOffset = mInitialThumb + (x - mInitialOffset);
@@ -142,7 +155,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 
 		int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
-		mHighlight->setMaxWidth(newOffset + 1);
+		mHighlight->setMaxWidth(newOffset + 1 + cr);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && shiftKeyPressed() && !altKeyPressed()) {
         int deltaX = getMouseDragDelta().x;
@@ -156,7 +169,7 @@ void ZSlider::onCursorPosChange(double x, double y) {
 
 		int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 		mThumb->setOffset(newOffset, yPosition);
-		mHighlight->setMaxWidth(newOffset + 1);
+		mHighlight->setMaxWidth(newOffset + 1 + cr);
 		valueChanged(newOffset);
 	} else if (mouseIsDown() && !shiftKeyPressed() && altKeyPressed()) {
         int deltaX = getMouseDragDelta().x;
@@ -207,9 +220,10 @@ void ZSlider::onScrollChange(double x, double y) {
 		newOffset = getWidth() - SLIDER_THUMB_SIZE;
 	}
 
+    float cr = (SLIDER_THUMB_SIZE / 2);
 	int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
 	mThumb->setOffset(newOffset, yPosition);
-	mHighlight->setMaxWidth(newOffset + 1);
+	mHighlight->setMaxWidth(newOffset + 1 + cr);
 	valueChanged(newOffset);
 }
 
@@ -218,6 +232,7 @@ void ZSlider::setListener(ZSliderListener* listener) {
 }
 
 void ZSlider::valueChanged(float offset) {
+    float cr = (SLIDER_THUMB_SIZE / 2);
 	float maxOffset = (float) (getWidth() - SLIDER_THUMB_SIZE);
 	float factor = (float) offset / maxOffset;
 	float value = ((mMaxValue - mMinValue) * factor) + mMinValue;
@@ -233,13 +248,13 @@ void ZSlider::valueChanged(float offset) {
         mLabel->setText(mTitle + " " + output);
     }
 	if (mListener != nullptr && !altKeyPressed()) {
-		mHighlight->setMaxWidth(offset + 1);
+		mHighlight->setMaxWidth(offset + 1 + cr);
 		mListener->onSliderValueChanged(this, incValue);
 
 	}
 
 	if (mSlideListener != nullptr) {
-        mHighlight->setMaxWidth(offset + 1);
+        mHighlight->setMaxWidth(offset + 1 + cr);
         mSlideListener(this, incValue, false);
 	}
 	invalidate();
@@ -254,7 +269,9 @@ void ZSlider::setMinValue(float min) {
 }
 
 void ZSlider::setValue(float value) {
-	float maxOffset = (float) (getWidth() - SLIDER_THUMB_SIZE);
+    float cr = (SLIDER_THUMB_SIZE / 2);
+
+    float maxOffset = (float) (getWidth() - SLIDER_THUMB_SIZE);
 	float factor = (value - mMinValue) / (mMaxValue - mMinValue);
 	float offset = factor * maxOffset;
 	int yPosition = Y_OFFSET - (SLIDER_THUMB_SIZE / 2);
@@ -267,7 +284,7 @@ void ZSlider::setValue(float value) {
 	}
 
 	mThumb->setOffset(newOffset, yPosition);
-	mHighlight->setMaxWidth(newOffset);
+	mHighlight->setMaxWidth(newOffset + cr);
 	valueChanged(newOffset);
 }
 

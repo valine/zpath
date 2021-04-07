@@ -720,7 +720,7 @@ void ZView::addSubView(ZView *view) {
     view->setParentView(this);
     view->setRootView(mRootView);
     view->onDpChange(mDP);
-
+    view->updateCornerRadius();
     if (mShader != nullptr) {
         view->setShader(mShader);
         view->setTextShader(mTextShader);
