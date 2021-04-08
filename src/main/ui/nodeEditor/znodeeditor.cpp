@@ -475,6 +475,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     if (node->getParentView() != mNodeContainer) {
         mNodeContainer->addSubView(node);
     }
+    deselectNode(node);
     node->setCornerRadius(5);
     node->setVisibility(true);
     mNodeViews.push_back(node);
@@ -605,7 +606,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
 
     node->resetInitialPosition();
     node->invalidateSingleNode();
-    deselectNode(node);
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
@@ -730,8 +730,8 @@ void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last
 
 void ZNodeEditor::selectNode(ZNodeView* node) {
     if (node->getVisibility()) {
+        node->setLineWidth(6.0);
         node->setOutlineColor(gold);
-        node->setLineWidth(3.0);
         node->setElevation(SELECTED_ELEVATION);
         node->bringToFront();
 

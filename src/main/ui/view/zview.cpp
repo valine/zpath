@@ -357,13 +357,13 @@ void ZView::updateCornerRadius() {
         if (mRoundedRect == nullptr) {
             auto tex = ZCornerRenderer::get().
                     createTexture(getWidth() * mDP, getHeight() * mDP,
-                                  getBackgroundColor(), mOutlineColor, mLineWidth, mCornerRadius * mDP);
+                                  getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mCornerRadius * mDP);
             mRoundedRect = tex;
         } else {
             ZCornerRenderer::get().
                     draw(getWidth() * mDP, getHeight() * mDP,
                          mCornerRadius * mDP,
-                         getBackgroundColor(), mOutlineColor, mLineWidth, mRoundedRect, false);
+                         getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mRoundedRect, false);
         }
     }
 }
@@ -1200,6 +1200,7 @@ string ZView::getName() {
 
 void ZView::setLineWidth(float width) {
     mLineWidth = width;
+    updateCornerRadius();
 }
 
 void ZView::setAllowNegativeSize(bool allow) {

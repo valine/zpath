@@ -89,13 +89,11 @@ public:
         return 0;
     }
 
-
     static ZCornerRenderer& get(){
         static ZCornerRenderer instance; // Guaranteed to be destroyed.
         // Instantiated on first use.
         return instance;
     }
-
 
 private:
 
@@ -129,7 +127,7 @@ private:
 
         for (int i = 0; i < mTmpVec.size(); i++) {
             int multiple = 500;
-            int intValue = (int) (floor(mTmpVec.at(i) * 100));
+            int intValue = (int) (floor(mTmpVec.at(i) * 1000));
             hashValue += (intValue * (long) pow(multiple, i));
         }
         return hashValue;

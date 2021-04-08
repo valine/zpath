@@ -23,9 +23,7 @@ public:
     }
 
     static ZSettingsStore& get(){
-        static ZSettingsStore instance; // Guaranteed to be destroyed.
-        // Instantiated on first use.
-        return instance;
+        return getInstance();
     }
 
     vec4 getHighlightColor();
