@@ -70,6 +70,24 @@ public:
         return 5;
     }
 
+    /**
+     * Returns true if the parentheses are valid.
+     * @param symbols
+     * @return
+     */
+    bool validateParentheses(vector<string> symbols) {
+        int count = 0;
+        for (string symbol : symbols) {
+            if (symbol == "(") {
+                count++;
+            } else if (symbol == ")") {
+                count--;
+            }
+        }
+
+        return count == 0;
+    }
+
     string graphToString(ZNodeView* root) {
 
         string expression;
@@ -222,6 +240,11 @@ public:
         vector<string> tokens = getTokens(testString);
 
         if (tokens.empty()) {
+            return vector<ZNodeView*>();
+        }
+
+        // check for parentheses issues
+        if (!validateParentheses(tokens)) {
             return vector<ZNodeView*>();
         }
 
