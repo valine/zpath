@@ -3,6 +3,8 @@
 
 static const int DEFAULT_OFFSET = 25;
 
+static const int MARGIN = 30;
+
 #include "zview.h"
 #include <iostream>
 #include <map>
@@ -33,6 +35,8 @@ public:
 
     void selectItem(int index);
     void setDynamicTitle(bool dynamic);
+
+    void wrapTitle();
 
 private:
 	ZLabel* mTitle;

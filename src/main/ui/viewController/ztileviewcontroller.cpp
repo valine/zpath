@@ -53,7 +53,7 @@ void ZTileViewController::onLayoutFinished() {
     mContent->setMarginBottom(BOTTOM_MARGIN);
     addSubView(mContent);
 
-    mHandle = new ZView(vec2(30), this);
+    mHandle = new ZView(vec2(25), this);
     mHandle->setGravity(topRight);
     mHandle->setBackgroundImage(new ZTexture(getResourcePath() + "resources/icons/tile.png"));
 

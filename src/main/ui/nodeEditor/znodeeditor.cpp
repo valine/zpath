@@ -80,11 +80,15 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
+    auto* headerBackground = new ZView(fillParent, 25, this);
+    headerBackground->setBackgroundColor(lightGrey);
+
     mHeader = new ZView(fillParent, fillParent, this);
 
     auto* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(0, 0);
-    dropDown->setTitle("All Nodes");
+    dropDown->setTitle("Nodes");
+    dropDown->wrapTitle();
     dropDown->setDynamicTitle(false);
     dropDown->setOnItemChange([this](int index){
         auto type = static_cast<ZNodeView::Type>(index);
@@ -100,6 +104,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
     complexDropdown->setOffset(100, 0);
     complexDropdown->setTitle("Trig");
+    complexDropdown->setOffset(dropDown->getLocalRight(), 0);
+    complexDropdown->wrapTitle();
     complexDropdown->setDynamicTitle(false);
     complexDropdown->setOnItemChange([this, complexTypes](int index){
         ZNodeView::Type type = complexTypes.at(index);
@@ -107,8 +113,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     });
 
     auto* viewDropDown = new ZDropDown(100,800, {"Snap to Nodes"}, mHeader);
-    viewDropDown->setOffset(200, 0);
+    viewDropDown->setOffset(complexDropdown->getLocalRight(), 0);
     viewDropDown->setTitle("View");
+    viewDropDown->wrapTitle();
     viewDropDown->setDynamicTitle(false);
     viewDropDown->setOnItemChange([this](int index){
         // Center view
@@ -124,12 +131,12 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto* buttonPanel = new ZLinearLayout(80, fillParent, this);
     buttonPanel->setGravity(topRight);
     buttonPanel->setYOffset(30);
-    buttonPanel->setXOffset(10);
+    buttonPanel->setXOffset(5);
 
     mLaplaceBtn = new ZButton("Laplace", buttonPanel);
     float cr = (float) mLaplaceBtn->getMaxHeight() / 2;
     mLaplaceBtn->setMaxWidth(fillParent);
-    mLaplaceBtn->setCornerRadius(vec4(cr,cr,0,0));
+    mLaplaceBtn->setCornerRadius(vec4(0,0,0,0));
     mLaplaceBtn->setMaxHeight(25);
     mLaplaceBtn->setOnClick([this](){
 
@@ -138,7 +145,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Button example
     auto* addNodeBtn = new ZButton("Add node", buttonPanel);
     addNodeBtn->setMarginTop(2);
-    addNodeBtn->setCornerRadius(vec4(0,0,0,0));
+    addNodeBtn->setCornerRadius(vec4(0,0,0,cr));
     addNodeBtn->setOnClick([this](ZView* btn){
         addNode(mLastType);
     });
