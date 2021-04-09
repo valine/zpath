@@ -46,21 +46,25 @@ void ZView::setup(float maxWidth, float maxHeight, ZView *parent) {
 
 void ZView::onKeyPress(int key, int scancode, int action, int mods) {
 
+    bool modifier = false;
     if ((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) && action == GLFW_PRESS) {
         mShiftKeyPressed = true;
+        modifier = true;
     } else if ((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) && action == GLFW_RELEASE) {
         mShiftKeyPressed = false;
+        modifier = true;
     }
 
     if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_PRESS) {
         mAltKeyPressed = true;
+        modifier = true;
     } else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_RELEASE) {
         mAltKeyPressed = false;
+        modifier = true;
     }
 
-
     for (auto & mView : mViews) {
-        if ((isMouseInBounds(mView)) || action == GLFW_RELEASE) {
+        if ((isMouseInBounds(mView)) || (action == GLFW_RELEASE && modifier)) {
             mView->onKeyPress(key, scancode, action, mods);
         }
     }
@@ -262,7 +266,9 @@ void ZView::draw() {
         glViewport(0, 0, mWindowWidth * mDP, mWindowHeight * mDP);
 
         // Update scale, useful for zooming a view out
-        mat4 projection = ortho(0.0f, (float) mWindowWidth, (float) mWindowHeight, 0.0f, -1.0f, 10.0f);
+        mat4 projection = ortho(0.0f, (float)
+            mWindowWidth, (float) mWindowHeight,
+        0.0f, -1.0f, 10.0f);
         vec2 absoluteScale = getScale();
         mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
 
@@ -277,7 +283,6 @@ void ZView::draw() {
 //        if (glm::length(mCornerRadius) > 0) {
 //            //updateCornerRadius();
 //        } else
-
 
         if (length(mCornerRadius) < 0.01) {
             mShader->use();
@@ -323,8 +328,6 @@ void ZView::draw() {
             glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
         }
 
-
-
         if (mBackgroundImage != nullptr) {
             mImageShader->use();
 
@@ -338,7 +341,6 @@ void ZView::draw() {
             glBindVertexArray(mVAO);
             glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
         }
-
 
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -887,7 +889,6 @@ int ZView::calculateLeft() {
     float parentLeft = mParentView->getLeft() / scale + translation.x;
     float parentRight = mParentView->getRight() / scale + translation.x;
 
-
     if (mParentView == this) {
         mLeft = thisLeft;
         return mLeft;
@@ -1262,6 +1263,10 @@ void ZView::removeSubView(int index) {
 
 ZView::~ZView(){}
 
+ZView* ZView::getFocusedView() {
+    return getParentView()->getFocusedView();
+}
+
 bool ZView::isViewInFocus() {
     return getParentView()->isViewInFocus();
 }
@@ -1269,6 +1274,7 @@ bool ZView::isViewInFocus() {
 void ZView::requestFocus(ZView* view) {
     getParentView()->requestFocus(view);
 }
+
 void ZView::releaseFocus(ZView *forView) {
     getParentView()->releaseFocus(forView);
 }

@@ -58,12 +58,12 @@ public:
     void onScrollChange(double x, double y) override;
 	void onFileDrop(int count, const char** paths) override;
 
-
     void onCharacterInput(unsigned int character) override;
 
 	bool isViewInFocus() override;
 	void requestFocus(ZView* view) override;
     void releaseFocus(ZView *forView) override;
+    ZView* getFocusedView() override;
 
 	void setDrawingEnabled(bool);
 private:

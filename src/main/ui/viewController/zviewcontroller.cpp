@@ -204,3 +204,7 @@ void ZViewController::onCharacterInput(unsigned int character) {
     }
 
 }
+
+ZView *ZViewController::getFocusedView() {
+    return mFocusedView;
+}

@@ -47,6 +47,9 @@ void ZDrawer::onCursorPosChange(double x, double y) {
 
 void ZDrawer::onGlobalMouseUp(int key) {
     ZScrollView::onGlobalMouseUp(key);
+    if (isViewInFocus()) {
+        return;
+    }
     if (mSelected != -1 && getMouseDragDelta().x < 10) {
         if (mOnItemClicked != nullptr) {
             mOnItemClicked(mSelected);
@@ -57,6 +60,9 @@ void ZDrawer::onGlobalMouseUp(int key) {
 void ZDrawer::onMouseEvent(int button, int action, int mods, int x, int y) {
     ZScrollView::onMouseEvent(button, action, mods, x, y);
     if (action == GLFW_PRESS) {
+        if (isViewInFocus()) {
+            return;
+        }
         int index = 0;
         for (ZView* view : mButtons) {
             if (isMouseInBounds(view)) {

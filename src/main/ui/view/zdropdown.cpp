@@ -109,11 +109,12 @@ void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
             releaseFocus(this);
 		}
 	}
+
+	mDrawer->onMouseEvent(button,action,mods,x,y);
 }
 
 void ZDropDown::onKeyPress(int key, int scancode, int action, int mods) {
 	ZView::onKeyPress(key, scancode, action, mods);
-
 }
 
 int ZDropDown::getMaxHeight() {

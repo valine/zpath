@@ -116,6 +116,7 @@ class ZView {
         float getZCursorPosition();
 
         virtual bool isViewInFocus();
+        virtual ZView* getFocusedView();
         virtual void requestFocus(ZView* view);
         virtual void releaseFocus(ZView *forView);
 
@@ -323,6 +324,7 @@ class ZView {
     void setCornerRadius(vec4 radius) {
         mCornerRadius = radius;
         computeBounds();
+        updateCornerRadius();
     }
 
     void setCornerRadius(float radius) {
@@ -466,7 +468,7 @@ private:
     void cacheScale();
 
     void addViewFromDraw(ZView *view);
-void setComsumeClicks();
+    void setComsumeClicks();
 
     void clearFocus();
 

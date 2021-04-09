@@ -38,8 +38,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
     mNodeContainer->setXOffset(100);
-    
-    mHeader = new ZView(fillParent, fillParent, this);
 
     mTmpLine = new ZLineView(vec2(20, 20), vec2(200, 200), mLineContainer);
     mTmpLine->setVisibility(false);
@@ -56,11 +54,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     auto* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
-    // Button example
-    auto* addNodeBtn = new ZButton("Add node", mHeader);
-    addNodeBtn->setOnClick([this](ZView* btn){
-        addNode(mLastType);
-    });
+
 
     mDrawer = new ZDrawer(this, allTypes, allColors);
     mDrawer->setMarginTop(25);
@@ -86,10 +80,10 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
-
+    mHeader = new ZView(fillParent, fillParent, this);
 
     auto* dropDown = new ZDropDown(100,800, allTypes, mHeader);
-    dropDown->setOffset(150, 0);
+    dropDown->setOffset(0, 0);
     dropDown->setTitle("All Nodes");
     dropDown->setDynamicTitle(false);
     dropDown->setOnItemChange([this](int index){
@@ -104,7 +98,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             ZNodeView::Type::TAN,
             ZNodeView::Type::EXP,};
     auto* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
-    complexDropdown->setOffset(250, 0);
+    complexDropdown->setOffset(100, 0);
     complexDropdown->setTitle("Trig");
     complexDropdown->setDynamicTitle(false);
     complexDropdown->setOnItemChange([this, complexTypes](int index){
@@ -113,7 +107,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     });
 
     auto* viewDropDown = new ZDropDown(100,800, {"Snap to Nodes"}, mHeader);
-    viewDropDown->setOffset(350, 0);
+    viewDropDown->setOffset(200, 0);
     viewDropDown->setTitle("View");
     viewDropDown->setDynamicTitle(false);
     viewDropDown->setOnItemChange([this](int index){
@@ -127,14 +121,26 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
 
-    mLaplaceBtn = new ZButton("Laplace", this);
-    mLaplaceBtn->setGravity(topRight);
-    mLaplaceBtn->setMaxWidth(70);
+    auto* buttonPanel = new ZLinearLayout(80, fillParent, this);
+    buttonPanel->setGravity(topRight);
+    buttonPanel->setYOffset(30);
+    buttonPanel->setXOffset(10);
+
+    mLaplaceBtn = new ZButton("Laplace", buttonPanel);
+    float cr = (float) mLaplaceBtn->getMaxHeight() / 2;
+    mLaplaceBtn->setMaxWidth(fillParent);
+    mLaplaceBtn->setCornerRadius(vec4(cr,cr,0,0));
     mLaplaceBtn->setMaxHeight(25);
-    mLaplaceBtn->setYOffset(30);
-    mLaplaceBtn->setXOffset(10);
     mLaplaceBtn->setOnClick([this](){
 
+    });
+
+    // Button example
+    auto* addNodeBtn = new ZButton("Add node", buttonPanel);
+    addNodeBtn->setMarginTop(2);
+    addNodeBtn->setCornerRadius(vec4(0,0,0,0));
+    addNodeBtn->setOnClick([this](ZView* btn){
+        addNode(mLastType);
     });
 
 
