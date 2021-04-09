@@ -259,6 +259,11 @@ void ZNodeEditor::snapViewToNodes() {
     }
 }
 
+void ZNodeEditor::onSizeChange() {
+    ZView::onSizeChange();
+    updateLines();
+}
+
 
 /**
  * Add a graph to the node view. This is usually a list of pre-connected

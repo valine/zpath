@@ -174,6 +174,8 @@ private:
     void snapViewToNodes();
 
     void testCorners();
+
+    void onSizeChange();
 };
 
 
