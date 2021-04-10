@@ -120,11 +120,6 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             mRightMouseDown = false;
         }
 
-//        if (action == GLFW_RELEASE) {
-//            onMouseDrag(vec2(sx, sy), vec2(mMouseDownX, mMouseDownY),
-//                        vec2(sx - mMouseDownX, sy - mMouseDownY), mouseUp);
-//        }
-
         if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
             mMouseDown = true;
         }
@@ -1306,4 +1301,10 @@ void ZView::onMouseLeave() {
 
 void ZView::setComsumeClicks() {
 
+}
+
+void ZView::onDoubleClick() {
+    for (ZView* child : getSubViews()) {
+        child->onDoubleClick();
+    }
 }

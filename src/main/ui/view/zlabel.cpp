@@ -94,7 +94,7 @@ void ZLabel::drawText() {
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
-    GLfloat x = 0;
+    GLfloat x = getCornerRadius().x;
     GLfloat y = 5;
 
     float vHeight = getHeight();
@@ -124,7 +124,7 @@ void ZLabel::drawText() {
             char newLine = '\n';
             if (ac == newLine) {
                 y -= lineHeight;
-                x = 0;
+                x = getCornerRadius().x;
                 mLineIndices.push_back(mPoints.size());
             } else {
                 // Update VBO for each character

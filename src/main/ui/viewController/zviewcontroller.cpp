@@ -100,6 +100,15 @@ void ZViewController::onWindowChange(int width, int height) {
 
 
 void ZViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
+    long clickTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    if (action == GLFW_PRESS) {
+        if (clickTime - mLastClickTime < 500 && abs(glm::distance(mLastClickPosition, vec2(x,y))) < 5) {
+            onDoubleClick();
+        }
+        mLastClickTime = clickTime;
+        mLastClickPosition = vec2(x,y);
+    }
+
     if (getVisibility()) {
         ZView::onMouseEvent(button, action, mods, x, y);
     }
@@ -111,6 +120,8 @@ void ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
             }
         }
     }
+
+
 }
 
 void ZViewController::onCursorPosChange(double x, double y) {

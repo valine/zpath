@@ -24,6 +24,7 @@
 using namespace std;
 using namespace glm;
 
+using namespace chrono;
 
 class ZView {
 
@@ -88,6 +89,7 @@ class ZView {
          * Called when mouse up anywhere on the screen
          */
         virtual void onGlobalMouseUp(int key);
+        virtual void onDoubleClick();
 
         virtual void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button);
         virtual void onSizeChange();
@@ -332,6 +334,10 @@ class ZView {
         computeBounds();
     }
 
+    vec4 getCornerRadius() {
+        return mCornerRadius;
+    }
+
 private:
 
     bool mNeedsRender = true;
@@ -461,6 +467,8 @@ private:
         bool mConsumeClicks = false;
 
         vec4 mCornerRadius = vec4(0);
+
+
     void drawShadow();
 
     void setup(float maxWidth, float maxHeight, ZView *parent);

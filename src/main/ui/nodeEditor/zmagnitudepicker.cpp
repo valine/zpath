@@ -13,7 +13,7 @@
 ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent) {
 
     setCornerRadius(10);
-    setBackgroundColor(base);
+    setBackgroundColor(white);
     setElevation(1.0);
 
     // Slider example

@@ -70,7 +70,12 @@ private:
 	int mParentWidth = 0;
 	int mParentHeight = 0;
 
-	ZShader *mUIShader = nullptr;
+	vec2 mLastClickPosition = vec2(0);
+    long mLastClickTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+    long mLastDoubleClickTime = 0;
+
+
+    ZShader *mUIShader = nullptr;
 	ZShader *mTextShader = nullptr;
 	ZShader *mImageViewShader;
 

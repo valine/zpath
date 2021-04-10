@@ -73,6 +73,7 @@ private:
     int mBoxMode = NO_BOX_SELECT;
 
     bool mGrab = false;
+    bool mWasDoubleClick = false;
 
     set<ZNodeView*> mSelectedNodes;
     ZNodeView* mLastSelected = nullptr;
@@ -176,6 +177,12 @@ private:
     void testCorners();
 
     void onSizeChange();
+
+    void selectNodeGraph(ZNodeView *root, int depth);
+
+    void onDoubleClick();
+
+    void selectNodeGraphUnderMouse();
 };
 
 

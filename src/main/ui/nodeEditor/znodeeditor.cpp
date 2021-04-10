@@ -264,7 +264,6 @@ void ZNodeEditor::onSizeChange() {
     updateLines();
 }
 
-
 /**
  * Add a graph to the node view. This is usually a list of pre-connected
  * nodes
@@ -364,6 +363,26 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
 
 }
 
+void ZNodeEditor::selectNodeGraph(ZNodeView* root, int depth) {
+    selectNode(root);
+
+    set<ZNodeView*> uniqueChildren;vector<vector<pair<ZNodeView *, int>>> inputIndices = root->mInputIndices;
+
+    for (const vector<pair<ZNodeView *, int>>& socketInputs : inputIndices) {
+        for (pair<ZNodeView*, int> input : socketInputs) {
+            ZNodeView* child = input.first;
+
+            if (uniqueChildren.count(child) == 0) {
+                uniqueChildren.insert(child);
+            }
+        }
+    }
+
+    for (ZNodeView* node : uniqueChildren) {
+        selectNodeGraph(node, depth + 1);
+    }
+}
+
 void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
     set<ZNodeView*> uniqueChildren;
     vector<ZNodeView*> children;
@@ -387,6 +406,7 @@ void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
 
     deleteNode(root);
 }
+
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
     vector<string> names;
     for (ZNodeView::Type type : types) {
@@ -1094,13 +1114,14 @@ void ZNodeEditor::onMouseUp(int button) {
 
     // If not shift select and user did not drag,
     // select the single drag node on mouse up.
-    if (!wasMouseDrag() && !shiftKeyPressed() && nodeIndex != -1 && button != GLFW_MOUSE_BUTTON_2) {
+    if (!wasMouseDrag() && !shiftKeyPressed() && nodeIndex != -1 &&
+        button != GLFW_MOUSE_BUTTON_2 && !mWasDoubleClick) {
         deselectAllNodes();
         selectNode(mNodeViews.at(nodeIndex));
     }
 
     // Toggle node selection when shift key pressed
-    if (mPendingDeselect != nullptr && !wasMouseDrag()) {
+    if (mPendingDeselect != nullptr && !wasMouseDrag() && !mWasDoubleClick) {
         deselectNode(mPendingDeselect);
     }
     mPendingDeselect = nullptr;
@@ -1115,6 +1136,7 @@ void ZNodeEditor::onMouseUp(int button) {
         updateBoxSelect();
     }
     exitBoxSelectMode();
+    mWasDoubleClick = false;
 }
 
 void ZNodeEditor::resetNodeInitialPosition() {
@@ -1217,10 +1239,31 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
         duplicateSelectedNodes();
     }
 
+    else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+        selectNodeGraphUnderMouse();
+    }
+
     else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT)) {
         mInitialOffset = getMouse();
         resetNodeInitialPosition();
     }
+}
+
+void ZNodeEditor::selectNodeGraphUnderMouse() {
+    int nodeIndex = getMouseOverNode();
+    if (nodeIndex != -1) {
+        ZNodeView* mouseOverNode = mNodeViews.at(getMouseOverNode());
+        if (!shiftKeyPressed()) {
+            deselectAllNodes();
+        }
+        selectNodeGraph(mouseOverNode, 0);
+    }
+}
+
+void ZNodeEditor::onDoubleClick() {
+    ZView::onDoubleClick();
+    selectNodeGraphUnderMouse();
+    mWasDoubleClick = true;
 }
 
 void ZNodeEditor::onScrollChange(double x, double y) {

@@ -163,7 +163,8 @@ void ZUtil::saveGlFBOMain(const char *file, int x, int y, int w, int h) {
 }
 
 void ZUtil::saveView(ZView *v) {
-    saveGlFBOMain((getHomeFolder() + "/Desktop/view").c_str(), v->getLeft(), v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
+    saveGlFBOMain((getHomeFolder() + "/Desktop/view.png").c_str(), v->getLeft(),
+                  v->getWindowHeight() - v->getBottom(), v->getWidth(), v->getHeight());
 }
 
 void ZUtil::chart(float *points, int size, float max) {
