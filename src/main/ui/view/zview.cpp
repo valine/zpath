@@ -248,6 +248,8 @@ void ZView::setTag(string tag) {
 }
 
 void ZView::draw() {
+    initBuffers();
+
     if (mVisible && mNeedsRender) {
         if (mVertsInvalid) {
             glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -314,9 +316,8 @@ void ZView::draw() {
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, mRoundedRect->getID());
-
-
-            mImageShader->setVec4("uTint", mBackgroundColor);
+            
+            mImageShader->setVec4("uTint", white);
 
             // Update scale, useful for zooming a view out
             glUniformMatrix4fv(glGetUniformLocation(mImageShader->mID, "uVPMatrix"), 1,
@@ -407,53 +408,58 @@ float ZView::getElevation() {
 
 void ZView::init() {
     computeBounds();
+}
 
-    glGenBuffers(1, &mVertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float),  &mVertices, GL_STATIC_DRAW);
+void ZView::initBuffers() {
+    if (!mBuffersInit) {
+        mBuffersInit = true;
+        glGenBuffers(1, &mVertexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glBufferData(GL_ARRAY_BUFFER, 16 * sizeof(float), &mVertices, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &mFaceIndicesBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, FACE_INDEX_COUNT * sizeof(int), &mFaceIndices, GL_STATIC_DRAW);
+        glGenBuffers(1, &mFaceIndicesBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, FACE_INDEX_COUNT * sizeof(int), &mFaceIndices, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &mEdgeIndicesBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, EDGE_INDEX_COUNT * sizeof(int), &mEdgeIndices, GL_STATIC_DRAW);
+        glGenBuffers(1, &mEdgeIndicesBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, EDGE_INDEX_COUNT * sizeof(int), &mEdgeIndices, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &mOutlineIndicesBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, OUTLINE_INDEX_COUNT * sizeof(int), &mOutlineIndices, GL_STATIC_DRAW);
+        glGenBuffers(1, &mOutlineIndicesBuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, OUTLINE_INDEX_COUNT * sizeof(int), &mOutlineIndices, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &mTexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), mTexCoords, GL_STATIC_DRAW);
+        glGenBuffers(1, &mTexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+        glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), mTexCoords, GL_STATIC_DRAW);
 
-    glGenVertexArrays(1, &mVAO);
-    glBindVertexArray(mVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-    glBindVertexArray(0);
+        glGenVertexArrays(1, &mVAO);
+        glBindVertexArray(mVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mFaceIndicesBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+        glBindVertexArray(0);
 
-    glGenVertexArrays(1, &mEdgeVAO);
-    glBindVertexArray(mEdgeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-    glBindVertexArray(0);
+        glGenVertexArrays(1, &mEdgeVAO);
+        glBindVertexArray(mEdgeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEdgeIndicesBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+        glBindVertexArray(0);
 
-    glGenVertexArrays(1, &mOutlineVAO);
-    glBindVertexArray(mOutlineVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
-    glBindVertexArray(0);
+        glGenVertexArrays(1, &mOutlineVAO);
+        glBindVertexArray(mOutlineVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mOutlineIndicesBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
+        glBindVertexArray(0);
+    }
 }
 
 void ZView::setShader(ZShader *shader) {

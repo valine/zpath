@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
     }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator"}, true, nullptr);
 
 
+   // tiles->triggerSideSplit(0.5, 0);
     ZApplication(tiles, "zpath", false, 1200, 800, "resources/icons/zpath.png");
 
     //ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, textEditor, view3d});

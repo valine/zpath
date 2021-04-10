@@ -31,7 +31,7 @@ void ZTileViewController::onLayoutFinished() {
     setBackgroundColor(darkerGrey);
     int defaultController = 1;
 
-    if (mParentTile != nullptr) {
+    if (mParentTile != nullptr && getIndexTag() == -1) {
         defaultController = mParentTile->getIndexTag();
     }
 
@@ -68,34 +68,7 @@ void ZTileViewController::onLayoutFinished() {
     mJoinGuide->setVisibility(false);
 
     mDropDown->setOnItemChange([this](int index){
-        for (ZViewController* controller : mControllers) {
-            if (controller != nullptr) {
-                controller->setVisibility(false);
-            }
-        }
-
-        if(mControllers.at(index) == nullptr) {
-            mControllers.at(index) = mControllerFactory(index);
-            mContent = mControllers.at(index);
-            mContent->setDrawingEnabled(false);
-            mContent->setOutlineType(outline);
-            mContent->setLineWidth(2);
-            mContent->setYOffset(1);
-            mContent->setXOffset(1);
-            mContent->setMarginBottom(BOTTOM_MARGIN);
-            addSubView(mContent);
-            getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-        } else {
-            mControllers.at(index)->setVisibility(true);
-            mContent = mControllers.at(index);
-        }
-
-        setIndexTag(index);
-        mHandle->bringToFront();
-        mDropDown->bringToFront();
-
-        invalidate();
-
+        selectController(index);
     });
 
     mIndexLabel = new ZLabel("-1", this);
@@ -103,6 +76,36 @@ void ZTileViewController::onLayoutFinished() {
     mIndexLabel->setYOffset(2);
     mIndexLabel->setTextColor(grey);
     mIndexLabel->setMaxWidth(15);
+}
+
+void ZTileViewController::selectController(int index) {
+    for (ZViewController* controller : mControllers) {
+        if (controller != nullptr) {
+            controller->setVisibility(false);
+        }
+    }
+
+    if(mControllers.at(index) == nullptr) {
+        mControllers.at(index) = mControllerFactory(index);
+        mContent = mControllers.at(index);
+        mContent->setDrawingEnabled(false);
+        mContent->setOutlineType(outline);
+        mContent->setLineWidth(2);
+        mContent->setYOffset(1);
+        mContent->setXOffset(1);
+        mContent->setMarginBottom(BOTTOM_MARGIN);
+        addSubView(mContent);
+        getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+    } else {
+        mControllers.at(index)->setVisibility(true);
+        mContent = mControllers.at(index);
+    }
+
+    setIndexTag(index);
+    mHandle->bringToFront();
+    mDropDown->bringToFront();
+
+    invalidate();
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
@@ -185,7 +188,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
 
                 ///////////////Step 2: trigger split or join
                 if (delta.x < -DRAG_THRESHOLD) {
-                    triggerSideSplit();
+                    triggerSideSplit(0, -1);
                 } else if (delta.x > DRAG_THRESHOLD) {
                     mDragType = pendingHorizontalJoin;
                     updateHorizontalJoinGuide();
@@ -195,7 +198,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->bringToFront();
                     }
                 } else if (delta.y > DRAG_THRESHOLD) {
-                    triggerOverUnderSplit();
+                    triggerOverUnderSplit(0, -1);
                 } else if (delta.y < -DRAG_THRESHOLD) {
                     mDragType = pendingVerticalJoin;
                     updateVerticalJoinGuide();
@@ -506,7 +509,7 @@ void ZTileViewController::resetController() {
 
 //////////
 /// Split tiles
-void ZTileViewController::triggerSideSplit() {
+void ZTileViewController::triggerSideSplit(float percent, int controllerIndex) {
 
     /////////////// Step 3: create views after split
 
@@ -518,10 +521,12 @@ void ZTileViewController::triggerSideSplit() {
         ZTileViewController* rightTile;
         if (mChildrenTiles.empty()) {
             leftTile = new ZTileViewController(getResourcePath(),
-                                               mControllerFactory, mNames, false, mContent);
+                                               mControllerFactory,
+                                               mNames, false, mContent);
             rightTile = new ZTileViewController(getResourcePath(),
-                                                mControllerFactory, mNames, false, nullptr);
-
+                                                mControllerFactory,
+                                                mNames, false, nullptr);
+            rightTile->setIndexTag(controllerIndex);
             leftTile->mParentTile = this;
             rightTile->mParentTile = this;
 
@@ -532,24 +537,25 @@ void ZTileViewController::triggerSideSplit() {
             rightTile = mChildrenTiles.at(1);
         }
 
+        float leftPercent = 1.0 - percent;
         leftTile->setParentView(this);
         leftTile->setDrawingEnabled(false);
-       // leftTile->mHandle->bringToFront();
         leftTile->setVisibility(true);
         leftTile->setTileIndex(0);
         leftTile->mTileType = horizontalTile;
         leftTile->mParentTile = this;
-        mChildrenTiles.push_back(leftTile);
+        leftTile->setXOffset(getWidth() * percent);
+        leftTile->setMaxWidth(getWidth() * leftPercent);
 
+        mChildrenTiles.push_back(leftTile);
 
         rightTile->setDrawingEnabled(false);
         rightTile->setVisibility(true);
-        rightTile->setMaxWidth(0);
-        rightTile->setXOffset(getWidth());
+        rightTile->setMaxWidth(getWidth() * leftPercent);
+        rightTile->setXOffset(getWidth() * percent);
         rightTile->setParentView(this);
         rightTile->mParentTile = this;
         rightTile->setTileIndex(1);
-       // rightTile->mHandle->bringToFront();
         rightTile->mTileType = horizontalTile;
 
         mChildrenTiles.push_back(rightTile);
@@ -569,10 +575,9 @@ void ZTileViewController::triggerSideSplit() {
     }
 
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
-
 }
 
-void ZTileViewController::triggerOverUnderSplit() {// Trigger split
+void ZTileViewController::triggerOverUnderSplit(float percent, int controllerIndex) {// Trigger split
 
     /////////////// Step 3: create views after split
 
@@ -583,10 +588,13 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
         ZTileViewController* leftTile;
         ZTileViewController* rightTile;
         if (mChildrenTiles.empty()) {
-            leftTile = new ZTileViewController(getResourcePath(),
-                                               mControllerFactory, mNames, false, mContent);
-            rightTile = new ZTileViewController(getResourcePath(),
-                                                mControllerFactory, mNames, false, nullptr);
+            leftTile = new ZTileViewController(
+                    getResourcePath(),mControllerFactory,
+                    mNames, false, mContent);
+            rightTile = new ZTileViewController(
+                    getResourcePath(),mControllerFactory,
+                    mNames, false, nullptr);
+            rightTile->setIndexTag(controllerIndex);
 
             leftTile->mParentTile = this;
             rightTile->mParentTile = this;
@@ -598,6 +606,8 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
             rightTile = mChildrenTiles.at(1);
         }
 
+        float percentLeft = 1.0 - percent;
+
         leftTile->setParentView(this);
         leftTile->setDrawingEnabled(false);
         // leftTile->mHandle->bringToFront();
@@ -605,13 +615,15 @@ void ZTileViewController::triggerOverUnderSplit() {// Trigger split
         leftTile->setTileIndex(0);
         leftTile->mTileType = verticalTile;
         leftTile->mParentTile = this;
+        leftTile->setMaxHeight(getHeight() * percentLeft);
+        leftTile->setYOffset(getHeight() * percentLeft);
         mChildrenTiles.push_back(leftTile);
 
 
         rightTile->setDrawingEnabled(false);
         rightTile->setVisibility(true);
-        rightTile->setMaxHeight(0);
-        rightTile->setYOffset(0);
+        rightTile->setMaxHeight(getHeight() * percent);
+        rightTile->setYOffset(getHeight() * percent);
         rightTile->setParentView(this);
         rightTile->mParentTile = this;
         rightTile->setTileIndex(1);
@@ -701,7 +713,8 @@ void ZTileViewController::triggerJoinTopToBottom(int index) {
             int offset = 0;
             int height = getHeight();
             if (mChildrenTiles.size() > index + 1) {
-                offset = mChildrenTiles.at(index + 1)->getOffsetY() + mChildrenTiles.at(index + 1)->getMaxHeight();
+                offset = mChildrenTiles.at(index + 1)->getOffsetY() +
+                        mChildrenTiles.at(index + 1)->getMaxHeight();
             }
 
             if (index - 1 >= 0) {

@@ -59,9 +59,9 @@ void main() {
 
     vec4 color = mix(uOutlineColor, uColor, outline);
     float intensity = 1.0;
-   	fragColor.r = 1.0;
-   	fragColor.g = 1.0;
-   	fragColor.b = 1.0;
+   	fragColor.r = color.r;
+   	fragColor.g = color.g;
+   	fragColor.b = color.b;
    	fragColor.a = isOn;
 }
 )"

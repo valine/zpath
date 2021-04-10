@@ -37,6 +37,9 @@ public:
 
     int keepFirst = 9;
     int keepSecond = 10;
+
+    void triggerSideSplit(float percent, int controllerIndex);
+
 private:
 
     bool mIsRoot = false;
@@ -73,10 +76,9 @@ private:
     ZTileViewController* mParentTile = nullptr;
     ZViewController* mContent = nullptr;
 
-    void triggerSideSplit();
     void triggerSideJoinLeftToRight(int index);
     void triggerSideJoinRightToLeft(int index);
-    void triggerOverUnderSplit();
+    void triggerOverUnderSplit(float percent, int controllerIndex);
 
 
     void setTileIndex(int index);
@@ -98,6 +100,8 @@ private:
     void updateVerticalJoinGuide();
 
     void onTileEdgeDrag(const vec2 &delta);
+
+    void selectController(int index);
 };
 
 

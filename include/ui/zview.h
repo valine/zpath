@@ -344,7 +344,8 @@ class ZView {
 
 private:
 
-    bool mNeedsRender = true;
+        bool mBuffersInit = false;
+        bool mNeedsRender = true;
 		bool mVertsInvalid = false;
 
 		bool mCreateComplete = false;
@@ -451,7 +452,7 @@ private:
 		vector<ZView*> mViews;
 		vector<ZView*> mPendingViews;
 		string mTag;
-		int mIndexTag{};
+		int mIndexTag = -1;
 
         int mLeft = 0;
         int mRight = 0;
@@ -474,6 +475,7 @@ private:
         vec4 mCornerRadius = vec4(0);
 
 
+
     void drawShadow();
 
     void setup(float maxWidth, float maxHeight, ZView *parent);
@@ -486,6 +488,8 @@ private:
     void clearFocus();
 
     void updateCornerRadius();
+
+    void initBuffers();
 };
 
 #endif
