@@ -1341,7 +1341,7 @@ void ZNodeEditor::updateBoxSelect() {
     vec2 max1 = vec2(std::max(p1.x, p2.x), std::max(p1.y, p2.y));
 
     for (ZNodeView* node : mNodeViews) {
-        vec2 p3 = node->getOffset();
+        vec2 p3 = node->getOffset() + mNodeContainer->getOffset();
         vec2 p4 = p3 + node->getSize();
 
         vec2 min2  = vec2(std::min(p3.x, p4.x), std::min(p3.y, p4.y)) +
