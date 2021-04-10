@@ -338,6 +338,10 @@ class ZView {
         return mCornerRadius;
     }
 
+    void setTint(vec4 tint) {
+        mTint = tint;
+    }
+
 private:
 
     bool mNeedsRender = true;
@@ -364,6 +368,7 @@ private:
 
 		vec4 mBackgroundColor = vec4(0);
         vec4 mHighlightColor = vec4(0);
+        vec4 mTint = vec4(1);
 		vec4 mOutlineColor = transparent;
 		bool mShowHighlight = false;
 

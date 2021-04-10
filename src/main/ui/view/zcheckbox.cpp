@@ -55,7 +55,9 @@ ZCheckbox::ZCheckbox(string label, ZView *parent)  :
     setCheckColor(ZSettingsStore::getInstance().getBaseColor());
     setVisibility(true);
     parent->addSubView(this);
+    mCheck->setTint(highlight);
 }
+
 
 
 ZCheckbox::ZCheckbox(string label, string resourcePath, ZView* parent) :

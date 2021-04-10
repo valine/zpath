@@ -315,6 +315,9 @@ void ZView::draw() {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, mRoundedRect->getID());
 
+
+            mImageShader->setVec4("uTint", mBackgroundColor);
+
             // Update scale, useful for zooming a view out
             glUniformMatrix4fv(glGetUniformLocation(mImageShader->mID, "uVPMatrix"), 1,
                                GL_FALSE, glm::value_ptr(scaleMat));
@@ -325,6 +328,8 @@ void ZView::draw() {
 
         if (mBackgroundImage != nullptr) {
             mImageShader->use();
+
+            mImageShader->setVec4("uTint", mTint);
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());

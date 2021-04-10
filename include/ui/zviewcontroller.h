@@ -103,7 +103,7 @@ private:
 	;
 
 	const string image_fs =
-	        #include "shaders/imageview.fs"
+	        #include "shaders/imageviewfs.glsl"
     ;
 };
 

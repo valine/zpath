@@ -111,11 +111,6 @@ private:
         mTmpVec.at(4) = radius.z;
         mTmpVec.at(5) = radius.a;
 
-        mTmpVec.at(6) = color.x;
-        mTmpVec.at(7) = color.y;
-        mTmpVec.at(8) = color.z;
-        mTmpVec.at(9) = color.a;
-
         mTmpVec.at(10) = outline.x;
         mTmpVec.at(11) = outline.y;
         mTmpVec.at(12) = outline.z;
@@ -133,6 +128,8 @@ private:
         return hashValue;
     }
 
+
+    unordered_map<long, unsigned int> mUsageCount;
     unordered_map<long, unsigned int> mTextureMap;
     unordered_map<unsigned int, long> mKeyMap;
 
