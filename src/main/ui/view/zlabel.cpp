@@ -68,7 +68,6 @@ void ZLabel::setBackgroundColor(vec4 color) {
 }
 
 void ZLabel::drawText() {
-
     if (getTextShader() == nullptr || getTextShader()->mID == -1) {
         return;
     }
@@ -218,6 +217,7 @@ void ZLabel::setTextSize(int textSize) {
 
 void ZLabel::setTextColor(vec3 color) {
     mTextColor = color;
+    mTextInvalid = true;
     invalidate();
 }
 

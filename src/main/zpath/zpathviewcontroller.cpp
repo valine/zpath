@@ -17,7 +17,7 @@ void ZPathViewController::onCreate() {
 	mScene = new BasicScene(getResourcePath());
 
     auto* tab1 = new ZScrollView(300, fillParent);
-    tab1->setName("Viewport Controls");
+    tab1->setName("Viewport");
     auto* tab2 = new ZScrollView(300, fillParent);
     tab2->setName("Other");
 
@@ -25,10 +25,15 @@ void ZPathViewController::onCreate() {
     tabView->setGravity(ZView::topRight);
 
     auto* label = new ZLabel("Controls", tab1);
-    label->setXOffset(10);
+    label->setXOffset(5);
+    label->setMarginTop(5);
 
     // Button Example
     auto* gridButton = new ZButton("Toggle Grid View", tab1);
+    gridButton->setCornerRadius(vec4(gridButton->getHeight() / 2,
+            gridButton->getHeight() / 2,0,0));
+    gridButton->setMarginLeft(5);
+    gridButton->setMarginTop(5);
     gridButton->setOnClick([this](ZView*) {
         if (mIsQuadView) {
             mIsQuadView = false;
@@ -40,6 +45,11 @@ void ZPathViewController::onCreate() {
     });
 
     auto* saveButton = new ZButton("SaveImage", tab1);
+    saveButton->setCornerRadius(vec4(0,0,
+                                     saveButton->getHeight() / 2,
+                                     saveButton->getHeight() / 2));
+    saveButton->setMarginLeft(5);
+    saveButton->setMarginTop(1);
     saveButton->setOnClick([this](ZView*){
         ZUtil::saveView(mTileView->getTiles().at(0));
     });
@@ -63,7 +73,7 @@ void ZPathViewController::onCreate() {
     mTileView->setGravity(ZView::topRight);
     addSubView(mTileView);
 
-    ZViewController* subViewController = new ZViewController(getResourcePath());
+    auto* subViewController = new ZViewController(getResourcePath());
     tab2->addSubView(subViewController);
 
     auto* slider2d = new Z2DSlider(200, 200, vec2(0,0), vec2(5), subViewController);

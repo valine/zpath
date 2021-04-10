@@ -136,7 +136,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mLaplaceBtn = new ZButton("Laplace", buttonPanel);
     float cr = (float) mLaplaceBtn->getMaxHeight() / 2;
     mLaplaceBtn->setMaxWidth(fillParent);
-    mLaplaceBtn->setCornerRadius(vec4(0,0,0,0));
+    mLaplaceBtn->setCornerRadius(vec4(cr,cr,0,0));
     mLaplaceBtn->setMaxHeight(25);
     mLaplaceBtn->setOnClick([this](){
 
@@ -144,12 +144,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     // Button example
     auto* addNodeBtn = new ZButton("Add node", buttonPanel);
-    addNodeBtn->setMarginTop(2);
-    addNodeBtn->setCornerRadius(vec4(0,0,0,cr));
+    addNodeBtn->setMarginTop(1);
+    addNodeBtn->setCornerRadius(vec4(0,0,cr,cr));
     addNodeBtn->setOnClick([this](ZView* btn){
         addNode(mLastType);
     });
-
 
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(this);
