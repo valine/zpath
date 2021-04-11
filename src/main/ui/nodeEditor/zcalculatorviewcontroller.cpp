@@ -14,7 +14,7 @@ void ZCalculatorViewController::onCreate() {
 
     int yOffset = 30;
     int start = 30;
-    int buttonWidth = 100;
+    int buttonWidth = 70;
     int margin = 0;
     auto* evaluate = new ZButton("Evaluate", this);
     float cr = evaluate->getMaxHeight() / 2;
