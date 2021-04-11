@@ -31,6 +31,9 @@ public:
 	void setNearClipping(float nearClipping);
     vector<Z3DView*> getTiles();
     void setAASamples(int samples);
+
+    void setZoom(float zoom);
+
 private:
 	int mTileCountX;
 	int mTileCountY;
@@ -45,4 +48,5 @@ private:
 	ZScene* mScene;
 	string mResourcePath;
 	vector<Z3DView*> mTiles;
+
 };

@@ -116,8 +116,6 @@ void ZRenderer::setWireMode(bool wiremode) {
 void ZRenderer::draw() {
     if (mScene != nullptr) {
         if (mParentView->getVisibility()) {
-
-
             updateAnimations();
             sortObjects();
             renderMain();

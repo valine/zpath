@@ -10,7 +10,7 @@ void ZCalculatorViewController::onCreate() {
     ZViewController::onCreate();
 
     auto* field = new ZTextField(this);
-    auto* output = new ZLabel("Output", this);
+    auto* output = new ZLabel("", this);
 
     int yOffset = 30;
     int start = 30;

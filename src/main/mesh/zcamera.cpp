@@ -88,10 +88,6 @@ int ZCamera::getHeight() {
 	return mHeight;
 }
 
-void ZCamera::setTranslation(vec3 translation) {
-	mTranslation = translation;
-}
-
 bool ZCamera::isPerspective() {
 	return mPerspective;
 }

@@ -38,7 +38,10 @@ public:
     int keepFirst = 9;
     int keepSecond = 10;
 
-    void triggerSideSplit(float percent, int controllerIndex);
+    ZTileViewController* triggerSideSplit(float percent, int controllerIndex);
+    ZTileViewController* triggerOverUnderSplit(float percent, int controllerIndex);
+
+    void triggerSideJoinLeftToRight(int index);
 
 private:
 
@@ -76,9 +79,7 @@ private:
     ZTileViewController* mParentTile = nullptr;
     ZViewController* mContent = nullptr;
 
-    void triggerSideJoinLeftToRight(int index);
     void triggerSideJoinRightToLeft(int index);
-    void triggerOverUnderSplit(float percent, int controllerIndex);
 
 
     void setTileIndex(int index);

@@ -63,9 +63,12 @@ int main(int argc, char* argv[]) {
 
     }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator"}, true, nullptr);
 
+    ZApplication(tiles, "zpath", false, 1200, 800, "resources/icons/zpath.png", [tiles](){
 
-   // tiles->triggerSideSplit(0.5, 0);
-    ZApplication(tiles, "zpath", false, 1200, 800, "resources/icons/zpath.png");
+        // Calculator
+        auto calculator = tiles->triggerSideSplit(0.25, 3);
+        auto textEditor = calculator->triggerOverUnderSplit(0.25, 0);
+    });
 
     //ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, textEditor, view3d});
    // ZApplication(tabs, "zpath", false, 1200, 800);

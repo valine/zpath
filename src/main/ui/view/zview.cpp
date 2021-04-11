@@ -316,7 +316,7 @@ void ZView::draw() {
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, mRoundedRect->getID());
-            
+
             mImageShader->setVec4("uTint", white);
 
             // Update scale, useful for zooming a view out

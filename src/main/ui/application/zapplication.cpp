@@ -48,9 +48,9 @@ ZApplication::ZApplication(vector<ZViewController*> controllers, string name, bo
     init(controllers, name, shouldPoll, windowWidth, windowHeight, nullptr);
 }
 
-
-ZApplication::ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth, int windowHeight,
-                           string icon) {
+ZApplication::ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth,
+                           int windowHeight, string icon, function<void()> onStart) {
+    mOnStartListener = std::move(onStart);
     vector<ZViewController*> controllers = {controller};
     init(controllers, std::move(name), shouldPoll, windowWidth, windowHeight, nullptr);
     mIconPath = std::move(icon);
@@ -214,6 +214,12 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
     viewController->onWindowChange(windowWidth, windowHeight);
     viewController->onLayoutFinished();
+
+
+    if (mOnStartListener != nullptr) {
+        mOnStartListener();
+    }
+
     viewController->onWindowChange(windowWidth, windowHeight);
     viewController->draw();
     glfwSwapBuffers(window);

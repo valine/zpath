@@ -14,7 +14,8 @@ public:
 	ZApplication(ZViewController* viewcontroller, string windowName);
 	ZApplication(ZViewController* controller, string name, bool shouldPoll);
 	ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight);
-    ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight, string icon);
+    ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth,
+                 int windowHeight, string icon, function<void()> onStart);
 
 
     ZApplication(vector<ZViewController*> controllers);
@@ -37,11 +38,13 @@ private:
     map<GLFWwindow*, ZViewController*> mWindows;
 	vector<ZViewController*> mViewControllers;
 	bool mShouldSwapBuffer = true;
+
+    function<void()> mOnStartListener = nullptr;
 	void init(vector<ZViewController *> controllers, string windowName, bool shouldPoll, int width, int height,
               ZApplication *application);
 	bool mShouldPoll = false;
 
-    static void startUiThread(ZViewController *viewController, bool shouldPoll, ZApplication *app, string windowName,
+	void startUiThread(ZViewController *viewController, bool shouldPoll, ZApplication *app, string windowName,
                               int width, int height);
 
     void onCharacterInput(unsigned int character, ZViewController *viewController);

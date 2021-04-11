@@ -29,10 +29,13 @@ void ZTileViewController::onLayoutFinished() {
     ZViewController::onLayoutFinished();
 
     setBackgroundColor(darkerGrey);
+
     int defaultController = 1;
 
     if (mParentTile != nullptr && getIndexTag() == -1) {
         defaultController = mParentTile->getIndexTag();
+    } else if (getIndexTag() != -1) {
+        defaultController = getIndexTag();
     }
 
     if (mContent == nullptr) {
@@ -509,16 +512,16 @@ void ZTileViewController::resetController() {
 
 //////////
 /// Split tiles
-void ZTileViewController::triggerSideSplit(float percent, int controllerIndex) {
+ZTileViewController* ZTileViewController::triggerSideSplit(float percent, int controllerIndex) {
 
     /////////////// Step 3: create views after split
+    ZTileViewController* leftTile;
+    ZTileViewController* rightTile;
 
     // Check if this needs to be a root tile
     if (mTileType != horizontalTile) {
         removeSubView(mContent);
 
-        ZTileViewController* leftTile;
-        ZTileViewController* rightTile;
         if (mChildrenTiles.empty()) {
             leftTile = new ZTileViewController(getResourcePath(),
                                                mControllerFactory,
@@ -544,15 +547,15 @@ void ZTileViewController::triggerSideSplit(float percent, int controllerIndex) {
         leftTile->setTileIndex(0);
         leftTile->mTileType = horizontalTile;
         leftTile->mParentTile = this;
-        leftTile->setXOffset(getWidth() * percent);
+        leftTile->setXOffset(0);
         leftTile->setMaxWidth(getWidth() * leftPercent);
 
         mChildrenTiles.push_back(leftTile);
 
         rightTile->setDrawingEnabled(false);
         rightTile->setVisibility(true);
-        rightTile->setMaxWidth(getWidth() * leftPercent);
-        rightTile->setXOffset(getWidth() * percent);
+        rightTile->setMaxWidth(getWidth() * percent);
+        rightTile->setXOffset(getWidth() * leftPercent);
         rightTile->setParentView(this);
         rightTile->mParentTile = this;
         rightTile->setTileIndex(1);
@@ -560,11 +563,14 @@ void ZTileViewController::triggerSideSplit(float percent, int controllerIndex) {
 
         mChildrenTiles.push_back(rightTile);
 
+        // Controller index is -1 when user drags the corner
         mSplitType = sideBySide;
-        mDragType = tileDrag;
-        mDragIndex = 1;
+        if (controllerIndex == -1) {
+            mDragType = tileDrag;
+            mDragIndex = 1;
+        }
 
-        mInitialBondary = getWidth();
+        mInitialBondary = getWidth() * leftPercent;
 
         mHandle->setVisibility(false);
         mDropDown->setVisibility(false);
@@ -575,68 +581,69 @@ void ZTileViewController::triggerSideSplit(float percent, int controllerIndex) {
     }
 
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+    return rightTile;
 }
 
-void ZTileViewController::triggerOverUnderSplit(float percent, int controllerIndex) {// Trigger split
+ZTileViewController* ZTileViewController::triggerOverUnderSplit(float percent, int controllerIndex) {// Trigger split
 
     /////////////// Step 3: create views after split
+    ZTileViewController* bottomTile;
+    ZTileViewController* topTile;
 
     // Check if this needs to be a root tile
     if (mTileType != verticalTile) {
         removeSubView(mContent);
 
-        ZTileViewController* leftTile;
-        ZTileViewController* rightTile;
         if (mChildrenTiles.empty()) {
-            leftTile = new ZTileViewController(
+            bottomTile = new ZTileViewController(
                     getResourcePath(),mControllerFactory,
                     mNames, false, mContent);
-            rightTile = new ZTileViewController(
+            topTile = new ZTileViewController(
                     getResourcePath(),mControllerFactory,
                     mNames, false, nullptr);
-            rightTile->setIndexTag(controllerIndex);
+            topTile->setIndexTag(controllerIndex);
 
-            leftTile->mParentTile = this;
-            rightTile->mParentTile = this;
+            bottomTile->mParentTile = this;
+            topTile->mParentTile = this;
 
-            addSubView(leftTile);
-            addSubView(rightTile);
+            addSubView(bottomTile);
+            addSubView(topTile);
         } else {
-            leftTile = mChildrenTiles.at(0);
-            rightTile = mChildrenTiles.at(1);
+            bottomTile = mChildrenTiles.at(0);
+            topTile = mChildrenTiles.at(1);
         }
 
         float percentLeft = 1.0 - percent;
 
-        leftTile->setParentView(this);
-        leftTile->setDrawingEnabled(false);
-        // leftTile->mHandle->bringToFront();
-        leftTile->setVisibility(true);
-        leftTile->setTileIndex(0);
-        leftTile->mTileType = verticalTile;
-        leftTile->mParentTile = this;
-        leftTile->setMaxHeight(getHeight() * percentLeft);
-        leftTile->setYOffset(getHeight() * percentLeft);
-        mChildrenTiles.push_back(leftTile);
+        bottomTile->setParentView(this);
+        bottomTile->setDrawingEnabled(false);
+        // bottomTile->mHandle->bringToFront();
+        bottomTile->setVisibility(true);
+        bottomTile->setTileIndex(0);
+        bottomTile->mTileType = verticalTile;
+        bottomTile->mParentTile = this;
+        bottomTile->setMaxHeight(getHeight() * percent);
+        bottomTile->setYOffset(getHeight() * percentLeft);
+        mChildrenTiles.push_back(bottomTile);
 
+        topTile->setDrawingEnabled(false);
+        topTile->setVisibility(true);
+        topTile->setMaxHeight(getHeight() * percentLeft);
+        topTile->setYOffset(0);
+        topTile->setParentView(this);
+        topTile->mParentTile = this;
+        topTile->setTileIndex(1);
+        // topTile->mHandle->bringToFront();
+        topTile->mTileType = verticalTile;
 
-        rightTile->setDrawingEnabled(false);
-        rightTile->setVisibility(true);
-        rightTile->setMaxHeight(getHeight() * percent);
-        rightTile->setYOffset(getHeight() * percent);
-        rightTile->setParentView(this);
-        rightTile->mParentTile = this;
-        rightTile->setTileIndex(1);
-        // rightTile->mHandle->bringToFront();
-        rightTile->mTileType = verticalTile;
-
-        mChildrenTiles.push_back(rightTile);
+        mChildrenTiles.push_back(topTile);
 
         mSplitType = overUnder;
-        mDragType = tileDrag;
-        mDragIndex = 1;
-
-        mInitialBondary = 0;
+        if (controllerIndex == -1) {
+            mDragType = tileDrag;
+            mDragIndex = 1;
+            mInitialBondary = getHeight() * percentLeft;
+        }
 
         mHandle->setVisibility(false);
         mDropDown->setVisibility(false);
@@ -647,6 +654,7 @@ void ZTileViewController::triggerOverUnderSplit(float percent, int controllerInd
     }
 
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
+    return topTile;
 }
 
 //////////

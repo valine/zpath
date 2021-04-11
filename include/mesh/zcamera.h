@@ -28,7 +28,6 @@ public:
 	void setWidth(int width);
 	void setHeight(int height);
 
-	void setTranslation(vec3 translation);
 	//vec3 getTranslation();
 
 	void setFocalLength(float focalLength);

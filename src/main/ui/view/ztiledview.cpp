@@ -1,11 +1,12 @@
 #include "ui/ztiledview.h"
 #include <iostream>
+#include <utility>
 #include <utils/zsettingsstore.h>
 
 ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tilesX, int tilesY, string resourcePath) 
 : ZView(maxWidth, maxHeight) {
    	mScene = scene;
-   	mResourcePath = resourcePath;
+   	mResourcePath = std::move(resourcePath);
 	setTileCount(tilesX, tilesY);
     setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
 }
@@ -21,7 +22,7 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 	int i = 0;
 	for (int x = 0; x < tilesX; x++) {
 		for (int y = 0; y < tilesY; y++) {
-			ZRenderer *renderer = new ZRenderer(mResourcePath);
+			auto *renderer = new ZRenderer(mResourcePath);
 			renderer->setScene(mScene);
 			
 			Z3DView *tile;
@@ -60,8 +61,8 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 }
 
 void ZTiledView::setPerspective(bool perspective) {
-	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
-    	(*it)->getRenderer()->getCamera()->setUsePerspective(perspective);
+	for (auto & mTile : mTiles) {
+    	mTile->getRenderer()->getCamera()->setUsePerspective(perspective);
     }
 }
 
@@ -71,21 +72,26 @@ void ZTiledView::setTileMargin(int margin) {
 }
 
 void ZTiledView::setNearClipping(float nearClipping) {
-	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
-    	(*it)->getRenderer()->getCamera()->setNearClipping(nearClipping);
+	for (auto & mTile : mTiles) {
+    	mTile->getRenderer()->getCamera()->setNearClipping(nearClipping);
     }
 }
 
 void ZTiledView::zoomBy(float zoom) {
-	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
-    	(*it)->getRenderer()->getCamera()->translateBy(vec3(0,0,zoom));
+	for (auto & mTile : mTiles) {
+    	mTile->getRenderer()->getCamera()->translateBy(vec3(0,0,zoom));
     }
+}
 
+void ZTiledView::setZoom(float zoom) {
+    for (auto & mTile : mTiles) {
+        mTile->setZoom(zoom);
+    }
 }
 
 void ZTiledView::setWireMode(bool wireMode) {
-	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
-    	(*it)->getRenderer()->setWireMode(wireMode);
+	for (auto & mTile : mTiles) {
+    	mTile->getRenderer()->setWireMode(wireMode);
     }
 }
 
@@ -127,8 +133,8 @@ ZScene* ZTiledView::getScene() {
 }
 
 void ZTiledView::setFocalLength(float focalLength) {
-	for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
-    	(*it)->getRenderer()->getCamera()->setFocalLength(focalLength);
+	for (auto & mTile : mTiles) {
+    	mTile->getRenderer()->getCamera()->setFocalLength(focalLength);
     }
 }
 	
@@ -146,7 +152,7 @@ vector<Z3DView *> ZTiledView::getTiles() {
 }
 
 void ZTiledView::setAASamples(int samples) {
-    for (vector<Z3DView*>::iterator it = mTiles.begin() ; it != mTiles.end(); ++it) {
-        (*it)->getRenderer()->setAASamples(samples);
+    for (auto & mTile : mTiles) {
+        mTile->getRenderer()->setAASamples(samples);
     }
 }

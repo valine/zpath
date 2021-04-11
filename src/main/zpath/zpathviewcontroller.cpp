@@ -17,11 +17,11 @@ void ZPathViewController::onCreate() {
 	mScene = new BasicScene(getResourcePath());
 
     auto* tab1 = new ZScrollView(300, fillParent);
-    tab1->setName("Viewport");
+    tab1->setName("Controls");
     auto* tab2 = new ZScrollView(300, fillParent);
     tab2->setName("Other");
 
-    auto tabView = new ZTabView(150, fillParent, {tab1, tab2}, this);
+    auto tabView = new ZTabView(120, fillParent, {tab1, tab2}, this);
     tabView->setGravity(ZView::topRight);
 
     auto* label = new ZLabel("Controls", tab1);
@@ -29,7 +29,7 @@ void ZPathViewController::onCreate() {
     label->setMarginTop(5);
 
     // Button Example
-    auto* gridButton = new ZButton("Toggle Grid View", tab1);
+    auto* gridButton = new ZButton("Toggle Grid", tab1);
     gridButton->setCornerRadius(vec4(gridButton->getHeight() / 2,
             gridButton->getHeight() / 2,0,0));
     gridButton->setMarginLeft(5);
@@ -44,7 +44,7 @@ void ZPathViewController::onCreate() {
         }
     });
 
-    auto* saveButton = new ZButton("SaveImage", tab1);
+    auto* saveButton = new ZButton("Save Image", tab1);
     saveButton->setCornerRadius(vec4(0,0,
                                      saveButton->getHeight() / 2,
                                      saveButton->getHeight() / 2));
@@ -60,7 +60,7 @@ void ZPathViewController::onCreate() {
         mScene->setExposure(v);
     });
 
-    auto checkBox = new ZCheckbox("Background blur", tab1);
+    auto checkBox = new ZCheckbox("Enable Blur", tab1);
     checkBox->setMarginTop(5);
     checkBox->setOnCheck([this](ZView* sender, bool checked){
         mScene->getWorld()->blurBackground(checked);
@@ -72,6 +72,8 @@ void ZPathViewController::onCreate() {
     mTileView->setOffset(tab1->getWidth(), 0);
     mTileView->setGravity(ZView::topRight);
     addSubView(mTileView);
+
+    mTileView->setZoom(3);
 
     auto* subViewController = new ZViewController(getResourcePath());
     tab2->addSubView(subViewController);
