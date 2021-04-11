@@ -19,7 +19,7 @@
 #include <ui/zdrawer.h>
 #include <utils/zcornerrenderer.h>
 #include "ui/znodeeditor.h"
-
+#include "utils/casutil.h"
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
 
@@ -140,6 +140,17 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mLaplaceBtn->setMaxHeight(25);
     mLaplaceBtn->setOnClick([this](){
 
+        cout << mSelectedNodes.size() << endl;
+        // Only works if one node selected
+        if (mSelectedNodes.size() == 1) {
+            ZNodeView *root = (*mSelectedNodes.begin());
+            string exp = ZNodeUtil::get().graphToString(root);
+            string laplace = "laplace(" + exp + ")";
+            string result = replace(CasUtil::get().evaluate(laplace), "\n", "");
+            string zResult = replace(result, "x", "z");
+            string heatResult = "heat(" + zResult + ")";
+            addNodeGraph(ZNodeUtil::get().stringToGraph(heatResult).at(0), vec2(10), 0);
+        }
     });
 
     // Button example
@@ -202,6 +213,16 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 //    testCorners();
 
 
+}
+
+string ZNodeEditor::replace(std::string subject, const std::string& search,
+                            const std::string& replace) {
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos) {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
+    return subject;
 }
 
 void ZNodeEditor::testCorners() {
@@ -946,7 +967,7 @@ void ZNodeEditor::onMouseDown() {
             // node to multiple nodes easily.
             if (mBoxMode == NO_BOX_SELECT && !rightMouseIsDown()) {
                 if (mSelectedNodes.count(node) == 0 && !shiftKeyPressed() &&
-                    !isMouseInBounds(mExpressionField)) {
+                    !clickConsumed()) {
                     deselectAllNodes();
                 }
 
@@ -1021,12 +1042,16 @@ void ZNodeEditor::onMouseDown() {
         i--;
     }
 
-    if (!mouseOverNode && mouseIsDown() && !isMouseInBounds(mExpressionField)) {
+    if (!mouseOverNode && mouseIsDown() && !clickConsumed()) {
         deselectAllNodes();
     }
 
     updateLines();
 
+}
+
+bool ZNodeEditor::clickConsumed() const {
+    return isMouseInBounds(mExpressionField) || isMouseInBounds(mLaplaceBtn);
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {

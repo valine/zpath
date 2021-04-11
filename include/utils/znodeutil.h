@@ -395,6 +395,7 @@ public:
     }
 
     static vector<string> getTokens(string input) {
+        input += "";
         vector<string> tokens;
         set<string> variables = {"x", "y", "z"};
 
@@ -447,8 +448,10 @@ public:
 
                 tokens.emplace_back(string(afterSplit));
             } else if (start < input.size()){
-                char d = fullInput[start];
-                tokens.emplace_back(string(1, d));
+                for (uint i = start; i < input.size(); i++) {
+                    char d = fullInput[i];
+                    tokens.emplace_back(string(1, d));
+                }
             }
         }
         
