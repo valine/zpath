@@ -1,4 +1,4 @@
-#include <utils/zimageutil.h>
+#include <utils/zutil.h>
 #include "ui/ztexture.h"
 
 #define STB_IMAGE_IMPLEMENTATION

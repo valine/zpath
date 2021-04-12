@@ -1,7 +1,7 @@
 #include "mesh/zrenderer.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
-#include <utils/zimageutil.h>
+#include <utils/zutil.h>
 
 ZRenderer::ZRenderer(string resourcePath) {
     mShader = new ZShader(base_vs, base_fs);

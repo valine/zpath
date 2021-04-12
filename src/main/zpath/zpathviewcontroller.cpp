@@ -2,7 +2,7 @@
 #include <utility>
 
 #include <ui/zchart.h>
-#include <utils/zimageutil.h>
+#include <utils/zutil.h>
 #include <ui/ztabview.h>
 #include <ui/zradiobutton.h>
 #include <ui/z2dslider.h>

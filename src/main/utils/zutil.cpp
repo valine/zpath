@@ -1,5 +1,5 @@
 
-#include "utils/zimageutil.h"
+#include "utils/zutil.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -13,6 +13,17 @@
 #include <ui/zchartrenderer.h>
 #include <pwd.h>
 #include "png.h"
+
+
+string ZUtil::replace(std::string subject, const std::string& search,
+                            const std::string& replace) {
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos) {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
+    return subject;
+}
 
 
 void ZUtil::saveImage(const char *file, float *pixels, int w, int h) {

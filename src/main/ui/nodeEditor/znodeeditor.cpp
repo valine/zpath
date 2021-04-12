@@ -12,14 +12,14 @@
 #include <ui/zcheckbox.h>
 #include <ui/zmagnitudepicker.h>
 #include <thread>
-#include <zconf.h>
 #include <utils/zsettingsstore.h>
-#include <utils/znodeutil.h>
 #include <ui/ztextfield.h>
 #include <ui/zdrawer.h>
 #include <utils/zcornerrenderer.h>
 #include "ui/znodeeditor.h"
+#include <utils/znodeutil.h>
 #include "utils/casutil.h"
+#include "utils/zutil.h"
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
 
@@ -146,8 +146,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             ZNodeView *root = (*mSelectedNodes.begin());
             string exp = ZNodeUtil::get().graphToString(root);
             string laplace = "laplace(" + exp + ")";
-            string result = replace(CasUtil::get().evaluate(laplace), "\n", "");
-            string zResult = replace(result, "x", "z");
+            string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
+            string zResult = ZUtil::replace(result, "x", "z");
             string heatResult = "heat(" + zResult + ")";
             addNodeGraph(ZNodeUtil::get().stringToGraph(heatResult).at(0), vec2(10), 0);
         }
@@ -204,25 +204,10 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     });
 
-
    //da addTestNodes();
-
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
-
 //    testCorners();
-
-
-}
-
-string ZNodeEditor::replace(std::string subject, const std::string& search,
-                            const std::string& replace) {
-    size_t pos = 0;
-    while ((pos = subject.find(search, pos)) != std::string::npos) {
-        subject.replace(pos, search.length(), replace);
-        pos += replace.length();
-    }
-    return subject;
 }
 
 void ZNodeEditor::testCorners() {

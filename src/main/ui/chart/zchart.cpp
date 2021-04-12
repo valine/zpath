@@ -3,7 +3,7 @@
 //
 
 #include <mesh/zobject.h>
-#include <utils/zimageutil.h>
+#include <utils/zutil.h>
 #include "ui/zchart.h"
 
 ZChart::ZChart(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {

@@ -14,6 +14,7 @@
 #include <sstream>
 #include <iomanip>
 #include <mutex>
+#include "utils/znodeutil.h"
 
 ZNodeView::ZNodeView(ZNodeView::Type type) : ZView(10, 10){
     init();
@@ -746,4 +747,283 @@ void ZNodeView::hideSocketLabels() {
             label->setVisibility(false);
         }
     }
+}
+
+vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type) {
+    vec2 chartBound = mChart->getXBounds();
+    float chartWidth = chartBound.y - chartBound.x;
+    vector<vector<float>> output;
+    for (uint d = 0; d < x.size(); d++) {
+        vector<float> in = x.at(d);
+
+        vector<float> out;
+        switch (type) {
+            case POLY: {
+                float in0 = x.at(REAL).at(0);
+                float term0 = x.at(REAL).at(1);
+                float term1 = x.at(REAL).at(2);
+                float term2 = x.at(REAL).at(3);
+                float term3 = x.at(REAL).at(4);
+
+                float out0 = (term3 * pow(in0, 3)) + (term2 * pow(in0, 2)) + (term1 * in0) + term0;
+
+                x.at(REAL).at(0) = out0;
+                x.at(REAL).at(1) = chartBound.x;
+                x.at(REAL).at(2) = chartWidth;
+
+                x.at(IMAG).at(0) = 0.0;
+                x.at(IMAG).at(1) = chartBound.x;
+                x.at(IMAG).at(2) = chartWidth;
+                return x;
+            }
+            case SIN: {
+                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                complex<float> out0 = sin(in0 * in1) * in2;
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case COS: {
+                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+                complex<float> out0 = cos(in0 * in1) * in2;
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case TAN: {
+                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> out0 = tan(in0);
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case ABS: {
+                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> out0 = abs(in0);
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case EXP: {
+                complex<float> comIn = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> comOut = exp(comIn);
+                return {{comOut.real(), chartBound.x, chartWidth},
+                        {comOut.imag(), chartBound.x, chartWidth}};
+            }
+            case SIGMOID: {
+                float in =x.at(REAL).at(0);
+                float out = 1.0 / (1.0 + exp(-in));
+                return {{out, chartBound.x, chartWidth},
+                        {0.0, chartBound.x, chartWidth}};
+            }
+            case TANH: {
+                float in =x.at(REAL).at(0);
+                float out = tanh(in);
+                return {{out, chartBound.x, chartWidth},
+                        {0.0, chartBound.x, chartWidth}};
+            }
+
+            case SQRT: {
+                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> out0 = sqrt(in0);
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case POW: {
+                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                complex<float> out0 = pow(in0, in1);
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case GAUSSIAN: {
+                complex<float> in0 = {x.at(REAL).at(0), 0};
+                complex<float> in1 = {x.at(REAL).at(1), 0};
+                complex<float> in2 = {x.at(REAL).at(2), 0};
+                complex<float> two = {2.0, 0};
+                complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case MORLET: {
+                auto real = (float) (
+                        cos(in.at(0) * in.at(4)) * // sinusoid
+                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))));
+
+                auto imaginary = (float) (
+                        sin(in.at(0) * in.at(4)) * // sinusoid
+                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))));
+                return {{real,      chartBound.x, chartWidth},
+                        {imaginary, chartBound.x, chartWidth}};
+            }
+
+            case ADD: {
+                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+                complex<float> out0 = in0 + in1;
+                return {{out0.real(), chartBound.x, chartWidth},
+                        {out0.imag(), chartBound.x, chartWidth}};
+            }
+            case SUBTRACT:
+                out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
+                break;
+            case MULTIPLY: {
+                complex<float> a = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+                complex<float> b = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+
+                auto result = a * b;
+                return {{result.real(), chartBound.x, chartWidth},
+                        {result.imag(), chartBound.x, chartWidth}};
+            }
+            case DIVIDE: {
+                float a = x.at(REAL).at(1);
+                float b = x.at(IMAG).at(1);
+                float c = x.at(REAL).at(0);
+                float e = x.at(IMAG).at(0);
+
+                float denom = pow(a, 2) + pow(b, 2);
+
+                float r = (c * a + b * e) / denom;
+                float img = (a * d - c * e) / denom;
+                return {{r, chartBound.x, chartWidth},
+                        {{img, chartBound.x, chartWidth}}};
+            }
+            case C:
+                x.at(REAL) = mConstantValueOutput;
+                x.at(IMAG).at(0) = 0;
+                return x;
+
+            case CI:
+                x.at(REAL).at(0) = 0;
+                x.at(IMAG) = mConstantValueOutput;
+                return x;
+            case X:
+                x.at(REAL).at(0) = x.at(REAL).at(0);
+                x.at(REAL).at(1) = chartBound.x;
+                x.at(REAL).at(2) = chartWidth;
+
+                x.at(IMAG).at(0) = 0;
+                x.at(IMAG).at(1) = chartBound.x;
+                x.at(IMAG).at(2) = chartWidth;
+                return x;
+            case Y:
+                return {{x.at(IMAG).at(0),chartBound.x, chartWidth},
+                        {0, chartBound.x, chartWidth}};
+            case Z:
+                return {{x.at(REAL).at(0), chartBound.x, chartWidth},
+                        {x.at(IMAG).at(0), chartBound.x, chartWidth}};
+            case FILE:
+                return {{x.at(REAL).at(0), chartBound.x, chartWidth},
+                        {0,                chartBound.x, chartWidth}};
+                break;
+            case FFT: {
+                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
+                return {{fft.first,  chartWidth, in.at(3)},
+                        {fft.second, chartWidth, in.at(3)}};
+            }
+            case IFFT: {
+                auto fft = computeInverseFft(in.at(1), in.at(2), in.at(3));
+                return {{fft.first,  chartBound.x, chartWidth},
+                        {fft.second, chartBound.x, chartWidth}};
+            }
+            case HARTLEY: {
+                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
+                return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartWidth, in.at(3)},
+                        {0.0,                                                chartWidth, in.at(3)}};
+            }
+            case LAPLACE: {
+                mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
+                // Static resolution for now
+                auto laplace = computeLaplace(x.at(REAL).at(1), x.at(IMAG).at(1), in.at(2), in.at(3),
+                                              mChart->getMaxResolution());
+
+                x.at(REAL).at(0) = laplace.first;
+                return x;
+            }
+            case LAPLACE_S: {
+                string exp = ZNodeUtil::get().graphToString(this);
+                string laplace = "laplace(" + exp + ")";
+                string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
+                string zResult = ZUtil::replace(result, "x", "z");
+                string heatResult = "heat(" + zResult + ")";
+                ZNodeUtil::get().stringToGraph(heatResult).at(0);
+
+                mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
+                out = {x.at(0).at(0), chartBound.x, chartWidth};
+                break;
+            }
+            case FIRST_DIFF: {
+                float diff = computeFirstDifference(in.at(0), in.at(1));
+                out = {diff, chartBound.x, chartWidth};
+                break;
+            }
+            case DOT:
+                return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)),
+                             vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
+            case CROSS:
+                break;
+            case CHART_2D: {
+                mChart->setResolution(100);
+
+                x.at(REAL).at(0) = in.at(0);
+                x.at(REAL).at(1) = in.at(1);
+                x.at(REAL).at(2) = chartBound.x;
+                x.at(REAL).at(3) = chartWidth;
+
+                x.at(IMAG).at(0) = 0.0;
+                x.at(IMAG).at(1) = 0.0;
+                x.at(IMAG).at(2) = 0.0;
+                x.at(IMAG).at(3) = 0.0;
+                return x;
+            }
+
+            case HEAT_MAP: {
+                mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
+                out = {x.at(0).at(0), chartBound.x, chartWidth};
+                break;
+            }
+            case COMBINE: {
+                return {{x.at(REAL).at(0)},
+                        {x.at(REAL).at(1)}};
+            }
+            case SPLIT: {
+                return {{x.at(REAL).at(0), x.at(IMAG).at(0)},
+                        {NAN, NAN}};
+            }
+            case NEURAL_CORE: {
+                if (mMlModel == nullptr) {
+                    initializeNNModel();
+                }
+
+                float returnValue;
+                if (mMlModel->getTrainingInProgress()) {
+                    vec2 thisChartBounds = mChart->getXBounds();
+                    float span = thisChartBounds.y - thisChartBounds.x;
+                    float inX = ((x.at(REAL).at(1) - thisChartBounds.x) / span) * mMlCache.size();
+                    if (span > 0) {
+                        int xIndex = 0;
+                        if (inX >= 0 && (inX) < mMlCache.size() && !mMlCache.empty()) {
+                            xIndex = (int) inX;
+                            complex<float> y = mMlCache.at(xIndex);
+                            returnValue = y.real();
+                        }
+                    }
+
+                } else {
+                    mMlModel->setInput(x.at(REAL).at(1), 0);
+                    mMlModel->compute();
+                    returnValue = mMlModel->getOutputAt(0);
+                }
+
+                return {{returnValue, chartBound.x, chartWidth},
+                        {x.at(REAL).at(0),      chartBound.x, chartWidth}};
+            }
+            case LAST:
+                break;
+        }
+
+        output.push_back(out);
+    }
+
+    return output;
 }

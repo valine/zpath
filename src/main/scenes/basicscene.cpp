@@ -1,5 +1,5 @@
 
-#include <utils/zimageutil.h>
+#include <utils/zutil.h>
 #include "scenes/basicscene.h"
 
 BasicScene::BasicScene(string resourcePath) 

@@ -7,9 +7,9 @@
 
 class ZLabel;
 
-#include <ui/nodeview.h>
 #include <queue>
 #include <set>
+#include "ui/nodeview.h"
 
 using namespace std;
 

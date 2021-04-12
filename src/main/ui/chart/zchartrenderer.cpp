@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <ui/zshader.h>
-#include <utils/zimageutil.h>
+#include <utils/zutil.h>
 #include "ui/zchartrenderer.h"
 #include "png.h"
 

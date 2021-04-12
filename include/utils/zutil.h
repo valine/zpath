@@ -1,6 +1,6 @@
 
-#ifndef ZPATH_ZIMAGEUTIL_H
-#define ZPATH_ZIMAGEUTIL_H
+#ifndef ZPATH_ZUTIL_H
+#define ZPATH_ZUTIL_H
 
 #include <string>
 #include "ui/z3dview.h"
@@ -26,7 +26,9 @@ public:
     static void chart(double *p, int size, int mod, int offset, float max);
 
     static string getHomeFolder();
+
+    static string replace(string subject, const string &search, const string &replace);
 };
 
 
-#endif //ZPATH_ZIMAGEUTIL_H
+#endif //ZPATH_ZUTIL_H
