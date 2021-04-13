@@ -868,6 +868,9 @@ public:
         return returnValue;
     }
 
+
+
+
     pair<float, float> computeLaplace(float x, float y, float start, float windowSize, int resolution) {
 
         vec2 xBounds = mChart->getXBounds();
@@ -1099,6 +1102,8 @@ private:
 
     vector<vector<float>> mLaplaceCache;
 
+    vector<ZNodeView*> mHeadlessLaplaceNodes;
+
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     void clearInvalidateNode();
@@ -1113,7 +1118,7 @@ private:
 
     void updateChart1D2X();
 
-    void setOutputLabel(float output) const;
+    void setOutputLabel(float output);
 
     void updateChartHeatMap();
 
@@ -1124,6 +1129,10 @@ private:
     void init();
 
     void draw();
+
+    vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x);
+
+    void onCreate();
 };
 
 

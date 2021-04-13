@@ -88,7 +88,7 @@ public:
         return count == 0;
     }
 
-    string graphToString(ZNodeView* root) {
+    string graphToString(ZNodeView *root, bool includeRoot) {
 
         string expression;
         set<string> operators = {"+", "-", "*", "/", "^"};
@@ -114,7 +114,7 @@ public:
                 if (needParen) {
                     expression += "(";
                 }
-                expression += graphToString(child);
+                expression += graphToString(child, true);
 
                 if (needParen) {
                     expression += ")";
@@ -149,7 +149,7 @@ public:
                 if (needParen) {
                     expression += "(";
                 }
-                expression += graphToString(child);
+                expression += graphToString(child, true);
 
                 if (index < root->mInputIndices.at(1).size() - 1) {
                     expression += " + ";
@@ -166,20 +166,21 @@ public:
             return expression;
         }
 
-        // Node is a constant
-        if (root->getType() == ZNodeView::Type::C) {
+        if (includeRoot) {
+            // Node is a constant
+            if (root->getType() == ZNodeView::Type::C) {
 
-            return floatToString(root->getConstantValue(0));
+                return floatToString(root->getConstantValue(0));
+            }
+
+            expression = root->getName(root->getType());
+            array<ZNodeView::SocketType, 8> inputType = root->getSocketType().at(0);
+
+            // Node is a variable
+            if (root->getSocketCount().x == 0) {
+                return expression;
+            }
         }
-
-        expression = root->getName(root->getType());
-        array<ZNodeView::SocketType,8> inputType = root->getSocketType().at(0);
-
-        // Node is a variable
-        if (root->getSocketCount().x == 0) {
-            return expression;
-        }
-
 
         // Node is function
         expression += "(";
@@ -193,7 +194,7 @@ public:
                 int index = 0;
                 for (pair<ZNodeView *, int> input : root->mInputIndices.at(socketIndex)) {
                     ZNodeView *child = input.first;
-                    expression += graphToString(child);
+                    expression += graphToString(child, true);
                     if (index < root->mInputIndices.at(socketIndex).size() - 1) {
                         expression += " + ";
                     }

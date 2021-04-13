@@ -144,7 +144,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         // Only works if one node selected
         if (mSelectedNodes.size() == 1) {
             ZNodeView *root = (*mSelectedNodes.begin());
-            string exp = ZNodeUtil::get().graphToString(root);
+            string exp = ZNodeUtil::get().graphToString(root, true);
             string laplace = "laplace(" + exp + ")";
             string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
             string zResult = ZUtil::replace(result, "x", "z");
@@ -784,7 +784,7 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
 
         if (!mExpressionField->isViewInFocus()) {
             if (mSelectedNodes.size() == 1) {
-                mExpressionField->setText(ZNodeUtil::get().graphToString(node));
+                mExpressionField->setText(ZNodeUtil::get().graphToString(node, true));
             } else {
                 mExpressionField->setText("");
             }

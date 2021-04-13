@@ -17,14 +17,20 @@
 #include "utils/znodeutil.h"
 
 ZNodeView::ZNodeView(ZNodeView::Type type) : ZView(10, 10){
-    init();
-    setType(type);
+    mType = type;
+    initializeEdges();
 }
 
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     init();
 
+}
+
+void ZNodeView::onCreate() {
+    ZView::onCreate();
+    init();
+    setType(mType);
 }
 
 void ZNodeView::init() {
@@ -159,6 +165,11 @@ void ZNodeView::updateChart() {
             updateChart1D2X();
         } else if (getChartType(getType()) == IMAGE) {
             mLaplaceCache.clear();
+
+            for (ZNodeView* node : mHeadlessLaplaceNodes) {
+                ZNodeUtil::get().submitForRecycle(node);
+            }
+            mHeadlessLaplaceNodes.clear();
             updateChartHeatMap();
         }
     }
@@ -502,13 +513,15 @@ void ZNodeView::setShowEnumPickerListener(
 }
 
 void ZNodeView::setConstantValue(int index, float value, int magnitudeIndex) {
-    if (index >= mConstantValueOutput.size()) {
-        mOutputLabel->setText("Bad input");
-    } else {
-        mConstantValueOutput.at(index) = value;
-        mConstantMagnitudeOutput.at(index) = magnitudeIndex;
-        setOutputLabel(mConstantValueOutput.at(0));
-        invalidateNodeRecursive();
+    if (getParentView() != this) {
+        if (index >= mConstantValueOutput.size()) {
+            mOutputLabel->setText("Bad input");
+        } else {
+            mConstantValueOutput.at(index) = value;
+            mConstantMagnitudeOutput.at(index) = magnitudeIndex;
+            setOutputLabel(mConstantValueOutput.at(0));
+            invalidateNodeRecursive();
+        }
     }
 }
 
@@ -643,7 +656,7 @@ void ZNodeView::clearInvalidateNode() {
  */
 void ZNodeView::invalidateSingleNode() {
     //setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
-    if (getVisibility()) {
+    if (getVisibility() && getParentView() != this) {
         mInvalid = true;
         if (mInvalidateListener != nullptr) {
             mInvalidateListener(this);
@@ -695,10 +708,12 @@ void ZNodeView::copyParameters(ZNodeView* node) {
    setOutputLabel(mConstantValueOutput.at(0));
 }
 
-void ZNodeView::setOutputLabel(float output) const {
-    std::stringstream ss;
-    ss << std::fixed << std::setprecision(mMagPrecision.at(mConstantMagnitudeOutput.at(0))) << output;
-    mOutputLabel->setText(ss.str());
+void ZNodeView::setOutputLabel(float output) {
+    if (getParentView() != nullptr && getParentView() != this) {
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(mMagPrecision.at(mConstantMagnitudeOutput.at(0))) << output;
+        mOutputLabel->setText(ss.str());
+    }
 }
 
 void ZNodeView::updateLabelVisibility() {
@@ -749,8 +764,26 @@ void ZNodeView::hideSocketLabels() {
     }
 }
 
+
+vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x) {
+
+    if (mHeadlessLaplaceNodes.empty()) {
+        string exp = ZNodeUtil::get().graphToString(this, false);
+        string laplace = "laplace(" + exp + ")";
+        string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
+        string zResult = ZUtil::replace(result, "x", "z");
+        vector<ZNodeView*> headless = ZNodeUtil::get().stringToGraph(zResult);
+        mHeadlessLaplaceNodes.push_back(headless.at(0));
+    }
+    return mHeadlessLaplaceNodes.at(0)->evaluate(std::move(x));
+}
+
 vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type) {
-    vec2 chartBound = mChart->getXBounds();
+    vec2 chartBound = vec2(0);
+    if (mChart != nullptr && getParentView() != this) {
+        chartBound = mChart->getXBounds();
+    }
+
     float chartWidth = chartBound.y - chartBound.x;
     vector<vector<float>> output;
     for (uint d = 0; d < x.size(); d++) {
@@ -932,7 +965,7 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
                         {0.0,                                                chartWidth, in.at(3)}};
             }
             case LAPLACE: {
-                mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
+              //  mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
                 // Static resolution for now
                 auto laplace = computeLaplace(x.at(REAL).at(1), x.at(IMAG).at(1), in.at(2), in.at(3),
                                               mChart->getMaxResolution());
@@ -941,15 +974,10 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
                 return x;
             }
             case LAPLACE_S: {
-                string exp = ZNodeUtil::get().graphToString(this);
-                string laplace = "laplace(" + exp + ")";
-                string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
-                string zResult = ZUtil::replace(result, "x", "z");
-                string heatResult = "heat(" + zResult + ")";
-                ZNodeUtil::get().stringToGraph(heatResult).at(0);
 
+                vector<vector<float>> sx = computeLaplaceHeadless(x);
                 mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
-                out = {x.at(0).at(0), chartBound.x, chartWidth};
+                out = {sx.at(0).at(0), chartBound.x, chartWidth};
                 break;
             }
             case FIRST_DIFF: {
