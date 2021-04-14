@@ -24,8 +24,6 @@
 using namespace std;
 using namespace glm;
 
-using namespace chrono;
-
 class ZView {
 
 	public:
@@ -326,7 +324,6 @@ class ZView {
     void setCornerRadius(vec4 radius) {
         mCornerRadius = radius;
         computeBounds();
-        updateCornerRadius();
     }
 
     void setCornerRadius(float radius) {
@@ -348,6 +345,7 @@ private:
         bool mNeedsRender = true;
 		bool mVertsInvalid = false;
 
+		bool mRadiusInvalid = false;
 		bool mCreateComplete = false;
 
 		Gravity mGravity = topLeft;
@@ -490,6 +488,8 @@ private:
     void updateCornerRadius();
 
     void initBuffers();
+
+    void redrawCornerRadius();
 };
 
 #endif

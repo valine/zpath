@@ -6,8 +6,7 @@
 
 ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath)
         : ZView(maxWidth, maxHeight) {
-    setup("resources/fonts/" + font);
-    createFBO();
+
 }
 
 ZLabel::ZLabel(string label, ZView *parent)
@@ -19,15 +18,18 @@ ZLabel::ZLabel(string label, ZView *parent)
     setWindowHeight(parent->getWindowHeight());
     setWindowWidth(parent->getWindowWidth());
 
-    setup(ZFontStore::getInstance().getDefaultResource());
-    createFBO();
+
 }
 
 
 ZLabel::ZLabel(float maxWidth, float maxHeight) : ZView(maxWidth, maxHeight) {
-    setup(ZFontStore::getInstance().getDefaultResource());
-    createFBO();
+
 }
+
+void ZLabel::onCreate() {
+    ZView::onCreate();
+}
+
 
 void ZLabel::setup(const string &font) {
     mFont = font;
@@ -195,6 +197,11 @@ string ZLabel::getText() {
 }
 
 void ZLabel::draw() {
+    if (!mInit) {
+        mInit = true;
+        setup(ZFontStore::getInstance().getDefaultResource());
+        createFBO();
+    }
     if (mFrameInvalid) {
         updateFrameSize();
     }

@@ -107,6 +107,7 @@ private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener = nullptr;
 
+    bool mViewInit = false;
     float defaultRange = 5.0;
     mat4 mDefaultMat = ortho(-defaultRange, defaultRange, defaultRange, -defaultRange, -1.0f, 10.0f);
 
@@ -196,6 +197,9 @@ private:
 
     void initHeatLUT();
 
+    void initView();
+
+    void onCreate();
 };
 
 

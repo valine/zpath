@@ -128,6 +128,8 @@ public:
     array<array<SocketType, 8>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}}, {{VAR, VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}}, {{VAR, VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> LAPLACE_S_MAP_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
+
     array<array<SocketType, 8>, 2> COMBINE_TYPE = {{{{VAR, VAR}}, {{VAR}}}};
     array<array<SocketType, 8>, 2> SPLIT_TYPE = {{{{VAR}}, {{VAR, VAR}}}};
     array<array<SocketType, 8>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM, ENUM}}, {{VAR, CON, CON}}}};
@@ -225,9 +227,12 @@ public:
                     mSocketType = CHART_2D_TYPE;
                     break;
                 }
-                case HEAT_MAP:
-                case LAPLACE_S:{
+                case HEAT_MAP: {
                     mSocketType = HEAT_MAP_TYPE;
+                    break;
+                }
+                case LAPLACE_S:{
+                    mSocketType = LAPLACE_S_MAP_TYPE;
                     break;
                 }
                 case COMBINE: {
@@ -351,8 +356,10 @@ public:
                     mSocketCount = ivec2(3, 4);
                     break;
                 case HEAT_MAP:
-                case LAPLACE_S:
                     mSocketCount = ivec2(3, 3);
+                    break;
+                case LAPLACE_S:
+                    mSocketCount = ivec2(4, 3);
                     break;
                 case COMBINE:
                     mSocketCount = ivec2(2, 1);
@@ -402,8 +409,9 @@ public:
             case DOT:
                 return {1.0, 1.0};
             case HEAT_MAP:
-            case LAPLACE_S:
                 return {0.0, -1.0, 1.0};
+            case LAPLACE_S:
+                return {0.0, 0.0, -1.0, 1.0};
             case NEURAL_CORE:
                 return {0.0, 0.0, 0.05, -5, -1, 0, 0};
             default:
@@ -449,8 +457,9 @@ public:
             case CHART_2D:
                 return {"X", "A", "Resolution"};
             case HEAT_MAP:
-            case LAPLACE_S:
                 return {"X", "Z Min", "Z Max"};
+            case LAPLACE_S:
+                return {"X", "A", "Z Min", "Z Max"};
             case NEURAL_CORE:
                 return {"Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
             default:

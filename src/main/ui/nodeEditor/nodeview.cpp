@@ -17,8 +17,8 @@
 #include "utils/znodeutil.h"
 
 ZNodeView::ZNodeView(ZNodeView::Type type) : ZView(10, 10){
-    mType = type;
-    initializeEdges();
+    init();
+    setType(type);
 }
 
 
@@ -29,8 +29,6 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
 void ZNodeView::onCreate() {
     ZView::onCreate();
-    init();
-    setType(mType);
 }
 
 void ZNodeView::init() {
@@ -329,7 +327,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
         if (i >= socketCount.x) {
             mSocketsIn.at(i)->setVisibility(false);
         } else {
-
             mSocketsIn.at(i)->setVisibility(true);
             if (i < socketCount.x) {
                 vec4 color = getSocketColor(socketType.at(0).at(i));
@@ -374,7 +371,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
         if (i == 0) {
             mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_HEIGHT / 2, 3, 0, SOCKET_HEIGHT / 2));
         } else {
-
             mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_HEIGHT / 2, 0, 0, SOCKET_HEIGHT / 2));
         }
 
@@ -513,15 +509,13 @@ void ZNodeView::setShowEnumPickerListener(
 }
 
 void ZNodeView::setConstantValue(int index, float value, int magnitudeIndex) {
-    if (getParentView() != this) {
-        if (index >= mConstantValueOutput.size()) {
-            mOutputLabel->setText("Bad input");
-        } else {
-            mConstantValueOutput.at(index) = value;
-            mConstantMagnitudeOutput.at(index) = magnitudeIndex;
-            setOutputLabel(mConstantValueOutput.at(0));
-            invalidateNodeRecursive();
-        }
+    if (index >= mConstantValueOutput.size()) {
+        mOutputLabel->setText("Bad input");
+    } else {
+        mConstantValueOutput.at(index) = value;
+        mConstantMagnitudeOutput.at(index) = magnitudeIndex;
+        setOutputLabel(mConstantValueOutput.at(0));
+        invalidateNodeRecursive();
     }
 }
 
@@ -656,7 +650,7 @@ void ZNodeView::clearInvalidateNode() {
  */
 void ZNodeView::invalidateSingleNode() {
     //setBackgroundColor(blue); // Turn this to another color to debug invalidation logic.
-    if (getVisibility() && getParentView() != this) {
+    if (getVisibility()) {
         mInvalid = true;
         if (mInvalidateListener != nullptr) {
             mInvalidateListener(this);
@@ -709,11 +703,9 @@ void ZNodeView::copyParameters(ZNodeView* node) {
 }
 
 void ZNodeView::setOutputLabel(float output) {
-    if (getParentView() != nullptr && getParentView() != this) {
-        std::stringstream ss;
-        ss << std::fixed << std::setprecision(mMagPrecision.at(mConstantMagnitudeOutput.at(0))) << output;
-        mOutputLabel->setText(ss.str());
-    }
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(mMagPrecision.at(mConstantMagnitudeOutput.at(0))) << output;
+    mOutputLabel->setText(ss.str());
 }
 
 void ZNodeView::updateLabelVisibility() {
@@ -779,11 +771,7 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x)
 }
 
 vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type) {
-    vec2 chartBound = vec2(0);
-    if (mChart != nullptr && getParentView() != this) {
-        chartBound = mChart->getXBounds();
-    }
-
+    vec2 chartBound = mChart->getXBounds();
     float chartWidth = chartBound.y - chartBound.x;
     vector<vector<float>> output;
     for (uint d = 0; d < x.size(); d++) {
@@ -975,7 +963,10 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             }
             case LAPLACE_S: {
 
-                vector<vector<float>> sx = computeLaplaceHeadless(x);
+                vector<vector<float>> sx = computeLaplaceHeadless(
+                        {vector<float>(MAX_INPUT_COUNT,x.at(REAL).at(1)),
+                                vector<float>(MAX_INPUT_COUNT,x.at(IMAG).at(1))});
+
                 mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
                 out = {sx.at(0).at(0), chartBound.x, chartWidth};
                 break;

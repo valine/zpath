@@ -275,6 +275,7 @@ void ZView::draw() {
             backgroundColor = mHighlightColor;
         }
 
+        redrawCornerRadius();
         drawShadow();
 
 //        if (glm::length(mCornerRadius) > 0) {
@@ -356,20 +357,28 @@ void ZView::draw() {
 }
 
 void ZView::updateCornerRadius() {
-    if (length(mCornerRadius) > 0) {
-        if (mRoundedRect == nullptr) {
-            auto tex = ZCornerRenderer::get().
-                    createTexture(getWidth() * mDP, getHeight() * mDP,
-                                  getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mCornerRadius * mDP);
-            mRoundedRect = tex;
-        } else {
-            ZCornerRenderer::get().
-                    draw(getWidth() * mDP, getHeight() * mDP,
-                         mCornerRadius * mDP,
-                         getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mRoundedRect, false);
+    mRadiusInvalid = true;
+}
+
+void ZView::redrawCornerRadius() {
+    if (mRadiusInvalid) {
+        if (length(mCornerRadius) > 0) {
+            if (mRoundedRect == nullptr) {
+                auto tex = ZCornerRenderer::get().
+                        createTexture(getWidth() * mDP, getHeight() * mDP,
+                                      getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mCornerRadius * mDP);
+                mRoundedRect = tex;
+            } else {
+                ZCornerRenderer::get().
+                        draw(getWidth() * mDP, getHeight() * mDP,
+                             mCornerRadius * mDP,
+                             getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mRoundedRect, false);
+            }
         }
+        mRadiusInvalid = false;
     }
 }
+
 void ZView::drawShadow() {
     float shadowRadius = 30 * mElevation;
     float offset = -5 * mElevation;

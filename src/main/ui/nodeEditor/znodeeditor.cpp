@@ -88,7 +88,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto* dropDown = new ZDropDown(100,800, allTypes, mHeader);
     dropDown->setOffset(0, 0);
     dropDown->setTitle("Nodes");
-    dropDown->wrapTitle();
+    //dropDown->wrapTitle();
     dropDown->setDynamicTitle(false);
     dropDown->setOnItemChange([this](int index){
         auto type = static_cast<ZNodeView::Type>(index);
@@ -105,7 +105,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     complexDropdown->setOffset(100, 0);
     complexDropdown->setTitle("Trig");
     complexDropdown->setOffset(dropDown->getLocalRight(), 0);
-    complexDropdown->wrapTitle();
+   // complexDropdown->wrapTitle();
     complexDropdown->setDynamicTitle(false);
     complexDropdown->setOnItemChange([this, complexTypes](int index){
         ZNodeView::Type type = complexTypes.at(index);
@@ -115,7 +115,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto* viewDropDown = new ZDropDown(100,800, {"Snap to Nodes"}, mHeader);
     viewDropDown->setOffset(complexDropdown->getLocalRight(), 0);
     viewDropDown->setTitle("View");
-    viewDropDown->wrapTitle();
+    //viewDropDown->wrapTitle();
     viewDropDown->setDynamicTitle(false);
     viewDropDown->setOnItemChange([this](int index){
         // Center view

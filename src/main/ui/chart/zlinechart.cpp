@@ -7,71 +7,83 @@
 #include "ui/zlinechart.h"
 
 ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, height, parent) {
-    mShader = new ZShader(ui_vs, ui_fs);
-    mHeatShader = new ZShader(heat_vs, heat_fs);
 
-    glGenTextures(1, &mFinalTexBuffer);
-    glGenFramebuffers(1, &mFinalFBO);
-    glGenRenderbuffers(1, &mFinalRBO);
+}
 
-    glGenBuffers(1, &mHeatVertBuffer);
-    glGenBuffers(1, &mHeatEdgeBuffer);
-    glGenTextures(1, &mHeatTexBuffer);
+void ZLineChart::onCreate() {
+    ZView::onCreate();
+    initView();
+}
+void ZLineChart::initView() {
+    if (!mViewInit) {
+        mViewInit = true;
 
-    glGenBuffers(1, &mBGridEdgeBuffer);
-    glGenBuffers(1, &mBGridVertBuffer);
+        mShader = new ZShader(ui_vs, ui_fs);
+        mHeatShader = new ZShader(heat_vs, heat_fs);
 
-    glGenVertexArrays(1, &mHeatVAO);
-    glBindVertexArray(mHeatVAO);
+        glGenTextures(1, &mFinalTexBuffer);
+        glGenFramebuffers(1, &mFinalFBO);
+        glGenRenderbuffers(1, &mFinalRBO);
 
-    glGenBuffers(1, &mGridVertBuffer);
-    glGenBuffers(1, &mGridEdgeBuffer);
+        glGenBuffers(1, &mHeatVertBuffer);
+        glGenBuffers(1, &mHeatEdgeBuffer);
+        glGenTextures(1, &mHeatTexBuffer);
 
-    // Heat map vao
-    glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);
-    int dimension = 4;
-    glEnableVertexAttribArray(glGetAttribLocation(mHeatShader->mID, "vPosUi"));
-    glVertexAttribPointer(glGetAttribLocation(mHeatShader->mID, "vPosUi"), dimension, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * dimension, nullptr);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHeatEdgeBuffer);
-    glBindVertexArray(0);
+        glGenBuffers(1, &mBGridEdgeBuffer);
+        glGenBuffers(1, &mBGridVertBuffer);
 
-    // Line vao
-    glGenVertexArrays(1, &mVAO);
-    glBindVertexArray(mVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, mBGridVertBuffer);
-    glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
-    glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 4, nullptr);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
-    glBindVertexArray(0);
+        glGenVertexArrays(1, &mHeatVAO);
+        glBindVertexArray(mHeatVAO);
+
+        glGenBuffers(1, &mGridVertBuffer);
+        glGenBuffers(1, &mGridEdgeBuffer);
+
+        // Heat map vao
+        glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);
+        int dimension = 4;
+        glEnableVertexAttribArray(glGetAttribLocation(mHeatShader->mID, "vPosUi"));
+        glVertexAttribPointer(glGetAttribLocation(mHeatShader->mID, "vPosUi"), dimension, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * dimension, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHeatEdgeBuffer);
+        glBindVertexArray(0);
+
+        // Line vao
+        glGenVertexArrays(1, &mVAO);
+        glBindVertexArray(mVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, mBGridVertBuffer);
+        glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+        glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * 4, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
+        glBindVertexArray(0);
 
 
-    glGenVertexArrays(1, &mGridVAO);
-    glBindVertexArray(mGridVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
-    glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
-    glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
-                          sizeof(float) * 4, nullptr);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
-    glBindVertexArray(0);
+        glGenVertexArrays(1, &mGridVAO);
+        glBindVertexArray(mGridVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, mGridVertBuffer);
+        glEnableVertexAttribArray(glGetAttribLocation(mShader->mID, "vPosUi"));
+        glVertexAttribPointer(glGetAttribLocation(mShader->mID, "vPosUi"), 4, GL_FLOAT, GL_FALSE,
+                              sizeof(float) * 4, nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mGridEdgeBuffer);
+        glBindVertexArray(0);
 
-    initHeatLUT();
+        initHeatLUT();
 
-    mBackground = new ZTexture(mFinalTexBuffer);
-    setBackgroundImage(mBackground);
+        mBackground = new ZTexture(mFinalTexBuffer);
+        setBackgroundImage(mBackground);
 
-    mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
-    mTransform = mDefaultMat;
+        mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+        mTransform = mDefaultMat;
 
-    computeChartBounds();
+        computeChartBounds();
+        updateFBOSize();
+        initGrid();
+        initBackgroundGrid();
 
-    updateFBOSize();
+        glBindVertexArray(0);
 
-    initGrid();
-
-    initBackgroundGrid();
-
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
 }
 
 void ZLineChart::initHeatLUT()  {
@@ -338,7 +350,7 @@ void ZLineChart::updateChart1D() {
 }
 
 void ZLineChart::draw() {
-
+    initView();
     if (mDataInvalid) {
         mDataInvalid = false;
         updateData();

@@ -47,6 +47,7 @@ public:
 
 private:
 
+    bool mInit = false;
     unsigned int mFBO = -1;
     unsigned int mTexBuffer = -1;
 
@@ -74,6 +75,7 @@ private:
     void updateFrameSize();
 
 
+    void onCreate();
 };
 
 #endif
