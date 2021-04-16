@@ -10,6 +10,9 @@ Dependencies
 * GLM https://github.com/g-truc/glm/archive/0.9.8.5.tar.gz 
 * Freetype https://www.freetype.org/ 
 * Assimp git@github.com:assimp/assimp.git
+* Giac https://www-fourier.ujf-grenoble.fr/~parisse/giac.html
+* libpng http://www.libpng.org/pub/png/libpng.html
+* zlib https://zlib.net/
 
 ### To build on Linux
 
