@@ -967,7 +967,7 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
                         {vector<float>(MAX_INPUT_COUNT,x.at(REAL).at(1)),
                                 vector<float>(MAX_INPUT_COUNT,x.at(IMAG).at(1))});
 
-                mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
+                mChart->setZBound(vec2(x.at(0).at(2), x.at(0).at(3)));
                 out = {sx.at(0).at(0), chartBound.x, chartWidth};
                 break;
             }
