@@ -102,6 +102,8 @@ public:
     }
 
     void resetZoom();
+    void resetTmpTransform();
+    bool isTransformCurrent();
 
 private:
     function<void()> mInvalidateListener;
@@ -114,6 +116,7 @@ private:
     // Temp bound is set on ui thread, the real bounds get updated after evaluation
     vec2 mLastMouse = vec2(0);
     mat4 mTmpTransform;
+    bool mTransformCurrent = true;
     mat4 mTmpTransformIdentity = mat4(1);
     mat4 mTransform;
     vec3 mScaleOrigin = vec3(0);
@@ -200,6 +203,7 @@ private:
     void initView();
 
     void onCreate();
+
 };
 
 

@@ -14,6 +14,7 @@ void ZLineChart::onCreate() {
     ZView::onCreate();
     initView();
 }
+
 void ZLineChart::initView() {
     if (!mViewInit) {
         mViewInit = true;
@@ -74,6 +75,7 @@ void ZLineChart::initView() {
 
         mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
         mTransform = mDefaultMat;
+        mTransformCurrent = true;
 
         computeChartBounds();
         updateFBOSize();
@@ -166,13 +168,20 @@ void ZLineChart::updateData() {
     } else if (mInputType == HEAT_MAP){
         updateHeatMap();
     }
+    resetTmpTransform();
+    invalidate();
+}
 
+void ZLineChart::resetTmpTransform()  {
     // Reset the tmp transform. The tmp transform is used while evaluation
     // happens on a background thread. This ensures the ui will not lag
     // when evaluating large graphs.
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+    mTransformCurrent = true;
+}
 
-    invalidate();
+bool ZLineChart::isTransformCurrent() {
+    return mTransformCurrent;
 }
 
 void ZLineChart::initBackgroundGrid() {
@@ -352,8 +361,8 @@ void ZLineChart::updateChart1D() {
 void ZLineChart::draw() {
     initView();
     if (mDataInvalid) {
-        mDataInvalid = false;
         updateData();
+        mDataInvalid = false;
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
@@ -422,6 +431,14 @@ void ZLineChart::draw() {
     glBindVertexArray(0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ZView::draw();
+
+    if (!mTransformCurrent) {
+        cout << "bad" << endl;
+        if (mInvalidateListener != nullptr) {
+            mInvalidateListener();
+        }
+
+    }
 }
 
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
@@ -461,6 +478,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
                     mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransformIdentity;
             mTmpTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransform;
             mTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTransform;
+            mTransformCurrent = false;
             needsRefresh = true;
         }
 
@@ -514,6 +532,8 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
             mTransform = (translate(mat4(1), mScaleOrigin) *
                              scale(mat4(1), vec3(percent.x, percent.y, 1)) *
                              translate(mat4(1), -mScaleOrigin)) * mTransform;
+
+            mTransformCurrent = false;
             needsRefresh = true;
         }
     }
@@ -530,6 +550,7 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
 void ZLineChart::resetZoom() {
     mTmpTransform = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
     mTransform = mDefaultMat;
+    mTransformCurrent = true;
 }
 
 void ZLineChart::onScrollChange(double x, double y) {
@@ -552,6 +573,7 @@ void ZLineChart::onScrollChange(double x, double y) {
         mTransform = (translate(mat4(1), origin) *
                          scale(mat4(1), vec3(percent.x, percent.y, 1)) *
                          translate(mat4(1), -origin)) * mTransform;
+        mTransformCurrent = false;
         if (mInvalidateListener != nullptr) {
             mInvalidateListener();
         }

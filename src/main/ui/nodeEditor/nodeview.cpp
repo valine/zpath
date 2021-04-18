@@ -153,7 +153,6 @@ void ZNodeView::initializeEdges() {
 void ZNodeView::updateChart() {
     // This is run from background thread
     if (mInvalid) {
-        clearInvalidateNode();
         mFftCache.clear();
         if (getChartType(getType()) == LINE_1D) {
             updateChart1D();
@@ -175,6 +174,8 @@ void ZNodeView::updateChart() {
     mChart->invalidateData();
     vec2 xBound = mChart->getXBounds();
     vec2 yBound = mChart->getYBounds();
+    mChart->invalidate();
+
 
     std::stringstream xmin;
     xmin << std::fixed << std::setprecision(2) << xBound.x;
