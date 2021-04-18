@@ -260,6 +260,8 @@ void ZView::draw() {
             mVertsInvalid = false;
         }
 
+        redrawCornerRadius();
+
         glViewport(0, 0, mWindowWidth * mDP, mWindowHeight * mDP);
 
         // Update scale, useful for zooming a view out
@@ -275,7 +277,7 @@ void ZView::draw() {
             backgroundColor = mHighlightColor;
         }
 
-        redrawCornerRadius();
+
         drawShadow();
 
 //        if (glm::length(mCornerRadius) > 0) {
@@ -362,6 +364,7 @@ void ZView::updateCornerRadius() {
 
 void ZView::redrawCornerRadius() {
     if (mRadiusInvalid) {
+        mRadiusInvalid = false;
         if (length(mCornerRadius) > 0) {
             if (mRoundedRect == nullptr) {
                 auto tex = ZCornerRenderer::get().
@@ -375,7 +378,7 @@ void ZView::redrawCornerRadius() {
                              getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mRoundedRect, false);
             }
         }
-        mRadiusInvalid = false;
+
     }
 }
 

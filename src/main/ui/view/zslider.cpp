@@ -257,6 +257,7 @@ void ZSlider::valueChanged(float offset) {
         mHighlight->setMaxWidth(offset + 1 + cr);
         mSlideListener(this, incValue, false);
 	}
+
 	invalidate();
 }
 

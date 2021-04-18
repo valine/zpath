@@ -79,6 +79,7 @@ public:
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glBindVertexArray(0);
+            glBindTexture(GL_TEXTURE_2D, 0);
 
             if (cacheResult) {
                 mTextureMap.insert({key, texture->getID()});
