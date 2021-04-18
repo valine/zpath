@@ -361,8 +361,8 @@ void ZLineChart::updateChart1D() {
 void ZLineChart::draw() {
     initView();
     if (mDataInvalid) {
-        updateData();
         mDataInvalid = false;
+        updateData();
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
@@ -431,14 +431,6 @@ void ZLineChart::draw() {
     glBindVertexArray(0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ZView::draw();
-
-    if (!mTransformCurrent) {
-        cout << "bad" << endl;
-        if (mInvalidateListener != nullptr) {
-            mInvalidateListener();
-        }
-
-    }
 }
 
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {

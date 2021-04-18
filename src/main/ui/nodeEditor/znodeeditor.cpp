@@ -477,9 +477,6 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
             {
                 ZNodeView *node = *editor->mEvalSet.begin();
 
-                std::lock_guard<std::mutex> guard(editor->mEvalMutex);
-                editor->mEvalSet.erase(node);
-
                 if (node->getVisibility()) {
                     nodesToUpdate.insert(node);
                 } else {
@@ -487,6 +484,8 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
                     editor->updateLines();
                 }
 
+                std::lock_guard<std::mutex> guard(editor->mEvalMutex);
+                editor->mEvalSet.erase(node);
             }
         }
 
@@ -497,9 +496,11 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
         }
 
         glfwPostEmptyEvent();
-        {
-            std::unique_lock<std::mutex> lck(editor->mEvalMutex);
-            editor->mEvalConVar.wait(lck);
+        if (editor->mEvalSet.empty()) {
+            {
+                std::unique_lock<std::mutex> lck(editor->mEvalMutex);
+                editor->mEvalConVar.wait(lck);
+            }
         }
     }
 }
