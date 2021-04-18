@@ -150,17 +150,14 @@ void ZLineChart::updateHeatMap() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
     mHeatInitialized = true;
-    invalidate();
 }
 
 void ZLineChart::updateData() {
-
+    // Run from UI thread
     if (mListener == nullptr) {
         return;
     }
-
     if (mInputType == LINE || mInputType == LINE_2X) {
         updateChart1D();
     } else if (mInputType == LINE_2D) {
@@ -168,7 +165,9 @@ void ZLineChart::updateData() {
     } else if (mInputType == HEAT_MAP){
         updateHeatMap();
     }
+
     resetTmpTransform();
+
     invalidate();
 }
 
@@ -466,8 +465,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
     if ((middleMouseIsDown() || mouseIsDown()) && shiftKeyPressed()) {
         if (state == mouseDrag) {
             vec2 d = (mLastMouse - positionInView) * vec2(2.0);
-            mTmpTransformIdentity = translate(
-                    mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransformIdentity;
             mTmpTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransform;
             mTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTransform;
             mTransformCurrent = false;
@@ -497,7 +494,6 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
 
             if (positionInView.x < minPos.x) {
                 if (sampleScale.x == 0) {
-                    mTmpTransformIdentity = mat4(1);
                     mTransform = mat4(1);
                     resetZoom();
                     return;

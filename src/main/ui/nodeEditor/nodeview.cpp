@@ -173,6 +173,7 @@ void ZNodeView::updateChart() {
     }
 
     mChart->invalidateData();
+
     vec2 xBound = mChart->getXBounds();
     vec2 yBound = mChart->getYBounds();
 
@@ -192,12 +193,12 @@ void ZNodeView::updateChart() {
 }
 
 void ZNodeView::updateChartHeatMap() {
+    // Run from background thread
 
     // todo: update this when x and y resolution defined independently
     int xRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
     int yRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
 
-    mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
 
@@ -210,7 +211,9 @@ void ZNodeView::updateChartHeatMap() {
 
             float x = mix(xBounds.x, xBounds.y, xFactor);
             float y = mix(yBounds.x, yBounds.y, yFactor);
-            vector<vector<float>> inVec = {vector<float>(MAX_INPUT_COUNT, x), vector<float>(MAX_INPUT_COUNT, y)};
+            vector<vector<float>> inVec = {
+                    vector<float>(MAX_INPUT_COUNT, x),
+                            vector<float>(MAX_INPUT_COUNT, y)};
 
             vector<vector<float>> z = evaluate(inVec);
             if (!z.empty()) {
@@ -223,11 +226,11 @@ void ZNodeView::updateChartHeatMap() {
 }
 
 void ZNodeView::updateChart2D() {
+    // Run from background thread
+
     // Data doesn't necessarily go off screen after this number of points.
     // Finding this optimal resolution is potentially complicated.
     float increment = 0.1;
-
-    mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
     evaluate(evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, 0))));
@@ -255,9 +258,9 @@ void ZNodeView::updateChart2D() {
 }
 
 void ZNodeView::updateChart1D() {
+    // Run from background thread
     int chartRes = mChart->getResolution();
 
-    mChart->computeChartBounds();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
 
@@ -282,9 +285,9 @@ void ZNodeView::updateChart1D() {
 }
 
 void ZNodeView::updateChart1D2X() {
-    int chartRes = mChart->getResolution();
+    // Run from background thread
 
-    mChart->computeChartBounds();
+    int chartRes = mChart->getResolution();
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
 
@@ -654,6 +657,7 @@ void ZNodeView::invalidateSingleNode() {
         mInvalid = true;
         if (mInvalidateListener != nullptr) {
             mInvalidateListener(this);
+            mChart->computeChartBounds();
         }
     }
 }
