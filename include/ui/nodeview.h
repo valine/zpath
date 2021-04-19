@@ -773,6 +773,8 @@ public:
                 return mNNColor;
             case SYMBOLIC:
                 return mSymbolicColor;
+            default:
+                return mVariableColor;
 
         }
     }

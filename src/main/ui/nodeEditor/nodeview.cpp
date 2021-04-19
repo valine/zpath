@@ -57,6 +57,8 @@ void ZNodeView::init() {
         auto* socket = new ZView(SOCKET_WIDTH, SOCKET_HEIGHT, this);
         socket->setOffset(2, yOffset + i * (SOCKET_HEIGHT + margin));
         socket->setClickable(false);
+        socket->setHighlighColor(vec4(0));
+        socket->setTint(vec4(1));
         mSocketsIn.push_back(socket);
     }
 
@@ -360,13 +362,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsOut.at(i)->setVisibility(true);
             if (i < socketCount.y) {
                 vec4 color = getSocketColor(socketType.at(1).at(i)) - darkenVec;
-                if (socketType.at(1).at(i) == VAR) {
-                    mSocketsOut.at(i)->setBackgroundColor(color);
-                } else if (socketType.at(1).at(i) == CON)  {
-                    mSocketsOut.at(i)->setBackgroundColor(color);
-                } else if (socketType.at(1).at(i) == ENUM) {
-                    mSocketsOut.at(i)->setBackgroundColor(color);
-                }
+                mSocketsOut.at(i)->setBackgroundColor(color);
             }
         }
 

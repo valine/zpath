@@ -826,20 +826,14 @@ vector<ZView*> ZView::getSubViews() {
 
 void ZView::setBackgroundColor(float color[4]) {
     mBackgroundColor = vec4(color[0], color[1], color[2], color[3]);
+    updateCornerRadius();
     invalidate();
-
-    if (length(mCornerRadius) > 0) {
-        updateCornerRadius();
-    }
 }
 
 void ZView::setBackgroundColor(vec4 color) {
     mBackgroundColor = color;
+    updateCornerRadius();
     invalidate();
-
-    if (length(mCornerRadius) > 0) {
-        updateCornerRadius();
-    }
 }
 
 vec4 ZView::getBackgroundColor() {
