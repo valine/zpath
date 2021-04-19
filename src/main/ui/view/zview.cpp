@@ -271,7 +271,7 @@ void ZView::draw() {
         vec2 absoluteScale = getScale();
         mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
 
-        vec4 backgroundColor = mBackgroundColor;
+        vec4 backgroundColor = max(vec4(0), mBackgroundColor);
 
         if (mShowHighlight) {
             backgroundColor = mHighlightColor;
@@ -369,13 +369,13 @@ void ZView::redrawCornerRadius() {
             if (mRoundedRect == nullptr) {
                 auto tex = ZCornerRenderer::get().
                         createTexture(getWidth() * mDP, getHeight() * mDP,
-                                      getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mCornerRadius * mDP);
+                                      max(vec4(0), getBackgroundColor()), mOutlineColor, mLineWidth * mDP, mCornerRadius * mDP);
                 mRoundedRect = tex;
             } else {
                 ZCornerRenderer::get().
                         draw(getWidth() * mDP, getHeight() * mDP,
                              mCornerRadius * mDP,
-                             getBackgroundColor(), mOutlineColor, mLineWidth * mDP, mRoundedRect, false);
+                             max(vec4(0), getBackgroundColor()), mOutlineColor, mLineWidth * mDP, mRoundedRect, false);
             }
         }
 

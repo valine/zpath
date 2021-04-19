@@ -361,7 +361,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
             mSocketsOut.at(i)->setVisibility(true);
             if (i < socketCount.y) {
-                vec4 color = getSocketColor(socketType.at(1).at(i)) - darkenVec;
+                vec4 color = max(getSocketColor(socketType.at(1).at(i)) - darkenVec, vec4(0));
                 mSocketsOut.at(i)->setBackgroundColor(color);
             }
         }
