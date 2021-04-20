@@ -508,10 +508,8 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
     vec2 nodeSize = ZNodeView::getNodeSize(type);
-
     ZNodeView* node = ZNodeUtil::get().newNode(type);
     addNodeToView(node, true);
-
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
     return node;
 }
@@ -520,6 +518,15 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     if (node->getParentView() != mNodeContainer) {
         mNodeContainer->addSubView(node);
     }
+
+    node->setInvalidateListener([this](ZNodeView* node){
+        {
+            lock_guard<mutex> guard(mEvalMutex);
+            mEvalSet.insert(node);
+            mEvalConVar.notify_one();
+        }
+    });
+
     deselectNode(node);
     node->setCornerRadius(5);
     node->setVisibility(true);
@@ -543,13 +550,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     }
 
     node->setInitialPosition(node->getOffset() - getMouseDragDelta());
-    node->setInvalidateListener([this](ZNodeView* node){
-        {
-            lock_guard<mutex> guard(mEvalMutex);
-            mEvalSet.insert(node);
-            mEvalConVar.notify_one();
-        }
-    });
 
     node->setShowMagPickerListener([this, node](ZView *view, ZNodeView *nodeView,
             int index, bool isInput, float initialValue, string name) {
@@ -646,10 +646,9 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
         });
         mMagnitudePicker->setValue(initialValue);
     });
-
-
     node->resetInitialPosition();
-    node->invalidateSingleNode();
+    node->invalidateNodeRecursive();
+   // node->invalidate();
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){

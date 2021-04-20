@@ -13,6 +13,7 @@ ZLineChart::ZLineChart(float width, float height, ZView *parent) : ZView(width, 
 void ZLineChart::onCreate() {
     ZView::onCreate();
     initView();
+
 }
 
 void ZLineChart::initView() {
@@ -57,7 +58,6 @@ void ZLineChart::initView() {
                               sizeof(float) * 4, nullptr);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBGridEdgeBuffer);
         glBindVertexArray(0);
-
 
         glGenVertexArrays(1, &mGridVAO);
         glBindVertexArray(mGridVAO);
@@ -275,6 +275,8 @@ void ZLineChart::updateFBOSize() {
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    computeChartBounds();
 }
 
 void ZLineChart::updateChart2D() {

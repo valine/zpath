@@ -102,6 +102,8 @@ void ZNodeView::init() {
     mChart->setInvalidateListener([this](){
         invalidateNodeRecursive();
     });
+    mChart->resetZoom();
+    mChart->resetTmpTransform();
 
     // Bound labels
     vec4 boundColor = vec4(0.4,0.4,0.4,1.0);
@@ -175,6 +177,7 @@ void ZNodeView::updateChart() {
     }
 
     mChart->invalidateData();
+    mChart->invalidate();
 
     vec2 xBound = mChart->getXBounds();
     vec2 yBound = mChart->getYBounds();
@@ -402,7 +405,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
     mNameLabel->setXOffset(22);
     mNameLabel->setYOffset(1);
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
-
 
     if (getSocketCount().x == 0) {
         mNameLabel->setXOffset(MIN_MARGIN);
