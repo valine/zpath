@@ -982,6 +982,10 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
                 return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)),
                              vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
             case CROSS:
+                return {
+                        {dot(vec2(x.at(0).at(0), x.at(1).at(0)),
+                             vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}
+                };
                 break;
             case CHART_2D: {
                 mChart->setResolution(100);
