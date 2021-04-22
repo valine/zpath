@@ -180,10 +180,11 @@ public:
             if (root->getSocketCount().x == 0) {
                 return expression;
             }
+
+            // Node is function
+            expression += "(";
         }
 
-        // Node is function
-        expression += "(";
         int varCount = getVarCount(root);
         for (int socketIndex = 0; socketIndex < varCount; socketIndex++) {
 
@@ -209,7 +210,13 @@ public:
 
         }
 
-        expression += ")";
+        if (includeRoot) {
+            expression += ")";
+        }
+
+        if (expression.empty()) {
+            expression = "x";
+        }
         return expression;
     }
 
