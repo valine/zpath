@@ -89,6 +89,7 @@ public:
         NONE,
         CON,
         VAR,
+        VAR_Z,
         ENUM,
         NN,
         SYMBOLIC,
@@ -128,7 +129,7 @@ public:
     array<array<SocketType, 8>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}}, {{VAR, VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}}, {{VAR, VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> LAPLACE_S_MAP_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> LAPLACE_S_MAP_TYPE = {{{{VAR, VAR_Z, CON, CON}}, {{VAR, CON, CON}}}};
 
     array<array<SocketType, 8>, 2> COMBINE_TYPE = {{{{VAR, VAR}}, {{VAR}}}};
     array<array<SocketType, 8>, 2> SPLIT_TYPE = {{{{VAR}}, {{VAR, VAR}}}};
@@ -459,7 +460,7 @@ public:
             case HEAT_MAP:
                 return {"X", "Z Min", "Z Max"};
             case LAPLACE_S:
-                return {"X", "A", "Z Min", "Z Max"};
+                return {"X", "Z", "Z Min", "Z Max"};
             case NEURAL_CORE:
                 return {"Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
             default:
@@ -761,6 +762,7 @@ public:
         const vec4 mEnumColor = vec4(0.038825, 0.538225, 0.048049, 1.000000);
         const vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
         const vec4 mSymbolicColor = vec4(0.122923, 0.061397, 0.314665, 1.000000);
+        const vec4 mVariableZColor = vec4(0.848084, 0.215260, 0.077509, 1.000000);
 
         switch (type) {
             case CON:
@@ -771,6 +773,8 @@ public:
                 return mEnumColor;
             case NN:
                 return mNNColor;
+            case VAR_Z:
+                return mVariableZColor;
             case SYMBOLIC:
                 return mSymbolicColor;
             default:
@@ -787,8 +791,9 @@ public:
                 return getSocketColor(CON);
             case X:
             case Y:
-            case Z:
                 return getSocketColor(VAR);
+            case Z:
+                return getSocketColor(VAR_Z);
             case NEURAL_CORE:
             case TANH:
             case SIGMOID:
@@ -878,9 +883,6 @@ public:
         mChart->invalidate();
         return returnValue;
     }
-
-
-
 
     pair<float, float> computeLaplace(float x, float y, float start, float windowSize, int resolution) {
 

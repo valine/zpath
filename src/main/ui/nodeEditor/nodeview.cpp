@@ -338,13 +338,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             mSocketsIn.at(i)->setVisibility(true);
             if (i < socketCount.x) {
                 vec4 color = getSocketColor(socketType.at(0).at(i));
-                if (socketType.at(0).at(i) == VAR) {
-                    mSocketsIn.at(i)->setBackgroundColor(color);
-                } else if (socketType.at(0).at(i) == CON) {
-                    mSocketsIn.at(i)->setBackgroundColor(color);
-                } else if (socketType.at(0).at(i) == ENUM) {
-                    mSocketsIn.at(i)->setBackgroundColor(color);
-                }
+                mSocketsIn.at(i)->setBackgroundColor(color);
             }
 
             // First socket round corner a little more
@@ -604,6 +598,9 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
                         if (getSocketType().at(0).at(i) == VAR) {
                             summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
                             summedInputs.at(IMAG).at(i) = 0;
+                        } else if (getSocketType().at(0).at(i) == VAR_Z) {
+                            summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
+                            summedInputs.at(IMAG).at(i) = x.at(IMAG).at(i);
                         } else if (getSocketType().at(0).at(i) == CON) {
                             // By default constants have no imaginary component
                             if (d == REAL) {
@@ -770,7 +767,7 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x)
         } else {
             exp = ZNodeUtil::get().graphToString(root, false);
         }
-       
+
         string laplace = "laplace(" + exp + ")";
         string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
         string zResult = ZUtil::replace(result, "x", "z");
