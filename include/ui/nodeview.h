@@ -779,7 +779,6 @@ public:
                 return mSymbolicColor;
             default:
                 return mVariableColor;
-
         }
     }
 

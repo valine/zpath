@@ -762,8 +762,7 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x)
         ZNodeView* root = this;
         string exp;
         if (!mInputIndices.empty() && !mInputIndices.at(0).empty()) {
-            root = mInputIndices.at(0).at(0).first;
-            exp = ZNodeUtil::get().graphToString(root, true);
+            exp = ZNodeUtil::get().graphToString(root, false);
         } else {
             exp = ZNodeUtil::get().graphToString(root, false);
         }

@@ -186,6 +186,11 @@ public:
         }
 
         int varCount = getVarCount(root);
+
+        if (!includeRoot) {
+            varCount = 1;
+        }
+
         for (int socketIndex = 0; socketIndex < varCount; socketIndex++) {
 
             // No inputs for socket
