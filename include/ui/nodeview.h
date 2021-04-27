@@ -123,7 +123,7 @@ public:
     array<array<SocketType, 8>, 2> IFFT_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> FFT_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> HARTLEY_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> LAPLACE_TYPE = {{{{VAR, VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
+    array<array<SocketType, 8>, 2> LAPLACE_TYPE = {{{{VAR, VAR_Z, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> FIRST_DIFF_TYPE = {{{{VAR, VAR}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> DOT_TYPE = {{{{CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}}, {{VAR, VAR, CON, CON}}}};
