@@ -758,11 +758,20 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
     node->setVisibility(false);
     deleteConnections(node);
-    remove(mNodeViews, node->getIndexTag());
+
+    if (node->getIndexTag() != -1) {
+        remove(mNodeViews, node->getIndexTag());
+    }
+
+    node->setIndexTag(-1);
     int index = 0;
     for (ZNodeView *nv : mNodeViews){
         nv->setIndexTag(index);
         index++;
+    }
+
+    for (ZNodeView* nodeView : node->mHeadlessLaplaceNodes) {
+        deleteNodeAsync(nodeView);
     }
 
    // mNodeContainer->removeSubView(node);

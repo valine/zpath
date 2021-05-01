@@ -1064,6 +1064,7 @@ public:
 
     float getConstantInput(int index);
 
+    vector<ZNodeView*> mHeadlessLaplaceNodes;
 private:
     bool mInvalid = true;
 
@@ -1113,8 +1114,6 @@ private:
     vector<complex<float>> mMlCache;
 
     vector<vector<float>> mLaplaceCache;
-
-    vector<ZNodeView*> mHeadlessLaplaceNodes;
 
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
