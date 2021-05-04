@@ -774,9 +774,7 @@ void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last
         deleteNodeAsync(nodeView);
     }
 
-   // mNodeContainer->removeSubView(node);
     ZNodeUtil::get().submitForRecycle(node);
-    // Reindex node views
     invalidate();
 }
 
@@ -838,7 +836,6 @@ void ZNodeEditor::quickConnectNodes(ZNodeView* firstNode, ZNodeView* secondNode)
     // Shortcut for linking two nodes. This works well when
     // the first node has the same number of outputs as the
     // second node has inputs.
-
     if (firstNode == secondNode || firstNode == nullptr || secondNode == nullptr) {
         return;
     }
