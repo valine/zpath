@@ -191,7 +191,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
 
                 ///////////////Step 2: trigger split or join
                 if (delta.x < -DRAG_THRESHOLD) {
-                    triggerSideSplit(0, -1);
+                    triggerSideSplit(0, getIndexTag());
                 } else if (delta.x > DRAG_THRESHOLD) {
                     mDragType = pendingHorizontalJoin;
                     updateHorizontalJoinGuide();
@@ -201,7 +201,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->bringToFront();
                     }
                 } else if (delta.y > DRAG_THRESHOLD) {
-                    triggerOverUnderSplit(0, -1);
+                    triggerOverUnderSplit(0, getIndexTag());
                 } else if (delta.y < -DRAG_THRESHOLD) {
                     mDragType = pendingVerticalJoin;
                     updateVerticalJoinGuide();
@@ -421,8 +421,9 @@ void ZTileViewController::updateHorizontalJoinGuide() {
 
 }
 
-void ZTileViewController::insertChildAtIndexHorizontal(int index) {
+void ZTileViewController::insertChildAtIndexHorizontal(int index, int controllerType) {
     auto tile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+    tile->setIndexTag(controllerType);
     addSubView(tile);
 
     double offset = mChildrenTiles.at(index - 1)->getOffsetX() +  mChildrenTiles.at(index - 1)->getWidth();
@@ -445,8 +446,9 @@ void ZTileViewController::insertChildAtIndexHorizontal(int index) {
     mInitialBondary = mChildrenTiles.at(index - 1)->getOffsetX() + mChildrenTiles.at(index - 1)->getWidth();
 }
 
-void ZTileViewController::insertChildAtIndexVertical(int index) {
+void ZTileViewController::insertChildAtIndexVertical(int index, int controllerType) {
     auto tile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
+    tile->setIndexTag(controllerType);
     addSubView(tile);
 
     double offset = mChildrenTiles.at(index - 1)->getOffsetY();
@@ -538,6 +540,9 @@ ZTileViewController* ZTileViewController::triggerSideSplit(float percent, int co
         } else {
             leftTile = mChildrenTiles.at(0);
             rightTile = mChildrenTiles.at(1);
+
+            rightTile->setIndexTag(controllerIndex);
+            leftTile->setIndexTag(controllerIndex);
         }
 
         float leftPercent = 1.0 - percent;
@@ -576,7 +581,7 @@ ZTileViewController* ZTileViewController::triggerSideSplit(float percent, int co
         mDropDown->setVisibility(false);
 
     } else {
-        mParentTile->insertChildAtIndexHorizontal(mTileIndex + 1);
+        mParentTile->insertChildAtIndexHorizontal(mTileIndex + 1, controllerIndex);
         mDragType = noDrag;
     }
 
@@ -611,6 +616,9 @@ ZTileViewController* ZTileViewController::triggerOverUnderSplit(float percent, i
         } else {
             bottomTile = mChildrenTiles.at(0);
             topTile = mChildrenTiles.at(1);
+
+            topTile->setIndexTag(controllerIndex);
+            bottomTile->setIndexTag(controllerIndex);
         }
 
         float percentLeft = 1.0 - percent;
@@ -649,7 +657,7 @@ ZTileViewController* ZTileViewController::triggerOverUnderSplit(float percent, i
         mDropDown->setVisibility(false);
 
     } else {
-        mParentTile->insertChildAtIndexVertical(mTileIndex + 1);
+        mParentTile->insertChildAtIndexVertical(mTileIndex + 1, controllerIndex);
         mDragType = noDrag;
     }
 

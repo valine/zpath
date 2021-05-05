@@ -84,11 +84,11 @@ private:
 
     void setTileIndex(int index);
 
-    void insertChildAtIndexHorizontal(int index);
+    void insertChildAtIndexHorizontal(int index, int controllerType);
 
     void updateIndices();
 
-    void insertChildAtIndexVertical(int index);
+    void insertChildAtIndexVertical(int index, int controllerType);
 
     void triggerJoinBottomToTop(int index);
 
