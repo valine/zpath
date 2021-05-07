@@ -73,6 +73,7 @@ public:
         NEURAL_CORE,
         SIGMOID,
         TANH,
+        GROUP,
         LAST // Fake enum to allow easy iteration
     };
 
@@ -93,6 +94,8 @@ public:
         ENUM,
         NN,
         SYMBOLIC,
+        GROUP_SOCKET
+
     };
 
     enum ChartResMode {
@@ -107,7 +110,6 @@ public:
         IMAGE
     };
 
-    vector<vector<float>> compute(vector<vector<float>> x, Type type);
 
     array<array<SocketType, 8>, 2> COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> POLY_TYPE = {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
@@ -248,6 +250,9 @@ public:
                     mSocketType = NEURAL_CORE_TYPE;
                     break;
                 }
+                case GROUP: {
+                    mSocketType = NONE_TYPE;
+                }
                 case LAST: {
                     mSocketType = NONE_TYPE;
                     break;
@@ -371,6 +376,9 @@ public:
                 case NEURAL_CORE:
                     mSocketCount = ivec2(7, 3);
                     break;
+                case GROUP:
+                    // When set to zero socket count is dynamic
+                    mSocketCount = ivec2(0);
                 case LAST:
                     mSocketCount = ivec2(0, 0);
                     break;
@@ -415,6 +423,8 @@ public:
                 return {0.0, 0.0, -1.0, 1.0};
             case NEURAL_CORE:
                 return {0.0, 0.0, 0.05, -5, -1, 0, 0};
+            case GROUP:
+                return {0.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
         }
@@ -569,6 +579,8 @@ public:
                 return "sigmoid";
             case TANH:
                 return "tanh";
+            case GROUP:
+                return "group";
             case LAST:
                 return "none";
         }
@@ -764,6 +776,8 @@ public:
         const vec4 mSymbolicColor = vec4(0.122923, 0.061397, 0.314665, 1.000000);
         const vec4 mVariableZColor = vec4(0.848084, 0.215260, 0.077509, 1.000000);
 
+        const vec4 mGroupColor = vec4(0.04, 0.04, 0.04, 1.000000);
+
         switch (type) {
             case CON:
                 return mConstantColor;
@@ -777,6 +791,8 @@ public:
                 return mVariableZColor;
             case SYMBOLIC:
                 return mSymbolicColor;
+            case GROUP_SOCKET:
+                return mGroupColor;
             default:
                 return mVariableColor;
         }
@@ -799,6 +815,8 @@ public:
                 return getSocketColor(NN);
             case LAPLACE_S:
                 return getSocketColor(SYMBOLIC);
+            case GROUP:
+                return getSocketColor(GROUP_SOCKET);
             default:
                 return vec4(1);
         }
@@ -833,6 +851,9 @@ public:
                 return IMAGE;
         }
     }
+
+    vector<vector<float>> compute(vector<vector<float>> x, Type type);
+
 
     float computeFirstDifference(float fx, float x) {
         vec2 bound = mChart->getXBounds();

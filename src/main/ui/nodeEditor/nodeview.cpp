@@ -1047,6 +1047,9 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
                 return {{returnValue, chartBound.x, chartWidth},
                         {x.at(REAL).at(0),      chartBound.x, chartWidth}};
             }
+            case GROUP: {
+                return {{0.0, 0.0}, {0.0,0.0}};
+            }
             case LAST:
                 break;
         }
