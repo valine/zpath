@@ -448,6 +448,14 @@ void ZNodeView::setType(ZNodeView::Type type) {
         button->setElevation(1.0);
         buttonIndex++;
     }
+    
+    vec4 bg = getBackgroundColor();
+    vec3 color3 = vec3(bg.r,bg.g,bg.b);
+    if (glm::length(color3) < 0.8 && bg.a != 0) {
+        mNameLabel->setTextColor(white);
+    } else {
+        mNameLabel->setTextColor(black);
+    }
 
 }
 

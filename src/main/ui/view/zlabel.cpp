@@ -17,8 +17,6 @@ ZLabel::ZLabel(string label, ZView *parent)
 
     setWindowHeight(parent->getWindowHeight());
     setWindowWidth(parent->getWindowWidth());
-
-
 }
 
 
