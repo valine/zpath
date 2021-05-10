@@ -21,7 +21,6 @@ public:
     ZTileViewController(string path, std::function<ZViewController *(int)> factory,
                         vector<string> names, bool isRoot, ZViewController *content);
 
-
     int sideBySide = 0;
     int overUnder = 1;
 

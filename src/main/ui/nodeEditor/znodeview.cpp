@@ -10,7 +10,7 @@
 #include <ui/zbutton.h>
 #include <ui/zcheckbox.h>
 #include <utils/zsettingsstore.h>
-#include "ui/nodeview.h"
+#include "ui/znodeview.h"
 #include <sstream>
 #include <iomanip>
 #include <mutex>
@@ -416,6 +416,9 @@ void ZNodeView::setType(ZNodeView::Type type) {
         mChart->setLineCount(2);
     }
 
+    mChart->setDefaultMat(getChartBounds(mType));
+    mChart->resetZoom();
+
     int i = 0;
     for (float cValue : getDefaultInput(mType)) {
         mConstantValueInput.at(i) = cValue;
@@ -439,7 +442,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
     int buttonIndex = 0;
     for (const string& buttonName : getButtonNames()) {
         int margin = 2;
-        ZButton* button = new ZButton(buttonName, this);
+        auto* button = new ZButton(buttonName, this);
         button->setMaxWidth(50);
         button->setMaxHeight(20);
         button->getLabel()->offsetBy(0, -3);
@@ -539,7 +542,6 @@ void ZNodeView::setConstantValueInput(int index, float value, int magnitudeIndex
         invalidateNodeRecursive();
     }
 }
-
 
 vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x) {
 
@@ -762,7 +764,6 @@ void ZNodeView::hideSocketLabels() {
         }
     }
 }
-
 
 vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x) {
 

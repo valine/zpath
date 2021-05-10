@@ -727,7 +727,6 @@ void ZTileViewController::triggerSideJoinRightToLeft(int index) {
         mChildrenTiles.at(index)->setMaxWidth(width);
 
         resetController();
-
     }
 }
 

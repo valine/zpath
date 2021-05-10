@@ -2,8 +2,8 @@
 // Created by lukas on 10/4/20.
 //
 
-#ifndef ZPATH_NODEVIEW_H
-#define ZPATH_NODEVIEW_H
+#ifndef ZPATH_ZNODEVIEW_H
+#define ZPATH_ZNODEVIEW_H
 
 static const int SOCKET_WIDTH = 15;
 static const int SOCKET_HEIGHT = 15;
@@ -110,7 +110,7 @@ public:
         IMAGE
     };
 
-
+    ///// Start node definitions
     array<array<SocketType, 8>, 2> COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> POLY_TYPE = {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> SQRT_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
@@ -607,6 +607,16 @@ public:
         }
     }
 
+    static vec4 getChartBounds(Type type) {
+        switch (type) {
+            case FFT:
+            case IFFT:
+                return vec4(0,10,-5,5);
+            default:
+                return (vec4(-5,5,-5,5));
+        }
+    }
+
     static bool isOutputLabelVisible(Type type) {
         switch (type) {
             case C:
@@ -617,23 +627,6 @@ public:
         }
     }
 
-    void initializeNNModel() {
-        vector<int> heights = {3, 3, 3};
-        int width = heights.size();
-
-        int inputs = 1;
-        int outputs = 1;
-        int batchSize = 50;
-        float stepSize = 0.0001;
-        MlModel::Optimizer optimizer = MlModel::RMSPROP;
-        Neuron::Activation type = Neuron::TANH;
-        vector<Neuron::Activation> activationFunctions = vector<Neuron::Activation>(width, type);
-
-        mMlModel = new MlModel(width, heights, inputs, outputs,
-                               batchSize, stepSize, optimizer, activationFunctions);
-        mMlModel->resetNetwork();
-    }
-
     function<void(ZButton *sender)> getButtonCallback(int index) {
         switch (mType) {
             case NEURAL_CORE: {
@@ -641,93 +634,7 @@ public:
                     case 0: {
                         return [this](ZButton *sender) {
                             // Train the network
-
-                            if (mMlModel == nullptr) {
-                                initializeNNModel();
-                            }
-
-                            vector<pair<vector<double>, vector<double>>> trainingData;
-                            int samples = 200;
-
-                            int socketIndex = 0;
-                            int dimenIndex = 0;
-
-                            auto fres = (float) samples;
-
-                            float windowStart = sumInputs(0.0, 3, 0);
-                            float windowSize = sumInputs(0.0, 4, 0);
-
-                            // When window size is less than zero use this nodes chart window size
-                            vec2 chartBound = mChart->getXBounds();
-                            float chartWidth = chartBound.y - chartBound.x;
-                            if (windowSize < 0) {
-                                windowSize = chartWidth;
-                                windowStart = chartBound.x;
-                            }
-
-                            for (int i = 0; i < samples; i++) {
-                                float t = (((float) i / fres) * windowSize) + windowStart;
-                                float summedInput = sumInputs(t, socketIndex, dimenIndex);
-                                trainingData.push_back({{t},
-                                                        {summedInput}});
-                            }
-
-                            mMlModel->setStepSize(sumInputs(0.0, 2, 0));
-
-                            int activationIndex = sumInputs(0, 6, 0);
-                            switch (activationIndex) {
-                                case 0: {
-                                    mMlModel->setActivationFunction(Neuron::Activation::TANH);
-                                    break;
-                                }
-                                case 1: {
-                                    mMlModel->setActivationFunction(Neuron::Activation::SIGMOID);
-                                    break;
-                                }
-                                case 2: {
-                                    mMlModel->setActivationFunction(Neuron::Activation::RELU);
-                                    break;
-                                }
-                            }
-
-                            int optmizerIndex = sumInputs(0, 5, 0);
-                            setOptimizer(optmizerIndex);
-
-                            mMlModel->setTrainingData(trainingData);
-                            mMlModel->computeNormalization();
-                            mMlModel->setTrainingCallback([this]() {
-                                int optmizerIndex = sumInputs(0, 5, 0);
-                                setOptimizer(optmizerIndex);
-                                mMlModel->setStepSize(sumInputs(0.0, 2, 0));
-
-
-                                vec2 xBound = mChart->getXBounds();
-                                float span = xBound.y - xBound.x;
-                                float inc = span / mChart->getResolution();
-                                vector<vector<float>> job;
-                                for (float x = xBound.x; x < xBound.y; x += inc) {
-                                    job.push_back({x});
-
-                                }
-                                mMlModel->computeAsync(job, [this](vector<vector<float>> outputs) {
-                                    mMlCache.clear();
-                                    for (vector<float> output : outputs) {
-                                        mMlCache.emplace_back(output.at(0), output.at(0));
-                                    }
-
-                                    invalidateNodeRecursive();
-                                });
-
-
-                            });
-
-                            if (mMlModel->getTrainingInProgress()) {
-                                mMlModel->requestStopTraining();
-                                sender->setText("Train");
-                            } else {
-                                mMlModel->trainNetworkAsync(10000);
-                                sender->setText("Stop");
-                            }
+                            trainNN(sender);
                         };
                     }
                     case 1: {
@@ -743,28 +650,6 @@ public:
             }
             default:
                 return nullptr;
-        }
-    }
-
-    void setOptimizer(int optmizerIndex) const {
-        switch (optmizerIndex) {
-            case 0: {
-                mMlModel->setOptimizer(MlModel::RMSPROP);
-                break;
-            }
-            case 1: {
-                mMlModel->setOptimizer(MlModel::ADAGRAD);
-                break;
-            }
-            case 2: {
-                mMlModel->setOptimizer(MlModel::MOMENTUM);
-                break;
-            }
-            case 3: {
-                mMlModel->setOptimizer(MlModel::GD);
-                break;
-            }
-
         }
     }
 
@@ -854,6 +739,135 @@ public:
 
     vector<vector<float>> compute(vector<vector<float>> x, Type type);
 
+    ///////// End node definition
+
+    void initializeNNModel() {
+        vector<int> heights = {3, 3, 3};
+        int width = heights.size();
+
+        int inputs = 1;
+        int outputs = 1;
+        int batchSize = 50;
+        float stepSize = 0.0001;
+        MlModel::Optimizer optimizer = MlModel::RMSPROP;
+        Neuron::Activation type = Neuron::TANH;
+        vector<Neuron::Activation> activationFunctions = vector<Neuron::Activation>(width, type);
+
+        mMlModel = new MlModel(width, heights, inputs, outputs,
+                               batchSize, stepSize, optimizer, activationFunctions);
+        mMlModel->resetNetwork();
+    }
+
+    void trainNN(ZButton *sender) {
+        if (mMlModel == nullptr) {
+            initializeNNModel();
+        }
+
+        vector<pair<vector<double>, vector<double>>> trainingData;
+        int samples = 200;
+
+        int socketIndex = 0;
+        int dimenIndex = 0;
+
+        auto fres = (float) samples;
+
+        float windowStart = sumInputs(0.0, 3, 0);
+        float windowSize = sumInputs(0.0, 4, 0);
+
+        // When window size is less than zero use this nodes chart window size
+        vec2 chartBound = mChart->getXBounds();
+        float chartWidth = chartBound.y - chartBound.x;
+        if (windowSize < 0) {
+            windowSize = chartWidth;
+            windowStart = chartBound.x;
+        }
+
+        for (int i = 0; i < samples; i++) {
+            float t = (((float) i / fres) * windowSize) + windowStart;
+            float summedInput = sumInputs(t, socketIndex, dimenIndex);
+            trainingData.push_back({{t},
+                                    {summedInput}});
+        }
+
+        mMlModel->setStepSize(sumInputs(0.0, 2, 0));
+
+        int activationIndex = sumInputs(0, 6, 0);
+        switch (activationIndex) {
+            case 0: {
+                mMlModel->setActivationFunction(Neuron::TANH);
+                break;
+            }
+            case 1: {
+                mMlModel->setActivationFunction(Neuron::SIGMOID);
+                break;
+            }
+            case 2: {
+                mMlModel->setActivationFunction(Neuron::RELU);
+                break;
+            }
+        }
+
+        int optmizerIndex = sumInputs(0, 5, 0);
+        setOptimizer(optmizerIndex);
+
+        mMlModel->setTrainingData(trainingData);
+        mMlModel->computeNormalization();
+        mMlModel->setTrainingCallback([this]() {
+            int optmizerIndex = sumInputs(0, 5, 0);
+            setOptimizer(optmizerIndex);
+            mMlModel->setStepSize(sumInputs(0.0, 2, 0));
+
+
+            vec2 xBound = mChart->getXBounds();
+            float span = xBound.y - xBound.x;
+            float inc = span / mChart->getResolution();
+            vector<vector<float>> job;
+            for (float x = xBound.x; x < xBound.y; x += inc) {
+                job.push_back({x});
+
+            }
+            mMlModel->computeAsync(job, [this](vector<vector<float>> outputs) {
+                mMlCache.clear();
+                for (vector<float> output : outputs) {
+                    mMlCache.emplace_back(output.at(0), output.at(0));
+                }
+
+                invalidateNodeRecursive();
+            });
+
+
+        });
+
+        if (mMlModel->getTrainingInProgress()) {
+            mMlModel->requestStopTraining();
+            sender->setText("Train");
+        } else {
+            mMlModel->trainNetworkAsync(10000);
+            sender->setText("Stop");
+        }
+    }
+
+    void setOptimizer(int optmizerIndex) const {
+        switch (optmizerIndex) {
+            case 0: {
+                mMlModel->setOptimizer(MlModel::RMSPROP);
+                break;
+            }
+            case 1: {
+                mMlModel->setOptimizer(MlModel::ADAGRAD);
+                break;
+            }
+            case 2: {
+                mMlModel->setOptimizer(MlModel::MOMENTUM);
+                break;
+            }
+            case 3: {
+                mMlModel->setOptimizer(MlModel::GD);
+                break;
+            }
+
+        }
+    }
 
     float computeFirstDifference(float fx, float x) {
         vec2 bound = mChart->getXBounds();
@@ -898,6 +912,35 @@ public:
                 complex<float> y = mFftCache.at(xIndex);
                 returnValue = {y.real() / res, y.imag() / res};
             }
+        }
+
+        mChart->invalidate();
+        return returnValue;
+    }
+
+    pair<float, float> computeInverseFft(float in, float fftRes, float windowSize) {
+        int res = std::max((int) fftRes, 1);
+        if (mFftCache.empty()) {
+            for (int i = 0; i < res * 2; i++) {
+
+                int socketIndex = 0;
+                int dimenIndexX = 0;
+                int dimenIndexY = 1;
+                auto inputSocket = mInputIndices.at(0);
+                float summedInput = sumInputs(i, socketIndex, dimenIndexX);
+                float summedInput2 = sumInputs(i, socketIndex, dimenIndexY);
+
+                mFftCache.emplace_back(summedInput, summedInput2);
+            }
+            ZFFt::inverseTransform(mFftCache);
+        }
+
+        pair<float, float> returnValue = {NAN, NAN};
+        uint xIndex = (int) ((in * (mFftCache.size() - 1)) / windowSize);
+        if (xIndex >= 0 && !mFftCache.empty() && windowSize > 0 && xIndex < mFftCache.size()) {
+
+            complex<float> y = mFftCache.at(xIndex);
+            returnValue = {y.real(), y.imag()};
         }
 
         mChart->invalidate();
@@ -996,35 +1039,6 @@ public:
         }
 
         return summedInputs;
-    }
-
-    pair<float, float> computeInverseFft(float in, float fftRes, float windowSize) {
-        int res = std::max((int) fftRes, 1);
-        if (mFftCache.empty()) {
-            for (int i = 0; i < res * 2; i++) {
-
-                int socketIndex = 0;
-                int dimenIndexX = 0;
-                int dimenIndexY = 1;
-                auto inputSocket = mInputIndices.at(0);
-                float summedInput = sumInputs(i, socketIndex, dimenIndexX);
-                float summedInput2 = sumInputs(i, socketIndex, dimenIndexY);
-
-                mFftCache.emplace_back(summedInput, summedInput2);
-            }
-            ZFFt::inverseTransform(mFftCache);
-        }
-
-        pair<float, float> returnValue = {NAN, NAN};
-        uint xIndex = (int) ((in * (mFftCache.size() - 1)) / windowSize);
-        if (xIndex >= 0 && !mFftCache.empty() && windowSize > 0 && xIndex < mFftCache.size()) {
-
-            complex<float> y = mFftCache.at(xIndex);
-            returnValue = {y.real(), y.imag()};
-        }
-
-        mChart->invalidate();
-        return returnValue;
     }
 
     vector<vector<float>> evaluate(vector<vector<float>> x);
@@ -1168,4 +1182,4 @@ private:
 };
 
 
-#endif //ZPATH_NODEVIEW_H
+#endif //ZPATH_ZNODEVIEW_H

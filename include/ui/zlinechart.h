@@ -105,6 +105,8 @@ public:
     void resetTmpTransform();
     bool isTransformCurrent();
 
+    void setDefaultMat(vec4 defaultBounds);
+
 private:
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener = nullptr;

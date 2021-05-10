@@ -28,7 +28,7 @@ static const double DEFAULT_ELEVATION = 0.3;
 static const double SELECTED_ELEVATION = 1.0;
 
 #include <ui/zview.h>
-#include "nodeview.h"
+#include "znodeview.h"
 #include "zmagnitudepicker.h"
 #include "zcursorview.h"
 #include <queue>

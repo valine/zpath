@@ -88,6 +88,11 @@ void ZLineChart::initView() {
     }
 }
 
+void ZLineChart::setDefaultMat(vec4 defaultBounds) {
+    mDefaultMat = ortho(defaultBounds.x, defaultBounds.y,
+                        defaultBounds.w, defaultBounds.z, -1.0f, 10.0f);
+}
+
 void ZLineChart::initHeatLUT()  {
     glGenTextures(1, &mHeatLUTBuffer);
     mHeatShader->use();

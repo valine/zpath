@@ -7,7 +7,7 @@
 #include <ui/zlineview.h>
 #include <ui/zlabel.h>
 #include <ui/zbutton.h>
-#include <ui/nodeview.h>
+#include <ui/znodeview.h>
 #include <ui/zdropdown.h>
 #include <ui/zcheckbox.h>
 #include <ui/zmagnitudepicker.h>
