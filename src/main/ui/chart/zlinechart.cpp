@@ -426,13 +426,15 @@ void ZLineChart::draw() {
     // mat4 projection = mTmpTransform;
     mShader->setMat4("uVPMatrix", mTmpTransform);
 
-    // Draw graph lines
-    glLineWidth(2.0);
-    for (int i = mPoints.size() - 1; i >= 0; i--) {
-        mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
-                                   vec4(vec3((float) i / mPoints.size()), 1.0));
-        glBindVertexArray(mLineVAO.at(i));
-        glDrawArrays(GL_LINE_STRIP, 0, (mPointCount.at(i) / 4));
+    if (mInputType != HEAT_MAP) {
+        // Draw graph lines
+        glLineWidth(2.0);
+        for (int i = mPoints.size() - 1; i >= 0; i--) {
+            mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
+                                       vec4(vec3((float) i / mPoints.size()), 1.0));
+            glBindVertexArray(mLineVAO.at(i));
+            glDrawArrays(GL_LINE_STRIP, 0, (mPointCount.at(i) / 4));
+        }
     }
 
     glBindVertexArray(0);
