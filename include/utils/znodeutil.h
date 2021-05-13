@@ -35,7 +35,6 @@ public:
         ZNodeView* node;
         if (!mDeleteNodes.empty()) {
             node = mDeleteNodes.front();
-            node->setVisibility(true);
             mDeleteNodes.pop();
             node->setType(type);
         } else {

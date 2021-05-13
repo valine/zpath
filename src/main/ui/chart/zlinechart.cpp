@@ -478,8 +478,10 @@ void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, i
     if ((middleMouseIsDown() || mouseIsDown()) && shiftKeyPressed()) {
         if (state == mouseDrag) {
             vec2 d = (mLastMouse - positionInView) * vec2(2.0);
-            mTmpTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransform;
-            mTransform = translate(mat4(1), vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTransform;
+            mTmpTransform = translate(mat4(1),
+                                      vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTmpTransform;
+            mTransform = translate(mat4(1),
+                                   vec3(d.x / -getWidth(), d.y / -getHeight(), 0)) * mTransform;
             mTransformCurrent = false;
             needsRefresh = true;
         }

@@ -1233,13 +1233,17 @@ void ZView::removeView() {
 
     if (parent != nullptr) {
         int index = 0;
-        for (ZView *view : parent->getSubViews()) {
-            if (view == this) {
-                break;
+        if (parent != this) {
+            for (ZView *view : parent->getSubViews()) {
+                if (view == this) {
+                    break;
+                }
+                index++;
             }
-            index++;
+
+
+            parent->removeSubView(index);
         }
-        parent->removeSubView(index);
         mParentView = nullptr;
        // delete this;
     }

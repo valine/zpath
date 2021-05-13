@@ -611,6 +611,7 @@ public:
         switch (type) {
             case FFT:
             case IFFT:
+            case HARTLEY:
                 return vec4(0,10,-5,5);
             default:
                 return (vec4(-5,5,-5,5));

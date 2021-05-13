@@ -169,6 +169,7 @@ void ZNodeView::updateChart() {
             mLaplaceCache.clear();
 
             for (ZNodeView* node : mHeadlessLaplaceNodes) {
+                node->setVisibility(false);
                 ZNodeUtil::get().submitForRecycle(node);
             }
             mHeadlessLaplaceNodes.clear();
