@@ -1060,6 +1060,12 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             case GROUP: {
                 return {{0.0, 0.0}, {0.0,0.0}};
             }
+            case MIN:
+                return {{std::min(x.at(REAL).at(0), x.at(REAL).at(1)), chartBound.x, chartWidth},
+                        {std::min(x.at(IMAG).at(0), x.at(IMAG).at(1)), chartBound.x, chartWidth}};
+            case MAX:
+                return {{std::max(x.at(REAL).at(0), x.at(REAL).at(1)), chartBound.x, chartWidth},
+                        {std::max(x.at(IMAG).at(0), x.at(IMAG).at(1)), chartBound.x, chartWidth}};
             case LAST:
                 break;
         }

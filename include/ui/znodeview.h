@@ -57,6 +57,8 @@ public:
         X,
         Y,
         Z, // Complex variable
+        MIN,
+        MAX,
         FILE,
         FFT,
         IFFT,
@@ -111,6 +113,8 @@ public:
     };
 
     ///// Start node definitions
+    array<array<SocketType, 8>, 2> MIN_MAX_TYPE = {{{{VAR, VAR}}, {{VAR, CON, CON}}}};
+
     array<array<SocketType, 8>, 2> COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> POLY_TYPE = {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
     array<array<SocketType, 8>, 2> SQRT_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
@@ -253,6 +257,11 @@ public:
                 case GROUP: {
                     mSocketType = NONE_TYPE;
                 }
+                case MIN:
+                case MAX:{
+                    mSocketType = MIN_MAX_TYPE;
+                    break;
+                }
                 case LAST: {
                     mSocketType = NONE_TYPE;
                     break;
@@ -376,6 +385,10 @@ public:
                 case NEURAL_CORE:
                     mSocketCount = ivec2(7, 3);
                     break;
+                case MIN:
+                case MAX:
+                    mSocketCount = ivec2(2,3);
+                    break;
                 case GROUP:
                     // When set to zero socket count is dynamic
                     mSocketCount = ivec2(0);
@@ -473,6 +486,9 @@ public:
                 return {"X", "Z", "Z Min", "Z Max"};
             case NEURAL_CORE:
                 return {"Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
+            case MIN:
+            case MAX:
+                return {"A", "B"};
             default:
                 return {" ", " ", " ", " ", " ", " "};
         }
@@ -581,6 +597,10 @@ public:
                 return "tanh";
             case GROUP:
                 return "group";
+            case MIN:
+                return "min";
+            case MAX:
+                return "max";
             case LAST:
                 return "none";
         }
@@ -661,7 +681,6 @@ public:
         const vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
         const vec4 mSymbolicColor = vec4(0.122923, 0.061397, 0.314665, 1.000000);
         const vec4 mVariableZColor = vec4(0.848084, 0.215260, 0.077509, 1.000000);
-
         const vec4 mGroupColor = vec4(0.04, 0.04, 0.04, 1.000000);
 
         switch (type) {
