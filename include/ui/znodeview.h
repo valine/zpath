@@ -540,7 +540,7 @@ public:
             case SQRT:
                 return "sqrt";
             case POW:
-                return "pow";
+                return "^";
             case GAUSSIAN:
                 return "gaussian";
             case MORLET:
