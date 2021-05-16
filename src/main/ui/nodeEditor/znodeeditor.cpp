@@ -102,7 +102,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             ZNodeView::Type::TAN,
             ZNodeView::Type::EXP,};
     auto* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
-    complexDropdown->setOffset(100, 0);
     complexDropdown->setTitle("Trig");
     complexDropdown->setOffset(dropDown->getLocalRight(), 0);
    // complexDropdown->wrapTitle();
