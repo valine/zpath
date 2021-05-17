@@ -497,7 +497,7 @@ public:
     vector<string> getButtonNames() {
         switch (mType) {
             case NEURAL_CORE:
-                return {"Train", "Reset"};
+                return {"Train", "Reset", "To String"};
             default:
                 return {};
         }
@@ -661,6 +661,11 @@ public:
                     case 1: {
                         return [this](ZButton *sender) {
                             mMlModel->resetNetwork();
+                        };
+                    }
+                    case 2: {
+                        return [this](ZButton *sender) {
+                            cout<< mMlModel->toFunctionString() << endl;
                         };
                     }
                     default:
