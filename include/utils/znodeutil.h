@@ -318,7 +318,7 @@ public:
             outQueue.pop();
             if (isNumber(symbol)) {
                 auto* constant = get().newNode(ZNodeView::Type::C);
-                constant->setConstantValue(0, stof(symbol), 6);
+                constant->setConstantValue(0, (float) stod(symbol), 6);
                 evalStack.push(constant);
                 allNodes.push_back(constant);
             } else {
