@@ -114,10 +114,11 @@ public:
 
     ///// Start node definitions
     vector<vector<SocketType>> MIN_MAX_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
-
     vector<vector<SocketType>> COS_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
     vector<vector<SocketType>> POLY_TYPE = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
     vector<vector<SocketType>> SQRT_TYPE = {{VAR}, {VAR, CON, CON}};
+
+
     vector<vector<SocketType>> POW_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
     vector<vector<SocketType>> GAUSSIAN_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
     vector<vector<SocketType>> MORLET_TYPE = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
@@ -147,125 +148,45 @@ public:
     vector<vector<SocketType>> getSocketType() {
         if (mSocketType.at(0).at(0) == NONE) {
             switch (mType) {
-                case POLY: {
-                    mSocketType = POLY_TYPE;
-                    break;
-                }
+                case POLY: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
                 case SIN:
-                case COS: {
-                    mSocketType = COS_TYPE;
-                    break;
-                }
+                case COS: return {{VAR, CON, CON}, {VAR, CON, CON}};
                 case TAN:
                 case ABS:
                 case EXP:
                 case SIGMOID:
                 case TANH:
-                case SQRT: {
-                    mSocketType = SQRT_TYPE;
-                    break;
-                }
-                case POW: {
-                    mSocketType = POW_TYPE;
-                    break;
-                }
-                case GAUSSIAN: {
-                    mSocketType = GAUSSIAN_TYPE;
-                    break;
-                }
-                case MORLET: {
-                    mSocketType = MORLET_TYPE;
-                    break;
-                }
+                case SQRT: return {{VAR}, {VAR, CON, CON}};
+                case POW: return {{VAR, VAR}, {VAR, CON, CON}};
+                case GAUSSIAN: return {{VAR, CON, CON}, {VAR, CON, CON}};
+                case MORLET: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
                 case ADD:
                 case SUBTRACT:
                 case MULTIPLY:
-                case DIVIDE: {
-                    mSocketType = DIVIDE_TYPE;
-                    break;
-                }
+                case DIVIDE: return {{CON, CON}, {VAR, CON, CON}};
                 case C:
-                case CI: {
-                    mSocketType = CI_TYPE;
-                    break;
-                }
+                case CI: return {{CON}, {CON}};
                 case X:
-                case Y: {
-                    mSocketType = Y_TYPE;
-                    break;
-                }
-                case Z: {
-                    mSocketType = Z_TYPE;
-                    break;
-                }
-                case FILE: {
-                    mSocketType = FILE_TYPE;
-                    break;
-                }
-                case IFFT: {
-                    mSocketType = IFFT_TYPE;
-                    break;
-                }
-                case FFT: {
-                    mSocketType = FFT_TYPE;
-                    break;
-                }
-                case HARTLEY: {
-                    mSocketType = HARTLEY_TYPE;
-                    break;
-                }
-                case LAPLACE: {
-                    mSocketType = LAPLACE_TYPE;
-                    break;
-                }
-                case FIRST_DIFF: {
-                    mSocketType = FIRST_DIFF_TYPE;
-                    break;
-                }
-                case DOT: {
-                    mSocketType = DOT_TYPE;
-                    break;
-                }
-                case CROSS: {
-                    mSocketType = CROSS_TYPE;
-                    break;
-                }
-                case CHART_2D: {
-                    mSocketType = CHART_2D_TYPE;
-                    break;
-                }
-                case HEAT_MAP: {
-                    mSocketType = HEAT_MAP_TYPE;
-                    break;
-                }
-                case LAPLACE_S:{
-                    mSocketType = LAPLACE_S_MAP_TYPE;
-                    break;
-                }
-                case COMBINE: {
-                    mSocketType = COMBINE_TYPE;
-                    break;
-                }
-                case SPLIT: {
-                    mSocketType = SPLIT_TYPE;
-                    break;
-                }
-                case NEURAL_CORE: {
-                    mSocketType = NEURAL_CORE_TYPE;
-                    break;
-                }
-                case GROUP: {
-                    mSocketType = NONE_TYPE;
-                }
+                case Y: return {{VAR}, {VAR, CON, CON}};
+                case Z: return {{VAR}, {VAR, CON, CON}};
+                case FILE: return {{}, {VAR, CON, CON}};
+                case IFFT: return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
+                case FFT: return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+                case HARTLEY: return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+                case LAPLACE: return {{VAR, VAR_Z, CON, CON, CON, CON}, {VAR, CON, CON}};
+                case FIRST_DIFF: return {{VAR, VAR}, {VAR, CON, CON}};
+                case DOT: return {{CON, CON}, {VAR, CON, CON}};
+                case CROSS: return {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
+                case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
+                case HEAT_MAP: return {{VAR, CON, CON}, {VAR, CON, CON}};
+                case LAPLACE_S: return {{VAR, VAR_Z, CON, CON}, {VAR, CON, CON}};
+                case COMBINE: return {{VAR, VAR}, {VAR}};
+                case SPLIT: return {{VAR}, {VAR, VAR}};
+                case NEURAL_CORE: return {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
+                case GROUP: return {{ NONE}, {NONE}};
                 case MIN:
-                case MAX:{
-                    mSocketType = MIN_MAX_TYPE;
-                    break;
-                }
-                case LAST: {
-                    mSocketType = NONE_TYPE;
-                    break;
-                }
+                case MAX: return {{VAR, VAR}, {VAR, CON, CON}};
+                case LAST: return {{NONE}, {NONE}};
             }
         }
 
