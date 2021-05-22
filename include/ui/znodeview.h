@@ -113,38 +113,38 @@ public:
     };
 
     ///// Start node definitions
-    array<array<SocketType, 8>, 2> MIN_MAX_TYPE = {{{{VAR, VAR}}, {{VAR, CON, CON}}}};
+    vector<vector<SocketType>> MIN_MAX_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
 
-    array<array<SocketType, 8>, 2> COS_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> POLY_TYPE = {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> SQRT_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> POW_TYPE = {{{{VAR, VAR}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> GAUSSIAN_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> MORLET_TYPE = {{{{VAR, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> DIVIDE_TYPE = {{{{CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> CI_TYPE = {{{{CON}}, {{CON}}}};
-    array<array<SocketType, 8>, 2> Y_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> Z_TYPE = {{{{VAR}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> FILE_TYPE = {{{{}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> IFFT_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> FFT_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> HARTLEY_TYPE = {{{{VAR, VAR, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> LAPLACE_TYPE = {{{{VAR, VAR_Z, CON, CON, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> FIRST_DIFF_TYPE = {{{{VAR, VAR}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> DOT_TYPE = {{{{CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> CROSS_TYPE = {{{{VAR, VAR, VAR, VAR}}, {{VAR, VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> CHART_2D_TYPE = {{{{VAR, VAR, CON}}, {{VAR, VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> HEAT_MAP_TYPE = {{{{VAR, CON, CON}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> LAPLACE_S_MAP_TYPE = {{{{VAR, VAR_Z, CON, CON}}, {{VAR, CON, CON}}}};
+    vector<vector<SocketType>> COS_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> POLY_TYPE = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> SQRT_TYPE = {{VAR}, {VAR, CON, CON}};
+    vector<vector<SocketType>> POW_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
+    vector<vector<SocketType>> GAUSSIAN_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> MORLET_TYPE = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> DIVIDE_TYPE = {{CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> CI_TYPE = {{CON}, {CON}};
+    vector<vector<SocketType>> Y_TYPE = {{VAR}, {VAR, CON, CON}};
+    vector<vector<SocketType>> Z_TYPE = {{VAR}, {VAR, CON, CON}};
+    vector<vector<SocketType>> FILE_TYPE = {{}, {VAR, CON, CON}};
+    vector<vector<SocketType>> IFFT_TYPE = {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
+    vector<vector<SocketType>> FFT_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> HARTLEY_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> LAPLACE_TYPE = {{VAR, VAR_Z, CON, CON, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> FIRST_DIFF_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
+    vector<vector<SocketType>> DOT_TYPE = {{CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> CROSS_TYPE = {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
+    vector<vector<SocketType>> CHART_2D_TYPE = {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
+    vector<vector<SocketType>> HEAT_MAP_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
+    vector<vector<SocketType>> LAPLACE_S_MAP_TYPE = {{VAR, VAR_Z, CON, CON}, {VAR, CON, CON}};
 
-    array<array<SocketType, 8>, 2> COMBINE_TYPE = {{{{VAR, VAR}}, {{VAR}}}};
-    array<array<SocketType, 8>, 2> SPLIT_TYPE = {{{{VAR}}, {{VAR, VAR}}}};
-    array<array<SocketType, 8>, 2> NEURAL_CORE_TYPE = {{{{VAR, VAR, CON, CON, CON, ENUM, ENUM}}, {{VAR, CON, CON}}}};
-    array<array<SocketType, 8>, 2> NONE_TYPE = {{ {{NONE}}, {{NONE}} }};
+    vector<vector<SocketType>> COMBINE_TYPE = {{VAR, VAR}, {VAR}};
+    vector<vector<SocketType>> SPLIT_TYPE = {{VAR}, {VAR, VAR}};
+    vector<vector<SocketType>> NEURAL_CORE_TYPE = {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
+    vector<vector<SocketType>> NONE_TYPE = {{ NONE}, {NONE }};
 
-    array<array<SocketType, 8>, 2> mSocketType = NONE_TYPE;
+    vector<vector<SocketType>> mSocketType = NONE_TYPE;
 
-    array<array<SocketType, 8>, 2> getSocketType() {
+    vector<vector<SocketType>> getSocketType() {
         if (mSocketType.at(0).at(0) == NONE) {
             switch (mType) {
                 case POLY: {
@@ -401,6 +401,7 @@ public:
         return mSocketCount;
     }
 
+    constexpr static float const isVar = 0.0;
     static vector<float> getDefaultInput(Type type) {
         switch (type) {
             case POLY:

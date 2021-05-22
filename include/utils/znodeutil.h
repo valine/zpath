@@ -173,7 +173,7 @@ public:
             }
 
             expression = root->getName(root->getType());
-            array<ZNodeView::SocketType, 8> inputType = root->getSocketType().at(0);
+            vector<ZNodeView::SocketType> inputType = root->getSocketType().at(0);
 
             // Node is a variable
             if (root->getSocketCount().x == 0) {
@@ -383,7 +383,8 @@ public:
 
         int count = 0;
         int constantCount = 0;
-        for (ZNodeView::SocketType type : node->getSocketType().at(0)) {
+        vector<ZNodeView::SocketType> types = node->getSocketType().at(0);
+        for (ZNodeView::SocketType type : types) {
             if (type == ZNodeView::SocketType::VAR) {
                 count++;
             }
