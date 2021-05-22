@@ -76,6 +76,8 @@ public:
         SIGMOID,
         TANH,
         GROUP,
+        GROUP_IN,
+        GROUP_OUT,
         LAST // Fake enum to allow easy iteration
     };
 
@@ -155,6 +157,8 @@ public:
                 case SPLIT: return {{VAR}, {VAR, VAR}};
                 case NEURAL_CORE: return {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
                 case GROUP: return {{ NONE}, {NONE}};
+                case GROUP_IN: return {{},{VAR}};
+                case GROUP_OUT: return {{VAR}, {}};
                 case MIN:
                 case MAX: return {{VAR, VAR}, {VAR, CON, CON}};
                 case LAST: return {{NONE}, {NONE}};
@@ -379,6 +383,10 @@ public:
                 return "min";
             case MAX:
                 return "max";
+            case GROUP_IN:
+                return "in";
+            case GROUP_OUT:
+                return "out";
             case LAST:
                 return "none";
         }
@@ -503,6 +511,8 @@ public:
             case LAPLACE_S:
                 return getSocketColor(SYMBOLIC);
             case GROUP:
+            case GROUP_IN:
+            case GROUP_OUT:
                 return getSocketColor(GROUP_SOCKET);
             default:
                 return vec4(1);

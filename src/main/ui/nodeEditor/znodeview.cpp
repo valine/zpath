@@ -1060,6 +1060,12 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             case GROUP: {
                 return {{0.0, 0.0}, {0.0,0.0}};
             }
+            case GROUP_IN: {
+                return x;
+            }
+            case GROUP_OUT: {
+                return x;
+            }
             case MIN:
                 return {{std::min(x.at(REAL).at(0), x.at(REAL).at(1)), chartBound.x, chartWidth},
                         {std::min(x.at(IMAG).at(0), x.at(IMAG).at(1)), chartBound.x, chartWidth}};
