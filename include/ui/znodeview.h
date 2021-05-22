@@ -113,36 +113,7 @@ public:
     };
 
     ///// Start node definitions
-    vector<vector<SocketType>> MIN_MAX_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
-    vector<vector<SocketType>> COS_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> POLY_TYPE = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> SQRT_TYPE = {{VAR}, {VAR, CON, CON}};
-
-
-    vector<vector<SocketType>> POW_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
-    vector<vector<SocketType>> GAUSSIAN_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> MORLET_TYPE = {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> DIVIDE_TYPE = {{CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> CI_TYPE = {{CON}, {CON}};
-    vector<vector<SocketType>> Y_TYPE = {{VAR}, {VAR, CON, CON}};
-    vector<vector<SocketType>> Z_TYPE = {{VAR}, {VAR, CON, CON}};
-    vector<vector<SocketType>> FILE_TYPE = {{}, {VAR, CON, CON}};
-    vector<vector<SocketType>> IFFT_TYPE = {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
-    vector<vector<SocketType>> FFT_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> HARTLEY_TYPE = {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> LAPLACE_TYPE = {{VAR, VAR_Z, CON, CON, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> FIRST_DIFF_TYPE = {{VAR, VAR}, {VAR, CON, CON}};
-    vector<vector<SocketType>> DOT_TYPE = {{CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> CROSS_TYPE = {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
-    vector<vector<SocketType>> CHART_2D_TYPE = {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
-    vector<vector<SocketType>> HEAT_MAP_TYPE = {{VAR, CON, CON}, {VAR, CON, CON}};
-    vector<vector<SocketType>> LAPLACE_S_MAP_TYPE = {{VAR, VAR_Z, CON, CON}, {VAR, CON, CON}};
-
-    vector<vector<SocketType>> COMBINE_TYPE = {{VAR, VAR}, {VAR}};
-    vector<vector<SocketType>> SPLIT_TYPE = {{VAR}, {VAR, VAR}};
-    vector<vector<SocketType>> NEURAL_CORE_TYPE = {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
-    vector<vector<SocketType>> NONE_TYPE = {{ NONE}, {NONE }};
-
+    vector<vector<SocketType>> NONE_TYPE = {{NONE}, {NONE}};
     vector<vector<SocketType>> mSocketType = NONE_TYPE;
 
     vector<vector<SocketType>> getSocketType() {
@@ -165,10 +136,10 @@ public:
                 case MULTIPLY:
                 case DIVIDE: return {{CON, CON}, {VAR, CON, CON}};
                 case C:
-                case CI: return {{CON}, {CON}};
+                case CI: return {{}, {CON}};
                 case X:
-                case Y: return {{VAR}, {VAR, CON, CON}};
-                case Z: return {{VAR}, {VAR, CON, CON}};
+                case Y: return {{}, {VAR, CON, CON}};
+                case Z: return {{}, {VAR, CON, CON}};
                 case FILE: return {{}, {VAR, CON, CON}};
                 case IFFT: return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
                 case FFT: return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
@@ -189,7 +160,6 @@ public:
                 case LAST: return {{NONE}, {NONE}};
             }
         }
-
         return mSocketType;
     }
 
@@ -202,123 +172,10 @@ public:
      * @return Vector with node socket input and output count
      */
     ivec2 getSocketCount() {
-
         if (mSocketCount == ivec2(0)) {
-            switch (mType) {
-                case POLY:
-                    mSocketCount = ivec2(5, 3);
-                    break;
-                case SIN:
-                    mSocketCount = ivec2(3, 3);
-                    break;
-                case COS:
-                    mSocketCount = ivec2(3, 3);
-                    break;
-                case TAN:
-                    mSocketCount = ivec2(1, 3);
-                    break;
-                case ABS:
-                    mSocketCount = ivec2(1, 3);
-                    break;
-                case EXP:
-                case TANH:
-                case SIGMOID:
-                    mSocketCount = ivec2(1, 3);
-                    break;
-                case SQRT:
-                    mSocketCount = ivec2(1, 3);
-                    break;
-                case POW:
-                    mSocketCount = ivec2(2, 3);
-                    break;
-                case GAUSSIAN:
-                    mSocketCount = ivec2(3, 3);
-                    break;
-                case MORLET:
-                    mSocketCount = ivec2(5, 3);
-                    break;
-                case ADD:
-                    mSocketCount = ivec2(2, 3);
-                    break;
-                case SUBTRACT:
-                    mSocketCount = ivec2(2, 3);
-                    break;
-                case MULTIPLY:
-                    mSocketCount = ivec2(2, 3);
-                    break;
-                case DIVIDE:
-                    mSocketCount = ivec2(2, 3);
-                    break;
-                case C:
-                    mSocketCount = ivec2(0, 1);
-                    break;
-                case CI:
-                    mSocketCount = ivec2(0, 1);
-                    break;
-                case X:
-                    mSocketCount = ivec2(0, 3);
-                    break;
-                case Y:
-                    mSocketCount = ivec2(0, 3);
-                    break;
-                case Z:
-                    mSocketCount = ivec2(0, 3);
-                    break;
-                case FILE:
-                    mSocketCount = ivec2(0, 1);
-                    break;
-                case FFT:
-                    mSocketCount = ivec2(4, 3);
-                    break;
-                case IFFT:
-                    mSocketCount = ivec2(4, 3);
-                    break;
-                case HARTLEY:
-                    mSocketCount = ivec2(4, 3);
-                    break;
-                case LAPLACE:
-                    mSocketCount = ivec2(6, 3);
-                    break;
-                case FIRST_DIFF:
-                    mSocketCount = ivec2(2, 3);
-                    break;
-                case DOT:
-                    mSocketCount = ivec2(2, 3);
-                    break;
-                case CROSS:
-                    mSocketCount = ivec2(4, 4);
-                    break;
-                case CHART_2D:
-                    mSocketCount = ivec2(3, 4);
-                    break;
-                case HEAT_MAP:
-                    mSocketCount = ivec2(3, 3);
-                    break;
-                case LAPLACE_S:
-                    mSocketCount = ivec2(4, 3);
-                    break;
-                case COMBINE:
-                    mSocketCount = ivec2(2, 1);
-                    break;
-                case SPLIT:
-                    mSocketCount = ivec2(1, 2);
-                    break;
-                case NEURAL_CORE:
-                    mSocketCount = ivec2(7, 3);
-                    break;
-                case MIN:
-                case MAX:
-                    mSocketCount = ivec2(2,3);
-                    break;
-                case GROUP:
-                    // When set to zero socket count is dynamic
-                    mSocketCount = ivec2(0);
-                case LAST:
-                    mSocketCount = ivec2(0, 0);
-                    break;
-            }
+            mSocketCount = ivec2(getSocketType().at(0).size(),
+                                 getSocketType().at(1).size());
         }
-
         return mSocketCount;
     }
 
@@ -426,7 +283,6 @@ public:
     }
 
     vector<string> getEnumNames(int socketIndex) {
-
         switch (mType) {
             case NEURAL_CORE: {
                 switch (socketIndex) {
@@ -631,7 +487,6 @@ public:
     }
 
     static vec4 getNodeColor(Type type) {
-
         switch (type) {
             case C:
             case CI:
