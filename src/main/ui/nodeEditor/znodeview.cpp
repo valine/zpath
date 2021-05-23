@@ -244,7 +244,8 @@ void ZNodeView::updateChart2D() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float input = (float) i * increment;
 
-        vector<vector<float>> fx = evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, input)));
+        vector<vector<float>> fx = evaluate(
+                vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, input)));
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -344,9 +345,11 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
             // First socket round corner a little more
             if (i == 0) {
-                mSocketsIn.at(i)->setCornerRadius(vec4(3, SOCKET_HEIGHT / 2, SOCKET_HEIGHT / 2, 0));
+                mSocketsIn.at(i)->setCornerRadius(vec4(3,
+                                                       SOCKET_HEIGHT / 2, SOCKET_HEIGHT / 2, 0));
             } else {
-                mSocketsIn.at(i)->setCornerRadius(vec4(0, SOCKET_HEIGHT / 2, SOCKET_HEIGHT / 2, 0));
+                mSocketsIn.at(i)->setCornerRadius(vec4(0,
+                                                       SOCKET_HEIGHT / 2, SOCKET_HEIGHT / 2, 0));
             }
 
         }
@@ -366,9 +369,11 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
         // First socket round corner a little more
         if (i == 0) {
-            mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_HEIGHT / 2, 3, 0, SOCKET_HEIGHT / 2));
+            mSocketsOut.at(i)->setCornerRadius(
+                    vec4(SOCKET_HEIGHT / 2, 3, 0, SOCKET_HEIGHT / 2));
         } else {
-            mSocketsOut.at(i)->setCornerRadius(vec4(SOCKET_HEIGHT / 2, 0, 0, SOCKET_HEIGHT / 2));
+            mSocketsOut.at(i)->setCornerRadius(
+                    vec4(SOCKET_HEIGHT / 2, 0, 0, SOCKET_HEIGHT / 2));
         }
 
     }
@@ -506,12 +511,14 @@ void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
 }
 
 void ZNodeView::setShowMagPickerListener(
-        function<void(ZView *sender, ZNodeView *node, int index, bool isInput, float initialValue, string name)> onValueSelect) {
+        function<void(ZView *sender, ZNodeView *node, int index, bool isInput,
+                float initialValue, string name)> onValueSelect) {
     mShowMagnitudeView = std::move(onValueSelect);
 }
 
 void ZNodeView::setShowEnumPickerListener(
-        function<void(ZView *sender, ZNodeView *node, int index, bool isInput, float initialValue, string name, vector<string> enumNames)> onValueSelect) {
+        function<void(ZView *sender, ZNodeView *node, int index, bool isInput,
+                float initialValue, string name, vector<string> enumNames)> onValueSelect) {
     mShowEnumView = std::move(onValueSelect);
 }
 
@@ -885,11 +892,13 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             case MORLET: {
                 auto real = (float) (
                         cos(in.at(0) * in.at(4)) * // sinusoid
-                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))));
+                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
+                        pow(2 * in.at(1), 2))));
 
                 auto imaginary = (float) (
                         sin(in.at(0) * in.at(4)) * // sinusoid
-                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) / pow(2 * in.at(1), 2))));
+                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
+                        pow(2 * in.at(1), 2))));
                 return {{real,      chartBound.x, chartWidth},
                         {imaginary, chartBound.x, chartWidth}};
             }
@@ -965,13 +974,15 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             }
             case HARTLEY: {
                 auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)), chartWidth, in.at(3)},
-                        {0.0,                                                chartWidth, in.at(3)}};
+                return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)),
+                         chartWidth, in.at(3)},
+                        {0.0, chartWidth, in.at(3)}};
             }
             case LAPLACE: {
               //  mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
                 // Static resolution for now
-                auto laplace = computeLaplace(x.at(REAL).at(1), x.at(IMAG).at(1), in.at(2), in.at(3),
+                auto laplace = computeLaplace(x.at(REAL).at(1),
+                                              x.at(IMAG).at(1), in.at(2), in.at(3),
                                               mChart->getMaxResolution());
 
                 x.at(REAL).at(0) = laplace.first;
