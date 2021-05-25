@@ -446,15 +446,33 @@ void ZNodeView::setType(ZNodeView::Type type) {
     }
 
     int buttonIndex = 0;
+
+    int margin = 2;
+    int firstLineWidth = (int) mNameLabel->getTextWidth();
+    int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
     for (const string& buttonName : getButtonNames()) {
-        int margin = 2;
-        auto* button = new ZButton(buttonName, this);
-        button->setMaxWidth(50);
-        button->setMaxHeight(20);
-        button->getLabel()->offsetBy(0, -3);
-        button->setXOffset(120 + ((button->getMaxWidth() + margin) * buttonIndex));
+
+        ZButton* button;
+        if (mButtons.size() <= buttonIndex) {
+            button = new ZButton(buttonName, this);
+            mButtons.push_back(button);
+        } else {
+            button = mButtons.at(buttonIndex);
+        }
+
+        button->setMaxWidth(button->getLabel()->getTextWidth() + 15);
+        button->setMaxHeight(16);
+        button->setYOffset(2);
+        button->setCornerRadius(vec4(8));
+        button->getLabel()->offsetBy(0, -5);
+
+        button->setBackgroundColor(white);
+        button->setXOffset(buttonOffset);
+        buttonOffset += button->getMaxWidth();
+
         button->setOnClick(getButtonCallback(buttonIndex));
         button->setElevation(1.0);
+        button->onWindowChange(getWindowWidth(), getWindowHeight());
         buttonIndex++;
     }
     
@@ -750,7 +768,7 @@ void ZNodeView::onCursorPosChange(double x, double y) {
             for (const string &name : getSocketNames()) {
 
                 mSocketInLabels.at(index)->setText(name);
-                mSocketInLabels.at(index)->setXOffset((int) -mSocketInLabels.at(index)->getFirstLineWidth());
+                mSocketInLabels.at(index)->setXOffset((int) -mSocketInLabels.at(index)->getTextWidth());
                 mSocketInLabels.at(index)->setYOffset((int) mSocketsIn.at(index)->getOffsetY());
                 mSocketInLabels.at(index)->setVisibility(true);
                 index++;

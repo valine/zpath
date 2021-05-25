@@ -53,7 +53,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 
 void ZDropDown::wrapTitle() {
     mTitle->drawText();
-    setMaxWidth(mTitle->getFirstLineWidth() + MARGIN);
+    setMaxWidth(mTitle->getTextWidth() + MARGIN);
 }
 
 void ZDropDown::selectItem(int index) {

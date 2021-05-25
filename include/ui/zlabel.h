@@ -43,7 +43,7 @@ public:
 
     int getLineHeight();
 
-    float getFirstLineWidth();
+    float getTextWidth();
 
 private:
 
@@ -76,6 +76,8 @@ private:
 
 
     void onCreate();
+
+    void computeLineWidth();
 };
 
 #endif

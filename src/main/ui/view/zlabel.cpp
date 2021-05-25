@@ -6,11 +6,12 @@
 
 ZLabel::ZLabel(float maxWidth, float maxHeight, string font, string resourcePath)
         : ZView(maxWidth, maxHeight) {
-
+    mFont = ZFontStore::getInstance().getDefaultResource();
 }
 
 ZLabel::ZLabel(string label, ZView *parent)
         : ZView(ZView::fillParent, getLineHeight()) {
+    mFont = ZFontStore::getInstance().getDefaultResource();
     setText(std::move(label));
     setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     parent->addSubView(this);
@@ -105,7 +106,7 @@ void ZLabel::drawText() {
 
     // Handle cursor position for empty string
     mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
-    if (mText.empty()) {
+    if (mText.empty() || mFont.empty()) {
 
     } else {
 
@@ -171,6 +172,43 @@ void ZLabel::drawText() {
     mTextInvalid = false;
 }
 
+void ZLabel::computeLineWidth() {
+    if (mText.empty() || mFont.empty()) {
+        return;
+    }
+    GLfloat x = getCornerRadius().x;
+    GLfloat y = 5;
+    GLfloat labelScale = 1.0;
+
+    std::string::const_iterator c;
+    float vHeight = getHeight();
+    int lineHeight = getLineHeight();
+
+    for (c = mText.begin(); c != mText.end(); c++) {
+        Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
+        int w = ch.Size.x;
+        int h = ch.Size.y;
+
+        float lineOffset = vHeight - lineHeight;
+        GLfloat xpos = x + ch.Bearing.x;
+        GLfloat ypos = lineOffset + y - (ch.Size.y - ch.Bearing.y);
+        char ac = c[0];
+        char newLine = '\n';
+        if (ac == newLine) {
+            y -= lineHeight;
+            x = getCornerRadius().x;
+        } else {
+            // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            x += (((float) ch.Advance) / 64.0) *
+                 labelScale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+        }
+
+        if (mLineIndices.empty()) {
+            mFirstLineWidth = std::max(mFirstLineWidth, x + w);
+        }
+    }
+}
+
 pair<int,int> ZLabel::getEndPoint() {
     if (mPoints.empty()) {
         return {0,0};
@@ -229,6 +267,7 @@ void ZLabel::setTextColor(vec3 color) {
 void ZLabel::setText(string text) {
     mText = std::move(text);
     mTextInvalid = true;
+    computeLineWidth();
     invalidate();
 }
 
@@ -242,6 +281,6 @@ void ZLabel::onSizeChange() {
     mTextInvalid = true;
 }
 
-float ZLabel::getFirstLineWidth() {
+float ZLabel::getTextWidth() {
     return mFirstLineWidth;
 }

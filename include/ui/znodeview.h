@@ -114,7 +114,10 @@ public:
         IMAGE
     };
 
-    ///// Start node definitions
+    //////////////////////////////////////////////////
+    ///// Start node definitions /////////////////////
+    //////////////////////////////////////////////////
+
     vector<vector<SocketType>> NONE_TYPE = {{NONE}, {NONE}};
     vector<vector<SocketType>> mSocketType = NONE_TYPE;
 
@@ -277,15 +280,6 @@ public:
         }
     }
 
-    vector<string> getButtonNames() {
-        switch (mType) {
-            case NEURAL_CORE:
-                return {"Train", "Reset", "To String"};
-            default:
-                return {};
-        }
-    }
-
     vector<string> getEnumNames(int socketIndex) {
         switch (mType) {
             case NEURAL_CORE: {
@@ -434,6 +428,19 @@ public:
         }
     }
 
+    vector<string> getButtonNames() {
+        switch (mType) {
+            case NEURAL_CORE:
+                return {"Train", "Reset", "To String"};
+            case GROUP_IN:
+                return {"In+", "In-"};
+            case GROUP_OUT:
+                return {"Out+", "Out-"};
+            default:
+                return {};
+        }
+    }
+
     function<void(ZButton *sender)> getButtonCallback(int index) {
         switch (mType) {
             case NEURAL_CORE: {
@@ -551,8 +558,9 @@ public:
 
     vector<vector<float>> compute(vector<vector<float>> x, Type type);
 
-    ///////// End node definition
-
+    ///////////////////////////////////////////
+    ///////// End node definition /////////////
+    ///////////////////////////////////////////
     void initializeNNModel() {
         vector<int> heights = {3, 3, 3};
         int width = heights.size();
@@ -961,6 +969,7 @@ private:
     vector<complex<float>> mMlCache;
 
     vector<vector<float>> mLaplaceCache;
+    vector<ZButton*> mButtons;
 
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
