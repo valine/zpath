@@ -122,6 +122,9 @@ public:
     vector<vector<SocketType>> mSocketType = NONE_TYPE;
 
     vector<vector<SocketType>> getSocketType() {
+        if (isDynamicSockets(mType)) {
+            return {vector<SocketType>(MAX_INPUT_COUNT, VAR), vector<SocketType>(MAX_INPUT_COUNT, VAR)};
+        }
         if (mSocketType.at(0).at(0) == NONE) {
             switch (mType) {
                 case POLY: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
@@ -179,11 +182,25 @@ public:
      * @return Vector with node socket input and output count
      */
     ivec2 getSocketCount() {
+        if (isDynamicSockets(mType)) {
+            return mSocketCount;
+        }
+
         if (mSocketCount == ivec2(0)) {
             mSocketCount = ivec2(getSocketType().at(0).size(),
                                  getSocketType().at(1).size());
         }
         return mSocketCount;
+    }
+
+    static bool isDynamicSockets(Type type) {
+        switch (type) {
+            case GROUP_IN:
+            case GROUP_OUT:
+                return true;
+            default:
+                return false;
+        }
     }
 
     constexpr static float const isVar = 0.0;
@@ -466,6 +483,48 @@ public:
 
                 }
 
+            }
+            case GROUP_IN: {
+                switch (index) {
+                    // Increment
+                    case 0: {
+                        return [this](ZButton *sender) {
+                            ivec2 count = mSocketCount + ivec2(0,1);
+                            setSocketCount(count);
+                        };
+                    }
+                    // Decrement
+                    case 1: {
+                        return [this](ZButton *sender) {
+                            ivec2 count = mSocketCount - ivec2(0,1);
+                            setSocketCount(count);
+                        };
+                    }
+                    default:
+                        return nullptr;
+
+                }
+            }
+            case GROUP_OUT: {
+                switch (index) {
+                    // Increment
+                    case 0: {
+                        return [this](ZButton *sender) {
+                            ivec2 count = mSocketCount + ivec2(1,0);
+                            setSocketCount(count);
+                        };
+                    }
+                    // Decrement
+                    case 1: {
+                        return [this](ZButton *sender) {
+                            ivec2 count = mSocketCount - ivec2(1,0);
+                            setSocketCount(count);
+                        };
+                    }
+                    default:
+                        return nullptr;
+
+                }
             }
             default:
                 return nullptr;
@@ -1000,6 +1059,10 @@ private:
     vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x);
 
     void onCreate();
+
+    void setSocketCount(ivec2 count);
+
+    void refreshView(Type &type);
 };
 
 

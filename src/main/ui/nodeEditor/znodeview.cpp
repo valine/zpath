@@ -149,6 +149,11 @@ void ZNodeView::init() {
 
 }
 
+void ZNodeView::setSocketCount(ivec2 count) {
+    mSocketCount = count;
+    refreshView(mType);
+}
+
 void ZNodeView::initializeEdges() {
     mInputIndices = vector<vector<pair<ZNodeView *, int>>>(MAX_INPUT_COUNT, vector<pair<ZNodeView *, int>>());
     mOutputIndices = vector<vector<pair<ZNodeView *, int>>>(MAX_OUTPUT_COUNT, vector<pair<ZNodeView *, int>>());
@@ -330,6 +335,88 @@ void ZNodeView::setType(ZNodeView::Type type) {
     mSocketCount = ivec2(0);
     mType = type;
 
+    setMaxWidth(getNodeSize(mType).x);
+    setMaxHeight(getNodeSize(mType).y);
+    refreshView(type);
+
+    mNameLabel->setText(getName(mType));
+    mOutputLabel->setVisibility(isOutputLabelVisible(mType));
+    setBackgroundColor(getNodeColor(mType));
+
+    if (isOutputLabelVisible(mType)) {
+        setOutputLabel(mConstantValueOutput.at(0));
+        //    mOutputLabel->setBackgroundColor(getNodeColor(mType));
+    }
+
+    int i = 0;
+    for (float cValue : getDefaultInput(mType)) {
+        mConstantValueInput.at(i) = cValue;
+        i++;
+    }
+
+    vector<int> magnitude = getDefaultMagnitude(type);
+    int magIndex = 0;
+    for (int & k : mConstantMagnitudeInput) {
+        if (magnitude.size() == 1) {
+            k = magnitude.at(0);
+        } else {
+            if (magIndex < magnitude.size()) {
+                k = magnitude.at(magIndex);
+            }
+        }
+
+        magIndex++;
+    }
+
+    int buttonIndex = 0;
+
+    int margin = 2;
+    int firstLineWidth = (int) mNameLabel->getTextWidth();
+    int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
+    for (const string& buttonName : getButtonNames()) {
+
+        ZButton* button;
+        if (mButtons.size() <= buttonIndex) {
+            button = new ZButton(buttonName, this);
+            mButtons.push_back(button);
+
+        } else {
+            button = mButtons.at(buttonIndex);
+        }
+        button->setOnClick(getButtonCallback(buttonIndex));
+        button->setMaxWidth(button->getLabel()->getTextWidth() + 15);
+        button->setMaxHeight(16);
+        button->setYOffset(2);
+        button->setCornerRadius(vec4(8));
+        button->getLabel()->offsetBy(0, -5);
+
+        button->setBackgroundColor(white);
+        button->setXOffset(buttonOffset);
+        buttonOffset += button->getMaxWidth();
+
+
+        button->setElevation(1.0);
+        button->onWindowChange(getWindowWidth(), getWindowHeight());
+        buttonIndex++;
+    }
+
+    vec4 bg = getBackgroundColor();
+    vec3 color3 = vec3(bg.r,bg.g,bg.b);
+    if (length(color3) < 0.8 && bg.a != 0) {
+        mNameLabel->setTextColor(white);
+    } else {
+        mNameLabel->setTextColor(black);
+    }
+
+    if (getChartType(mType) == LINE_1D_2X) {
+        mChart->setLineCount(2);
+    }
+
+    mChart->setDefaultMat(getChartBounds(mType));
+    mChart->resetZoom();
+}
+
+void ZNodeView::refreshView(ZNodeView::Type &type) {
     ivec2 socketCount = getSocketCount();
 
     auto socketType = getSocketType();
@@ -379,27 +466,16 @@ void ZNodeView::setType(ZNodeView::Type type) {
     }
 
     // Always set max height to be large enough to fit all sockets
-    setMaxWidth(getNodeSize(mType).x);
+
     if (socketCount.x > 0) {
         setMaxHeight(std::max((int) mSocketsIn.at(socketCount.x - 1)->getOffsetY() +
-                              SOCKET_HEIGHT + CHART_TOP_MARGIN, (int) getNodeSize(mType).y));
-    } else {
-        setMaxHeight(getNodeSize(mType).y);
+                         SOCKET_HEIGHT + CHART_TOP_MARGIN, (int) getMaxHeight()));
     }
 
     if (getChartType(type) == LINE_2D) {
         mChart->setInputType(getChartType(getType()));
     } else {
         mChart->setInputType(getChartType(getType()));
-    }
-
-    mNameLabel->setText(getName(mType));
-    mOutputLabel->setVisibility(isOutputLabelVisible(mType));
-    setBackgroundColor(getNodeColor(mType));
-
-    if (isOutputLabelVisible(mType)) {
-        setOutputLabel(mConstantValueOutput.at(0));
-    //    mOutputLabel->setBackgroundColor(getNodeColor(mType));
     }
 
     mNameLabel->setXOffset(22);
@@ -418,71 +494,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
         mChart->setMarginRight(MIN_MARGIN);
     }
 
-    if (getChartType(mType) == LINE_1D_2X) {
-        mChart->setLineCount(2);
-    }
-
-    mChart->setDefaultMat(getChartBounds(mType));
-    mChart->resetZoom();
-
-    int i = 0;
-    for (float cValue : getDefaultInput(mType)) {
-        mConstantValueInput.at(i) = cValue;
-        i++;
-    }
-
-    vector<int> magnitude = getDefaultMagnitude(type);
-    int magIndex = 0;
-    for (int & k : mConstantMagnitudeInput) {
-        if (magnitude.size() == 1) {
-            k = magnitude.at(0);
-        } else {
-            if (magIndex < magnitude.size()) {
-                k = magnitude.at(magIndex);
-            }
-        }
-
-        magIndex++;
-    }
-
-    int buttonIndex = 0;
-
-    int margin = 2;
-    int firstLineWidth = (int) mNameLabel->getTextWidth();
-    int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
-    for (const string& buttonName : getButtonNames()) {
-
-        ZButton* button;
-        if (mButtons.size() <= buttonIndex) {
-            button = new ZButton(buttonName, this);
-            mButtons.push_back(button);
-        } else {
-            button = mButtons.at(buttonIndex);
-        }
-
-        button->setMaxWidth(button->getLabel()->getTextWidth() + 15);
-        button->setMaxHeight(16);
-        button->setYOffset(2);
-        button->setCornerRadius(vec4(8));
-        button->getLabel()->offsetBy(0, -5);
-
-        button->setBackgroundColor(white);
-        button->setXOffset(buttonOffset);
-        buttonOffset += button->getMaxWidth();
-
-        button->setOnClick(getButtonCallback(buttonIndex));
-        button->setElevation(1.0);
-        button->onWindowChange(getWindowWidth(), getWindowHeight());
-        buttonIndex++;
-    }
-    
-    vec4 bg = getBackgroundColor();
-    vec3 color3 = vec3(bg.r,bg.g,bg.b);
-    if (glm::length(color3) < 0.8 && bg.a != 0) {
-        mNameLabel->setTextColor(white);
-    } else {
-        mNameLabel->setTextColor(black);
-    }
 
 }
 
