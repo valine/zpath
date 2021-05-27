@@ -122,9 +122,9 @@ public:
     vector<vector<SocketType>> mSocketType = NONE_TYPE;
 
     vector<vector<SocketType>> getSocketType() {
-        if (isDynamicSockets(mType)) {
-            return {vector<SocketType>(MAX_INPUT_COUNT, VAR), vector<SocketType>(MAX_INPUT_COUNT, VAR)};
-        }
+//        if (isDynamicSockets(mType)) {
+//            return {vector<SocketType>(MAX_INPUT_COUNT, VAR), vector<SocketType>(MAX_INPUT_COUNT, VAR)};
+//        }
         if (mSocketType.at(0).at(0) == NONE) {
             switch (mType) {
                 case POLY: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
@@ -163,8 +163,8 @@ public:
                 case SPLIT: return {{VAR}, {VAR, VAR}};
                 case NEURAL_CORE: return {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
                 case GROUP: return {{ NONE}, {NONE}};
-                case GROUP_IN: return {{},{VAR}};
-                case GROUP_OUT: return {{VAR}, {}};
+                case GROUP_IN: return {{},{vector<SocketType>(MAX_OUTPUT_COUNT, VAR)}};
+                case GROUP_OUT: return {{vector<SocketType>(MAX_INPUT_COUNT - 1, VAR)}, {}};
                 case MIN:
                 case MAX: return {{VAR, VAR}, {VAR, CON, CON}};
                 case LAST: return {{NONE}, {NONE}};
@@ -182,13 +182,14 @@ public:
      * @return Vector with node socket input and output count
      */
     ivec2 getSocketCount() {
-        if (isDynamicSockets(mType)) {
-            return mSocketCount;
-        }
 
         if (mSocketCount == ivec2(0)) {
             mSocketCount = ivec2(getSocketType().at(0).size(),
                                  getSocketType().at(1).size());
+
+            if (isDynamicSockets(mType)) {
+                mSocketCount = glm::min(mSocketCount, ivec2(1));
+            }
         }
         return mSocketCount;
     }
@@ -419,6 +420,9 @@ public:
                 return vec2(400, 400);
             case NEURAL_CORE:
                 return vec2(300, 100);
+            case GROUP_IN:
+            case GROUP_OUT:
+                return vec2(120, 70);
             default:
                 return vec2(80, 70);
         }
@@ -450,9 +454,9 @@ public:
             case NEURAL_CORE:
                 return {"Train", "Reset", "To String"};
             case GROUP_IN:
-                return {"In+", "In-"};
+                return {"+", "-"};
             case GROUP_OUT:
-                return {"Out+", "Out-"};
+                return {"+", "-"};
             default:
                 return {};
         }

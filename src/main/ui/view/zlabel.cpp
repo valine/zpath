@@ -156,9 +156,9 @@ void ZLabel::drawText() {
 
             mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
 
-            if (mLineIndices.empty()) {
-                mFirstLineWidth = x + w;
-            }
+            //if (mLineIndices.empty()) {
+               // mFirstLineWidth = x + w;
+           // }
         }
 
         mLineIndices.push_back(mPoints.size());

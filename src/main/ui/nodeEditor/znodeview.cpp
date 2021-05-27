@@ -150,7 +150,7 @@ void ZNodeView::init() {
 }
 
 void ZNodeView::setSocketCount(ivec2 count) {
-    mSocketCount = count;
+    mSocketCount = glm::min(count, ivec2(MAX_INPUT_COUNT - 1, MAX_OUTPUT_COUNT));
     refreshView(mType);
 }
 
@@ -337,10 +337,11 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     setMaxWidth(getNodeSize(mType).x);
     setMaxHeight(getNodeSize(mType).y);
-    refreshView(type);
 
     mNameLabel->setText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
+
+
     setBackgroundColor(getNodeColor(mType));
 
     if (isOutputLabelVisible(mType)) {
@@ -394,11 +395,12 @@ void ZNodeView::setType(ZNodeView::Type type) {
         button->setXOffset(buttonOffset);
         buttonOffset += button->getMaxWidth();
 
-
         button->setElevation(1.0);
         button->onWindowChange(getWindowWidth(), getWindowHeight());
         buttonIndex++;
     }
+
+    refreshView(type);
 
     vec4 bg = getBackgroundColor();
     vec3 color3 = vec3(bg.r,bg.g,bg.b);
@@ -466,12 +468,17 @@ void ZNodeView::refreshView(ZNodeView::Type &type) {
     }
 
     // Always set max height to be large enough to fit all sockets
-
+    int inSocketOffset = 0;
+    int outSocketOffset = 0;
     if (socketCount.x > 0) {
-        setMaxHeight(std::max((int) mSocketsIn.at(socketCount.x - 1)->getOffsetY() +
-                         SOCKET_HEIGHT + CHART_TOP_MARGIN, (int) getMaxHeight()));
+      inSocketOffset = (int) mSocketsIn.at(socketCount.x - 1)->getOffsetY();
+    }
+    if (socketCount.y > 0) {
+        outSocketOffset = (int) mSocketsOut.at(socketCount.y - 1)->getOffsetY();
     }
 
+    int socketOffset = std::max(inSocketOffset, outSocketOffset);
+    setMaxHeight(std::max(socketOffset + SOCKET_HEIGHT + CHART_TOP_MARGIN, (int) getMaxHeight()));
     if (getChartType(type) == LINE_2D) {
         mChart->setInputType(getChartType(getType()));
     } else {
@@ -494,6 +501,25 @@ void ZNodeView::refreshView(ZNodeView::Type &type) {
         mChart->setMarginRight(MIN_MARGIN);
     }
 
+
+    int buttonIndex = 0;
+    int margin = 2;
+    int firstLineWidth = (int) mNameLabel->getTextWidth();
+    int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
+    for (const string& buttonName : getButtonNames()) {
+
+        ZButton* button;
+        if (mButtons.size() > buttonIndex) {
+            button = mButtons.at(buttonIndex);
+        } else {
+           break;
+        }
+        button->setBackgroundColor(white);
+        button->setXOffset(buttonOffset);
+        buttonOffset += button->getMaxWidth();
+        button->onWindowChange(getWindowWidth(), getWindowHeight());
+        buttonIndex++;
+    }
 
 }
 
