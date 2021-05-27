@@ -82,6 +82,7 @@ public:
     };
 
     ZNodeView(ZNodeView::Type type);
+
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
 
     void setShowMagPickerListener(
@@ -983,6 +984,13 @@ public:
     float getConstantInput(int index);
 
     vector<ZNodeView*> mHeadlessLaplaceNodes;
+
+    /**
+     * Internal group node graph
+     */
+    ZNodeView* mGroupInput;
+    ZNodeView* mGroupOutput;
+    vector<ZNodeView*> mGroupNodes;
 private:
     bool mInvalid = true;
 
