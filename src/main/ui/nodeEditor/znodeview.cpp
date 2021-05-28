@@ -1124,6 +1124,8 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
                         {x.at(REAL).at(0),      chartBound.x, chartWidth}};
             }
             case GROUP: {
+                initializeGroup();
+
                 return {{0.0, 0.0}, {0.0,0.0}};
             }
             case GROUP_IN: {
@@ -1146,4 +1148,14 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
     }
 
     return output;
+}
+
+void ZNodeView::initializeGroup() {
+    if (mGroupInput == nullptr) {
+        mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
+    }
+
+    if (mGroupOutput == nullptr) {
+        mGroupOutput = ZNodeUtil::get().newNode(GROUP_OUT);
+    }
 }

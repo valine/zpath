@@ -506,7 +506,6 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
 ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
     mLastType = type;
-    vec2 nodeSize = ZNodeView::getNodeSize(type);
     ZNodeView* node = ZNodeUtil::get().newNode(type);
     addNodeToView(node, true);
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());

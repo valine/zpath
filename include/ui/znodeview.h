@@ -985,12 +985,7 @@ public:
 
     vector<ZNodeView*> mHeadlessLaplaceNodes;
 
-    /**
-     * Internal group node graph
-     */
-    ZNodeView* mGroupInput;
-    ZNodeView* mGroupOutput;
-    vector<ZNodeView*> mGroupNodes;
+
 private:
     bool mInvalid = true;
 
@@ -1042,6 +1037,13 @@ private:
     vector<vector<float>> mLaplaceCache;
     vector<ZButton*> mButtons;
 
+    /**
+ * Internal group node graph
+ */
+    ZNodeView* mGroupInput = nullptr;
+    ZNodeView* mGroupOutput = nullptr;
+    vector<ZNodeView*> mGroupNodes;
+
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
     void clearInvalidateNode();
@@ -1075,6 +1077,8 @@ private:
     void setSocketCount(ivec2 count);
 
     void refreshView(Type &type);
+
+    void initializeGroup();
 };
 
 
