@@ -1153,9 +1153,15 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
 void ZNodeView::initializeGroup() {
     if (mGroupInput == nullptr) {
         mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
+        if (mEditorInterface != nullptr) {
+            mEditorInterface(mGroupInput, true);
+        }
     }
 
     if (mGroupOutput == nullptr) {
         mGroupOutput = ZNodeUtil::get().newNode(GROUP_OUT);
+        if (mEditorInterface != nullptr) {
+            mEditorInterface(mGroupOutput, true);
+        }
     }
 }

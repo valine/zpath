@@ -646,7 +646,10 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     });
     node->resetInitialPosition();
     node->invalidateNodeRecursive();
-   // node->invalidate();
+
+    node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
+        addNodeToView(node, autoPosition);
+    });
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){

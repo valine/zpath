@@ -20,6 +20,7 @@ static const int REAL = 0;
 static const int IMAG = 1;
 using namespace std;
 
+#include <utility>
 #include <vector>
 #include "zview.h"
 #include "zchart.h"
@@ -985,6 +986,9 @@ public:
 
     vector<ZNodeView*> mHeadlessLaplaceNodes;
 
+    void setEditorInterface(std::function<void(ZNodeView*, bool)> interface) {
+        mEditorInterface = std::move(interface);
+    }
 
 private:
     bool mInvalid = true;
@@ -1004,6 +1008,12 @@ private:
     ZLabel *mXMaxLabel;
     ZLabel *mYMinLabel;
     ZLabel *mYMaxLabel;
+
+    /**
+     * The view interface is used to allow the node to
+     * add other views to the parent editor.
+     */
+    function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
 
     /**
      * Number of line segments on the chart
