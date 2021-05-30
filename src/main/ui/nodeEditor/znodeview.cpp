@@ -1125,8 +1125,7 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             }
             case GROUP: {
                 initializeGroup();
-
-                return {{0.0, 0.0}, {0.0,0.0}};
+                return mGroupOutput->evaluate(x);
             }
             case GROUP_IN: {
                 return x;
