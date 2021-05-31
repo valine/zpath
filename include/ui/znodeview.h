@@ -990,8 +990,17 @@ public:
         mEditorInterface = std::move(interface);
     }
 
+    void setIsDeleted(bool isDeleted) {
+        mIsDeleted = isDeleted;
+    }
+
+    bool isDeleted() {
+        return mIsDeleted;
+    }
+
 private:
     bool mInvalid = true;
+    bool mIsDeleted = false;
 
     vector<ZView *> mSocketsIn;
     vector<ZView *> mSocketsOut;

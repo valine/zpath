@@ -476,7 +476,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
             {
                 ZNodeView *node = *editor->mEvalSet.begin();
 
-                if (node->getVisibility()) {
+                if (!node->isDeleted()) {
                     nodesToUpdate.insert(node);
                 } else {
                     editor->deleteNodeAsync(node);
@@ -528,6 +528,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     deselectNode(node);
     node->setCornerRadius(5);
     node->setVisibility(true);
+    node->setIsDeleted(false);
     mNodeViews.push_back(node);
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
     node->setMaxWidth(nodeSize.x);
@@ -721,6 +722,7 @@ void ZNodeEditor::deleteSelectedConnections() {
 void ZNodeEditor::deleteNode(ZNodeView * node) {
     node->invalidateSingleNode();
     node->setVisibility(false);
+    node->setIsDeleted(true);
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
@@ -758,6 +760,7 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 
 void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
     node->setVisibility(false);
+    node->setIsDeleted(true);
     deleteConnections(node);
 
     if (node->getIndexTag() != -1) {
