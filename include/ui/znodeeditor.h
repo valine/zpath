@@ -27,6 +27,9 @@ static const double DEFAULT_ELEVATION = 0.3;
 
 static const double SELECTED_ELEVATION = 1.0;
 
+static const int NO_GROUP = 0;
+static const int GROUP_SELECTED = 1;
+
 #include <ui/zview.h>
 #include "znodeview.h"
 #include "zmagnitudepicker.h"
@@ -70,6 +73,9 @@ private:
     ZView* mBoxSelect;
     ZCursorView* mCursorView;
     ZDrawer* mDrawer;
+
+    int mGroupMode = NO_GROUP;
+
     int mBoxMode = NO_BOX_SELECT;
 
     bool mGrab = false;
@@ -187,6 +193,8 @@ private:
     bool clickConsumed() const;
 
     string replace(string subject, const string &search, const string &replace);
+
+    void toggleGroupSelection();
 };
 
 

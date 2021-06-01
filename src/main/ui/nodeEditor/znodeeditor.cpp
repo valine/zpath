@@ -1266,6 +1266,29 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
         mInitialOffset = getMouse();
         resetNodeInitialPosition();
     }
+
+    else if (key == GLFW_KEY_TAB && action == GLFW_RELEASE) {
+        toggleGroupSelection();
+    }
+}
+
+void ZNodeEditor::toggleGroupSelection() {
+    // Only one node selected
+    if (mGroupMode == NO_GROUP) {
+        if (mSelectedNodes.size() == 1) {
+            ZNodeView *node = (*mSelectedNodes.begin());
+            if (node->getType() == ZNodeView::GROUP) {
+                mGroupMode = GROUP_SELECTED;
+                setBackgroundColor(darkGrey);
+
+
+            }
+        }
+    } else {
+        setBackgroundColor(bg);
+        mGroupMode = NO_GROUP;
+        // Exit group select mode
+    }
 }
 
 void ZNodeEditor::selectNodeGraphUnderMouse() {
