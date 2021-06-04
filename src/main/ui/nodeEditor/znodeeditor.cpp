@@ -807,9 +807,10 @@ void ZNodeEditor::deselectNode(ZNodeView* node) {
     if (node->getVisibility()) {
         node->setOutlineColor(transparent);
         node->setElevation(DEFAULT_ELEVATION);
-        if (mSelectedNodes.count(node) != 0) {
-            mSelectedNodes.erase(node);
-        }
+    }
+    
+    if (mSelectedNodes.count(node) != 0) {
+        mSelectedNodes.erase(node);
     }
 }
 
@@ -1278,16 +1279,32 @@ void ZNodeEditor::toggleGroupSelection() {
         if (mSelectedNodes.size() == 1) {
             ZNodeView *node = (*mSelectedNodes.begin());
             if (node->getType() == ZNodeView::GROUP) {
-                mGroupMode = GROUP_SELECTED;
+                mGroupMode = node->getIndexTag();
                 setBackgroundColor(darkGrey);
 
+                node->setVisibility(false);
+                node->getGroupInput()->setVisibility(true);
+                node->getGroupOutput()->setVisibility(true);
+                onWindowChange(getWindowWidth(), getWindowHeight());
 
             }
         }
     } else {
-        setBackgroundColor(bg);
-        mGroupMode = NO_GROUP;
         // Exit group select mode
+        setBackgroundColor(bg);
+        mNodeViews.at(mGroupMode)->setVisibility(true);
+        deselectAllNodes();
+
+        for (ZNodeView* node : mNodeViews) {
+            if (node->getType() == ZNodeView::GROUP) {
+                node->getGroupInput()->setVisibility(false);
+                node->getGroupOutput()->setVisibility(false);
+            }
+        }
+
+        selectNode(mNodeViews.at(mGroupMode));
+        mGroupMode = NO_GROUP;
+
     }
 }
 

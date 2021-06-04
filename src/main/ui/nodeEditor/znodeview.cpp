@@ -1163,4 +1163,9 @@ void ZNodeView::initializeGroup() {
             mEditorInterface(mGroupOutput, true);
         }
     }
+
+    if (getVisibility()) {
+        mGroupOutput->setVisibility(false);
+        mGroupInput->setVisibility(false);
+    }
 }

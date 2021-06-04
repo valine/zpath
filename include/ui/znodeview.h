@@ -998,6 +998,14 @@ public:
         return mIsDeleted;
     }
 
+    ZNodeView* getGroupInput() {
+        return mGroupInput;
+    }
+
+    ZNodeView* getGroupOutput() {
+        return mGroupOutput;
+    }
+
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;

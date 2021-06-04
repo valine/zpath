@@ -27,7 +27,7 @@ static const double DEFAULT_ELEVATION = 0.3;
 
 static const double SELECTED_ELEVATION = 1.0;
 
-static const int NO_GROUP = 0;
+static const int NO_GROUP = -1;
 static const int GROUP_SELECTED = 1;
 
 #include <ui/zview.h>
