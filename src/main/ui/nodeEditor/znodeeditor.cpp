@@ -648,6 +648,10 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->resetInitialPosition();
     node->invalidateNodeRecursive();
 
+    if (mGroupMode != NO_GROUP) {
+        mNodeViews.at(mGroupMode)->addGroupNode(node);
+    }
+
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });
@@ -808,7 +812,7 @@ void ZNodeEditor::deselectNode(ZNodeView* node) {
         node->setOutlineColor(transparent);
         node->setElevation(DEFAULT_ELEVATION);
     }
-    
+
     if (mSelectedNodes.count(node) != 0) {
         mSelectedNodes.erase(node);
     }
@@ -1276,11 +1280,20 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
 void ZNodeEditor::toggleGroupSelection() {
     // Only one node selected
     if (mGroupMode == NO_GROUP) {
+        // Enter group selection
         if (mSelectedNodes.size() == 1) {
             ZNodeView *node = (*mSelectedNodes.begin());
             if (node->getType() == ZNodeView::GROUP) {
                 mGroupMode = node->getIndexTag();
                 setBackgroundColor(darkGrey);
+
+                for (ZNodeView* globalNode : mNodeViews) {
+                    globalNode->setVisibility(false);
+                }
+
+                for (ZNodeView* groupNode : node->getGroupNodes()) {
+                    groupNode->setVisibility(true);
+                }
 
                 node->setVisibility(false);
                 node->getGroupInput()->setVisibility(true);
@@ -1296,16 +1309,27 @@ void ZNodeEditor::toggleGroupSelection() {
         deselectAllNodes();
 
         for (ZNodeView* node : mNodeViews) {
+
+            if (node->getType() != ZNodeView::GROUP_IN && node->getType() != ZNodeView::GROUP_OUT) {
+                node->setVisibility(true);
+            }
+
             if (node->getType() == ZNodeView::GROUP) {
                 node->getGroupInput()->setVisibility(false);
                 node->getGroupOutput()->setVisibility(false);
             }
         }
 
+        for (ZNodeView* groupNode : mNodeViews.at(mGroupMode)->getGroupNodes()) {
+            groupNode->setVisibility(false);
+        }
+
         selectNode(mNodeViews.at(mGroupMode));
         mGroupMode = NO_GROUP;
 
     }
+
+    updateLines();
 }
 
 void ZNodeEditor::selectNodeGraphUnderMouse() {

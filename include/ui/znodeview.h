@@ -1006,6 +1006,14 @@ public:
         return mGroupOutput;
     }
 
+    void addGroupNode(ZNodeView* node) {
+        mGroupNodes.push_back(node);
+    }
+
+    vector<ZNodeView*> getGroupNodes() {
+        return mGroupNodes;
+    }
+
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;
