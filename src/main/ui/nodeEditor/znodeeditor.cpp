@@ -1303,13 +1303,15 @@ void ZNodeEditor::toggleGroupSelection() {
             }
         }
     } else {
+
         // Exit group select mode
+        ZNodeView* groupNode = mNodeViews.at(mGroupMode);
+
         setBackgroundColor(bg);
-        mNodeViews.at(mGroupMode)->setVisibility(true);
+        groupNode->setVisibility(true);
         deselectAllNodes();
 
         for (ZNodeView* node : mNodeViews) {
-
             if (node->getType() != ZNodeView::GROUP_IN && node->getType() != ZNodeView::GROUP_OUT) {
                 node->setVisibility(true);
             }
@@ -1320,16 +1322,19 @@ void ZNodeEditor::toggleGroupSelection() {
             }
         }
 
-        for (ZNodeView* groupNode : mNodeViews.at(mGroupMode)->getGroupNodes()) {
-            groupNode->setVisibility(false);
+        for (ZNodeView* innerNode : groupNode->getGroupNodes()) {
+            innerNode->setVisibility(false);
         }
+        groupNode->setSocketCount(vec2(groupNode->getGroupInput()->getSocketCount().y,
+                                       groupNode->getGroupOutput()->getSocketCount().x));
+        selectNode(groupNode);
 
-        selectNode(mNodeViews.at(mGroupMode));
         mGroupMode = NO_GROUP;
 
     }
 
     updateLines();
+    onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZNodeEditor::selectNodeGraphUnderMouse() {

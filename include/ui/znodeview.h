@@ -164,7 +164,8 @@ public:
                 case COMBINE: return {{VAR, VAR}, {VAR}};
                 case SPLIT: return {{VAR}, {VAR, VAR}};
                 case NEURAL_CORE: return {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
-                case GROUP: return {{ NONE}, {NONE}};
+                case GROUP: return {{vector<SocketType>(MAX_INPUT_COUNT - 1, VAR)},
+                                    {vector<SocketType>(MAX_OUTPUT_COUNT, VAR)}};
                 case GROUP_IN: return {{},{vector<SocketType>(MAX_OUTPUT_COUNT, VAR)}};
                 case GROUP_OUT: return {{vector<SocketType>(MAX_INPUT_COUNT - 1, VAR)}, {}};
                 case MIN:
@@ -200,6 +201,7 @@ public:
         switch (type) {
             case GROUP_IN:
             case GROUP_OUT:
+            case GROUP:
                 return true;
             default:
                 return false;
@@ -1014,6 +1016,8 @@ public:
         return mGroupNodes;
     }
 
+    void setSocketCount(ivec2 count);
+
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;
@@ -1108,8 +1112,6 @@ private:
     vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x);
 
     void onCreate();
-
-    void setSocketCount(ivec2 count);
 
     void refreshView(Type &type);
 
