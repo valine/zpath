@@ -623,7 +623,7 @@ public:
         }
     }
 
-    vector<vector<float>> compute(vector<vector<float>> x, Type type);
+    vector<vector<float>> compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<float>> rootInput);
 
     ///////////////////////////////////////////
     ///////// End node definition /////////////
@@ -887,26 +887,12 @@ public:
         return {mLaplaceCache.at(xi).at(yi), 0};
     }
 
-    float sumInputs(vec2 input, int socketIndex) {
-        float sum = 0.0;
-        auto inputSocket = mInputIndices.at(socketIndex);
-
-        vector<float> x = vector<float>(MAX_INPUT_COUNT, input.x);
-        vector<float> y = vector<float>(MAX_INPUT_COUNT, input.y);
-
-        for (auto singleInput : inputSocket) {
-            sum += singleInput.first->evaluate({x, y}).at(
-                    0).at(singleInput.second);
-        }
-
-        return sum;
-    }
-
     float sumInputs(float x, int socketIndex, int var) {
         float summedInputs = 0.0;
         auto inputSocket = mInputIndices.at(socketIndex);
         for (auto singleInput : inputSocket) {
-            summedInputs += singleInput.first->evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, x))).at(
+            vector<vector<float>> inVec = vector<vector<float>>(2,vector<float>(MAX_INPUT_COUNT, x));
+            summedInputs += singleInput.first->evaluate(inVec,inVec).at(
                     var).at(singleInput.second);
         }
 
@@ -928,9 +914,9 @@ public:
         return summedInputs;
     }
 
-    vector<vector<float>> evaluate(vector<vector<float>> x);
+    vector<vector<float>> evaluate(vector<vector<float>> x, vector<vector<float>> rootInput);
 
-    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView *root);
+    vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
 
     void setType(Type type);
 
@@ -1119,7 +1105,7 @@ private:
 
     void draw();
 
-    vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x);
+    vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x, vector<vector<float>> rootInput);
 
     void onCreate();
 
@@ -1127,7 +1113,7 @@ private:
 
     void initializeGroup();
 
-    vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root);
+    vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
 };
 
 

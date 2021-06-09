@@ -226,7 +226,7 @@ void ZNodeView::updateChartHeatMap() {
                     vector<float>(MAX_INPUT_COUNT, x),
                             vector<float>(MAX_INPUT_COUNT, y)};
 
-            vector<vector<float>> z = evaluate(inVec);
+            vector<vector<float>> z = evaluate(inVec, inVec);
             if (!z.empty()) {
                 points.push_back(z.at(0).at(0));
             }
@@ -244,13 +244,14 @@ void ZNodeView::updateChart2D() {
     float increment = 0.1;
     vec2 xBounds = mChart->getXBounds();
     vec2 yBounds = mChart->getYBounds();
-    evaluate(evaluate(vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, 0))));
+   // vector<vector<float>> inVec = vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, 0));
+   // evaluate(evaluate(inVec, inVec),inVec);
     vector<vector<float>> points;
     for (int i = 0; i < mChart->getResolution(); i++) {
         float input = (float) i * increment;
 
-        vector<vector<float>> fx = evaluate(
-                vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, input)));
+        vector<vector<float>> inVec = vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, input));
+        vector<vector<float>> fx = evaluate(inVec, inVec);
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -280,8 +281,8 @@ void ZNodeView::updateChart1D() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float factor = (float) i / (float) chartRes;
         float x = mix(xBounds.x, xBounds.y, factor);
-        vector<vector<float>> fx = evaluate(
-                vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x)));
+        vector<vector<float>> inVec = vector<vector<float>>(1, vector<float>(MAX_INPUT_COUNT, x));
+        vector<vector<float>> fx = evaluate(inVec, inVec);
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -309,7 +310,7 @@ void ZNodeView::updateChart1D2X() {
         float x = mix(xBounds.x, xBounds.y, factor);
         vector<vector<float>> inVec = {vector<float>(MAX_INPUT_COUNT, x), vector<float>(MAX_INPUT_COUNT, x)};
 
-        vector<vector<float>> fx = evaluate(inVec);
+        vector<vector<float>> fx = evaluate(inVec, inVec);
         if (fx.empty()) {
             mChart->setVisibility(false);
             return;
@@ -606,12 +607,12 @@ void ZNodeView::setConstantValueInput(int index, float value, int magnitudeIndex
     }
 }
 
-vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x) {
-
-    return evaluate(std::move(x), nullptr);
+vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, vector<vector<float>> rootInput) {
+    return evaluate(std::move(x), nullptr, std::move(rootInput));
 }
 
-vector<vector<float>> ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root) {
+vector<vector<float>>
+ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput) {
     ivec2 size = getSocketCount();
 
     if (mInputIndices.empty()) {
@@ -634,9 +635,9 @@ vector<vector<float>> ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView
             for (pair<ZNodeView *, int> input : inputs) {
                 vector<vector<float>> recurOutput;
                 if (root == nullptr) {
-                    recurOutput = input.first->evaluate(x, this);
+                    recurOutput = input.first->evaluate(x, this, rootInput);
                 } else {
-                    recurOutput = input.first->evaluate(x, root);
+                    recurOutput = input.first->evaluate(x, root, rootInput);
                 }
                 for (int d = 0; d < summedInputs.size(); d++) {
                     // It's possible a previous node on the stack has too few inputs.
@@ -689,15 +690,15 @@ vector<vector<float>> ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView
     return summedInputs;
 }
 
-vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* root) {
+vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput) {
     ivec2 size = getSocketCount();
     if (size.x == 0) {
-        x = compute(x, mType);
+        x = compute(x, mType, rootInput);
     }
 
     if (size.x > 0) {
-        vector<vector<float>> summedInputs = sumAllInputs(x, root);
-        x = compute(summedInputs, mType);
+        vector<vector<float>> summedInputs = sumAllInputs(x, root, rootInput);
+        x = compute(summedInputs, mType, rootInput);
     }
     return x;
 
@@ -836,7 +837,7 @@ void ZNodeView::hideSocketLabels() {
     }
 }
 
-vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x) {
+vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x, vector<vector<float>> rootInput) {
 
     if (mHeadlessLaplaceNodes.empty()) {
         ZNodeView* root = this;
@@ -853,10 +854,11 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x)
         vector<ZNodeView*> headless = ZNodeUtil::get().stringToGraph(zResult);
         mHeadlessLaplaceNodes.push_back(headless.at(0));
     }
-    return mHeadlessLaplaceNodes.at(0)->evaluate(std::move(x));
+    return mHeadlessLaplaceNodes.at(0)->evaluate(std::move(x), rootInput);
 }
 
-vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type) {
+vector<vector<float>>
+ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<float>> rootInput) {
     vec2 chartBound = mChart->getXBounds();
     float chartWidth = chartBound.y - chartBound.x;
     vector<vector<float>> output;
@@ -1054,8 +1056,8 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             case LAPLACE_S: {
 
                 vector<vector<float>> sx = computeLaplaceHeadless(
-                        {vector<float>(MAX_INPUT_COUNT,x.at(REAL).at(1)),
-                                vector<float>(MAX_INPUT_COUNT,x.at(IMAG).at(1))});
+                        {vector<float>(MAX_INPUT_COUNT, x.at(REAL).at(1)),
+                         vector<float>(MAX_INPUT_COUNT, x.at(IMAG).at(1))}, rootInput);
 
                 mChart->setZBound(vec2(x.at(0).at(2), x.at(0).at(3)));
                 out = {sx.at(0).at(0), chartBound.x, chartWidth};
@@ -1133,11 +1135,11 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
             }
             case GROUP: {
                 initializeGroup();
-                return mGroupOutput->evaluate(x);
+                return mGroupOutput->evaluate(rootInput, nullptr, rootInput);
             }
             case GROUP_IN: {
                 if (mInputProxy != nullptr) {
-                    return mInputProxy->sumAllInputs(x, nullptr);
+                    return mInputProxy->sumAllInputs(x, nullptr, vector<vector<float>>());
                 } else {
                     return x;
                 }

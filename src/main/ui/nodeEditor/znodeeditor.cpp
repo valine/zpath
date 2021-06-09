@@ -1298,6 +1298,9 @@ void ZNodeEditor::toggleGroupSelection() {
                 node->setVisibility(false);
                 node->getGroupInput()->setVisibility(true);
                 node->getGroupOutput()->setVisibility(true);
+
+                node->getGroupInput()->invalidateNodeRecursive();
+                node->getGroupOutput()->invalidateNodeRecursive();
                 onWindowChange(getWindowWidth(), getWindowHeight());
 
             }
@@ -1327,6 +1330,7 @@ void ZNodeEditor::toggleGroupSelection() {
         groupNode->setSocketCount(vec2(groupNode->getGroupInput()->getSocketCount().y,
                                        groupNode->getGroupOutput()->getSocketCount().x));
         selectNode(groupNode);
+        groupNode->invalidateNodeRecursive();
 
         mGroupMode = NO_GROUP;
 
