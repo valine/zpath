@@ -1303,7 +1303,6 @@ void ZNodeEditor::toggleGroupSelection() {
             }
         }
     } else {
-
         // Exit group select mode
         ZNodeView* groupNode = mNodeViews.at(mGroupMode);
 

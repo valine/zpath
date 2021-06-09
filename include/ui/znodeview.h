@@ -1018,6 +1018,15 @@ public:
 
     void setSocketCount(ivec2 count);
 
+    /**
+     * The input proxy node is used within the group node
+     * to pull input from the outside.
+     * @param nodeView
+     */
+    void setInputProxy(ZNodeView* nodeView) {
+        mInputProxy = nodeView;
+    }
+
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;
@@ -1081,6 +1090,7 @@ private:
  */
     ZNodeView* mGroupInput = nullptr;
     ZNodeView* mGroupOutput = nullptr;
+    ZNodeView* mInputProxy = nullptr;
     vector<ZNodeView*> mGroupNodes;
 
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
@@ -1116,6 +1126,8 @@ private:
     void refreshView(Type &type);
 
     void initializeGroup();
+
+    vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root);
 };
 
 

@@ -611,6 +611,84 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x) {
     return evaluate(std::move(x), nullptr);
 }
 
+vector<vector<float>> ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root) {
+    ivec2 size = getSocketCount();
+
+    if (mInputIndices.empty()) {
+        return x;
+    }
+
+    vector<vector<float>> summedInputs = vector<vector<float>>(x.size(), vector<float>(MAX_INPUT_COUNT, 0));
+
+
+    // Loop over input sockets
+    for (int i = 0; i < size.x; i++) {
+
+        const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
+
+        // If inputs are connected evaluate recursively, otherwise use the specified input.
+        if (!inputs.empty()) {
+            // Summing all inputs is useful for dot products.
+
+            // Loop over all inputs on a single socket
+            for (pair<ZNodeView *, int> input : inputs) {
+                vector<vector<float>> recurOutput;
+                if (root == nullptr) {
+                    recurOutput = input.first->evaluate(x, this);
+                } else {
+                    recurOutput = input.first->evaluate(x, root);
+                }
+                for (int d = 0; d < summedInputs.size(); d++) {
+                    // It's possible a previous node on the stack has too few inputs.
+                    // When that happens display an error message.
+                    if (recurOutput.empty()) {
+                        mOutputLabel->setText("Bad input");
+                        mOutputLabel->setTextColor(red);
+                        return vector<vector<float>>();
+                    } else {
+                        if (d < recurOutput.size() && input.second < recurOutput.at(d).size()) {
+                            summedInputs.at(d).at(i) += recurOutput.at(d).at(input.second);
+                        }
+                    }
+                }
+            }
+
+        } else {
+
+            // Check that the passed input vector dimension matches
+            // the number of input sockets on the node. If not
+            // display an error message.
+            if (x.at(0).size() <= size.x) {
+                //mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
+                mOutputLabel->setTextColor(white);
+                return vector<vector<float>>();
+            } else {
+                for (int d = 0; d < summedInputs.size(); d++) {
+                    // Use the default input when nothing is connected to a constant socket
+                    if (getSocketType().at(0).at(i) == VAR) {
+                        summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
+                        summedInputs.at(IMAG).at(i) = 0;
+                    } else if (getSocketType().at(0).at(i) == VAR_Z) {
+                        summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
+                        summedInputs.at(IMAG).at(i) = x.at(IMAG).at(i);
+                    } else if (getSocketType().at(0).at(i) == CON) {
+                        // By default constants have no imaginary component
+                        if (d == REAL) {
+                            summedInputs.at(d).at(i) = mConstantValueInput.at(i);
+                        } else {
+                            summedInputs.at(d).at(i) = 0.0;
+                        }
+                    } else if (getSocketType().at(0).at(i) == ENUM) {
+                        summedInputs.at(d).at(i) = mConstantMagnitudeInput.at(i);
+                    }
+                }
+            }
+        }
+    }
+
+    return summedInputs;
+}
+
 vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* root) {
     ivec2 size = getSocketCount();
     if (size.x == 0) {
@@ -618,77 +696,7 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView* ro
     }
 
     if (size.x > 0) {
-        vector<vector<float>> summedInputs = vector<vector<float>>(x.size(), vector<float>(MAX_INPUT_COUNT, 0));
-        if (mInputIndices.empty()) {
-            return x;
-        }
-
-
-        // Loop over input sockets
-        for (int i = 0; i < size.x; i++) {
-
-            const vector<pair<ZNodeView *, int>> &inputs = mInputIndices.at(i);
-
-            // If inputs are connected evaluate recursively, otherwise use the specified input.
-            if (!inputs.empty()) {
-                // Summing all inputs is useful for dot products.
-
-                // Loop over all inputs on a single socket
-                for (pair<ZNodeView *, int> input : inputs) {
-                    vector<vector<float>> recurOutput;
-                    if (root == nullptr) {
-                        recurOutput = input.first->evaluate(x, this);
-                    } else {
-                        recurOutput = input.first->evaluate(x, root);
-                    }
-                    for (int d = 0; d < summedInputs.size(); d++) {
-                        // It's possible a previous node on the stack has too few inputs.
-                        // When that happens display an error message.
-                        if (recurOutput.empty()) {
-                            mOutputLabel->setText("Bad input");
-                            mOutputLabel->setTextColor(red);
-                            return vector<vector<float>>();
-                        } else {
-                            if (d < recurOutput.size() && input.second < recurOutput.at(d).size()) {
-                                summedInputs.at(d).at(i) += recurOutput.at(d).at(input.second);
-                            }
-                        }
-                    }
-                }
-
-            } else {
-
-                // Check that the passed input vector dimension matches
-                // the number of input sockets on the node. If not
-                // display an error message.
-                if (x.at(0).size() <= size.x) {
-                    //mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-                    mOutputLabel->setTextColor(white);
-                    return vector<vector<float>>();
-                } else {
-                    for (int d = 0; d < summedInputs.size(); d++) {
-                        // Use the default input when nothing is connected to a constant socket
-                        if (getSocketType().at(0).at(i) == VAR) {
-                            summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
-                            summedInputs.at(IMAG).at(i) = 0;
-                        } else if (getSocketType().at(0).at(i) == VAR_Z) {
-                            summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
-                            summedInputs.at(IMAG).at(i) = x.at(IMAG).at(i);
-                        } else if (getSocketType().at(0).at(i) == CON) {
-                            // By default constants have no imaginary component
-                            if (d == REAL) {
-                                summedInputs.at(d).at(i) = mConstantValueInput.at(i);
-                            } else {
-                                summedInputs.at(d).at(i) = 0.0;
-                            }
-                        } else if (getSocketType().at(0).at(i) == ENUM) {
-                            summedInputs.at(d).at(i) = mConstantMagnitudeInput.at(i);
-                        }
-                    }
-                }
-            }
-        }
-
+        vector<vector<float>> summedInputs = sumAllInputs(x, root);
         x = compute(summedInputs, mType);
     }
     return x;
@@ -1128,7 +1136,11 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
                 return mGroupOutput->evaluate(x);
             }
             case GROUP_IN: {
-                return x;
+                if (mInputProxy != nullptr) {
+                    return mInputProxy->sumAllInputs(x, nullptr);
+                } else {
+                    return x;
+                }
             }
             case GROUP_OUT: {
                 return x;
@@ -1152,6 +1164,7 @@ vector<vector<float>> ZNodeView::compute(vector<vector<float>> x, ZNodeView::Typ
 void ZNodeView::initializeGroup() {
     if (mGroupInput == nullptr) {
         mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
+        mGroupInput->setInputProxy(this);
         if (mEditorInterface != nullptr) {
             mEditorInterface(mGroupInput, true);
         }
