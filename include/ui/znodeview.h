@@ -996,6 +996,7 @@ public:
 
     void addGroupNode(ZNodeView* node) {
         mGroupNodes.push_back(node);
+        node->mGroupParent = this;
     }
 
     vector<ZNodeView*> getGroupNodes() {
@@ -1006,11 +1007,15 @@ public:
 
     /**
      * The input proxy node is used within the group node
-     * to pull input from the outside.
+     * to pull input from outside the group.
      * @param nodeView
      */
     void setInputProxy(ZNodeView* nodeView) {
         mInputProxy = nodeView;
+    }
+
+    ZNodeView* getGroupParent() {
+        return mGroupParent;
     }
 
 private:
@@ -1077,6 +1082,7 @@ private:
     ZNodeView* mGroupInput = nullptr;
     ZNodeView* mGroupOutput = nullptr;
     ZNodeView* mInputProxy = nullptr;
+    ZNodeView* mGroupParent = nullptr;
     vector<ZNodeView*> mGroupNodes;
 
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;

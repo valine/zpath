@@ -1314,7 +1314,10 @@ void ZNodeEditor::toggleGroupSelection() {
         deselectAllNodes();
 
         for (ZNodeView* node : mNodeViews) {
-            if (node->getType() != ZNodeView::GROUP_IN && node->getType() != ZNodeView::GROUP_OUT) {
+
+            // Check if node is part of a group before showing
+            if (node->getType() != ZNodeView::GROUP_IN && node->getType() != ZNodeView::GROUP_OUT &&
+                node->getGroupParent() == nullptr) {
                 node->setVisibility(true);
             }
 
