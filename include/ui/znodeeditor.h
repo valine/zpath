@@ -195,6 +195,8 @@ private:
     string replace(string subject, const string &search, const string &replace);
 
     void toggleGroupSelection();
+
+    void reindexNodes();
 };
 
 

@@ -1018,6 +1018,12 @@ public:
         return mGroupParent;
     }
 
+    void setGroupParent(ZNodeView* node) {
+        mGroupParent = node;
+    }
+
+
+    vector<ZButton*> mButtons;
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;
@@ -1074,7 +1080,6 @@ private:
     vector<complex<float>> mMlCache;
 
     vector<vector<float>> mLaplaceCache;
-    vector<ZButton*> mButtons;
 
     /**
  * Internal group node graph

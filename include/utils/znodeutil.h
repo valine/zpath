@@ -44,6 +44,53 @@ public:
         return node;
     }
 
+    void deleteNode(ZNodeView* node) {
+        node->setVisibility(false);
+        node->setIsDeleted(true);
+        deleteConnections(node);
+
+        for (ZNodeView* nodeView : node->mHeadlessLaplaceNodes) {
+            deleteNode(nodeView);
+        }
+        ZNodeUtil::get().submitForRecycle(node);
+        node->setIndexTag(-1);
+
+    }
+
+    void deleteConnections(ZNodeView* node) {
+        for (const vector<pair<ZNodeView *, int>> &inputs : node->mInputIndices) {
+            for (pair<ZNodeView *, int> input : inputs) {
+                ZNodeView *prevNode = input.first;
+                int index = 0;
+                for (pair<ZNodeView *, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
+                    if (outputNode.first == node) {
+                        remove(prevNode->mOutputIndices.at(input.second), index);
+                    }
+
+                    index++;
+                }
+            }
+        }
+
+        for (const vector<pair<ZNodeView *, int>> &outputs : node->mOutputIndices) {
+            int pairIndex = 0;
+            for (pair<ZNodeView *, int> output : outputs) {
+                ZNodeView *nextNode = output.first;
+
+                if (nextNode != nullptr) {
+                    remove(nextNode->mInputIndices.at(output.second), pairIndex);
+                    nextNode->invalidateNodeRecursive();
+                }
+                pairIndex++;
+
+            }
+        }
+
+        node->initializeEdges();
+        node->invalidateSingleNode();
+    }
+
+
     void submitForRecycle(ZNodeView* node) {
         mDeleteNodes.push(node);
     }
@@ -374,6 +421,14 @@ public:
         std::sprintf(&output[0], format, value);
         return output;
     }
+
+    template <typename T>
+    void remove(std::vector<T>& vec, size_t pos){
+        auto it = vec.begin();
+        std::advance(it, pos);
+        vec.erase(it);
+    }
+
 
     static int getVarCount(ZNodeView* node) {
 
