@@ -44,17 +44,40 @@ public:
         return node;
     }
 
+    void deleteNodes(vector<ZNodeView*> nodes) {
+        for (ZNodeView* node : nodes) {
+            deleteNode(node);
+        }
+    }
+
     void deleteNode(ZNodeView* node) {
+        if (node == nullptr) {
+            return;
+        }
+
         node->setVisibility(false);
         node->setIsDeleted(true);
         deleteConnections(node);
 
-        for (ZNodeView* nodeView : node->mHeadlessLaplaceNodes) {
-            deleteNode(nodeView);
-        }
-        ZNodeUtil::get().submitForRecycle(node);
-        node->setIndexTag(-1);
+        deleteNode(node->getGroupInput());
+        deleteNode(node->getGroupOutput());
+        deleteNodes(node->getGroupNodes());
 
+        node->setGroupParent(nullptr);
+        node->mGroupOutput = nullptr;
+        node->mGroupInput = nullptr;
+        node->mInputProxy = nullptr;
+
+        deleteNodes(node->mHeadlessLaplaceNodes);
+
+        ZNodeUtil::get().submitForRecycle(node);
+
+        auto deleteInterface = node->getEditorDeletionInterface();
+        if (deleteInterface != nullptr) {
+            deleteInterface(node, node->getIndexTag());
+        }
+
+        node->setIndexTag(-1);
     }
 
     void deleteConnections(ZNodeView* node) {

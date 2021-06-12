@@ -978,6 +978,14 @@ public:
         mEditorInterface = std::move(interface);
     }
 
+    void setEditorDeletionInterface(std::function<void(ZNodeView*, int)> interface) {
+        mEditorDeleteInterface = std::move(interface);
+    }
+
+    function<void(ZNodeView*, int)> getEditorDeletionInterface() {
+        return mEditorDeleteInterface;
+    }
+
     void setIsDeleted(bool isDeleted) {
         mIsDeleted = isDeleted;
     }
@@ -1022,8 +1030,16 @@ public:
         mGroupParent = node;
     }
 
+    /**
+    * Internal group node graph
+    */
+    ZNodeView* mGroupInput = nullptr;
+    ZNodeView* mInputProxy = nullptr;
+    ZNodeView* mGroupParent = nullptr;
+    vector<ZNodeView*> mGroupNodes;
 
     vector<ZButton*> mButtons;
+    ZNodeView* mGroupOutput = nullptr;
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;
@@ -1049,6 +1065,12 @@ private:
      * add other views to the parent editor.
      */
     function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
+
+    /**
+     * The editor delete interface is used when the node whats to delete itself.
+     * This interface allows the node to inform the editor about it's deletion.
+     */
+    function<void(ZNodeView*, int)> mEditorDeleteInterface = nullptr;
 
     /**
      * Number of line segments on the chart
@@ -1081,14 +1103,6 @@ private:
 
     vector<vector<float>> mLaplaceCache;
 
-    /**
- * Internal group node graph
- */
-    ZNodeView* mGroupInput = nullptr;
-    ZNodeView* mGroupOutput = nullptr;
-    ZNodeView* mInputProxy = nullptr;
-    ZNodeView* mGroupParent = nullptr;
-    vector<ZNodeView*> mGroupNodes;
 
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 

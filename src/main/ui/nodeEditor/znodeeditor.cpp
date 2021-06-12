@@ -655,6 +655,14 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });
+
+    node->setEditorDeletionInterface([this](ZNodeView* node, int nodeIndex){
+        if (node->getIndexTag() != -1) {
+            remove(mNodeViews, node->getIndexTag());
+        }
+        reindexNodes();
+    });
+
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
@@ -763,13 +771,7 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 }
 
 void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
-    if (node->getIndexTag() != -1) {
-        remove(mNodeViews, node->getIndexTag());
-    }
-
     ZNodeUtil::get().deleteNode(node);
-
-    reindexNodes();
     invalidate();
 }
 
