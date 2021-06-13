@@ -70,6 +70,9 @@ private:
     ZMagnitudePicker* mMagnitudePicker;
     ZButton* mLaplaceBtn;
 
+    ZButton* mDerivativeButton;
+    ZButton* mSimplifyBtn;
+
     ZView* mBoxSelect;
     ZCursorView* mCursorView;
     ZDrawer* mDrawer;

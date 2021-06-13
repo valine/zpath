@@ -152,9 +152,47 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         }
     });
 
+
+    mDerivativeButton = new ZButton("Derivative", buttonPanel);
+    mDerivativeButton->setMaxWidth(fillParent);
+    mDerivativeButton->setCornerRadius(vec4(1));
+    mDerivativeButton->setMaxHeight(25);
+    mDerivativeButton->setMarginTop(1);
+    mDerivativeButton->setOnClick([this](){
+        cout << mSelectedNodes.size() << endl;
+        // Only works if one node selected
+        if (mSelectedNodes.size() == 1) {
+            ZNodeView *root = (*mSelectedNodes.begin());
+            string exp = ZNodeUtil::get().graphToString(root, true);
+            string diff = "diff(" + exp + ")";
+            string result = ZUtil::replace(CasUtil::get().evaluate(diff), "\n", "");
+            addNodeGraph(ZNodeUtil::get().stringToGraph(result).at(0), vec2(10), 0);
+        }
+    });
+
+
+    mSimplifyBtn = new ZButton("Simplify", buttonPanel);
+    mSimplifyBtn->setMaxWidth(fillParent);
+    mSimplifyBtn->setCornerRadius(vec4(1));
+    mSimplifyBtn->setMaxHeight(25);
+    mSimplifyBtn->setMarginTop(2);
+    mSimplifyBtn->setOnClick([this](){
+        cout << mSelectedNodes.size() << endl;
+        // Only works if one node selected
+        if (mSelectedNodes.size() == 1) {
+            ZNodeView *root = (*mSelectedNodes.begin());
+            string exp = ZNodeUtil::get().graphToString(root, true);
+            string diff = "simplify(" + exp + ")";
+            string result = ZUtil::replace(CasUtil::get().evaluate(diff), "\n", "");
+            addNodeGraph(ZNodeUtil::get().stringToGraph(result).at(0), vec2(10), 0);
+        }
+    });
+
+
+
     // Button example
     auto* addNodeBtn = new ZButton("Add node", buttonPanel);
-    addNodeBtn->setMarginTop(1);
+    addNodeBtn->setMarginTop(3);
     addNodeBtn->setCornerRadius(vec4(0,0,cr,cr));
     addNodeBtn->setOnClick([this](ZView* btn){
         addNode(mLastType);
@@ -1048,7 +1086,8 @@ void ZNodeEditor::onMouseDown() {
 }
 
 bool ZNodeEditor::clickConsumed() const {
-    return isMouseInBounds(mExpressionField) || isMouseInBounds(mLaplaceBtn);
+    return isMouseInBounds(mExpressionField) || isMouseInBounds(mLaplaceBtn) || isMouseInBounds(mDerivativeButton) ||
+        isMouseInBounds(mSimplifyBtn);
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
