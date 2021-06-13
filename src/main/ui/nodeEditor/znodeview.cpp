@@ -370,8 +370,11 @@ void ZNodeView::setType(ZNodeView::Type type) {
         magIndex++;
     }
 
-    int buttonIndex = 0;
+    for (ZButton* button : mButtons) {
+        button->setVisibility(false);
+    }
 
+    int buttonIndex = 0;
     int margin = 2;
     int firstLineWidth = (int) mNameLabel->getTextWidth();
     int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
