@@ -31,7 +31,7 @@ using namespace std;
 #include "zlabel.h"
 #include "neuralcore/mlmodel.h"
 #include "zbutton.h"
-
+#include <set>
 #include "utils/casutil.h"
 #include "utils/zutil.h"
 
@@ -986,6 +986,10 @@ public:
         return mEditorDeleteInterface;
     }
 
+    std::function<void(ZNodeView*, bool)> getAddNodeInterface() {
+        return mEditorInterface;
+    }
+
     void setIsDeleted(bool isDeleted) {
         mIsDeleted = isDeleted;
     }
@@ -1003,11 +1007,11 @@ public:
     }
 
     void addGroupNode(ZNodeView* node) {
-        mGroupNodes.push_back(node);
+        mGroupNodes.insert(node);
         node->mGroupParent = this;
     }
 
-    vector<ZNodeView*> getGroupNodes() {
+    set<ZNodeView*> getGroupNodes() {
         return mGroupNodes;
     }
 
@@ -1036,7 +1040,7 @@ public:
     ZNodeView* mGroupInput = nullptr;
     ZNodeView* mInputProxy = nullptr;
     ZNodeView* mGroupParent = nullptr;
-    vector<ZNodeView*> mGroupNodes;
+    set<ZNodeView*> mGroupNodes;
 
     vector<ZButton*> mButtons;
     ZNodeView* mGroupOutput = nullptr;

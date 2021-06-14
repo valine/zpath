@@ -394,6 +394,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
         button->setYOffset(2);
         button->setCornerRadius(vec4(8));
         button->getLabel()->offsetBy(0, -5);
+        button->setVisibility(true);
 
         button->setBackgroundColor(white);
         button->setXOffset(buttonOffset);

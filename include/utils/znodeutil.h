@@ -44,7 +44,63 @@ public:
         return node;
     }
 
+    set<ZNodeView*> duplicateNodes(set<ZNodeView*> selected) {
+        map<ZNodeView*, ZNodeView*> tmpMap;
+        set<ZNodeView*> originals;
+        set<ZNodeView*> duplicates;
+
+        for (ZNodeView* node : selected) {
+
+            ZNodeView* dupNode = ZNodeUtil::get().newNode(node->getType());
+            node->getAddNodeInterface()(dupNode, false);
+
+            dupNode->copyParameters(node);
+            dupNode->resetInitialPosition();
+            dupNode->invalidate();
+
+            if (!node->mGroupNodes.empty()) {
+                dupNode->mGroupNodes = duplicateNodes(node->mGroupNodes);
+                for (ZNodeView* groupNode : dupNode->mGroupNodes) {
+                    groupNode->mGroupParent = dupNode;
+                    groupNode->setVisibility(false);
+                }
+            }
+
+            originals.insert(node);
+            duplicates.insert(dupNode);
+
+            tmpMap.insert(pair<ZNodeView*, ZNodeView*>(node, dupNode));
+        }
+
+        for (ZNodeView* original : originals) {
+            ZNodeView* duplicate = tmpMap.at(original);
+
+            int outputIndex = 0;
+            // Looping over sockets
+            for (const vector<pair<ZNodeView*, int>>& edges : original->mOutputIndices) {
+                // Looping over individual edges
+                for(pair<ZNodeView*, int> edge : edges) {
+                    ZNodeView* nextNode = edge.first;
+                    int inputIndex = edge.second;
+
+                    if (tmpMap.find(nextNode) != tmpMap.end()) {
+                        connectNodes(outputIndex, inputIndex, duplicate, tmpMap.at(nextNode));
+                    }
+                }
+                outputIndex++;
+            }
+        }
+
+        return duplicates;
+    }
+
     void deleteNodes(vector<ZNodeView*> nodes) {
+        for (ZNodeView* node : nodes) {
+            deleteNode(node);
+        }
+    }
+
+    void deleteNodes(set<ZNodeView*> nodes) {
         for (ZNodeView* node : nodes) {
             deleteNode(node);
         }
@@ -112,7 +168,6 @@ public:
         node->initializeEdges();
         node->invalidateSingleNode();
     }
-
 
     void submitForRecycle(ZNodeView* node) {
         mDeleteNodes.push(node);

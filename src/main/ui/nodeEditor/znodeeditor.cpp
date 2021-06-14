@@ -704,43 +704,10 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
-
-    map<ZNodeView*, ZNodeView*> tmpMap;
-    vector<ZNodeView*> originals;
-    vector<ZNodeView*> duplicates;
     enterGrabMode();
-    for (ZNodeView* node : mSelectedNodes) {
-        ZNodeView* dupNode = addNode(node->getType());
-        dupNode->copyParameters(node);
+    auto duplicates = ZNodeUtil::get().duplicateNodes(mSelectedNodes);
 
-        dupNode->resetInitialPosition();
-        dupNode->invalidate();
-
-        originals.push_back(node);
-        duplicates.push_back(dupNode);
-
-        tmpMap.insert(pair<ZNodeView*, ZNodeView*>(node, dupNode));
-    }
-
-    for (ZNodeView* original : originals) {
-        ZNodeView* duplicate = tmpMap.at(original);
-
-        int outputIndex = 0;
-        // Looping over sockets
-        for (const vector<pair<ZNodeView*, int>>& edges : original->mOutputIndices) {
-            // Looping over individual edges
-            for(pair<ZNodeView*, int> edge : edges) {
-                ZNodeView* nextNode = edge.first;
-                int inputIndex = edge.second;
-
-                if (tmpMap.find(nextNode) != tmpMap.end()) {
-                    connectNodes(outputIndex, inputIndex, duplicate, tmpMap.at(nextNode));
-                }
-            }
-            outputIndex++;
-        }
-    }
-
+    getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
     deselectAllNodes();
 
     for (ZNodeView* duplicate : duplicates) {
@@ -748,7 +715,6 @@ void ZNodeEditor::duplicateSelectedNodes(){
     }
 
     mDragNode = 1;
-
     invalidate();
 }
 
