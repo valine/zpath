@@ -785,6 +785,8 @@ void ZNodeView::copyParameters(ZNodeView* node) {
    mConstantMagnitudeInput = node->mConstantMagnitudeInput;
    mConstantMagnitudeOutput = node->mConstantMagnitudeOutput;
    setOutputLabel(mConstantValueOutput.at(0));
+
+   setSocketCount(node->getSocketCount());
 }
 
 void ZNodeView::setOutputLabel(float output) {
@@ -1171,6 +1173,7 @@ void ZNodeView::initializeGroup() {
     if (mGroupInput == nullptr) {
         mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
         mGroupInput->setInputProxy(this);
+        mGroupNodes.insert(mGroupInput);
         if (mEditorInterface != nullptr) {
             mEditorInterface(mGroupInput, true);
         }
@@ -1178,6 +1181,7 @@ void ZNodeView::initializeGroup() {
 
     if (mGroupOutput == nullptr) {
         mGroupOutput = ZNodeUtil::get().newNode(GROUP_OUT);
+        mGroupNodes.insert(mGroupOutput);
         if (mEditorInterface != nullptr) {
             mEditorInterface(mGroupOutput, true);
         }

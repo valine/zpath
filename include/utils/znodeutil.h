@@ -52,19 +52,27 @@ public:
         for (ZNodeView* node : selected) {
 
             ZNodeView* dupNode = ZNodeUtil::get().newNode(node->getType());
-            node->getAddNodeInterface()(dupNode, false);
-
-            dupNode->copyParameters(node);
-            dupNode->resetInitialPosition();
-            dupNode->invalidate();
 
             if (!node->mGroupNodes.empty()) {
                 dupNode->mGroupNodes = duplicateNodes(node->mGroupNodes);
                 for (ZNodeView* groupNode : dupNode->mGroupNodes) {
                     groupNode->mGroupParent = dupNode;
                     groupNode->setVisibility(false);
+
+                    if (groupNode->getType() == ZNodeView::Type::GROUP_IN) {
+                        dupNode->mGroupInput = groupNode;
+                        dupNode->mGroupInput->setInputProxy(dupNode);
+                    } else if (groupNode->getType() == ZNodeView::Type::GROUP_OUT) {
+                        dupNode->mGroupOutput = groupNode;
+                    }
                 }
             }
+
+            node->getAddNodeInterface()(dupNode, false);
+
+            dupNode->copyParameters(node);
+            dupNode->resetInitialPosition();
+            dupNode->invalidate();
 
             originals.insert(node);
             duplicates.insert(dupNode);
