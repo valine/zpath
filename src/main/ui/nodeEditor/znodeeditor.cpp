@@ -27,7 +27,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     vector<vec4> allColors;
     for (int i = 0; i != ZNodeView::Type::LAST; i++) {
         auto type = static_cast<ZNodeView::Type>(i);
-        allTypes.push_back(ZNodeView::getName(type));
+        if (ZNodeView::showInDrawer(type)) {
+            allTypes.push_back(ZNodeView::getName(type));
+        }
     }
     for (int i = 0; i != ZNodeView::Type::LAST; i++) {
         auto type = static_cast<ZNodeView::Type>(i);
@@ -54,7 +56,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     auto* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
-
 
     mDrawer = new ZDrawer(this, allTypes, allColors);
     mDrawer->setMarginTop(25);

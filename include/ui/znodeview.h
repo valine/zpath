@@ -8,7 +8,7 @@
 static const int SOCKET_WIDTH = 15;
 static const int SOCKET_HEIGHT = 15;
 static const int MAX_INPUT_COUNT = 8;
-static const int MAX_OUTPUT_COUNT = 4;
+static const int MAX_OUTPUT_COUNT = 8;
 static const int CHART_RES_THRESHOLD = 4;
 static const int CHART_SIDE_MARGIN_WIDE = 20;
 static const int MIN_MARGIN = 3;
@@ -123,10 +123,12 @@ public:
     vector<vector<SocketType>> NONE_TYPE = {{NONE}, {NONE}};
     vector<vector<SocketType>> mSocketType = NONE_TYPE;
 
+    vector<SocketType> mGroupInSockets = vector<SocketType>(MAX_INPUT_COUNT, CON);
+    vector<SocketType> mGroupOutSockets = vector<SocketType>(MAX_OUTPUT_COUNT, VAR);
+
     vector<vector<SocketType>> getSocketType() {
-//        if (isDynamicSockets(mType)) {
-//            return {vector<SocketType>(MAX_INPUT_COUNT, VAR), vector<SocketType>(MAX_INPUT_COUNT, VAR)};
-//        }
+        mGroupInSockets.at(0) = VAR;
+
         if (mSocketType.at(0).at(0) == NONE) {
             switch (mType) {
                 case POLY: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
@@ -164,10 +166,9 @@ public:
                 case COMBINE: return {{VAR, VAR}, {VAR}};
                 case SPLIT: return {{VAR}, {VAR, VAR}};
                 case NEURAL_CORE: return {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
-                case GROUP: return {{vector<SocketType>(MAX_INPUT_COUNT - 1, VAR)},
-                                    {vector<SocketType>(MAX_OUTPUT_COUNT, VAR)}};
-                case GROUP_IN: return {{},{vector<SocketType>(MAX_OUTPUT_COUNT, VAR)}};
-                case GROUP_OUT: return {{vector<SocketType>(MAX_INPUT_COUNT - 1, VAR)}, {}};
+                case GROUP: return {mGroupInSockets, mGroupOutSockets};
+                case GROUP_IN: return {{},{mGroupInSockets}};
+                case GROUP_OUT: return {{mGroupOutSockets}, {}};
                 case MIN:
                 case MAX: return {{VAR, VAR}, {VAR, CON, CON}};
                 case LAST: return {{NONE}, {NONE}};
@@ -620,6 +621,16 @@ public:
             case LAPLACE_S:
             case HEAT_MAP:
                 return IMAGE;
+        }
+    }
+
+    static bool showInDrawer(Type type) {
+        switch (type) {
+            case GROUP_IN:
+            case GROUP_OUT:
+                return false;
+            default:
+                return true;
         }
     }
 
