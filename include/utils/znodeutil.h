@@ -516,7 +516,6 @@ public:
         vec.erase(it);
     }
 
-
     static int getVarCount(ZNodeView* node) {
 
         if (node->getSocketCount().x == 0) {
