@@ -1094,6 +1094,11 @@ void ZView::onGlobalMouseUp(int key) {
     }
 }
 
+/**
+ * Sets the outline type. Set to none to
+ * draw background.
+ * @param wire Full, outline, none
+ */
 void ZView::setOutlineType(WireType wire) {
     mDrawWire = wire;
 }

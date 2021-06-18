@@ -1021,7 +1021,7 @@ void ZNodeEditor::onMouseDown() {
                                mDragSocket = prevNode.second;
                                mDragNode = prevNode.first->getIndexTag();
                                mTmpLine->setVisibility(true);
-                               mTmpLine->setPoints(node->getSocketsIn().at(j)->getCenter(), mInitialOffset);
+                               mTmpLine->setPoints(mInitialOffset, node->getSocketsIn().at(j)->getCenter());
                                break;
                            }
                            k++;
@@ -1072,9 +1072,9 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
     if (!mNodeViews.empty() && mDragNode != NO_SELECTION && mBoxMode == NO_BOX_SELECT) {
         if (isSocketDrag()) {
             mTmpLine->setVisibility(true);
-            mTmpLine->setPoints(absolute, mInitialOffset);
+            mTmpLine->setPoints(mInitialOffset, absolute);
         } else {
-            if (mGrab) {
+            if (mGrab && (!shiftKeyPressed() || !mouseIsDown())) {
                 for (ZNodeView* selected : mSelectedNodes) {
                     selected->setOffset(
                             (int) selected->getInitialPosition().x + delta.x,
