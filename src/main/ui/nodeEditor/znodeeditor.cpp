@@ -128,76 +128,88 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
 
-    auto* buttonPanel = new ZLinearLayout(80, fillParent, this);
-    buttonPanel->setGravity(topRight);
-    buttonPanel->setYOffset(30);
-    buttonPanel->setXOffset(5);
+    mButtonPanel = new ZLinearLayout(80, 200, this);
+    mButtonPanel->setGravity(topRight);
+    mButtonPanel->setYOffset(30);
+    mButtonPanel->setXOffset(5);
 
-    mLaplaceBtn = new ZButton("Laplace", buttonPanel);
-    float cr = (float) mLaplaceBtn->getMaxHeight() / 2;
-    mLaplaceBtn->setMaxWidth(fillParent);
-    mLaplaceBtn->setCornerRadius(vec4(cr,cr,0,0));
-    mLaplaceBtn->setMaxHeight(25);
-    mLaplaceBtn->setOnClick([this](){
+    auto laplaceBtn = new ZButton("Laplace", mButtonPanel);
+    float cr = (float) laplaceBtn->getMaxHeight() / 2;
+    laplaceBtn->setMaxWidth(fillParent);
+    laplaceBtn->setCornerRadius(vec4(cr, cr, 0, 0));
+    laplaceBtn->setMaxHeight(25);
+    laplaceBtn->setOnClick([this](){
 
         cout << mSelectedNodes.size() << endl;
         // Only works if one node selected
         if (mSelectedNodes.size() == 1) {
             ZNodeView *root = (*mSelectedNodes.begin());
-            string exp = ZNodeUtil::get().graphToString(root, true);
+            string exp = ZNodeUtil::get().graphToExpString(root, true);
             string laplace = "laplace(" + exp + ")";
             string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
             string zResult = ZUtil::replace(result, "x", "z");
             string heatResult = "heat(" + zResult + ")";
-            addNodeGraph(ZNodeUtil::get().stringToGraph(heatResult).at(0), vec2(10), 0);
+            addNodeGraph(ZNodeUtil::get().expStringToGraph(heatResult).at(0), vec2(10), 0);
         }
     });
 
-
-    mDerivativeButton = new ZButton("Derivative", buttonPanel);
-    mDerivativeButton->setMaxWidth(fillParent);
-    mDerivativeButton->setCornerRadius(vec4(1));
-    mDerivativeButton->setMaxHeight(25);
-    mDerivativeButton->setMarginTop(1);
-    mDerivativeButton->setOnClick([this](){
+    auto derivativeBtn = new ZButton("Derivative", mButtonPanel);
+    derivativeBtn->setMaxWidth(fillParent);
+    derivativeBtn->setCornerRadius(vec4(1));
+    derivativeBtn->setMaxHeight(25);
+    derivativeBtn->setMarginTop(1);
+    derivativeBtn->setOnClick([this](){
         cout << mSelectedNodes.size() << endl;
         // Only works if one node selected
         if (mSelectedNodes.size() == 1) {
             ZNodeView *root = (*mSelectedNodes.begin());
-            string exp = ZNodeUtil::get().graphToString(root, true);
+            string exp = ZNodeUtil::get().graphToExpString(root, true);
             string diff = "diff(" + exp + ")";
             string result = ZUtil::replace(CasUtil::get().evaluate(diff), "\n", "");
-            addNodeGraph(ZNodeUtil::get().stringToGraph(result).at(0), vec2(10), 0);
+            addNodeGraph(ZNodeUtil::get().expStringToGraph(result).at(0), vec2(10), 0);
         }
     });
 
-
-    mSimplifyBtn = new ZButton("Simplify", buttonPanel);
-    mSimplifyBtn->setMaxWidth(fillParent);
-    mSimplifyBtn->setCornerRadius(vec4(1));
-    mSimplifyBtn->setMaxHeight(25);
-    mSimplifyBtn->setMarginTop(2);
-    mSimplifyBtn->setOnClick([this](){
+    auto simplifyBtn = new ZButton("Simplify", mButtonPanel);
+    simplifyBtn->setMaxWidth(fillParent);
+    simplifyBtn->setCornerRadius(vec4(1));
+    simplifyBtn->setMaxHeight(25);
+    simplifyBtn->setMarginTop(2);
+    simplifyBtn->setOnClick([this](){
         cout << mSelectedNodes.size() << endl;
         // Only works if one node selected
         if (mSelectedNodes.size() == 1) {
             ZNodeView *root = (*mSelectedNodes.begin());
-            string exp = ZNodeUtil::get().graphToString(root, true);
+            string exp = ZNodeUtil::get().graphToExpString(root, true);
             string diff = "simplify(" + exp + ")";
             string result = ZUtil::replace(CasUtil::get().evaluate(diff), "\n", "");
-            addNodeGraph(ZNodeUtil::get().stringToGraph(result).at(0), vec2(10), 0);
+            addNodeGraph(ZNodeUtil::get().expStringToGraph(result).at(0), vec2(10), 0);
         }
     });
 
-
-
     // Button example
-    auto* addNodeBtn = new ZButton("Add node", buttonPanel);
+    auto* addNodeBtn = new ZButton("Add node", mButtonPanel);
     addNodeBtn->setMarginTop(3);
     addNodeBtn->setCornerRadius(vec4(0,0,cr,cr));
     addNodeBtn->setOnClick([this](ZView* btn){
         addNode(mLastType);
     });
+
+
+    // Node io temp buttons
+    auto serializeBtn = new ZButton("Serialize", mButtonPanel);
+    serializeBtn->setMaxWidth(fillParent);
+    serializeBtn->setCornerRadius(vec4(cr));
+    serializeBtn->setMaxHeight(25);
+    serializeBtn->setMarginTop(30);
+    serializeBtn->setOnClick([this](){
+        string nodeS = ZNodeUtil::get().serialize(mSelectedNodes);
+        cout << "Start node serialize ========" << endl;
+        cout << nodeS << endl;
+        cout << "End node serialize ========" << endl;
+    });
+
+
 
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(this);
@@ -214,7 +226,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mExpressionField->setElevation(1.0);
     mExpressionField->setMargin(vec4(20));
     mExpressionField->setOnReturn([this](string value) {
-       // vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
+       // vector<ZNodeView*> evalNodes = ZNodeUtil::get().expStringToGraph(value);
        // vec2 pos = vec2(700, 300);
        // addNodeGraph(evalNodes.at(0), pos, 0);
     });
@@ -234,7 +246,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
         mSelectedNodes.clear();
 
-        vector<ZNodeView*> evalNodes = ZNodeUtil::get().stringToGraph(value);
+        vector<ZNodeView*> evalNodes = ZNodeUtil::get().expStringToGraph(value);
 
         if (!evalNodes.empty()) {
             addNodeGraph(evalNodes.at(0), pos, 0);
@@ -801,7 +813,7 @@ void ZNodeEditor::selectNode(ZNodeView* node) {
 
         if (!mExpressionField->isViewInFocus()) {
             if (mSelectedNodes.size() == 1) {
-                mExpressionField->setText(ZNodeUtil::get().graphToString(node, true));
+                mExpressionField->setText(ZNodeUtil::get().graphToExpString(node, true));
             } else {
                 mExpressionField->setText("");
             }
@@ -1053,8 +1065,7 @@ void ZNodeEditor::onMouseDown() {
 }
 
 bool ZNodeEditor::clickConsumed() const {
-    return isMouseInBounds(mExpressionField) || isMouseInBounds(mLaplaceBtn) || isMouseInBounds(mDerivativeButton) ||
-        isMouseInBounds(mSimplifyBtn);
+    return isMouseInBounds(mExpressionField) || isMouseInBounds(mButtonPanel);
 }
 
 void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {

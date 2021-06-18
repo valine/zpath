@@ -850,15 +850,15 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x,
         ZNodeView* root = this;
         string exp;
         if (!mInputIndices.empty() && !mInputIndices.at(0).empty()) {
-            exp = ZNodeUtil::get().graphToString(root, false);
+            exp = ZNodeUtil::get().graphToExpString(root, false);
         } else {
-            exp = ZNodeUtil::get().graphToString(root, false);
+            exp = ZNodeUtil::get().graphToExpString(root, false);
         }
 
         string laplace = "laplace(" + exp + ")";
         string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
         string zResult = ZUtil::replace(result, "x", "z");
-        vector<ZNodeView*> headless = ZNodeUtil::get().stringToGraph(zResult);
+        vector<ZNodeView*> headless = ZNodeUtil::get().expStringToGraph(zResult);
         mHeadlessLaplaceNodes.push_back(headless.at(0));
     }
     return mHeadlessLaplaceNodes.at(0)->evaluate(std::move(x), rootInput);

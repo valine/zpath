@@ -983,6 +983,10 @@ public:
 
     float getConstantInput(int index);
 
+    vector<float> getConstantInputs() {
+        return mConstantValueInput;
+    }
+
     vector<ZNodeView*> mHeadlessLaplaceNodes;
 
     void setEditorInterface(std::function<void(ZNodeView*, bool)> interface) {

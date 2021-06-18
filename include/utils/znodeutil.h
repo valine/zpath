@@ -31,6 +31,87 @@ public:
         return instance;
     }
 
+    //////////////////////
+    /// Node IO
+
+    string nodeToString(ZNodeView* node) {
+
+        ZNodeView::Type type = node->getType();
+
+        string nodeString;
+        nodeString+="type:" + ZNodeView::getName(type) + "\n";
+        nodeString+="id:" + to_string(node->getIndexTag()) + "\n";
+        nodeString+="pos:" + to_string(node->getOffsetX()) + "," +  to_string(node->getOffsetY()) + "\n";
+        nodeString+="size:" + to_string(node->getMaxWidth()) + "," +  to_string(node->getMaxHeight()) + "\n";
+
+        string edges;
+        for (const auto& socket : node->mInputIndices) {
+            for (auto socketInput : socket) {
+                ZNodeView* prevNode = socketInput.first;
+                int prevNodeIndex = socketInput.second;
+
+                edges+="n" + to_string(prevNode->getIndexTag());
+                edges+="s" + to_string(prevNodeIndex);
+            }
+
+            if (!socket.empty()) {
+                edges += "|";
+            }
+        }
+
+        if (!edges.empty()) {
+            edges.pop_back();
+            nodeString+="edges:";
+            nodeString+=edges;
+            nodeString+="\n";
+        }
+
+        nodeString+="defaults:";
+        for (int i = 0; i < node->getSocketCount().x; i++) {
+            nodeString+=to_string(node->getConstantInput(i)) + ",";
+        }
+        if (!node->getConstantInputs().empty()) {
+            nodeString.pop_back();
+        }
+        nodeString+="\n";
+
+        // Parse inner group node
+        if (type == ZNodeView::Type::GROUP) {
+            nodeString+="group:";
+
+            auto groupNodes = node->getGroupNodes();
+            for (auto gnode : groupNodes) {
+                nodeString+=to_string(gnode->getIndexTag())+",";
+             }
+            nodeString.pop_back();
+            nodeString+="\n";
+        }
+
+        return nodeString;
+    }
+
+    string serialize(set<ZNodeView*> nodes) {
+
+        string sep = "===\n";
+
+        string graph;
+        for (auto node : nodes) {
+            graph += sep;
+            graph += nodeToString(node);
+        }
+
+        graph += sep;
+        return graph;
+    }
+
+    set<ZNodeView> deserialize(string nodeString) {
+
+    }
+
+
+    /// End Node IO
+    /////////////////////
+
     ZNodeView* newNode(ZNodeView::Type type) {
         ZNodeView* node;
         if (!mDeleteNodes.empty()) {
@@ -221,7 +302,7 @@ public:
         return count == 0;
     }
 
-    string graphToString(ZNodeView *root, bool includeRoot) {
+    string graphToExpString(ZNodeView *root, bool includeRoot) {
 
         string expression;
         set<string> operators = {"+", "-", "*", "/", "^"};
@@ -247,7 +328,7 @@ public:
                 if (needParen) {
                     expression += "(";
                 }
-                expression += graphToString(child, true);
+                expression += graphToExpString(child, true);
 
                 if (needParen) {
                     expression += ")";
@@ -282,7 +363,7 @@ public:
                 if (needParen) {
                     expression += "(";
                 }
-                expression += graphToString(child, true);
+                expression += graphToExpString(child, true);
 
                 if (index < root->mInputIndices.at(1).size() - 1) {
                     expression += " + ";
@@ -333,7 +414,7 @@ public:
                 int index = 0;
                 for (pair<ZNodeView *, int> input : root->mInputIndices.at(socketIndex)) {
                     ZNodeView *child = input.first;
-                    expression += graphToString(child, true);
+                    expression += graphToExpString(child, true);
                     if (index < root->mInputIndices.at(socketIndex).size() - 1) {
                         expression += " + ";
                     }
@@ -358,7 +439,7 @@ public:
         return expression;
     }
 
-    vector<ZNodeView *> stringToGraph(string testString) {
+    vector<ZNodeView *> expStringToGraph(string testString) {
         if (testString.empty()) {
             return vector<ZNodeView*>();
         }
