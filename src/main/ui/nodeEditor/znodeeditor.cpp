@@ -1063,7 +1063,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
             mTmpLine->setVisibility(true);
             mTmpLine->setPoints(absolute, mInitialOffset);
         } else {
-            if (mGrab) {
+            if (mGrab && (!shiftKeyPressed() || !mouseIsDown())) {
                 for (ZNodeView* selected : mSelectedNodes) {
                     selected->setOffset(
                             (int) selected->getInitialPosition().x + delta.x,
