@@ -624,8 +624,6 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
     }
 
     vector<vector<float>> summedInputs = vector<vector<float>>(x.size(), vector<float>(MAX_INPUT_COUNT, 0));
-
-
     // Loop over input sockets
     for (int i = 0; i < size.x; i++) {
 

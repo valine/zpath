@@ -6,9 +6,13 @@
 #define ZPATH_ZNODESTORE_H
 
 #include <filesystem>
-
+#if __APPLE__
 using std::__fs::filesystem::directory_iterator;
 using std::__fs::filesystem::directory_entry;
+#else
+using std::filesystem::directory_iterator;
+using std::filesystem::directory_entry;
+#endif
 
 class ZNodeStore {
 
@@ -46,7 +50,7 @@ public:
         string path = ZSettingsStore::get().getResourcePath() + projectFolder;
 
         vector<string> names;
-        for (const std::__fs::filesystem::directory_entry &file : directory_iterator(path)) {
+        for (const auto &file : directory_iterator(path)) {
             names.push_back(file.path());
         }
 
