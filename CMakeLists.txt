@@ -34,7 +34,11 @@ if (BUILD_LIB)
     target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
     add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/znodeview.cpp include/ui/znodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h src/main/utils/znodeutil.cpp include/utils/znodeutil.h src/main/utils/zshadowrenderer.cpp include/utils/zshadowrenderer.h src/main/ui/view/ztextfield.cpp include/ui/ztextfield.h src/main/ui/textEditor/ztextviewcontroller.cpp include/zpath/ztextviewcontroller.h src/main/ui/nodeEditor/zdrawer.cpp include/ui/zdrawer.h src/main/ui/viewController/ztileviewcontroller.cpp include/ui/ztileviewcontroller.h src/main/ui/nodeEditor/zcalculatorviewcontroller.cpp include/ui/zcalculatorviewcontroller.h src/main/utils/zcornerrenderer.cpp include/utils/zcornerrenderer.h src/main/ui/nodeEditor/zprojectview.cpp include/ui/zprojectview.h include/utils/znodestore.h)
-    target_compile_options(zpath PUBLIC -std=c++17 -Wall)
+    if (APPLE)
+        target_compile_options(zpath PUBLIC -std=c++14 -Wall)
+    else()
+        target_compile_options(zpath PUBLIC -std=c++17 -Wall)
+    endif()
     file(COPY ${data} DESTINATION resources)
     add_custom_command(TARGET zpath PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -209,6 +213,7 @@ find_package (OpenGL REQUIRED)
 include_directories(zpath ${OPENGL_INCLUDE_DIR})
 link_libraries(zpath ${OPENGL_gl_LIBRARY})
 find_package (Threads)
+
 
 if (APPLE)
 
