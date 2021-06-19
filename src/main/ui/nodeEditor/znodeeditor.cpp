@@ -18,6 +18,7 @@
 #include <utils/zcornerrenderer.h>
 #include "ui/znodeeditor.h"
 #include <utils/znodeutil.h>
+#include <utils/znodestore.h>
 #include "utils/casutil.h"
 #include "utils/zutil.h"
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -197,7 +198,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
 
     // Node io temp buttons
-    auto serializeBtn = new ZButton("Serialize", mButtonPanel);
+    auto serializeBtn = new ZButton("Test serialize", mButtonPanel);
     serializeBtn->setMaxWidth(fillParent);
     serializeBtn->setCornerRadius(vec4(cr));
     serializeBtn->setMaxHeight(25);
@@ -207,9 +208,14 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         cout << "Start node serialize ========" << endl;
         cout << nodeS << endl;
         cout << "End node serialize ========" << endl;
+
+//        set<ZNodeView*> deserialize = ZNodeUtil::get().deserialize(nodeS);
+//        for (auto node : deserialize) {
+//            addNodeToView(node, false);
+//        }
+
+        ZNodeStore::get().saveGraph(mNodeViews, "test.zpath");
     });
-
-
 
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(this);
@@ -582,7 +588,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setIsDeleted(false);
     mNodeViews.push_back(node);
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
-    node->setMaxWidth(nodeSize.x);
     node->setIndexTag(mNodeViews.size() - 1);
 
     vec2 scale = mNodeContainer->getScale();

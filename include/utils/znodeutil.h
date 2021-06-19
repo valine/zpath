@@ -10,6 +10,7 @@ class ZLabel;
 #include <queue>
 #include <set>
 #include "ui/znodeview.h"
+#include <string>
 
 using namespace std;
 
@@ -53,10 +54,7 @@ public:
                 edges+="n" + to_string(prevNode->getIndexTag());
                 edges+="s" + to_string(prevNodeIndex);
             }
-
-            if (!socket.empty()) {
-                edges += "|";
-            }
+            edges += "|";
         }
 
         if (!edges.empty()) {
@@ -66,14 +64,16 @@ public:
             nodeString+="\n";
         }
 
-        nodeString+="defaults:";
-        for (int i = 0; i < node->getSocketCount().x; i++) {
-            nodeString+=to_string(node->getConstantInput(i)) + ",";
+        if (node->getSocketCount().x > 0) {
+            nodeString += "defaultin:";
+            for (int i = 0; i < node->getSocketCount().x; i++) {
+                nodeString += to_string(node->getConstantInput(i)) + ",";
+            }
+            if (!node->getConstantInputs().empty()) {
+                nodeString.pop_back();
+            }
+            nodeString += "\n";
         }
-        if (!node->getConstantInputs().empty()) {
-            nodeString.pop_back();
-        }
-        nodeString+="\n";
 
         // Parse inner group node
         if (type == ZNodeView::Type::GROUP) {
@@ -91,21 +91,108 @@ public:
     }
 
     string serialize(set<ZNodeView*> nodes) {
-
-        string sep = "===\n";
+        string sep = "=\n";
 
         string graph;
         for (auto node : nodes) {
             graph += sep;
             graph += nodeToString(node);
         }
-
-        graph += sep;
         return graph;
     }
 
-    set<ZNodeView> deserialize(string nodeString) {
+    set<ZNodeView*> deserialize(string nodeString) {
+        vector<string> snodes = split(nodeString, '=');
 
+        map<int, ZNodeView*> nodeMap;
+        map<int, string> edgeMap;
+        set<ZNodeView*> nodes;
+        for (string snode : snodes) {
+            if (snode.empty()) {
+                continue;
+            }
+
+            // String to node
+            vector<string> attrs = split(snode, '\n');
+            ZNodeView::Type type = ZNodeView::Type::LAST;
+            vec2 pos;
+            vec2 size;
+            int id;
+            string edges;
+            for (const auto& attr : attrs) {
+                if (attr.empty()) {
+                    continue;
+                }
+
+                vector<string> keyvalue = split(attr, ':');
+                string key = keyvalue.at(0);
+                string value = keyvalue.at(1);
+
+                if (key == "type") {
+                    type = mTypes.at(value);
+                } else if (key == "pos") {
+                    vector<string> spos = split(value, ',');
+                    pos = vec2(stoi(spos.at(0)), stoi(spos.at(1)));
+                } else if (key == "size") {
+                    vector<string> ssize = split(value, ',');
+                    size = vec2(stoi(ssize.at(0)), stoi(ssize.at(1)));
+                } else if (key == "id") {
+                    id = stoi(value);
+                } else if (key == "edges") {
+                    edges = value;
+                }
+            }
+
+            ZNodeView* node = newNode(type);
+            node->setOffset(pos);
+            node->setMaxWidth(size.x);
+            node->setMaxHeight(size.y);
+            node->setIndexTag(id);
+            nodeMap.insert({id, node});
+            edgeMap.insert({id, edges});
+
+            nodes.insert(node);
+        }
+
+        for (auto node : nodes) {
+            string edges = edgeMap.at(node->getIndexTag());
+
+            int socketIndex = 0;
+            vector<string> sockets = split(edges, '|');
+            for (const auto& socket : sockets) {
+                if (socket.empty()) {
+                    socketIndex++;
+                    continue;
+                }
+                vector<string> edge = split(socket, 'n');
+                for (const auto& edgeAttr : edge) {
+                    if (edgeAttr.empty()) {
+                        continue;
+                    }
+                    vector<string> socketAttr = split(edgeAttr, 's');
+                    int prevNodeIndex = stoi(socketAttr.at(0));
+                    int prevSocketIndex = stoi(socketAttr.at(1));
+
+                    if (nodeMap.count(prevNodeIndex) > 0) {
+                        connectNodes(prevSocketIndex, socketIndex,
+                                     nodeMap.at(prevNodeIndex), node);
+                    }
+                }
+                socketIndex++;
+            }
+        }
+        return nodes;
+    }
+
+    vector<string> split(const string &s, char delim) {
+        vector<string> result;
+        stringstream ss (s);
+        string item;
+
+        while (getline (ss, item, delim)) {
+            result.push_back (item);
+        }
+        return result;
     }
 
 
