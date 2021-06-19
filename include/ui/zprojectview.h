@@ -9,8 +9,9 @@
 #include "zview.h"
 #include "zscrollview.h"
 
-class ZProjectView : ZScrollView {
+class ZProjectView : public ZScrollView {
 
+public :
     ZProjectView(ZView *parent, vector<string> names);
 
 };

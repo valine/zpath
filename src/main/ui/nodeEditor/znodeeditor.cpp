@@ -19,6 +19,7 @@
 #include "ui/znodeeditor.h"
 #include <utils/znodeutil.h>
 #include <utils/znodestore.h>
+#include <ui/zprojectview.h>
 #include "utils/casutil.h"
 #include "utils/zutil.h"
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -81,6 +82,14 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         auto type = static_cast<ZNodeView::Type>(index);
         addNode(type);
     });
+
+
+    auto projectNames = ZNodeStore::get().getProjectNames();
+    auto mProjectBrowser = new ZProjectView(this, projectNames);
+    mProjectBrowser->setGravity(topRight);
+    mProjectBrowser->setYOffset(500);
+    mProjectBrowser->onWindowChange(getWindowWidth(), getWindowWidth());
+
 
     auto* headerBackground = new ZView(fillParent, 25, this);
     headerBackground->setBackgroundColor(lightGrey);

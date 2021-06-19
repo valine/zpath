@@ -8,6 +8,7 @@
 #include <filesystem>
 
 using std::__fs::filesystem::directory_iterator;
+using std::__fs::filesystem::directory_entry;
 
 class ZNodeStore {
 
@@ -45,8 +46,8 @@ public:
         string path = ZSettingsStore::get().getResourcePath() + projectFolder;
 
         vector<string> names;
-        for (const auto &file : directory_iterator(path)) {
-            names.push_back(file.path());
+        for (const std::__fs::filesystem::directory_entry &file : directory_iterator(path)) {
+            names.push_back(getFileName(file.path()));
         }
 
         return names;
@@ -65,6 +66,21 @@ public:
                           std::istreambuf_iterator<char>());
 
         return ZNodeUtil::get().deserialize(dataString);
+    }
+
+    static string getFileName(const string& s) {
+        char sep = '/';
+
+#ifdef _WIN32
+        sep = '\\';
+#endif
+
+        size_t i = s.rfind(sep, s.length());
+        if (i != string::npos) {
+            return(s.substr(i+1, s.length() - i));
+        }
+
+        return("");
     }
 
 };
