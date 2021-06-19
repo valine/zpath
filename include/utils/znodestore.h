@@ -47,7 +47,7 @@ public:
 
         vector<string> names;
         for (const std::__fs::filesystem::directory_entry &file : directory_iterator(path)) {
-            names.push_back(getFileName(file.path()));
+            names.push_back(file.path());
         }
 
         return names;
@@ -68,20 +68,6 @@ public:
         return ZNodeUtil::get().deserialize(dataString);
     }
 
-    static string getFileName(const string& s) {
-        char sep = '/';
-
-#ifdef _WIN32
-        sep = '\\';
-#endif
-
-        size_t i = s.rfind(sep, s.length());
-        if (i != string::npos) {
-            return(s.substr(i+1, s.length() - i));
-        }
-
-        return("");
-    }
 
 };
 

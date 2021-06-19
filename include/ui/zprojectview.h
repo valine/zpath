@@ -13,7 +13,10 @@ class ZProjectView : public ZScrollView {
 
 public :
     ZProjectView(ZView *parent, vector<string> names);
+    string getFileName(const string &s);
 
+private:
+    vector<ZButton*> mButtons;
 };
 
 
