@@ -20,12 +20,12 @@ ZProjectView::ZProjectView(ZView *parent, vector<string> names)  : ZScrollView(1
         tf->setCornerRadius(vec4(5));
         tf->setMargin(vec4(2,2,2,0));
         tf->setBackgroundColor(white);
-//        tf->setOnClick([this](ZButton* sender){
-//            for (auto otherBtn : mButtons) {
-//                otherBtn->setBackgroundColor(white);
-//            }
-//            sender->setBackgroundColor(highlight);
-//        });
+        tf->setOnClick([this](ZView* sender){
+            for (auto otherTf : mButtons) {
+                otherTf->setBackgroundColor(white);
+            }
+            sender->setBackgroundColor(highlight);
+        });
     }
 
     getInnerView()->refreshMargins();

@@ -43,6 +43,7 @@ public:
         mFocusMode = mode;
     }
 
+    void setBackgroundColor(vec4 color) override;
 private:
 
     ZView* mCursor;
@@ -97,6 +98,7 @@ private:
     void updateCursorOffset();
 
     void startEdit();
+
 };
 
 

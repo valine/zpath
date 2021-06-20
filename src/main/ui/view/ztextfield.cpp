@@ -201,6 +201,16 @@ void ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) 
     }
 }
 
+void ZTextField::setBackgroundColor(vec4 color) {
+    ZLabel::setBackgroundColor(color);
+    vec3 color3 = vec3(color.r,color.g,color.b);
+    if (glm::length(color3) < 0.8 && color.a != 0) {
+        mCursor->setBackgroundColor(white);
+    } else {
+        mCursor->setBackgroundColor(highlight);
+    }
+}
+
 void ZTextField::startEdit() {
     float x = getMouse().x - getLeft();
     float y = getMouse().y - getTop();
