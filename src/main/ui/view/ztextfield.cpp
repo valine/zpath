@@ -194,20 +194,30 @@ void ZTextField::updateCursorOffset() {
 
 void ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) {
     ZView::onMouseEvent(button, action, mods, sx, sy);
-
-    sx -= getLeft();
-    sy -= getTop();
-
     if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
-        setInFocus();
-        cursorToPosition(sx, sy);
+        if (mFocusMode == singleClick) {
+            startEdit();
+        }
     }
+}
 
+void ZTextField::startEdit() {
+    float x = getMouse().x - getLeft();
+    float y = getMouse().y - getTop();
+    setInFocus();
+    cursorToPosition(x, y);
 }
 
 void ZTextField::onGlobalMouseUp(int key) {
     ZView::onGlobalMouseUp(key);
     if (!isMouseInBounds(this)) {
         applyEdit();
+    }
+}
+
+void ZTextField::onDoubleClick() {
+    ZView::onDoubleClick();
+    if (mFocusMode == doubleClick) {
+        startEdit();
     }
 }

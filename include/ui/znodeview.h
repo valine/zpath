@@ -467,23 +467,23 @@ public:
         }
     }
 
-    function<void(ZButton *sender)> getButtonCallback(int index) {
+    function<void(ZView *sender)> getButtonCallback(int index) {
         switch (mType) {
             case NEURAL_CORE: {
                 switch (index) {
                     case 0: {
-                        return [this](ZButton *sender) {
+                        return [this](ZView* sender) {
                             // Train the network
                             trainNN(sender);
                         };
                     }
                     case 1: {
-                        return [this](ZButton *sender) {
+                        return [this](ZView *sender) {
                             mMlModel->resetNetwork();
                         };
                     }
                     case 2: {
-                        return [this](ZButton *sender) {
+                        return [this](ZView *sender) {
                             cout<< mMlModel->toFunctionString() << endl;
                         };
                     }
@@ -497,14 +497,14 @@ public:
                 switch (index) {
                     // Increment
                     case 0: {
-                        return [this](ZButton *sender) {
+                        return [this](ZView *sender) {
                             ivec2 count = mSocketCount + ivec2(0,1);
                             setSocketCount(count);
                         };
                     }
                     // Decrement
                     case 1: {
-                        return [this](ZButton *sender) {
+                        return [this](ZView *sender) {
                             ivec2 count = mSocketCount - ivec2(0,1);
                             setSocketCount(count);
                         };
@@ -518,14 +518,14 @@ public:
                 switch (index) {
                     // Increment
                     case 0: {
-                        return [this](ZButton *sender) {
+                        return [this](ZView *sender) {
                             ivec2 count = mSocketCount + ivec2(1,0);
                             setSocketCount(count);
                         };
                     }
                     // Decrement
                     case 1: {
-                        return [this](ZButton *sender) {
+                        return [this](ZView *sender) {
                             ivec2 count = mSocketCount - ivec2(1,0);
                             setSocketCount(count);
                         };
@@ -656,7 +656,7 @@ public:
         mMlModel->resetNetwork();
     }
 
-    void trainNN(ZButton *sender) {
+    void trainNN(ZView *sender) {
         if (mMlModel == nullptr) {
             initializeNNModel();
         }
@@ -738,10 +738,10 @@ public:
 
         if (mMlModel->getTrainingInProgress()) {
             mMlModel->requestStopTraining();
-            sender->setText("Train");
+            mButtons.at(sender->getIndexTag())->setText("Train");
         } else {
             mMlModel->trainNetworkAsync(10000);
-            sender->setText("Stop");
+            mButtons.at(sender->getIndexTag())->setText("Stop");
         }
     }
 

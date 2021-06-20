@@ -201,7 +201,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto* addNodeBtn = new ZButton("Add node", mButtonPanel);
     addNodeBtn->setMarginTop(3);
     addNodeBtn->setCornerRadius(vec4(0,0,cr,cr));
-    addNodeBtn->setOnClick([this](ZView* btn){
+    addNodeBtn->setOnClick([this](){
         addNode(mLastType);
     });
 

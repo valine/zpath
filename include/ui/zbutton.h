@@ -38,12 +38,12 @@ public:
     void draw();
 	void onKeyPress(int key, int scancode, int action, int mods);
 	void onMouseEvent(int button, int action, int mods, int x, int y);
+    void setOnClick(std::function<void(ZView* sender)> onClick) override;
 	void onCursorPosChange(double x, double y);
 	void setText(string text);
 	string getText();
 	void setOnClickListener(ZOnClickListener* listener);
 	void computeBounds();
-    void setOnClick(std::function<void(ZButton* sender)> onClick);
     void setOnClick(std::function<void()> onClick);
     void setClickMode(ClickMode clickMode);
 
@@ -56,7 +56,6 @@ int debug;
 	ZLabel* mLabel;
 	ZOnClickListener* mListener = nullptr;
 	bool mWasPressed = false;
-	std::function<void(ZButton* sender)> mOnClick;
 
 	// Less code to setup. Works well when you only have a single button.
     std::function<void()> mOnClickSimple;

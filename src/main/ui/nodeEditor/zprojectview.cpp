@@ -3,7 +3,7 @@
 //
 
 #include "ui/zprojectview.h"
-
+#include "ui/ztextfield.h"
 ZProjectView::ZProjectView(ZView *parent, vector<string> names)  : ZScrollView(120, fillParent, parent) {
 
     setBackgroundColor(white);
@@ -12,18 +12,20 @@ ZProjectView::ZProjectView(ZView *parent, vector<string> names)  : ZScrollView(1
     setInnerViewHeight(200);
 
     for (const auto& name : names) {
-        auto btn = new ZButton(getFileName(name), this);
-        mButtons.push_back(btn);
-        btn->setMaxWidth(200);
-        btn->setCornerRadius(vec4(5));
-        btn->setMargin(vec4(2,2,2,0));
-        btn->setBackgroundColor(white);
-        btn->setOnClick([this](ZButton* sender){
-            for (auto otherBtn : mButtons) {
-                otherBtn->setBackgroundColor(white);
-            }
-            sender->setBackgroundColor(highlight);
-        });
+        auto tf = new ZTextField(this);
+        tf->setText(getFileName(name));
+        tf->setFocusMode(ZTextField::FocusMode::doubleClick);
+        mButtons.push_back(tf);
+        tf->setMaxWidth(200);
+        tf->setCornerRadius(vec4(5));
+        tf->setMargin(vec4(2,2,2,0));
+        tf->setBackgroundColor(white);
+//        tf->setOnClick([this](ZButton* sender){
+//            for (auto otherBtn : mButtons) {
+//                otherBtn->setBackgroundColor(white);
+//            }
+//            sender->setBackgroundColor(highlight);
+//        });
     }
 
     getInnerView()->refreshMargins();

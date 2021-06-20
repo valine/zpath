@@ -13,13 +13,19 @@ class ZTextField : public ZLabel {
 
 
 public:
+
+    enum FocusMode {
+        singleClick,
+        doubleClick
+    };
+
     ZTextField(ZView *parent);
 
     void onCharacterInput(unsigned int code) override;
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
     void onKeyPress(int key, int scancode, int action, int mods) override;
     void onGlobalMouseUp(int key) override;
-
+    void onDoubleClick() override;
     void setOnReturn(function<void(string)> listener) {
         mOnReturn = listener;
     }
@@ -30,12 +36,20 @@ public:
 
     void setInFocus();
 
+    /**
+     * Focus mode, 0 for click, 1 for double click;
+     */
+    void setFocusMode(FocusMode mode) {
+        mFocusMode = mode;
+    }
+
 private:
 
     ZView* mCursor;
     int mCursorIndex = 0;
     int mLineIndex = 0;
 
+    FocusMode mFocusMode = singleClick;
     int mCursorOffset = 0;
     string mInitialText;
     bool mInFocus = false;
@@ -81,6 +95,8 @@ private:
     int getLineIndex();
 
     void updateCursorOffset();
+
+    void startEdit();
 };
 
 

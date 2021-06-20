@@ -110,6 +110,9 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
 
         if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
             mMouseDown = false;
+            if (mOnClick != nullptr) {
+                mOnClick(this);
+            }
         }
 
         if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_RELEASE) {
@@ -122,6 +125,7 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
 
         if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS) {
             mMouseDown = true;
+            mWasClicked = true;
         }
 
         if (button == GLFW_MOUSE_BUTTON_3 && action == GLFW_PRESS) {

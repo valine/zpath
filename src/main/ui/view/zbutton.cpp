@@ -33,10 +33,6 @@ void ZButton::draw() {
 	ZView::draw();
 }
 
-void ZButton::setOnClick(std::function<void(ZButton* sender)> onClick) {
-    mOnClick = std::move(onClick);
-}
-
 string ZButton::getText() {
 	return mLabel->getText();
 }
@@ -63,10 +59,6 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 		    if (mWasPressed) {
                 setBackgroundColor(getBackgroundColor() + highlight);
             }
-
-			if (mOnClick != nullptr) {
-			    mOnClick(this);
-			}
 
             if (mOnClickSimple != nullptr) {
                 mOnClickSimple();
@@ -128,4 +120,8 @@ void ZButton::setBackgroundColor(vec4 color) {
     } else {
         mLabel->setTextColor(black);
     }
+}
+
+void ZButton::setOnClick(std::function<void(ZView *)> onClick) {
+    ZView::setOnClick(onClick);
 }

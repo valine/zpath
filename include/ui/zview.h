@@ -14,11 +14,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "ui/ztexture.h"
 
+#include <utility>
 #include <vector>
 
 #include <ft2build.h>
 #include <utils/zshadowrenderer.h>
 #include "utils/zsettingsstore.h"
+#include <functional>
 #include FT_FREETYPE_H
 
 using namespace std;
@@ -339,6 +341,10 @@ class ZView {
         mTint = tint;
     }
 
+    virtual void setOnClick(function<void(ZView* sender)> onClick) {
+        mOnClick = std::move(onClick);
+    }
+
 private:
 
         bool mBuffersInit = false;
@@ -444,6 +450,9 @@ private:
 		bool mVisible = true;
 		bool mClickable = true;
 
+		bool mWasClicked = false;
+		function<void(ZView* sender)> mOnClick;
+
 		bool mAllowNegativeSize = false;
 		ZTexture* mBackgroundImage = nullptr;
 		ZTexture* mRoundedRect = nullptr;
@@ -490,6 +499,7 @@ private:
     void initBuffers();
 
     void redrawCornerRadius();
+
 };
 
 #endif

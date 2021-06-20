@@ -8,6 +8,7 @@
 
 #include "zview.h"
 #include "zscrollview.h"
+#include "ui/ztextfield.h"
 
 class ZProjectView : public ZScrollView {
 
@@ -16,7 +17,7 @@ public :
     string getFileName(const string &s);
 
 private:
-    vector<ZButton*> mButtons;
+    vector<ZTextField*> mButtons;
 };
 
 
