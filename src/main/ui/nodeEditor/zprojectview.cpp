@@ -2,11 +2,12 @@
 // Created by Lukas Valine on 6/18/21.
 //
 
+#include <utility>
+
 #include "ui/zprojectview.h"
 #include "ui/ztextfield.h"
-ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()>& model)  : ZScrollView(120, fillParent, parent) {
+ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZScrollView(120, fillParent, parent) {
     mModelInterface = model;
-
     setBackgroundColor(white);
     setElevation(1.0);
     setCornerRadius(vec4(5,1,1,1));
@@ -23,14 +24,19 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()>& mode
         addUnsavedProject();
     });
 
-    addUnsavedProject();
-
     vector<string> names = model();
     for (const auto& name : names) {
         addProject(name);
     }
 
+    addUnsavedProject();
     getInnerView()->refreshMargins();
+}
+
+void ZProjectView::onLayoutFinished() {
+    ZView::onLayoutFinished();
+    selectProject(mAllProjects.at(mAllProjects.size() - 1));
+
 }
 
 
@@ -107,5 +113,5 @@ string ZProjectView::getFileName(const string& s) {
 }
 
 void ZProjectView::setOnProjectSelected(function<void(int, string)> listener) {
-    mOnProjectSelected = listener;
+    mOnProjectSelected = std::move(listener);
 }

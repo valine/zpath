@@ -14,10 +14,11 @@
 class ZProjectView : public ZScrollView {
 
 public :
-    ZProjectView(ZView *parent, const function<vector<string>()>& model);
+    ZProjectView(ZView *parent, const function<vector<string>()> &model);
     string getFileName(const string &s);
     void setOnProjectSelected(function<void(int index, string path)> listener);
 
+    void onLayoutFinished() override;
 private:
     vector<ZTextField*> mAllProjects;
     function<vector<string>()> mModelInterface;
@@ -32,6 +33,7 @@ private:
     void addUnsavedProject();
 
     void reloadProjects();
+
 };
 
 

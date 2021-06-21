@@ -83,7 +83,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
-    auto mProjectBrowser = new ZProjectView(this, [](){
+    auto mProjectBrowser = new ZProjectView(this, []() {
         return ZNodeStore::get().getProjectNames();
     });
 
@@ -93,6 +93,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mProjectBrowser->setMarginTop(200);
     mProjectBrowser->onWindowChange(getWindowWidth(), getWindowWidth());
     mProjectBrowser->setOnProjectSelected([this](int index, string path) {
+        mSelectedProject = index;
+
         // Saved project selected
         if (!path.empty()) {
             set<ZNodeView *> nodes = ZNodeStore::get().loadGraph(path);
@@ -748,6 +750,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
         mNodeViews.at(mGroupMode)->addGroupNode(node);
     }
 
+    node->setProjectID(mSelectedProject);
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });

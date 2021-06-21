@@ -106,6 +106,7 @@ private:
 
     vector<vector<ZNodeView*>> mTmpNodes;
     ZTextField* mExpressionField;
+    int mSelectedProject = 0;
 
     bool isSocketDrag();
 
