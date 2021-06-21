@@ -58,10 +58,10 @@ public:
     }
 
     set<ZNodeView*> loadGraph(string name) {
-        string projectFolder = "resources/graphs/";
-        string path = ZSettingsStore::get().getResourcePath() + projectFolder + name;
+        //string projectFolder = "resources/graphs/";
+        //string path = ZSettingsStore::get().getResourcePath() + projectFolder + name;
 
-        std::ifstream t(path);
+        std::ifstream t(name);
         std::string dataString;
         t.seekg(0, std::ios::end);
         dataString.reserve(t.tellg());

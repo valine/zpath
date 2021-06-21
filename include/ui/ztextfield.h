@@ -19,6 +19,11 @@ public:
         doubleClick
     };
 
+    enum TextMode {
+        field,
+        editor
+    };
+
     ZTextField(ZView *parent);
 
     void onCharacterInput(unsigned int code) override;
@@ -43,6 +48,10 @@ public:
         mFocusMode = mode;
     }
 
+    void setTextMode(TextMode tm) {
+        mTextMode = tm;
+    }
+
     void setBackgroundColor(vec4 color) override;
 private:
 
@@ -51,6 +60,7 @@ private:
     int mLineIndex = 0;
 
     FocusMode mFocusMode = singleClick;
+    TextMode mTextMode = editor;
     int mCursorOffset = 0;
     string mInitialText;
     bool mInFocus = false;

@@ -1049,6 +1049,14 @@ public:
         mGroupParent = node;
     }
 
+    void setProjectID(int id) {
+        mProjectID = id;
+    }
+
+    int getProjectID() {
+        return mProjectID;
+    }
+
     /**
     * Internal group node graph
     */
@@ -1094,7 +1102,6 @@ private:
     /**
      * Number of line segments on the chart
      */
-
     // Todo: remove  these
     ZLineChart *mChart;
     vector<vector<float>> mPointCache;
@@ -1122,6 +1129,7 @@ private:
 
     vector<vector<float>> mLaplaceCache;
 
+    int mProjectID = -1;
 
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 

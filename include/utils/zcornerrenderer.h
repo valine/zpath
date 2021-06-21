@@ -69,7 +69,6 @@ public:
                 mShader->setFloat("uLineWidth", lineWidth);
             }
 
-
             glViewport(0,0, width, height);
             glClearColor(0.0, 0.0, 0.0, 0.0);
             glClear(GL_COLOR_BUFFER_BIT);

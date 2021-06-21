@@ -83,12 +83,43 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
+    auto mProjectBrowser = new ZProjectView(this, [](){
+        return ZNodeStore::get().getProjectNames();
+    });
 
-    auto projectNames = ZNodeStore::get().getProjectNames();
-    auto mProjectBrowser = new ZProjectView(this, projectNames);
-    mProjectBrowser->setGravity(topRight);
-    mProjectBrowser->setYOffset(500);
+    mProjectBrowser->setGravity(bottomRight);
+    mProjectBrowser->setYOffset(0);
+    mProjectBrowser->setMaxHeight(400);
+    mProjectBrowser->setMarginTop(200);
     mProjectBrowser->onWindowChange(getWindowWidth(), getWindowWidth());
+    mProjectBrowser->setOnProjectSelected([this](int index, string path) {
+        // Saved project selected
+        if (!path.empty()) {
+            set<ZNodeView *> nodes = ZNodeStore::get().loadGraph(path);
+            for (auto node : mNodeViews) {
+                if (node->getProjectID() == index) {
+                    deleteNode(node);
+                } else {
+                    node->setVisibility(false);
+                }
+            }
+            for (auto node : nodes) {
+                node->setProjectID(index);
+                addNodeToView(node, false);
+            }
+        } else {
+            for (auto node : mNodeViews) {
+                if (node->getProjectID() == index) {
+                    node->setVisibility(true);
+                } else {
+                    node->setVisibility(false);
+                }
+            }
+        }
+
+        updateLines();
+        onWindowChange(getWindowWidth(), getWindowHeight());
+    });
 
 
     auto* headerBackground = new ZView(fillParent, 25, this);
@@ -239,7 +270,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mExpressionField->setMaxHeight(20);
     mExpressionField->setMargin(vec4(2));
     mExpressionField->setElevation(1.0);
-    mExpressionField->setMargin(vec4(20));
+    mExpressionField->setMargin(vec4(20,20,140,20));
     mExpressionField->setOnReturn([this](string value) {
        // vector<ZNodeView*> evalNodes = ZNodeUtil::get().expStringToGraph(value);
        // vec2 pos = vec2(700, 300);

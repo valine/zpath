@@ -117,13 +117,29 @@ void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
     ZView::onKeyPress(key, scancode, action, mods);
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
-        applyEdit();
+        if (mTextMode == editor) {
+            applyEdit();
+        } else {
+            cancelEdit();
+        }
     } else if (key == GLFW_KEY_ENTER && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         if (mOnReturn == nullptr) {
-            insertCharacter("\n");
+            if (mTextMode == editor) {
+                insertCharacter("\n");
+            } else {
+                if (getText().empty()) {
+                    cancelEdit();
+                } else {
+                    applyEdit();
+                }
+            }
         } else {
-            mOnReturn(getText());
-            applyEdit();
+            if (mTextMode == field && getText().empty()) {
+                cancelEdit();
+            } else {
+                mOnReturn(getText());
+                applyEdit();
+            }
         }
 
     } else if (key == GLFW_KEY_TAB && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
@@ -228,6 +244,8 @@ void ZTextField::onGlobalMouseUp(int key) {
 void ZTextField::onDoubleClick() {
     ZView::onDoubleClick();
     if (mFocusMode == doubleClick) {
-        startEdit();
+        if (isMouseInBounds(this)) {
+            startEdit();
+        }
     }
 }
