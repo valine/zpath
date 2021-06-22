@@ -297,11 +297,11 @@ public:
         node->mGroupInput = nullptr;
         node->mInputProxy = nullptr;
         node->mGroupNodes.clear();
+        node->setProjectID(-1);
+        node->setIndexTag(-1);
 
         deleteNodes(node->mHeadlessLaplaceNodes);
 
-        node->setIsDeleted(true);
-        node->setIndexTag(-1);
         ZNodeUtil::get().submitForRecycle(node);
 
 //        auto deleteInterface = node->getEditorDeletionInterface();

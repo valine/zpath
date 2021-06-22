@@ -1007,6 +1007,15 @@ public:
 
     void setIsDeleted(bool isDeleted) {
         mIsDeleted = isDeleted;
+        mReadyForRecycle = false;
+    }
+
+    void readyForRecycle(bool ready) {
+        mReadyForRecycle = ready;
+    }
+
+    bool isReadyForRecycle() {
+        return mReadyForRecycle;
     }
 
     bool isDeleted() {
@@ -1070,6 +1079,7 @@ public:
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;
+    bool mReadyForRecycle = false;
 
     vector<ZView *> mSocketsIn;
     vector<ZView *> mSocketsOut;

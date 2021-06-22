@@ -97,16 +97,23 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
         // Saved project selected
         if (!path.empty()) {
-            set<ZNodeView *> nodes = ZNodeStore::get().loadGraph(path);
+
+            set<ZNodeView*> toDelete;
             for (auto node : mNodeViews) {
                 if (node->getProjectID() == index) {
-                    deleteNode(node);
-                } else {
+                    toDelete.insert(node);
+                } else if (node->getProjectID() != -1 ){
                     node->setVisibility(false);
                 }
             }
+
+            for (auto node : toDelete) {
+                deleteNode(node);
+            }
+
+            set<ZNodeView *> nodes = ZNodeStore::get().loadGraph(path);
             for (auto node : nodes) {
-                node->setProjectID(index);
+                node->setProjectID(mSelectedProject);
                 addNodeToView(node, false);
             }
         } else {
@@ -634,9 +641,11 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setCornerRadius(5);
     node->setVisibility(true);
     node->setIsDeleted(false);
+
+    node->setIndexTag(mNodeViews.size());
     mNodeViews.push_back(node);
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
-    node->setIndexTag(mNodeViews.size() - 1);
+
 
     vec2 scale = mNodeContainer->getScale();
     vec2 translation = mNodeContainer->getInnerTranslation();
@@ -795,12 +804,13 @@ void ZNodeEditor::deleteSelectedConnections() {
 }
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
-    node->invalidateSingleNode();
-    node->setVisibility(false);
-    node->setIsDeleted(true);
-
-    remove(mNodeViews, node->getIndexTag());
-    reindexNodes();
+    if (!node->isDeleted()) {
+        node->invalidateSingleNode();
+        node->setVisibility(false);
+        node->setIsDeleted(true);
+        remove(mNodeViews, node->getIndexTag());
+        reindexNodes();
+    }
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
@@ -839,7 +849,6 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
     ZNodeUtil::get().deleteNode(node);
     invalidate();
-
 }
 
 void ZNodeEditor::reindexNodes() {
