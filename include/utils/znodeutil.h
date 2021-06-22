@@ -288,7 +288,6 @@ public:
         }
 
         node->setVisibility(false);
-
         deleteConnections(node);
 
         deleteNodes(node->getGroupNodes());
@@ -302,14 +301,13 @@ public:
         deleteNodes(node->mHeadlessLaplaceNodes);
 
         node->setIsDeleted(true);
+        node->setIndexTag(-1);
         ZNodeUtil::get().submitForRecycle(node);
 
-        auto deleteInterface = node->getEditorDeletionInterface();
-        if (deleteInterface != nullptr) {
-            deleteInterface(node, node->getIndexTag());
-        }
-
-        node->setIndexTag(-1);
+//        auto deleteInterface = node->getEditorDeletionInterface();
+//        if (deleteInterface != nullptr) {
+//            deleteInterface(node, node->getIndexTag());
+//        }
 
     }
 
@@ -347,7 +345,9 @@ public:
     }
 
     void submitForRecycle(ZNodeView* node) {
-        mDeleteNodes.push(node);
+        if (node != nullptr) {
+            mDeleteNodes.push(node);
+        }
     }
 
     ZNodeUtil() {

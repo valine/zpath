@@ -273,6 +273,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mExpressionField->setMargin(vec4(2));
     mExpressionField->setElevation(1.0);
     mExpressionField->setMargin(vec4(20,20,140,20));
+    mExpressionField->setTitleText("Enter expression...");
+    mExpressionField->setTextMode(ZTextField::TextMode::field);
     mExpressionField->setOnReturn([this](string value) {
        // vector<ZNodeView*> evalNodes = ZNodeUtil::get().expStringToGraph(value);
        // vec2 pos = vec2(700, 300);
@@ -280,7 +282,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     });
 
     mExpressionField->setOnTextChange([this](string value) {
-
         int margin = 20;
         vec2 pos = vec2(margin, margin);
         if (mSelectedNodes.size() == 1) {
@@ -389,6 +390,8 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
     if (depth == 0) {
         deselectAllNodes();
         selectNode(root);
+    } else {
+        deselectNode(root);
     }
 
     set<ZNodeView*> uniqueChildren;
@@ -419,7 +422,10 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
 
     for (ZNodeView* node : children) {
         vec2 nodeSize = node->getNodeSize(node->getType());
-        addNodeGraph(node, vec2(position.x, mTmpNodeOffsetYR.at(depth)) - (vec2(nodeSize.x, 0) + vec2(margin, 0)), depth + 1);
+        addNodeGraph(node, vec2(position.x,
+                                mTmpNodeOffsetYR.at(depth)) -
+                                (vec2(nodeSize.x, 0) + vec2(margin, 0)),
+                     depth + 1);
         mTmpNodeOffsetYR.at(depth) += nodeSize.y + margin;
         mTmpNodes.at(depth).push_back(node);
 
@@ -754,14 +760,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });
-
-    node->setEditorDeletionInterface([this](ZNodeView* node, int nodeIndex){
-        if (node->getIndexTag() != -1) {
-            remove(mNodeViews, node->getIndexTag());
-        }
-        reindexNodes();
-    });
-
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
@@ -800,6 +798,9 @@ void ZNodeEditor::deleteNode(ZNodeView * node) {
     node->invalidateSingleNode();
     node->setVisibility(false);
     node->setIsDeleted(true);
+
+    remove(mNodeViews, node->getIndexTag());
+    reindexNodes();
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
@@ -838,6 +839,7 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
     ZNodeUtil::get().deleteNode(node);
     invalidate();
+
 }
 
 void ZNodeEditor::reindexNodes() {
@@ -945,6 +947,7 @@ void ZNodeEditor::updateLines() {
         lineView->setVisibility(false);
     }
 
+    bool reindex = false;
     int lineIndex = 0;
     for (ZNodeView* node : mNodeViews) {
         if (node->getVisibility()) {
@@ -964,6 +967,7 @@ void ZNodeEditor::updateLines() {
             }
         }
     }
+
     getParentView()->invalidate();
     mMagnitudePicker->invalidate();
 }

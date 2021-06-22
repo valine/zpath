@@ -1079,13 +1079,13 @@ private:
 
     Type mType = ADD;
 
-    ZLabel *mOutputLabel;
-    ZLabel *mNameLabel;
+    ZLabel *mOutputLabel = nullptr;
+    ZLabel *mNameLabel = nullptr;
 
-    ZLabel *mXMinLabel;
-    ZLabel *mXMaxLabel;
-    ZLabel *mYMinLabel;
-    ZLabel *mYMaxLabel;
+    ZLabel *mXMinLabel = nullptr;
+    ZLabel *mXMaxLabel = nullptr;
+    ZLabel *mYMinLabel = nullptr;
+    ZLabel *mYMaxLabel = nullptr;
 
     /**
      * The view interface is used to allow the node to
@@ -1103,7 +1103,7 @@ private:
      * Number of line segments on the chart
      */
     // Todo: remove  these
-    ZLineChart *mChart;
+    ZLineChart *mChart = nullptr;
     vector<vector<float>> mPointCache;
     vector<float> mPointCache1D;
 

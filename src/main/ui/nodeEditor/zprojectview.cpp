@@ -60,7 +60,7 @@ void ZProjectView::addProject(string name) {
 
 void ZProjectView::addUnsavedProject() {
     auto unsavedPrj = new ZTextField(this);
-    unsavedPrj->setText("Unsaved Project");
+    unsavedPrj->setTitleText("Unsaved Project");
     unsavedPrj->setFocusMode(ZTextField::FocusMode::doubleClick);
     unsavedPrj->setOutlineType(WireType::outline);
     unsavedPrj->setTextMode(ZTextField::TextMode::field);

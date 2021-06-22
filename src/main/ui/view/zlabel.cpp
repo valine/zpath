@@ -270,6 +270,10 @@ void ZLabel::setTextColor(vec3 color) {
     invalidate();
 }
 
+vec3 ZLabel::getTextColor() {
+    return mTextColor;
+}
+
 void ZLabel::setText(string text) {
     mText = std::move(text);
     mTextInvalid = true;

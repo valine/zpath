@@ -70,9 +70,9 @@ private:
     ZLineView* mTmpLine;
     ZMagnitudePicker* mMagnitudePicker;
 
-    ZView* mBoxSelect;
-    ZCursorView* mCursorView;
-    ZDrawer* mDrawer;
+    ZView* mBoxSelect = nullptr;
+    ZCursorView* mCursorView = nullptr;
+    ZDrawer* mDrawer = nullptr;
 
     int mGroupMode = NO_GROUP;
 
@@ -86,9 +86,9 @@ private:
     ZNodeView* mSecondLastSelected = nullptr;
     ZNodeView* mPendingDeselect = nullptr;
 
-    ZView* mHeader;
-    ZView* mLineContainer;
-    ZView* mNodeContainer;
+    ZView* mHeader = nullptr;
+    ZView* mLineContainer = nullptr;
+    ZView* mNodeContainer = nullptr;
 
     vec2 mInitialOffset{};
     vec2 mInitialSize{};

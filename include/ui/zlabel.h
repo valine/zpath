@@ -29,7 +29,8 @@ public:
     void draw() override;
     void setTextSize(int textSize);
     void setTextColor(vec3 color);
-    void setText(string text);
+    vec3 getTextColor();
+    virtual void setText(string text);
     void setFont(string fontPath);
     string getText();
     void setBackgroundColor(vec4 color) override;
@@ -78,6 +79,7 @@ private:
     void onCreate();
 
     void computeLineWidth();
+
 };
 
 #endif

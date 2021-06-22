@@ -31,6 +31,8 @@ public:
     void onKeyPress(int key, int scancode, int action, int mods) override;
     void onGlobalMouseUp(int key) override;
     void onDoubleClick() override;
+    void setText(string text) override;
+
     void setOnReturn(function<void(string)> listener) {
         mOnReturn = listener;
     }
@@ -50,12 +52,18 @@ public:
 
     void setTextMode(TextMode tm) {
         mTextMode = tm;
+        updateTitle();
+    }
+
+    void setTitleText(string text) {
+        mTitle->setText(text);
     }
 
     void setBackgroundColor(vec4 color) override;
 private:
 
-    ZView* mCursor;
+    ZLabel* mTitle = nullptr;
+    ZView* mCursor = nullptr;
     int mCursorIndex = 0;
     int mLineIndex = 0;
 
@@ -108,6 +116,8 @@ private:
     void updateCursorOffset();
 
     void startEdit();
+
+    void updateTitle();
 
 };
 

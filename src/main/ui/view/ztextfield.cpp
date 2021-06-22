@@ -18,6 +18,29 @@ ZTextField::ZTextField(ZView *parent)
     cursorToEnd();
     setBackgroundColor(white);
     setCornerRadius(getMaxHeight() / 2);
+
+    mTitle = new ZLabel("", this);
+}
+
+void ZTextField::updateTitle() {
+    if (mTitle != nullptr) {
+        if (mTextMode == field) {
+            if (getText().empty() && !mInFocus) {
+                mTitle->setVisibility(true);
+            } else {
+                mTitle->setVisibility(false);
+            }
+        } else {
+            mTitle->setVisibility(false);
+        }
+        mTitle->setTextColor(getTextColor());
+        mTitle->setMarginLeft(getCornerRadius().x);
+    }
+}
+
+void ZTextField::setText(string text) {
+    ZLabel::setText(text);
+    updateTitle();
 }
 
 void ZTextField::cursorToEnd() {
@@ -77,17 +100,19 @@ void ZTextField::onFocusChanged(ZView *viewWithFocus) {
 }
 
 void ZTextField::deleteCharacter() {
-    string text = getText();
-    if (!text.empty()) {
-        if (mCursorIndex > 0) {
-            mCursorIndex-=1;
-            text.erase(mCursorIndex, 1);
-            setText(std::move(text));
-            drawText();
-            updateCursorPosition();
+    if (mInFocus) {
+        string text = getText();
+        if (!text.empty()) {
+            if (mCursorIndex > 0) {
+                mCursorIndex -= 1;
+                text.erase(mCursorIndex, 1);
+                setText(std::move(text));
+                drawText();
+                updateCursorPosition();
 
-            if (mOnTextChange != nullptr) {
-                mOnTextChange(getText());
+                if (mOnTextChange != nullptr) {
+                    mOnTextChange(getText());
+                }
             }
         }
     }
@@ -105,12 +130,14 @@ void ZTextField::cancelEdit() {
     setText(mInitialText);
     mCursor->setVisibility(false);
     releaseFocus(this);
+    updateTitle();
 }
 
 void ZTextField::applyEdit() {
     mInFocus = false;
     mCursor->setVisibility(false);
     releaseFocus(this);
+    updateTitle();
 }
 
 void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
@@ -225,6 +252,7 @@ void ZTextField::setBackgroundColor(vec4 color) {
     } else {
         mCursor->setBackgroundColor(highlight);
     }
+    updateTitle();
 }
 
 void ZTextField::startEdit() {
@@ -232,6 +260,7 @@ void ZTextField::startEdit() {
     float y = getMouse().y - getTop();
     setInFocus();
     cursorToPosition(x, y);
+    updateTitle();
 }
 
 void ZTextField::onGlobalMouseUp(int key) {

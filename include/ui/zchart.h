@@ -26,8 +26,8 @@ private:
     vector<bool> mLinesInvalid;
     vector<vector<float>> mPendingLines;
 
-    ZChartRenderer* mRenderer;
-    ZTexture* mBackground;
+    ZChartRenderer* mRenderer = nullptr;
+    ZTexture* mBackground = nullptr;
 
 };
 
