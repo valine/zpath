@@ -101,14 +101,14 @@ void ZLabel::drawText() {
     glBindVertexArray(VAO);
 
     GLfloat x = getCornerRadius().x * mDP;
-    GLfloat y = -(getLineHeight() / 2.0);
+    GLfloat y = 4;
 
     float vHeight = getHeight();
     int lineHeight = getLineHeight();
     mPoints.clear();
     mLineIndices.clear();
     int xMargin = 1;
-    int yMargin = 1;
+    int yMargin = -8;
 
     // Handle cursor position for empty string
     mPoints.emplace_back(((x/mDP) + xMargin), (-(y/mDP) - yMargin));
