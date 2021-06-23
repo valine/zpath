@@ -38,9 +38,10 @@ public:
     int keepSecond = 10;
 
     ZTileViewController* triggerSideSplit(float percent, int controllerIndex);
-    ZTileViewController* triggerOverUnderSplit(float percent, int controllerIndex);
+    ZTileViewController *triggerOverUnderSplit(float percent, int controllerIndex, bool enterDrag);
 
     void triggerSideJoinLeftToRight(int index);
+    ZTileViewController* getChild(int index);
 
 private:
 
@@ -87,7 +88,7 @@ private:
 
     void updateIndices();
 
-    void insertChildAtIndexVertical(int index, int controllerType);
+    void insertChildAtIndexVertical(int index, int controllerType, float percent);
 
     void triggerJoinBottomToTop(int index);
 
@@ -102,6 +103,7 @@ private:
     void onTileEdgeDrag(const vec2 &delta);
 
     void selectController(int index);
+
 };
 
 

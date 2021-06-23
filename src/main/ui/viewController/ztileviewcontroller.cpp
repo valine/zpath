@@ -201,7 +201,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                         mParentTile->mChildrenTiles.at(mTileIndex + 1)->mJoinGuide->bringToFront();
                     }
                 } else if (delta.y > DRAG_THRESHOLD) {
-                    triggerOverUnderSplit(1, -1);
+                    triggerOverUnderSplit(1, -1, true);
                 } else if (delta.y < -DRAG_THRESHOLD) {
                     mDragType = pendingVerticalJoin;
                     updateVerticalJoinGuide();
@@ -352,7 +352,6 @@ void ZTileViewController::onTileEdgeDrag(const vec2 &delta) {
             auto lowerTile = mChildrenTiles.at(i);
             auto thisTile = mChildrenTiles.at(i + 1);
 
-
             int height = fillParent;
             if (i - 1 >= 0) {
                 auto bottomTile = mChildrenTiles.at(i - 1);
@@ -366,8 +365,6 @@ void ZTileViewController::onTileEdgeDrag(const vec2 &delta) {
 
             lowerTile->onWindowChange(getWindowWidth(), getWindowHeight());
             lowerTile->invalidate();
-
-
         }
 
         topTile->onWindowChange(getWindowWidth(), getWindowHeight());
@@ -446,7 +443,7 @@ void ZTileViewController::insertChildAtIndexHorizontal(int index, int controller
     mInitialBondary = mChildrenTiles.at(index - 1)->getOffsetX() + mChildrenTiles.at(index - 1)->getWidth();
 }
 
-void ZTileViewController::insertChildAtIndexVertical(int index, int controllerType) {
+void ZTileViewController::insertChildAtIndexVertical(int index, int controllerType, float percent) {
     auto tile = new ZTileViewController(getResourcePath(), mControllerFactory, mNames, false, nullptr);
     tile->setIndexTag(controllerType);
     addSubView(tile);
@@ -469,6 +466,8 @@ void ZTileViewController::insertChildAtIndexVertical(int index, int controllerTy
     mDragIndex = index;
 
     mInitialBondary = mChildrenTiles.at(index - 1)->getOffsetY();
+    onTileEdgeDrag(vec2(0, mChildrenTiles.at(index - 1)->getHeight() * percent));
+
 }
 
 void ZTileViewController::updateIndices() {
@@ -595,7 +594,7 @@ ZTileViewController* ZTileViewController::triggerSideSplit(float percent, int co
     return rightTile;
 }
 
-ZTileViewController* ZTileViewController::triggerOverUnderSplit(float percent, int controllerIndex) {// Trigger split
+ZTileViewController * ZTileViewController::triggerOverUnderSplit(float percent, int controllerIndex, bool enterDrag) {// Trigger split
 
     /////////////// Step 3: create views after split
     ZTileViewController* bottomTile;
@@ -624,8 +623,6 @@ ZTileViewController* ZTileViewController::triggerOverUnderSplit(float percent, i
             topTile = mChildrenTiles.at(1);
         }
 
-        float percentLeft = 1.0 - percent;
-
         bottomTile->setParentView(this);
         bottomTile->setDrawingEnabled(false);
         // bottomTile->mHandle->bringToFront();
@@ -634,6 +631,7 @@ ZTileViewController* ZTileViewController::triggerOverUnderSplit(float percent, i
         bottomTile->mTileType = verticalTile;
         bottomTile->mParentTile = this;
 
+        float percentLeft = 1.0 - percent;
         if (getHeight() * percent + getHeight() * percentLeft >= getHeight()) {
             bottomTile->setMaxHeight(fillParent);
         } else {
@@ -667,11 +665,16 @@ ZTileViewController* ZTileViewController::triggerOverUnderSplit(float percent, i
 
     } else {
         if (controllerIndex == -1) {
-            mParentTile->insertChildAtIndexVertical(mTileIndex + 1, getIndexTag());
+            mParentTile->insertChildAtIndexVertical(mTileIndex + 1, getIndexTag(), percent);
         } else {
-            mParentTile->insertChildAtIndexVertical(mTileIndex + 1, controllerIndex);
+            mParentTile->insertChildAtIndexVertical(mTileIndex + 1, controllerIndex, percent);
+        }
+
+        if (!enterDrag) {
+            mParentTile->mDragType = noDrag;
         }
         mDragType = noDrag;
+        mDragIndex = -1;
     }
 
     getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
@@ -783,3 +786,6 @@ void ZTileViewController::triggerJoinBottomToTop(int index) {
     }
 }
 
+ZTileViewController* ZTileViewController::getChild(int index) {
+    return mChildrenTiles.at(index);
+}
