@@ -129,6 +129,15 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         updateLines();
         onWindowChange(getWindowWidth(), getWindowHeight());
     });
+    mProjectBrowser->setOnProjectSaved([this](string name, int index){
+        set<ZNodeView*> projectNodes;
+        for (auto node : mNodeViews) {
+            if (node->getProjectID() == index) {
+                projectNodes.insert(node);
+            }
+        }
+        return ZNodeStore::get().saveGraph(projectNodes, name);
+    });
 
 
     auto* headerBackground = new ZView(fillParent, 25, this);

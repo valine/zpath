@@ -26,23 +26,26 @@ public:
         return instance;
     }
 
-    void saveGraph(vector<ZNodeView*> graph, string name) {
+    string saveGraph(vector<ZNodeView*> graph, string name) {
         set<ZNodeView*> graphSet;
         for (auto node : graph) {
             graphSet.insert(node);
         }
-        saveGraph(graphSet, name);
+        return saveGraph(graphSet, name);
     }
 
 
-    void saveGraph(set<ZNodeView*> graph, string name) {
+    string saveGraph(set<ZNodeView*> graph, string name) {
         string sgraph = ZNodeUtil::get().serialize(graph);
 
         string projectFolder = "resources/graphs/";
         string path = ZSettingsStore::get().getResourcePath() + projectFolder;
-        std::ofstream out(path + name);
+        string ext = ".zpath";
+        string fullPath = path + name + ext;
+        std::ofstream out(fullPath);
         out << sgraph;
         out.close();
+        return fullPath;
     }
 
     vector<string> getProjectNames() {

@@ -213,7 +213,6 @@ public:
         } else {
             node = new ZNodeView(type);
         }
-
         return node;
     }
 

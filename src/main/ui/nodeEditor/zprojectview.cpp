@@ -33,12 +33,23 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &mode
     getInnerView()->refreshMargins();
 }
 
-void ZProjectView::onLayoutFinished() {
-    ZView::onLayoutFinished();
-    selectProject(mAllProjects.at(mAllProjects.size() - 1));
-
+void ZProjectView::reloadProjects() {
+//
+//    for (auto view : mProjectViews) {
+//        view->setIndexTag(-1);
+//        view->setVisibility(false);
+//    }
+//
+//    vector<string> names = mModelInterface();
+//    for (const auto& name : names) {
+//        addProject(name);
+//    }
 }
 
+void ZProjectView::onLayoutFinished() {
+    ZView::onLayoutFinished();
+    selectProject(mProjectViews.at(mProjectViews.size() - 1));
+}
 
 void ZProjectView::addProject(string name) {
     auto project = new ZTextField(this);
@@ -52,9 +63,10 @@ void ZProjectView::addProject(string name) {
     project->setOnClick([this](ZView* sender){
         selectProject(sender);
     });
-    mAllProjects.push_back(project);
+    mProjectViews.push_back(project);
     project->setIndexTag(mProjectIdInc);
-    mProjectMap.insert({mProjectIdInc, name});
+    mNameMap.insert({mProjectIdInc, name});
+    mIDMap.insert({name, mProjectIdInc});
     mProjectIdInc++;
 }
 
@@ -73,23 +85,30 @@ void ZProjectView::addUnsavedProject() {
     unsavedPrj->setOnClick([this](ZView* sender){
         selectProject(sender);
     });
-    mAllProjects.push_back(unsavedPrj);
-    unsavedPrj->setOnReturn([](string name){
+    mProjectViews.push_back(unsavedPrj);
+    unsavedPrj->setOnReturn([this, unsavedPrj](string name) {
+        if (mOnProjectSaved != nullptr) {
+           string path = mOnProjectSaved(name, unsavedPrj->getIndexTag());
+           mNameMap.at(unsavedPrj->getIndexTag()) = path;
+           unsavedPrj->setOutlineType(none);
+           unsavedPrj->invalidate();
+           unsavedPrj->setLineWidth(0.0);
+        }
         cout << name << endl;
     });
     unsavedPrj->setIndexTag(mProjectIdInc);
-    mProjectMap.insert({mProjectIdInc, ""});
+    mNameMap.insert({mProjectIdInc, ""});
     mProjectIdInc++;
 }
 
 void ZProjectView::selectProject(ZView *sender) {
-    for (auto project : mAllProjects) {
+    for (auto project : mProjectViews) {
         project->setBackgroundColor(white);
     }
     sender->setBackgroundColor(highlight);
     if (mOnProjectSelected != nullptr) {
-        mOnProjectSelected(sender->getIndexTag(),
-                           mProjectMap.at(sender->getIndexTag()));
+         mOnProjectSelected(sender->getIndexTag(),
+                           mNameMap.at(sender->getIndexTag()));
     }
 }
 
