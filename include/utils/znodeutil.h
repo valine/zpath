@@ -204,7 +204,12 @@ public:
         if (!mDeleteNodes.empty()) {
             node = mDeleteNodes.front();
             mDeleteNodes.pop();
-            node->setType(type);
+            if (node == nullptr) {
+                node = new ZNodeView(type);
+            } else {
+                node->setType(type);
+            }
+
         } else {
             node = new ZNodeView(type);
         }
