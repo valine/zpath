@@ -108,7 +108,7 @@ void ZLabel::drawText() {
     mPoints.clear();
     mLineIndices.clear();
     int xMargin = 1;
-    int yMargin = 1;
+    int yMargin = -getLineHeight() + (9.5 * mDP);
 
     // Handle cursor position for empty string
     mPoints.emplace_back(((x/mDP) + xMargin), (-(y/mDP) - yMargin));
