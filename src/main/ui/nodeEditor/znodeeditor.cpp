@@ -94,6 +94,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mProjectBrowser->onWindowChange(getWindowWidth(), getWindowWidth());
     mProjectBrowser->setOnProjectSelected([this](int index, string path) {
         mSelectedProject = index;
+        mProjectPath = path;
 
         // Saved project selected
         if (!path.empty()) {
@@ -136,7 +137,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
                 projectNodes.insert(node);
             }
         }
-        return ZNodeStore::get().saveGraph(projectNodes, name);
+        return ZNodeStore::get().saveGraph(projectNodes, name, false);
     });
 
 
@@ -272,7 +273,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 //            addNodeToView(node, false);
 //        }
 
-        ZNodeStore::get().saveGraph(mNodeViews, "test.zpath");
+        ZNodeStore::get().saveGraph(mNodeViews, "test.zpath", false);
     });
 
     // Magnitude picker work
@@ -325,30 +326,70 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 //    testCorners();
 }
 
-void ZNodeEditor::testCorners() {
-    for (int i = 0; i < 3; i++) {
+void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
+    ZView::onKeyPress(key, scancode, action, mods);
+    if (key == GLFW_KEY_R && shiftKeyPressed() && action == GLFW_PRESS) {
+        addNode(mLastType);
+    }
 
-        float rad = i + 10;
-        auto corner = new ZView(200, 200, this);
-        corner->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
-        corner->setMarginLeft(120);
-        corner->setBackgroundColor(blue);
-        corner->setCornerRadius(5);
-        vec4 radius = vec4(rad, rad, rad, 30);
+    else if (key == GLFW_KEY_E && shiftKeyPressed()) {
+        addNode(mLastType);
+    }
 
-        auto corner1 = new ZView(300, 100, this);
-        corner1->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
-        corner1->setMarginLeft(120 + corner->getLocalRight() + BUTTON_MARGIN);
-        corner1->setBackgroundColor(green);
-        corner1->setCornerRadius(radius);
+    else if (key == GLFW_KEY_B) {
+        enterBoxSelectMode();
+    }
 
+    else if (key == GLFW_KEY_ESCAPE) {
+        exitBoxSelectMode();
+    }
 
-        auto corner2 = new ZView(50, 50, this);
-        corner2->setYOffset(60 + (i * (200 + BUTTON_MARGIN)));
-        corner2->setMarginLeft(120 + corner->getLocalRight() + corner1->getLocalRight() + 2 * BUTTON_MARGIN);
-        corner2->setBackgroundColor(red);
-        corner2->setCornerRadius(radius);
+    else if (key == GLFW_KEY_X && !shiftKeyPressed() && action == GLFW_RELEASE) {
+        deleteSelectedNodes();
+    }
 
+    else if (key == GLFW_KEY_X && shiftKeyPressed() && action == GLFW_RELEASE) {
+        deleteSelectedConnections();
+    }
+
+    else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+        if (mSelectedNodes.empty()) {
+            selectAllNodes();
+        } else {
+            deselectAllNodes();
+        }
+        invalidate();
+    }
+
+    else if (key == GLFW_KEY_SLASH && action == GLFW_RELEASE) {
+        mExpressionField->setInFocus();
+    }
+
+    else if (key == GLFW_KEY_D && shiftKeyPressed() && action == GLFW_PRESS) {
+        duplicateSelectedNodes();
+    }
+
+    else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+        selectNodeGraphUnderMouse();
+    }
+
+    else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT)) {
+        mInitialOffset = getMouse();
+        resetNodeInitialPosition();
+    }
+
+    else if (key == GLFW_KEY_TAB && action == GLFW_RELEASE) {
+        toggleGroupSelection();
+    }
+
+    else if (key == GLFW_KEY_S && controlKeyPressed() && action == GLFW_RELEASE) {
+        set<ZNodeView*> projectNodes;
+        for (auto node : mNodeViews) {
+            if (node->getProjectID() == mSelectedProject) {
+                projectNodes.insert(node);
+            }
+        }
+        ZNodeStore::get().saveGraph(projectNodes, mProjectPath, true);
     }
 }
 
@@ -1302,63 +1343,6 @@ int ZNodeEditor::getMouseOverNode() {
 
 bool ZNodeEditor::isSocketDrag() {
     return mDragType == SOCKET_DRAG_OUT || mDragType == SOCKET_DRAG_IN;
-}
-
-void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
-    ZView::onKeyPress(key, scancode, action, mods);
-    if (key == GLFW_KEY_R && shiftKeyPressed() && action == GLFW_PRESS) {
-        addNode(mLastType);
-    }
-
-    else if (key == GLFW_KEY_E && shiftKeyPressed()) {
-        addNode(mLastType);
-    }
-
-    else if (key == GLFW_KEY_B) {
-        enterBoxSelectMode();
-    }
-
-    else if (key == GLFW_KEY_ESCAPE) {
-        exitBoxSelectMode();
-    }
-
-    else if (key == GLFW_KEY_X && !shiftKeyPressed() && action == GLFW_RELEASE) {
-        deleteSelectedNodes();
-    }
-
-    else if (key == GLFW_KEY_X && shiftKeyPressed() && action == GLFW_RELEASE) {
-        deleteSelectedConnections();
-    }
-
-    else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-        if (mSelectedNodes.empty()) {
-            selectAllNodes();
-        } else {
-            deselectAllNodes();
-        }
-        invalidate();
-    }
-
-    else if (key == GLFW_KEY_SLASH && action == GLFW_RELEASE) {
-        mExpressionField->setInFocus();
-    }
-
-    else if (key == GLFW_KEY_D && shiftKeyPressed() && action == GLFW_PRESS) {
-        duplicateSelectedNodes();
-    }
-
-    else if (key == GLFW_KEY_L && action == GLFW_PRESS) {
-        selectNodeGraphUnderMouse();
-    }
-
-    else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT)) {
-        mInitialOffset = getMouse();
-        resetNodeInitialPosition();
-    }
-
-    else if (key == GLFW_KEY_TAB && action == GLFW_RELEASE) {
-        toggleGroupSelection();
-    }
 }
 
 void ZNodeEditor::toggleGroupSelection() {

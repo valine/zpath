@@ -61,6 +61,12 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
     } else if ((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_RELEASE) {
         mAltKeyPressed = false;
         modifier = true;
+    } else if ((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL || (key == GLFW_KEY_LEFT_SUPER || key == GLFW_KEY_RIGHT_SUPER)) && action == GLFW_PRESS) {
+        mControlKeyPressed = true;
+        modifier = true;
+    } else if ((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL || (key == GLFW_KEY_LEFT_SUPER || key == GLFW_KEY_RIGHT_SUPER)) && action == GLFW_RELEASE) {
+        mControlKeyPressed = false;
+        modifier = true;
     }
 
     for (auto & mView : mViews) {
@@ -797,6 +803,10 @@ bool ZView::shiftKeyPressed() {
 
 bool ZView::altKeyPressed() {
     return mAltKeyPressed;
+}
+
+bool ZView::controlKeyPressed() {
+    return mControlKeyPressed;
 }
 
 int ZView::getMouseDownX() {

@@ -345,6 +345,8 @@ class ZView {
         mOnClick = std::move(onClick);
     }
 
+    bool controlKeyPressed();
+
 private:
 
         bool mBuffersInit = false;
@@ -445,6 +447,7 @@ private:
 
 		bool mShiftKeyPressed = false;
 		bool mAltKeyPressed = false;
+		bool mControlKeyPressed = false;
 
 		bool mDeleted = false;
 		bool mVisible = true;

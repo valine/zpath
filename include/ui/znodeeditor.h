@@ -107,6 +107,7 @@ private:
     vector<vector<ZNodeView*>> mTmpNodes;
     ZTextField* mExpressionField;
     int mSelectedProject = 0;
+    string mProjectPath = "";
 
     bool isSocketDrag();
 
@@ -180,8 +181,6 @@ private:
     void resetNodeInitialPosition();
 
     void snapViewToNodes();
-
-    void testCorners();
 
     void onSizeChange();
 
