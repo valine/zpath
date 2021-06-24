@@ -231,6 +231,10 @@ void ZTileViewController::onTileEdgeDrag(const vec2 &delta) {
     int margin = 50;
 
     if (mSplitType == sideBySide) {
+        if (mDragIndex <= 0) {
+            return;
+        }
+
         auto leftTile = mChildrenTiles.at(mDragIndex - 1);
         auto rightTile = mChildrenTiles.at(mDragIndex);
 
@@ -308,6 +312,9 @@ void ZTileViewController::onTileEdgeDrag(const vec2 &delta) {
         rightTile->onWindowChange(rightTile->getWindowWidth(), rightTile->getWindowHeight());
 
     } else if (mSplitType == overUnder) {
+        if (mDragIndex <= 0) {
+            return;
+        }
         auto bottomTile = mChildrenTiles.at(mDragIndex - 1);
         auto topTile = mChildrenTiles.at(mDragIndex);
 

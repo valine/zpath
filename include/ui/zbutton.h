@@ -6,7 +6,7 @@
 #define BTN_OFFSET 0
 
 #define DEFAULT_WIDTH 140
-#define DEFAULT_HEIGHT 25
+#define DEFAULT_HEIGHT 22
 
 #include "zview.h"
 #include <iostream>
@@ -46,6 +46,7 @@ public:
 	void computeBounds();
     void setOnClick(std::function<void()> onClick);
     void setClickMode(ClickMode clickMode);
+    void onSizeChange() override;
 
     ZLabel *getLabel();
 

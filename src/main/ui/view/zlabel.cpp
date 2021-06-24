@@ -93,15 +93,15 @@ void ZLabel::drawText() {
     // Update scale, useful for zooming a view out
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(getWidth()), 0.0f,static_cast<GLfloat>(getHeight()));
 
-    glm::mat4 scaleMat = glm::scale(glm::translate(projection, vec3(0,getHeight(),0)), vec3(1,-1,1));
+    glm::mat4 scaleMat = glm::scale(glm::translate(projection, vec3(0,getHeight() / mDP,0)), vec3(1,-1,1));
     glUniformMatrix4fv(glGetUniformLocation(getTextShader()->mID, "projection"), 1, GL_FALSE,
                        glm::value_ptr(scaleMat));
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
-    GLfloat x = getCornerRadius().x;
-    GLfloat y = 5;
+    GLfloat x = getCornerRadius().x * mDP;
+    GLfloat y = -(getLineHeight() / 2.0);
 
     float vHeight = getHeight();
     int lineHeight = getLineHeight();
@@ -111,11 +111,10 @@ void ZLabel::drawText() {
     int yMargin = 1;
 
     // Handle cursor position for empty string
-    mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
+    mPoints.emplace_back(((x/mDP) + xMargin), (-(y/mDP) - yMargin));
     if (mText.empty() || mFont.empty()) {
 
     } else {
-
         // Iterate through all characters
         std::string::const_iterator c;
         for (c = mText.begin(); c != mText.end(); c++) {
@@ -129,19 +128,24 @@ void ZLabel::drawText() {
             char ac = c[0];
             char newLine = '\n';
             if (ac == newLine) {
-                y -= lineHeight;
-                x = getCornerRadius().x;
+                y -= lineHeight * mDP;
+                x = getCornerRadius().x * mDP;
                 mLineIndices.push_back(mPoints.size());
             } else {
+
+                float xdp = xpos / mDP;
+                float ydp = ypos / mDP;
+                float wdp = (float) w / mDP;
+                float hdp = (float) h / mDP;
                 // Update VBO for each character
                 GLfloat vertices[6][4] = {
-                        {xpos,     ypos + h, 0.0, 0.0},
-                        {xpos,     ypos,     0.0, 1.0},
-                        {xpos + w, ypos,     1.0, 1.0},
+                        {xdp,     ydp + hdp, 0.0, 0.0},
+                        {xdp,     ydp,     0.0, 1.0},
+                        {xdp + wdp, ydp,     1.0, 1.0},
 
-                        {xpos,     ypos + h, 0.0, 0.0},
-                        {xpos + w, ypos,     1.0, 1.0},
-                        {xpos + w, ypos + h, 1.0, 0.0}
+                        {xdp,     ydp + hdp, 0.0, 0.0},
+                        {xdp + wdp, ydp,     1.0, 1.0},
+                        {xdp + wdp, ydp + hdp, 1.0, 0.0}
                 };
 
                 glCullFace(GL_FRONT);
@@ -156,11 +160,11 @@ void ZLabel::drawText() {
                 // Render quad
                 glDrawArrays(GL_TRIANGLES, 0, 6);
                 // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-                x += (((float) ch.Advance) / 64.0) *
+                x += ((((float) ch.Advance) / 64.0)) *
                      labelScale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
             }
 
-            mPoints.emplace_back(x + xMargin, -y + (lineHeight / 2) - yMargin);
+            mPoints.emplace_back(((x/mDP) + xMargin), (-(y/mDP) - yMargin));
 
             //if (mLineIndices.empty()) {
                // mFirstLineWidth = x + w;
@@ -183,21 +187,16 @@ void ZLabel::computeLineWidth() {
         return;
     }
     GLfloat x = getCornerRadius().x;
-    GLfloat y = 5;
+    GLfloat y = 0;
     GLfloat labelScale = 1.0;
 
     std::string::const_iterator c;
-    float vHeight = getHeight();
     int lineHeight = getLineHeight();
 
     for (c = mText.begin(); c != mText.end(); c++) {
         Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
         int w = ch.Size.x;
-        int h = ch.Size.y;
 
-        float lineOffset = vHeight - lineHeight;
-        GLfloat xpos = x + ch.Bearing.x;
-        GLfloat ypos = lineOffset + y - (ch.Size.y - ch.Bearing.y);
         char ac = c[0];
         char newLine = '\n';
         if (ac == newLine) {
@@ -210,7 +209,7 @@ void ZLabel::computeLineWidth() {
         }
 
         if (mLineIndices.empty()) {
-            mFirstLineWidth = std::max(mFirstLineWidth, x + w);
+            mFirstLineWidth = std::max(mFirstLineWidth, (x + w) / mDP);
         }
     }
 }

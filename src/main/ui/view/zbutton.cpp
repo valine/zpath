@@ -9,7 +9,7 @@ ZButton::ZButton(float maxWidth, float maxHeight) :
 	ZView(maxWidth, maxHeight) {
 
 	mLabel = new ZLabel(maxWidth, 18);
-	mLabel->setOffset(10, (maxHeight - 16) / 2);
+	mLabel->setOffset(10, 0);
 	mLabel->setText("Button");
 	mLabel->setGravity(ZView::topLeft);
 	addSubView(mLabel);
@@ -20,7 +20,7 @@ ZButton::ZButton(string label, ZView *parent) :
     mLabel = new ZLabel(std::move(label), this);
 
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setOffset(10, (getMaxHeight() - 16) / 2);
+    mLabel->setOffset(10, (getHeight() - mLabel->getLineHeight()) / 2);
 
     setCornerRadius(   12.5);
     setBackgroundColor(highlight);
@@ -124,4 +124,9 @@ void ZButton::setBackgroundColor(vec4 color) {
 
 void ZButton::setOnClick(std::function<void(ZView *)> onClick) {
     ZView::setOnClick(onClick);
+}
+
+void ZButton::onSizeChange() {
+    ZView::onSizeChange();
+    mLabel->setOffset(10, (getHeight() - mLabel->getLineHeight()) / 2);
 }

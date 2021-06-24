@@ -184,7 +184,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         }
     });
 
-
     thread evalThread = thread(ZNodeEditor::startEvaluation, this);
     evalThread.detach();
 
@@ -197,7 +196,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     float cr = (float) laplaceBtn->getMaxHeight() / 2;
     laplaceBtn->setMaxWidth(fillParent);
     laplaceBtn->setCornerRadius(vec4(cr, cr, 0, 0));
-    laplaceBtn->setMaxHeight(25);
+    laplaceBtn->setMaxHeight(22);
     laplaceBtn->setOnClick([this](){
 
         cout << mSelectedNodes.size() << endl;
@@ -216,7 +215,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto derivativeBtn = new ZButton("Derivative", mButtonPanel);
     derivativeBtn->setMaxWidth(fillParent);
     derivativeBtn->setCornerRadius(vec4(1));
-    derivativeBtn->setMaxHeight(25);
+    derivativeBtn->setMaxHeight(22);
     derivativeBtn->setMarginTop(1);
     derivativeBtn->setOnClick([this](){
         cout << mSelectedNodes.size() << endl;
@@ -233,8 +232,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto simplifyBtn = new ZButton("Simplify", mButtonPanel);
     simplifyBtn->setMaxWidth(fillParent);
     simplifyBtn->setCornerRadius(vec4(1));
-    simplifyBtn->setMaxHeight(25);
-    simplifyBtn->setMarginTop(2);
+    simplifyBtn->setMaxHeight(22);
+    simplifyBtn->setMarginTop(1);
     simplifyBtn->setOnClick([this](){
         cout << mSelectedNodes.size() << endl;
         // Only works if one node selected
@@ -249,32 +248,14 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     // Button example
     auto* addNodeBtn = new ZButton("Add node", mButtonPanel);
-    addNodeBtn->setMarginTop(3);
+    addNodeBtn->setMarginTop(1);
+    addNodeBtn->setMaxHeight(22);
     addNodeBtn->setCornerRadius(vec4(0,0,cr,cr));
     addNodeBtn->setOnClick([this](){
         addNode(mLastType);
     });
 
-
-    // Node io temp buttons
-    auto serializeBtn = new ZButton("Test serialize", mButtonPanel);
-    serializeBtn->setMaxWidth(fillParent);
-    serializeBtn->setCornerRadius(vec4(cr));
-    serializeBtn->setMaxHeight(25);
-    serializeBtn->setMarginTop(30);
-    serializeBtn->setOnClick([this](){
-        string nodeS = ZNodeUtil::get().serialize(mSelectedNodes);
-        cout << "Start node serialize ========" << endl;
-        cout << nodeS << endl;
-        cout << "End node serialize ========" << endl;
-
-//        set<ZNodeView*> deserialize = ZNodeUtil::get().deserialize(nodeS);
-//        for (auto node : deserialize) {
-//            addNodeToView(node, false);
-//        }
-
-        ZNodeStore::get().saveGraph(mNodeViews, "test.zpath", false);
-    });
+    mButtonPanel->refreshMargins();
 
     // Magnitude picker work
     mMagnitudePicker = new ZMagnitudePicker(this);
@@ -284,12 +265,12 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mExpressionField->setGravity(Gravity::bottomLeft);
     mExpressionField->setBackgroundColor(white);
     mExpressionField->setMaxWidth(360);
-    mExpressionField->setXOffset(mDrawer->getMaxWidth() + 10);
+    mExpressionField->setXOffset(mDrawer->getMaxWidth() + 5);
     mExpressionField->setOutlineType(WireType::outline);
     mExpressionField->setMaxHeight(20);
     mExpressionField->setMargin(vec4(2));
     mExpressionField->setElevation(1.0);
-    mExpressionField->setMargin(vec4(20,20,140,20));
+    mExpressionField->setMargin(vec4(15,15,140,15));
     mExpressionField->setTitleText("Enter expression...");
     mExpressionField->setTextMode(ZTextField::TextMode::field);
     mExpressionField->setOnReturn([this](string value) {

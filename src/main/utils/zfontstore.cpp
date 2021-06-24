@@ -68,9 +68,9 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
 
             Character character = {
                     texture,
-                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows) / glm::ivec2(dp),
-                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top) / glm::ivec2(dp),
-                    (GLuint) face->glyph->advance.x / (int) dp
+                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+                    (GLuint) face->glyph->advance.x
             };
             make_pair(c, resourcePath);
             string key = to_string(c) + resourcePath;
