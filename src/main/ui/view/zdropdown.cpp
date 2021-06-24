@@ -10,14 +10,19 @@
 ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
     mBackground = new ZView(200, 25, this);
-    mBackground->setBackgroundColor(lightGrey);
+    mBackground->setBackgroundColor(darkerGrey);
+    mBackground->setCornerRadius(4);
     mButtonHeight = maxHeight;
 
     mTitle = new ZLabel("Dropdown", this);
     mTitle->setText("Dropdown");
     mTitle->setTextColor(vec3(0));
-    mTitle->setMarginLeft(MARGIN / 2);
-    mTitle->setMarginTop(3);
+    mTitle->setMarginLeft(10);
+    mTitle->setTextColor(white);
+    mTitle->setYOffset((mBackground->getMaxHeight() - mTitle->getLineHeight()) / 2);
+    mTitle->setOnClick([this](ZView* sender){
+        handleClick();
+    });
 
     addSubView(mTitle);
 
@@ -28,6 +33,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     mDrawer->setElevation(1.0);
     mDrawer->setAllowNegativeSize(true);
     mDrawer->setClippingEnabled(false);
+    mDrawer->setCornerRadius(4);
 
     addSubView(mDrawer);
 
@@ -89,33 +95,37 @@ void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 
 	if (action == GLFW_PRESS) {
-		if (isMouseInBounds(mBackground)) {
-			mDrawer->setVisibility(!mDrawer->getVisibility());
-
-            mDrawer->scrollTo(0,0);
-
-            if (getGravity() == bottomLeft) {
-
-                mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
-                mDrawer->setYOffset(DEFAULT_OFFSET);
-			} else {
-                mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (DEFAULT_OFFSET * 2),
-                                               mDrawer->getInnerView()->getMaxHeight()));
-                mDrawer->setYOffset(DEFAULT_OFFSET);
-			}
-
-            mDrawer->onWindowChange(getWindowWidth(), getWindowHeight());
-			if (mDrawer->getVisibility()) {
-			    requestFocus(this);
-			} else {
-			    releaseFocus(this);
-			}
-		} else {
-            releaseFocus(this);
-		}
-	}
+        handleClick();
+    }
 
 	mDrawer->onMouseEvent(button,action,mods,x,y);
+}
+
+void ZDropDown::handleClick() {
+    if (isMouseInBounds(mBackground)) {
+        mDrawer->setVisibility(!mDrawer->getVisibility());
+
+        mDrawer->scrollTo(0, 0);
+
+        if (getGravity() == bottomLeft) {
+
+        mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
+        mDrawer->setYOffset(DEFAULT_OFFSET);
+                } else {
+        mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (DEFAULT_OFFSET * 2),
+                                  mDrawer->getInnerView()->getMaxHeight()));
+        mDrawer->setYOffset(DEFAULT_OFFSET);
+                }
+
+        mDrawer->onWindowChange(getWindowWidth(), getWindowHeight());
+                if (mDrawer->getVisibility()) {
+                    requestFocus(this);
+                } else {
+                    releaseFocus(this);
+                }
+            } else {
+        releaseFocus(this);
+    }
 }
 
 void ZDropDown::onKeyPress(int key, int scancode, int action, int mods) {

@@ -38,6 +38,7 @@ public:
 
     void wrapTitle();
 
+    ZView* mBackground;
 private:
 	ZLabel* mTitle;
 	ZScrollView* mDrawer;
@@ -45,9 +46,9 @@ private:
 	float mButtonHeight;
 
 	bool mDynamicTitle = true;
-	ZView* mBackground;
     std::function<void(int item)> mOnItemChange;
 
+    void handleClick();
 };
 
 #endif

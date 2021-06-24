@@ -107,17 +107,17 @@ void ZTileViewController::selectController(int index) {
     setIndexTag(index);
     mHandle->bringToFront();
     mDropDown->bringToFront();
-
     invalidate();
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
-    if (action == GLFW_PRESS && mHandle != nullptr && mHandle->getVisibility() && isMouseInBounds(mHandle)) {
 
+    ZViewController::onMouseEvent(button, action, mods, x, y);
+    if (action == GLFW_PRESS && mHandle != nullptr && mHandle->getVisibility() && isMouseInBounds(mHandle)) {
         ////////////// Step 1: enter corner drag mode
         mDragType = cornerDrag;
         setConsumeClicks(true);
-    } else if(action == GLFW_PRESS) {
+    } else if(action == GLFW_PRESS && !isMouseInBounds(mDropDown->mBackground)) {
         int index = 0;
         for (auto tile : mChildrenTiles) {
             int threshold = 10;
@@ -145,8 +145,6 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
             index++;
         }
     }
-
-    ZViewController::onMouseEvent(button, action, mods, x, y);
 
     if (action == GLFW_RELEASE) {
         if (mDragType == pendingHorizontalJoin) {

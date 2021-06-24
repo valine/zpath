@@ -142,7 +142,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
 
     auto* headerBackground = new ZView(fillParent, 25, this);
-    headerBackground->setBackgroundColor(lightGrey);
+    headerBackground->setBackgroundColor(darkerGrey);
 
     mHeader = new ZView(fillParent, fillParent, this);
 
