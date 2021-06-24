@@ -111,13 +111,11 @@ void ZTileViewController::selectController(int index) {
 }
 
 void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, int y) {
-
-    ZViewController::onMouseEvent(button, action, mods, x, y);
     if (action == GLFW_PRESS && mHandle != nullptr && mHandle->getVisibility() && isMouseInBounds(mHandle)) {
         ////////////// Step 1: enter corner drag mode
         mDragType = cornerDrag;
         setConsumeClicks(true);
-    } else if(action == GLFW_PRESS && !isMouseInBounds(mDropDown->mBackground)) {
+    } else if(action == GLFW_PRESS) {
         int index = 0;
         for (auto tile : mChildrenTiles) {
             int threshold = 10;
@@ -131,13 +129,13 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
                 }
             }
 
-            if (mSplitType == overUnder && (abs(tile->getBottom() - y) < threshold && mChildrenTiles.size() > tile->mTileIndex - 1) &&
+            int thresholdV = 23;
+            if (mSplitType == overUnder && (abs(tile->getBottom() - y) < thresholdV && mChildrenTiles.size() > tile->mTileIndex - 1) &&
                 !isMouseInBounds(mChildrenTiles.at(tile->mTileIndex - 1))) {
                 if (tile->mTileIndex > 0) {
                     mInitialBondary = mChildrenTiles.at(tile->mTileIndex - 1)->getOffsetY();
                     mDragType = tileDrag;
                     mDragIndex = tile->mTileIndex;
-                    setConsumeClicks(true);
                     break;
                 }
             }
@@ -145,6 +143,8 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
             index++;
         }
     }
+
+    ZViewController::onMouseEvent(button, action, mods, x, y);
 
     if (action == GLFW_RELEASE) {
         if (mDragType == pendingHorizontalJoin) {
@@ -176,10 +176,7 @@ void ZTileViewController::onMouseEvent(int button, int action, int mods, int x, 
         }
         mDragType = noDrag;
         setConsumeClicks(false);
-
     }
-
-
 }
 
 void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
