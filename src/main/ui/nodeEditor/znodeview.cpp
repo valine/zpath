@@ -338,6 +338,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     setMaxWidth(getNodeSize(mType).x);
     setMaxHeight(getNodeSize(mType).y);
+    initializeEdges();
 
     mNameLabel->setText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
@@ -672,7 +673,7 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
             } else {
                 auto socketType = getSocketType();
                 auto sinput = socketType.at(0);
-                if (!sinput.empty()) {
+                if (!sinput.empty() && sinput.size() > i) {
                     for (int d = 0; d < summedInputs.size(); d++) {
                         // Use the default input when nothing is connected to a constant socket
                         if (sinput.at(i) == VAR) {

@@ -306,7 +306,9 @@ public:
         node->setProjectID(-1);
         node->setIndexTag(-1);
 
-        deleteNodes(node->mHeadlessLaplaceNodes);
+        if (!node->mHeadlessLaplaceNodes.empty()) {
+            deleteNodes(node->mHeadlessLaplaceNodes);
+        }
 
         ZNodeUtil::get().submitForRecycle(node);
 
@@ -350,8 +352,6 @@ public:
                 }
             }
         }
-
-        node->initializeEdges();
         node->invalidateSingleNode();
     }
 

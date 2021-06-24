@@ -678,12 +678,13 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
                 lock_guard<mutex> guard(mEvalMutex);
                 mEvalSet.insert(node);
                 mEvalConVar.notify_one();
+
             }
         });
+        node->setCornerRadius(5);
     }
 
     deselectNode(node);
-    node->setCornerRadius(5);
     node->setVisibility(true);
     node->setIsDeleted(false);
 
@@ -978,6 +979,9 @@ void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, 
 }
 
 void ZNodeEditor::updateLines() {
+    if (mNodeViews.empty()) {
+        return;
+    }
     for (ZLineView* lineView : mLineBucket) {
         lineView->setVisibility(false);
     }

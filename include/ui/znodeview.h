@@ -120,7 +120,8 @@ public:
     ///// Start node definitions /////////////////////
     //////////////////////////////////////////////////
 
-    vector<vector<SocketType>> NONE_TYPE = {{NONE}, {NONE}};
+    vector<vector<SocketType>> NONE_TYPE = {vector<SocketType>(MAX_INPUT_COUNT, NONE),
+            vector<SocketType>(MAX_INPUT_COUNT, NONE)};
     vector<vector<SocketType>> mSocketType = NONE_TYPE;
 
     vector<SocketType> mGroupInSockets = vector<SocketType>(MAX_INPUT_COUNT, CON);
@@ -907,7 +908,7 @@ public:
                     var).at(singleInput.second);
         }
 
-        if (inputSocket.empty()) {
+        if (inputSocket.empty() && !getSocketType().empty()) {
             if (getSocketType().at(0).at(socketIndex) == VAR) {
                 summedInputs = x;
             } else if (getSocketType().at(0).at(socketIndex) == CON) {
@@ -987,7 +988,7 @@ public:
         return mConstantValueInput;
     }
 
-    vector<ZNodeView*> mHeadlessLaplaceNodes;
+    vector<ZNodeView*> mHeadlessLaplaceNodes = vector<ZNodeView*>();
 
     void setEditorInterface(std::function<void(ZNodeView*, bool)> interface) {
         mEditorInterface = std::move(interface);
