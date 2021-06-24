@@ -331,15 +331,21 @@ public:
         }
 
         for (const vector<pair<ZNodeView *, int>> &outputs : node->mOutputIndices) {
-            int pairIndex = 0;
+
             for (pair<ZNodeView *, int> output : outputs) {
                 ZNodeView *nextNode = output.first;
 
                 if (nextNode != nullptr) {
-                    remove(nextNode->mInputIndices.at(output.second), pairIndex);
+                    int pairIndex = 0;
+                    for (auto inputIndice : nextNode->mInputIndices.at(output.second)) {
+                        if (inputIndice.first == node) {
+                            remove(nextNode->mInputIndices.at(output.second), pairIndex);
+                        }
+                        pairIndex++;
+                    }
                     nextNode->invalidateNodeRecursive();
                 }
-                pairIndex++;
+
 
             }
         }
