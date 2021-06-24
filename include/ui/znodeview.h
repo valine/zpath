@@ -1041,6 +1041,8 @@ public:
 
     void setSocketCount(ivec2 count);
 
+    void invalidateForDelete();
+
     /**
      * The input proxy node is used within the group node
      * to pull input from outside the group.
@@ -1176,6 +1178,7 @@ private:
     void initializeGroup();
 
     vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
+
 };
 
 

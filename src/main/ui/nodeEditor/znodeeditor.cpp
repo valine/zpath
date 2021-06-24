@@ -423,7 +423,6 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
     addNodeToView(root, false);
     root->setOffset(position);
     root->setInitialPosition(position);
-    root->invalidateSingleNode();
 
     if (depth == 0) {
         deselectAllNodes();
@@ -441,9 +440,11 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         for (pair<ZNodeView*, int> input : socketInputs) {
             ZNodeView* child = input.first;
 
-            if (uniqueChildren.count(child) == 0) {
-                uniqueChildren.insert(child);
-                children.push_back(child);
+            if (child != nullptr) {
+                if (uniqueChildren.count(child) == 0) {
+                    uniqueChildren.insert(child);
+                    children.push_back(child);
+                }
             }
         }
     }
@@ -459,16 +460,18 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
     }
 
     for (ZNodeView* node : children) {
-        vec2 nodeSize = node->getNodeSize(node->getType());
-        addNodeGraph(node, vec2(position.x,
-                                mTmpNodeOffsetYR.at(depth)) -
-                                (vec2(nodeSize.x, 0) + vec2(margin, 0)),
-                     depth + 1);
-        mTmpNodeOffsetYR.at(depth) += nodeSize.y + margin;
-        mTmpNodes.at(depth).push_back(node);
+        if (node != nullptr) {
+            vec2 nodeSize = node->getNodeSize(node->getType());
+            addNodeGraph(node, vec2(position.x,
+                                    mTmpNodeOffsetYR.at(depth)) -
+                               (vec2(nodeSize.x, 0) + vec2(margin, 0)),
+                         depth + 1);
+            mTmpNodeOffsetYR.at(depth) += nodeSize.y + margin;
+            mTmpNodes.at(depth).push_back(node);
 
-        if (node->getOffsetX() - margin < 0) {
-            mTmpNodeOffsetX = std::min(mTmpNodeOffsetX, (int) node->getOffsetX() - margin);
+            if (node->getOffsetX() - margin < 0) {
+                mTmpNodeOffsetX = std::min(mTmpNodeOffsetX, (int) node->getOffsetX() - margin);
+            }
         }
     }
 
@@ -503,6 +506,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
             }
         }
 
+        root->invalidateSingleNode();
         getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         updateLines();
 
@@ -519,8 +523,10 @@ void ZNodeEditor::selectNodeGraph(ZNodeView* root, int depth) {
         for (pair<ZNodeView*, int> input : socketInputs) {
             ZNodeView* child = input.first;
 
-            if (uniqueChildren.count(child) == 0) {
-                uniqueChildren.insert(child);
+            if (child != nullptr) {
+                if (uniqueChildren.count(child) == 0) {
+                    uniqueChildren.insert(child);
+                }
             }
         }
     }
@@ -540,9 +546,11 @@ void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
         for (pair<ZNodeView*, int> input : socketInputs) {
             ZNodeView* child = input.first;
 
-            if (uniqueChildren.count(child) == 0) {
-                uniqueChildren.insert(child);
-                children.push_back(child);
+            if (child != nullptr) {
+                if (uniqueChildren.count(child) == 0) {
+                    uniqueChildren.insert(child);
+                    children.push_back(child);
+                }
             }
         }
     }
@@ -623,7 +631,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
                     nodesToUpdate.insert(node);
                 } else {
                     editor->deleteNodeAsync(node);
-                    editor->updateLines();
+                    //editor->updateLines();
                 }
 
                 std::lock_guard<std::mutex> guard(editor->mEvalMutex);
@@ -640,6 +648,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
         glfwPostEmptyEvent();
         if (editor->mEvalSet.empty()) {
             {
+                editor->updateLines();
                 std::unique_lock<std::mutex> lck(editor->mEvalMutex);
                 editor->mEvalConVar.wait(lck);
             }
@@ -835,51 +844,20 @@ void ZNodeEditor::deleteSelectedConnections() {
 }
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
-    if (!node->isDeleted()) {
-        node->invalidateSingleNode();
-        node->setVisibility(false);
-        node->setIsDeleted(true);
-        remove(mNodeViews, node->getIndexTag());
-        reindexNodes();
-    }
+    node->setIsDeleted(true);
+    node->setVisibility(false);
+    node->invalidateForDelete();
+    remove(mNodeViews, node->getIndexTag());
+    reindexNodes();
+
 }
 
 void ZNodeEditor::deleteConnections(ZNodeView* node) {
-        for (const vector<pair<ZNodeView *, int>> &inputs : node->mInputIndices) {
-            for (pair<ZNodeView *, int> input : inputs) {
-                ZNodeView *prevNode = input.first;
-                int index = 0;
-                for (pair<ZNodeView *, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
-                    if (outputNode.first == node) {
-                        remove(prevNode->mOutputIndices.at(input.second), index);
-                    }
-
-                    index++;
-                }
-            }
-        }
-
-        for (const vector<pair<ZNodeView *, int>> &outputs : node->mOutputIndices) {
-            int pairIndex = 0;
-            for (pair<ZNodeView *, int> output : outputs) {
-                ZNodeView *nextNode = output.first;
-
-                if (nextNode != nullptr) {
-                    remove(nextNode->mInputIndices.at(output.second), pairIndex);
-                    nextNode->invalidateNodeRecursive();
-                }
-                pairIndex++;
-
-            }
-        }
-
-        node->initializeEdges();
-        node->invalidateSingleNode();
+    ZNodeUtil::get().deleteConnections(node);
 }
 
 void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
     ZNodeUtil::get().deleteNode(node);
-    invalidate();
 }
 
 void ZNodeEditor::reindexNodes() {
@@ -997,6 +975,9 @@ void ZNodeEditor::updateLines() {
                 if (!nextNode.empty()) {
 
                     for (pair<ZNodeView *, int> inputIndex : node->mOutputIndices.at(outputIndex)) {
+                        if (inputIndex.first == nullptr) {
+                            continue;
+                        }
                         ZLineView *line = getLine(lineIndex++);
                         line->setPoints(outSockets.at(outputIndex)->getCenter(),
                                         inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter());
@@ -1009,7 +990,10 @@ void ZNodeEditor::updateLines() {
     }
 
     getParentView()->invalidate();
-    mMagnitudePicker->invalidate();
+
+    if (mMagnitudePicker != nullptr) {
+        mMagnitudePicker->invalidate();
+    }
 }
 
 ZLineView* ZNodeEditor::getLine(int index) {
@@ -1103,23 +1087,25 @@ void ZNodeEditor::onMouseDown() {
                         // Otherwise remove the last added connection
                        pair<ZNodeView*, int> prevNode = node->mInputIndices.at(j).at(node->mInputIndices.at(j).size() - 1);
                        int k = 0;
-                       for (pair<ZNodeView*, int> outputNode : prevNode.first->mOutputIndices.at(prevNode.second)) {
-                           if (outputNode.first == node && outputNode.second == j) {
-                               remove(prevNode.first->mOutputIndices.at(prevNode.second), k);
+                       if (prevNode.first != nullptr) {
+                           for (pair<ZNodeView *, int> outputNode : prevNode.first->mOutputIndices.at(
+                                   prevNode.second)) {
+                               if (outputNode.first == node && outputNode.second == j) {
+                                   remove(prevNode.first->mOutputIndices.at(prevNode.second), k);
 
-                               // Attach line to previous node after remove
-                               mDragType = SOCKET_DRAG_OUT;
-                               mInitialOffset = prevNode.first->getSocketsOut().at(prevNode.second)->getCenter();
-                               mDragSocket = prevNode.second;
-                               mDragNode = prevNode.first->getIndexTag();
-                               mTmpLine->setVisibility(true);
-                               mTmpLine->setPoints(mInitialOffset, node->getSocketsIn().at(j)->getCenter());
-                               break;
+                                   // Attach line to previous node after remove
+                                   mDragType = SOCKET_DRAG_OUT;
+                                   mInitialOffset = prevNode.first->getSocketsOut().at(prevNode.second)->getCenter();
+                                   mDragSocket = prevNode.second;
+                                   mDragNode = prevNode.first->getIndexTag();
+                                   mTmpLine->setVisibility(true);
+                                   mTmpLine->setPoints(mInitialOffset, node->getSocketsIn().at(j)->getCenter());
+                                   break;
+                               }
+                               k++;
                            }
-                           k++;
                        }
                        node->mInputIndices.at(j).pop_back();
-
                        node->invalidateNodeRecursive();
                        node->invalidate();
                     }

@@ -636,22 +636,25 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
 
             // Loop over all inputs on a single socket
             for (pair<ZNodeView *, int> input : inputs) {
-                vector<vector<float>> recurOutput;
-                if (root == nullptr) {
-                    recurOutput = input.first->evaluate(x, this, rootInput);
-                } else {
-                    recurOutput = input.first->evaluate(x, root, rootInput);
-                }
-                for (int d = 0; d < summedInputs.size(); d++) {
-                    // It's possible a previous node on the stack has too few inputs.
-                    // When that happens display an error message.
-                    if (recurOutput.empty()) {
-                        mOutputLabel->setText("Bad input");
-                        mOutputLabel->setTextColor(red);
-                        return vector<vector<float>>();
+
+                if (input.first != nullptr) {
+                    vector<vector<float>> recurOutput;
+                    if (root == nullptr) {
+                        recurOutput = input.first->evaluate(x, this, rootInput);
                     } else {
-                        if (d < recurOutput.size() && input.second < recurOutput.at(d).size()) {
-                            summedInputs.at(d).at(i) += recurOutput.at(d).at(input.second);
+                        recurOutput = input.first->evaluate(x, root, rootInput);
+                    }
+                    for (int d = 0; d < summedInputs.size(); d++) {
+                        // It's possible a previous node on the stack has too few inputs.
+                        // When that happens display an error message.
+                        if (recurOutput.empty()) {
+                            mOutputLabel->setText("Bad input");
+                            mOutputLabel->setTextColor(red);
+                            return vector<vector<float>>();
+                        } else {
+                            if (d < recurOutput.size() && input.second < recurOutput.at(d).size()) {
+                                summedInputs.at(d).at(i) += recurOutput.at(d).at(input.second);
+                            }
                         }
                     }
                 }
@@ -743,6 +746,12 @@ void ZNodeView::invalidateSingleNode() {
     }
 }
 
+void ZNodeView::invalidateForDelete() {
+    if (mInvalidateListener != nullptr) {
+        mInvalidateListener(this);
+    }
+}
+
 /**
  * Invalidate this node and all child nodes
  */
@@ -751,6 +760,9 @@ void ZNodeView::invalidateNodeRecursive() {
 
     for (const vector<pair<ZNodeView*, int>>& outputSocket : mOutputIndices) {
         for (pair<ZNodeView*, int> child : outputSocket) {
+            if (child.first == nullptr) {
+                continue;
+            }
             if (!child.first->isInvalid()) {
                 child.first->invalidateNodeRecursive();
             }

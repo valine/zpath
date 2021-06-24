@@ -68,7 +68,7 @@ private:
     ZLinearLayout* mButtonPanel;
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
-    ZMagnitudePicker* mMagnitudePicker;
+    ZMagnitudePicker* mMagnitudePicker = nullptr;
 
     ZView* mBoxSelect = nullptr;
     ZCursorView* mCursorView = nullptr;

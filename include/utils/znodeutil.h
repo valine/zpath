@@ -320,33 +320,32 @@ public:
             for (pair<ZNodeView *, int> input : inputs) {
                 ZNodeView *prevNode = input.first;
                 int index = 0;
-                for (pair<ZNodeView *, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
-                    if (outputNode.first == node) {
-                        remove(prevNode->mOutputIndices.at(input.second), index);
+                if (prevNode != nullptr) {
+                    for (pair<ZNodeView *, int> outputNode: prevNode->mOutputIndices.at(input.second)) {
+                        if (outputNode.first == node) {
+                            remove(prevNode->mOutputIndices.at(input.second), index);
+                        } else {
+                            index++;
+                        }
                     }
-
-                    index++;
                 }
             }
         }
 
         for (const vector<pair<ZNodeView *, int>> &outputs : node->mOutputIndices) {
-
             for (pair<ZNodeView *, int> output : outputs) {
                 ZNodeView *nextNode = output.first;
-
                 if (nextNode != nullptr) {
                     int pairIndex = 0;
                     for (auto inputIndice : nextNode->mInputIndices.at(output.second)) {
                         if (inputIndice.first == node) {
                             remove(nextNode->mInputIndices.at(output.second), pairIndex);
+                        } else {
+                            pairIndex++;
                         }
-                        pairIndex++;
                     }
                     nextNode->invalidateNodeRecursive();
                 }
-
-
             }
         }
 
@@ -420,21 +419,22 @@ public:
             for (pair<ZNodeView *, int> input : root->mInputIndices.at(0)) {
                 ZNodeView *child = input.first;
 
-                bool needParen = getNodePriority(root) > getNodePriority(child);
-                // Recursive
-                if (needParen) {
-                    expression += "(";
-                }
-                expression += graphToExpString(child, true);
+                if (child != nullptr) {
+                    bool needParen = getNodePriority(root) > getNodePriority(child);
+                    // Recursive
+                    if (needParen) {
+                        expression += "(";
+                    }
+                    expression += graphToExpString(child, true);
 
-                if (needParen) {
-                    expression += ")";
-                }
+                    if (needParen) {
+                        expression += ")";
+                    }
 
-                if (index < root->mInputIndices.at(0).size() - 1) {
-                    expression += " + ";
+                    if (index < root->mInputIndices.at(0).size() - 1) {
+                        expression += " + ";
+                    }
                 }
-
                 index++;
             }
             if (firstSocketMultiInput) {
@@ -454,21 +454,22 @@ public:
             for (pair<ZNodeView *, int> input : root->mInputIndices.at(1)) {
                 ZNodeView *child = input.first;
 
-                // Recursive
-                bool needParen = getNodePriority(root) > getNodePriority(child);
-                // Recursive
-                if (needParen) {
-                    expression += "(";
-                }
-                expression += graphToExpString(child, true);
+                if (child != nullptr) {
+                    // Recursive
+                    bool needParen = getNodePriority(root) > getNodePriority(child);
+                    // Recursive
+                    if (needParen) {
+                        expression += "(";
+                    }
+                    expression += graphToExpString(child, true);
 
-                if (index < root->mInputIndices.at(1).size() - 1) {
-                    expression += " + ";
+                    if (index < root->mInputIndices.at(1).size() - 1) {
+                        expression += " + ";
+                    }
+                    if (needParen) {
+                        expression += ")";
+                    }
                 }
-                if (needParen) {
-                    expression += ")";
-                }
-
                 index++;
             }
             if (secondSocketMultiInput) {
@@ -511,11 +512,13 @@ public:
                 int index = 0;
                 for (pair<ZNodeView *, int> input : root->mInputIndices.at(socketIndex)) {
                     ZNodeView *child = input.first;
-                    expression += graphToExpString(child, true);
-                    if (index < root->mInputIndices.at(socketIndex).size() - 1) {
-                        expression += " + ";
-                    }
 
+                    if (child != nullptr) {
+                        expression += graphToExpString(child, true);
+                        if (index < root->mInputIndices.at(socketIndex).size() - 1) {
+                            expression += " + ";
+                        }
+                    }
                     index++;
                 }
             }
