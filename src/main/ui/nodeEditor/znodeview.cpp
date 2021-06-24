@@ -671,23 +671,26 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
                 return vector<vector<float>>();
             } else {
                 auto socketType = getSocketType();
-                for (int d = 0; d < summedInputs.size(); d++) {
-                    // Use the default input when nothing is connected to a constant socket
-                    if (socketType.at(0).at(i) == VAR) {
-                        summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
-                        summedInputs.at(IMAG).at(i) = 0;
-                    } else if (socketType.at(0).at(i) == VAR_Z) {
-                        summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
-                        summedInputs.at(IMAG).at(i) = x.at(IMAG).at(i);
-                    } else if (socketType.at(0).at(i) == CON) {
-                        // By default constants have no imaginary component
-                        if (d == REAL) {
-                            summedInputs.at(d).at(i) = mConstantValueInput.at(i);
-                        } else {
-                            summedInputs.at(d).at(i) = 0.0;
+                auto sinput = socketType.at(0);
+                if (!sinput.empty()) {
+                    for (int d = 0; d < summedInputs.size(); d++) {
+                        // Use the default input when nothing is connected to a constant socket
+                        if (sinput.at(i) == VAR) {
+                            summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
+                            summedInputs.at(IMAG).at(i) = 0;
+                        } else if (sinput.at(i) == VAR_Z) {
+                            summedInputs.at(REAL).at(i) = x.at(REAL).at(i);
+                            summedInputs.at(IMAG).at(i) = x.at(IMAG).at(i);
+                        } else if (sinput.at(i) == CON) {
+                            // By default constants have no imaginary component
+                            if (d == REAL) {
+                                summedInputs.at(d).at(i) = mConstantValueInput.at(i);
+                            } else {
+                                summedInputs.at(d).at(i) = 0.0;
+                            }
+                        } else if (sinput.at(i) == ENUM) {
+                            summedInputs.at(d).at(i) = mConstantMagnitudeInput.at(i);
                         }
-                    } else if (socketType.at(0).at(i) == ENUM) {
-                        summedInputs.at(d).at(i) = mConstantMagnitudeInput.at(i);
                     }
                 }
             }
@@ -758,8 +761,8 @@ void ZNodeView::invalidateForDelete() {
 void ZNodeView::invalidateNodeRecursive() {
     invalidateSingleNode();
 
-    for (const vector<pair<ZNodeView*, int>>& outputSocket : mOutputIndices) {
-        for (pair<ZNodeView*, int> child : outputSocket) {
+    for (const vector<pair<ZNodeView *, int>> &outputSocket : mOutputIndices) {
+        for (pair<ZNodeView *, int> child : outputSocket) {
             if (child.first == nullptr) {
                 continue;
             }

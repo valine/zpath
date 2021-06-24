@@ -53,6 +53,7 @@ public:
     // Background evaluation
     set<ZNodeView*> mEvalSet;
     mutex mEvalMutex;
+    mutex mNodeMutex;
     condition_variable mEvalConVar;
 
     static void startEvaluation(ZNodeEditor* editor);
@@ -69,6 +70,7 @@ private:
     vector<ZNodeView*> mNodeViews;
     ZLineView* mTmpLine;
     ZMagnitudePicker* mMagnitudePicker = nullptr;
+    bool mNodeListInvalid = false;
 
     ZView* mBoxSelect = nullptr;
     ZCursorView* mCursorView = nullptr;

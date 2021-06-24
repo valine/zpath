@@ -290,6 +290,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         for (ZNodeView* node : mSelectedNodes) {
             deleteNodeRecursive(node);
         }
+        reindexNodes();
 
         mSelectedNodes.clear();
 
@@ -506,7 +507,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
             }
         }
 
-        root->invalidateSingleNode();
+       // root->invalidateSingleNode();
         getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         updateLines();
 
@@ -562,8 +563,6 @@ void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
         deleteNodeRecursive(node);
     }
 
-    remove(mNodeViews, root->getIndexTag());
-    reindexNodes();
     deleteNodeAsync(root);
 }
 
@@ -646,7 +645,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
         if (editor->mLineContainer != nullptr) {
             for (ZNodeView* node : nodesToUpdate) {
-                node->updateChart();
+                if (node->getIndexTag() != -1) {
+                    node->updateChart();
+                }
             }
         }
 
@@ -672,15 +673,14 @@ ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
 void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     if (node->getParentView() != mNodeContainer) {
         mNodeContainer->addSubView(node);
+        node->setInvalidateListener([this](ZNodeView* node){
+            {
+                lock_guard<mutex> guard(mEvalMutex);
+                mEvalSet.insert(node);
+                mEvalConVar.notify_one();
+            }
+        });
     }
-
-    node->setInvalidateListener([this](ZNodeView* node){
-        {
-            lock_guard<mutex> guard(mEvalMutex);
-            mEvalSet.insert(node);
-            mEvalConVar.notify_one();
-        }
-    });
 
     deselectNode(node);
     node->setCornerRadius(5);
@@ -688,9 +688,9 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setIsDeleted(false);
 
     node->setIndexTag(mNodeViews.size());
+
     mNodeViews.push_back(node);
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
-
 
     vec2 scale = mNodeContainer->getScale();
     vec2 translation = mNodeContainer->getInnerTranslation();
@@ -814,6 +814,8 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });
+
+
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
@@ -844,15 +846,12 @@ void ZNodeEditor::deleteSelectedConnections() {
     for (ZNodeView* node : mSelectedNodes) {
         deleteConnections(node);
     }
-
-    updateLines();
 }
 
 void ZNodeEditor::deleteNode(ZNodeView * node) {
     node->setIsDeleted(true);
     node->setVisibility(false);
     node->invalidateForDelete();
-    remove(mNodeViews, node->getIndexTag());
     reindexNodes();
 
 }
@@ -863,14 +862,27 @@ void ZNodeEditor::deleteConnections(ZNodeView* node) {
 
 void ZNodeEditor::deleteNodeAsync(ZNodeView *node) {// Otherwise remove the last added connection
     ZNodeUtil::get().deleteNode(node);
+    mNodeListInvalid = true;
+
+
+//    mNodeMutex.lock();
+//    remove(mNodeViews, node->getIndexTag());
+//    mNodeMutex.unlock();
 }
 
 void ZNodeEditor::reindexNodes() {
     int index = 0;
+    for (int i = 0; i < mNodeViews.size(); i++) {
+        if (mNodeViews.at(i)->getIndexTag() == -1) {
+            remove(mNodeViews, i);
+            i--;
+        }
+    }
     for (ZNodeView *nv : mNodeViews){
         nv->setIndexTag(index);
         index++;
     }
+    mNodeListInvalid = false;
 }
 
 void ZNodeEditor::selectNode(ZNodeView* node) {
