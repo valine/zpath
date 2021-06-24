@@ -71,8 +71,10 @@ int main(int argc, char* argv[]) {
 
         // Calculator
         auto calculator = tiles->triggerSideSplit(0.25, 3);
-        auto viewport = calculator->triggerOverUnderSplit(0.3, 0, false);
+        auto viewport = calculator->triggerOverUnderSplit(0.5, 2, false);
         auto dev = calculator->getChild(0)->triggerOverUnderSplit(0.5, 4, false);
+        auto textedit = viewport->triggerOverUnderSplit(0.5, 0, false);
+
     });
 
     //ZTabbedViewController* tabs = new ZTabbedViewController(argv, {nodeView, textEditor, view3d});
