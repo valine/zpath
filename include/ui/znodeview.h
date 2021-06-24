@@ -1129,12 +1129,12 @@ private:
     vector<int> mMagPrecision = {8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0};
 
     function<void(ZView *sender, ZNodeView *node, int socketIndex,
-                  bool isInput, float initialValue, string name)> mShowMagnitudeView;
+                  bool isInput, float initialValue, string name)> mShowMagnitudeView = nullptr;
 
     function<void(ZView *sender, ZNodeView *node, int socketIndex,
-                  bool isInput, float initialValue, string name, vector<string> enumNames)> mShowEnumView;
+                  bool isInput, float initialValue, string name, vector<string> enumNames)> mShowEnumView = nullptr;
 
-    function<void(ZNodeView *node)> mInvalidateListener;
+    function<void(ZNodeView *node)> mInvalidateListener = nullptr;
 
     vector<complex<float>> mFftCache;
     vector<complex<float>> mMlCache;

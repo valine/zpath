@@ -537,6 +537,9 @@ void ZNodeEditor::selectNodeGraph(ZNodeView* root, int depth) {
 }
 
 void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
+    if (root == nullptr) {
+        return;
+    }
     set<ZNodeView*> uniqueChildren;
     vector<ZNodeView*> children;
     vector<vector<pair<ZNodeView *, int>>> inputIndices = root->mInputIndices;
@@ -559,7 +562,9 @@ void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
         deleteNodeRecursive(node);
     }
 
-    deleteNode(root);
+    remove(mNodeViews, root->getIndexTag());
+    reindexNodes();
+    deleteNodeAsync(root);
 }
 
 vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {

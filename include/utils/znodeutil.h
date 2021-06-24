@@ -200,16 +200,18 @@ public:
     /////////////////////
 
     ZNodeView* newNode(ZNodeView::Type type) {
-        ZNodeView* node;
+        ZNodeView* node = nullptr;
         if (!mDeleteNodes.empty()) {
-            node = mDeleteNodes.front();
-            mDeleteNodes.pop();
+            while (node == nullptr && !mDeleteNodes.empty()) {
+                node = mDeleteNodes.front();
+                mDeleteNodes.pop();
+            }
+
             if (node == nullptr) {
                 node = new ZNodeView(type);
             } else {
                 node->setType(type);
             }
-
         } else {
             node = new ZNodeView(type);
         }
