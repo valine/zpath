@@ -29,6 +29,20 @@ ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(max
 
 void ZNodeView::onCreate() {
     ZView::onCreate();
+    int buttonIndex = 0;
+    int margin = 2;
+    int firstLineWidth = (int) mNameLabel->getTextWidth();
+    int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
+
+    for (auto button : mButtons) {
+        button->setMaxWidth(button->getLabel()->getTextWidth() / mDP + 18);
+        button->setMaxHeight(18);
+        button->setYOffset(2);
+        button->setXOffset(buttonOffset);
+        buttonOffset += button->getMaxWidth();
+        button->setElevation(1.0);
+        buttonIndex++;
+    }
 }
 
 void ZNodeView::init() {
@@ -390,20 +404,19 @@ void ZNodeView::setType(ZNodeView::Type type) {
             button = mButtons.at(buttonIndex);
         }
         button->setOnClick(getButtonCallback(buttonIndex));
-        button->setMaxWidth(button->getLabel()->getTextWidth() + 15);
-        button->setMaxHeight(16);
+        button->setMaxWidth(button->getLabel()->getTextWidth());
+        button->setMaxHeight(18);
         button->setYOffset(2);
         button->setCornerRadius(vec4(8));
-        button->getLabel()->offsetBy(0, -5);
         button->setVisibility(true);
         button->setIndexTag(buttonIndex);
 
+        button->computeBounds();
         button->setBackgroundColor(white);
         button->setXOffset(buttonOffset);
         buttonOffset += button->getMaxWidth();
 
         button->setElevation(1.0);
-        button->onWindowChange(getWindowWidth(), getWindowHeight());
         buttonIndex++;
     }
 

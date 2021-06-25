@@ -46,6 +46,8 @@ public:
 
     float getTextWidth();
 
+    void computeLineWidth();
+
 private:
 
     bool mInit = false;
@@ -77,8 +79,6 @@ private:
 
 
     void onCreate();
-
-    void computeLineWidth();
 
 };
 
