@@ -20,6 +20,16 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
    
 	float backgroundColor[4] = {0.002428, 0.021219, 0.063010, 1.0};
 	int i = 0;
+
+	vector<pair<float,float>> rotations = {
+	        {135,45},
+            {-90,-90},
+            {50,90},
+            {-120,90},
+            {90,45},
+            {180, -90},
+	};
+
 	for (int x = 0; x < tilesX; x++) {
 		for (int y = 0; y < tilesY; y++) {
 			auto *renderer = new ZRenderer(mResourcePath);
@@ -43,11 +53,11 @@ void ZTiledView::setTileCount(int tilesX, int tilesY) {
 			tile->getRenderer()->getCamera()->setWidth(width);
 			tile->getRenderer()->getCamera()->setHeight(height);
 			tile->getRenderer()->recreateBuffers();
-			i++;
+			tile->setTilt(rotations.at(i).first);
+            tile->setSpin(rotations.at(i).first);
+            tile->setZoom(2);
 
-			if (x == 1) {
-				tile->setTilt(-90);
-			}
+			i++;
 		}
 	}
 

@@ -41,6 +41,8 @@ public:
 
     void setZoom(float zoom);
 
+    void setSpin(float angle);
+
 private:
 	ZRenderer *mRenderer;
 

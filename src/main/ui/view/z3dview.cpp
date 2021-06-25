@@ -38,6 +38,10 @@ void Z3DView::setTilt(float angle) {
 	mTiltRig->setRotationAngle(angle);
 }
 
+void Z3DView::setSpin(float angle) {
+    mSpinRig->setRotationAngle(angle);
+}
+
 void Z3DView::setZoom(float zoom) {
     mRenderer->getCamera()->setTranslation(vec3(0,0,zoom));
 }

@@ -1421,13 +1421,11 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
     // Scrolling with shift key is used for zooming charts
     if (!shiftKeyPressed() && !isMouseInBounds(mDrawer)){
-        float maxScale = 0.3;
+        float maxScale = 0.1;
         float minScale = 1.0;
         float scaleDelta = 1.0 + (y / 5.0);
         vec2 originalScale = mNodeContainer->getRelativeScale();
         vec2 newScale = max(vec2(maxScale), min(vec2(minScale), originalScale * vec2(scaleDelta)));
-
-
         vec2 initialPos = mNodeContainer->getInnerTranslation();
         vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
 

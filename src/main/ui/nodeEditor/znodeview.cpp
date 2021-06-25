@@ -125,29 +125,52 @@ void ZNodeView::init() {
     mXMinLabel = new ZLabel("xmin", mChart);
     mXMinLabel->setMaxWidth(boundLabelWidth);
     mXMinLabel->setGravity(bottomLeft);
-    //mXMinLabel->setBackgroundColor(vec4(0));
     mXMinLabel->setTextColor(boundColor);
+    mXMinLabel->setTextColor(boundColor);
+    mXMinLabel->setBackgroundColor(white);
+    mXMinLabel->setCornerRadius(mXMinLabel->getMaxHeight()/2);
+    mXMinLabel->setElevation(1.0);
+    mXMinLabel->setMargin(vec4(2));
+   // mXMinLabel->setOutlineColor(darkerGrey);
+    //mXMinLabel->setLineWidth(0.0001);
 
     mXMaxLabel = new ZLabel("xmax", mChart);
     mXMaxLabel->setMaxWidth(boundLabelWidth);
     mXMaxLabel->setGravity(bottomRight);
     mXMaxLabel->setMargin(vec4(0));
-    //mXMaxLabel->setBackgroundColor(vec4(0));
-    mXMaxLabel->setXOffset(-20);
+    mXMaxLabel->setXOffset(-0);
     mXMaxLabel->setTextColor(boundColor);
+    mXMaxLabel->setTextColor(boundColor);
+    mXMaxLabel->setBackgroundColor(white);
+    mXMaxLabel->setCornerRadius(mXMaxLabel->getMaxHeight()/2);
+    mXMaxLabel->setElevation(1.0);
+    mXMaxLabel->setMargin(vec4(2));
+   // mXMaxLabel->setOutlineColor(darkerGrey);
+    //mXMaxLabel->setLineWidth(0.0001);
 
     mYMinLabel = new ZLabel("ymin", mChart);
     mYMinLabel->setMaxWidth(boundLabelWidth);
     mYMinLabel->setGravity(bottomLeft);
     mYMinLabel->setYOffset(20);
-    //mYMinLabel->setBackgroundColor(vec4(0));
     mYMinLabel->setTextColor(boundColor);
+    mYMinLabel->setTextColor(boundColor);
+    mYMinLabel->setBackgroundColor(white);
+    mYMinLabel->setCornerRadius(mYMinLabel->getMaxHeight()/2);
+    mYMinLabel->setElevation(1.0);
+    mYMinLabel->setMargin(vec4(2));
+    //mYMinLabel->setOutlineColor(darkerGrey);
+    //mYMinLabel->setLineWidth(0.0001);
 
     mYMaxLabel = new ZLabel("ymax", mChart);
     mYMaxLabel->setMaxWidth(boundLabelWidth);
     mYMaxLabel->setGravity(topLeft);
-    //mYMaxLabel->setBackgroundColor(vec4(0));
     mYMaxLabel->setTextColor(boundColor);
+    mYMaxLabel->setBackgroundColor(white);
+    mYMaxLabel->setCornerRadius(mYMaxLabel->getMaxHeight()/2);
+    mYMaxLabel->setElevation(1.0);
+    mYMaxLabel->setMargin(vec4(2));
+   // mYMaxLabel->setOutlineColor(darkerGrey);
+   // mYMaxLabel->setLineWidth(0.0001);
 
     updateLabelVisibility();
 

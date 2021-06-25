@@ -8,11 +8,10 @@
 void ZTextViewController::onCreate() {
     ZViewController::onCreate();
 
-    ZTextField* textField = new ZTextField(this);
+    auto* textField = new ZTextField(this);
     textField->setMaxHeight(ZView::fillParent);
-    textField->setMargin(vec4(10));
-    textField->setBackgroundColor(lightGrey);
+    textField->setMargin(vec4(3));
+    textField->setBackgroundColor(bg);
     textField->setXOffset(0);
-
-
+    textField->setCornerRadius(2);
 }

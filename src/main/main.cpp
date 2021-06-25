@@ -27,15 +27,15 @@ int main(int argc, char* argv[]) {
 
     CasUtil::get().testCompute();
    // vector<ZViewController*> controller = {new ZPathViewController(argv), new ZPathViewController(argv)};
-
-    auto* view3d = new ZPathViewController(argv);
-    view3d->setName("3D Viewport");
-
-    auto* nodeView = new NodeViewController(argv);
-    nodeView->setName("Node Editor");
-
-    auto* textEditor = new ZTextViewController(argv);
-    textEditor->setName("Text Editor");
+//
+//    auto* view3d = new ZPathViewController(argv);
+//    view3d->setName("3D Viewport");
+//
+//    auto* nodeView = new NodeViewController(argv);
+//    nodeView->setName("Node Editor");
+//
+//    auto* textEditor = new ZTextViewController(argv);
+//    textEditor->setName("Text Editor");
 
     auto* tiles = new ZTileViewController(argv, [argv](int index) {
         ZViewController *controller = nullptr;

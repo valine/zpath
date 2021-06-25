@@ -530,12 +530,12 @@ void ZView::setWindowHeight(int height) {
 }
 
 void ZView::onWindowChange(int windowWidth, int windowHeight) {
-    computeBounds();
     if (mParentView == this) {
         mMaxWidth = windowWidth;
         mMaxHeight = windowHeight;
     }
-
+    
+    computeBounds();
     for (int i = 0; i < mViews.size(); i++) {
         if (i < mViews.size() && mViews.at(i)->getVisibility()) {
             mViews.at(i)->onWindowChange(right, bottom);

@@ -73,7 +73,7 @@ void ZPathViewController::onCreate() {
     mTileView->setGravity(ZView::topRight);
     addSubView(mTileView);
 
-    mTileView->setZoom(3);
+    mTileView->setZoom(2);
 
     auto* subViewController = new ZViewController(getResourcePath());
     tab2->addSubView(subViewController);

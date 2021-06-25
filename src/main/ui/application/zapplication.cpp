@@ -252,6 +252,7 @@ void ZApplication::onWindowResize(int width, int height, ZViewController *viewCo
     glClearColor(background.r, background.g, background.b, background.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     viewController->onWindowChange(width, height);
+    viewController->invalidate();
 }
 
 void ZApplication::onWindowMove(GLFWwindow *window) {
