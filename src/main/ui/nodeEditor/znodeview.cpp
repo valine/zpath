@@ -404,7 +404,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
             button = mButtons.at(buttonIndex);
         }
         button->setOnClick(getButtonCallback(buttonIndex));
-        button->setMaxWidth(button->getLabel()->getTextWidth());
+        button->setMaxWidth(button->getLabel()->getTextWidth() / mDP + 18);
         button->setMaxHeight(18);
         button->setYOffset(2);
         button->setCornerRadius(vec4(8));
