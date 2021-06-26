@@ -211,6 +211,10 @@ public:
                 node = new ZNodeView(type);
             } else {
                 node->setType(type);
+
+                if (type != ZNodeView::Type::LAPLACE_S) {
+                    deleteNodes(node->mHeadlessLaplaceNodes);
+                }
             }
         } else {
             node = new ZNodeView(type);
@@ -305,10 +309,6 @@ public:
         node->mGroupNodes.clear();
         node->setProjectID(-1);
         node->setIndexTag(-1);
-
-        if (!node->mHeadlessLaplaceNodes.empty()) {
-            deleteNodes(node->mHeadlessLaplaceNodes);
-        }
 
         ZNodeUtil::get().submitForRecycle(node);
 
