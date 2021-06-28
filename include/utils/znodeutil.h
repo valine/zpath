@@ -298,6 +298,7 @@ public:
         }
 
         node->setVisibility(false);
+        node->setLineWidth(0);
         deleteConnections(node);
 
         deleteNodes(node->getGroupNodes());
