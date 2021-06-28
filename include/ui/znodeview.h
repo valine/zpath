@@ -1079,6 +1079,7 @@ public:
 
     vector<ZButton*> mButtons;
     ZNodeView* mGroupOutput = nullptr;
+    Type mType = ADD;
 private:
     bool mInvalid = true;
     bool mIsDeleted = false;
@@ -1089,8 +1090,6 @@ private:
 
     vector<ZLabel *> mSocketInLabels;
     vector<ZLabel *> mSockOutLabels;
-
-    Type mType = ADD;
 
     ZLabel *mOutputLabel = nullptr;
     ZLabel *mNameLabel = nullptr;

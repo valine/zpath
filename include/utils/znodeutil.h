@@ -211,10 +211,6 @@ public:
                 node = new ZNodeView(type);
             } else {
                 node->setType(type);
-
-                if (type != ZNodeView::Type::LAPLACE_S) {
-                    deleteNodes(node->mHeadlessLaplaceNodes);
-                }
             }
         } else {
             node = new ZNodeView(type);
@@ -311,13 +307,12 @@ public:
         node->setProjectID(-1);
         node->setIndexTag(-1);
 
+        for (auto laplace : node->mHeadlessLaplaceNodes) {
+            deleteNode(laplace);
+        }
+        node->mHeadlessLaplaceNodes.clear();
+
         ZNodeUtil::get().submitForRecycle(node);
-
-//        auto deleteInterface = node->getEditorDeletionInterface();
-//        if (deleteInterface != nullptr) {
-//            deleteInterface(node, node->getIndexTag());
-//        }
-
     }
 
     void deleteConnections(ZNodeView* node) {
@@ -515,8 +510,10 @@ public:
                 int index = 0;
                 for (pair<ZNodeView *, int> input : root->mInputIndices.at(socketIndex)) {
                     ZNodeView *child = input.first;
-
                     if (child != nullptr) {
+                        if (child == root) {
+                            return "Invalid tree";
+                        }
                         expression += graphToExpString(child, true);
                         if (index < root->mInputIndices.at(socketIndex).size() - 1) {
                             expression += " + ";

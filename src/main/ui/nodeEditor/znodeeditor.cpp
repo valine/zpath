@@ -533,6 +533,9 @@ void ZNodeEditor::selectNodeGraph(ZNodeView* root, int depth) {
     }
 
     for (ZNodeView* node : uniqueChildren) {
+        if (node == root) {
+            return;
+        }
         selectNodeGraph(node, depth + 1);
     }
 }
@@ -841,6 +844,10 @@ void ZNodeEditor::deleteSelectedNodes() {
 
     resetCursor();
     mSelectedNodes.clear();
+
+    if (!mExpressionField->isViewInFocus()) {
+        mExpressionField->setText("");
+    }
 }
 
 void ZNodeEditor::deleteSelectedConnections() {

@@ -212,7 +212,7 @@ void ZNodeView::updateChart() {
 
             for (ZNodeView* node : mHeadlessLaplaceNodes) {
                 node->setVisibility(false);
-                ZNodeUtil::get().submitForRecycle(node);
+                ZNodeUtil::get().deleteNode(node);
             }
             mHeadlessLaplaceNodes.clear();
             updateChartHeatMap();
@@ -738,6 +738,9 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
 }
 
 vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput) {
+    if (root == this) {
+        return vector<vector<float>>(MAX_INPUT_COUNT, vector<float>(MAX_INPUT_COUNT, 0));
+    }
     ivec2 size = getSocketCount();
     if (size.x == 0) {
         x = compute(x, mType, rootInput);
@@ -910,7 +913,10 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x,
         string result = ZUtil::replace(CasUtil::get().evaluate(laplace), "\n", "");
         string zResult = ZUtil::replace(result, "x", "z");
         vector<ZNodeView*> headless = ZNodeUtil::get().expStringToGraph(zResult);
-        mHeadlessLaplaceNodes.push_back(headless.at(0));
+        for (auto lnode : headless) {
+            mHeadlessLaplaceNodes.push_back(lnode);
+        }
+
     }
     return mHeadlessLaplaceNodes.at(0)->evaluate(std::move(x), rootInput);
 }
