@@ -58,6 +58,7 @@ public:
         X,
         Y,
         Z, // Complex variable
+        T, // Time
         MIN,
         MAX,
         FILE,
@@ -153,6 +154,7 @@ public:
                 case X:
                 case Y: return {{}, {VAR, CON, CON}};
                 case Z: return {{}, {VAR, CON, CON}};
+                case T: return {{CON, CON}, {VAR}};
                 case FILE: return {{}, {VAR, CON, CON}};
                 case IFFT: return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
                 case FFT: return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
@@ -267,6 +269,8 @@ public:
 
     vector<string> getSocketNames() {
         switch (mType) {
+            case T:
+                return {"Speed", ""};
             case POLY:
                 return {"X", "A", "BX", "CX^2", "DX^3"};
             case ADD:
@@ -363,6 +367,8 @@ public:
                 return "y";
             case Z:
                 return "z";
+            case T:
+                return "t";
             case FILE:
                 return "file";
             case IFFT:
@@ -463,6 +469,8 @@ public:
                 return {"+", "-"};
             case GROUP_OUT:
                 return {"+", "-"};
+            case T:
+                return {"Pause"};
             default:
                 return {};
         }
@@ -535,6 +543,11 @@ public:
                         return nullptr;
 
                 }
+            }
+            case T: {
+                return [this](ZView *sender) {
+
+                };
             }
             default:
                 return nullptr;

@@ -768,6 +768,10 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
 
 void ZNodeView::draw() {
     ZView::draw();
+
+    if (getType() == ZNodeView::Type::T) {
+        invalidateNodeRecursive();
+    }
 }
 
 void ZNodeView::clearInvalidateNode() {
@@ -1072,6 +1076,10 @@ ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<
                 x.at(REAL).at(0) = 0;
                 x.at(IMAG) = mConstantValueOutput;
                 return x;
+            case T: {
+                x.at(REAL).at(0) = glfwGetTime() * x.at(REAL).at(0);
+                return x;
+            }
             case X:
                 x.at(REAL).at(0) = x.at(REAL).at(0);
                 x.at(REAL).at(1) = chartBound.x;
