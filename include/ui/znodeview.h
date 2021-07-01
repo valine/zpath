@@ -1095,6 +1095,7 @@ public:
     Type mType = ADD;
 private:
     bool mInvalid = true;
+    bool mRecursiveInvalidate = false;
     bool mIsDeleted = false;
     bool mReadyForRecycle = false;
 

@@ -630,6 +630,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
 
     while(shouldRun) {
         set<ZNodeView*> nodesToUpdate;
+        bool wasDelete = false;
         while (!editor->mEvalSet.empty()) {
             {
                 ZNodeView *node = *editor->mEvalSet.begin();
@@ -638,7 +639,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
                     nodesToUpdate.insert(node);
                 } else {
                     editor->deleteNodeAsync(node);
-                    //editor->updateLines();
+                    wasDelete = true;
                 }
 
                 std::lock_guard<std::mutex> guard(editor->mEvalMutex);
@@ -657,7 +658,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
         glfwPostEmptyEvent();
         if (editor->mEvalSet.empty()) {
             {
-                editor->updateLines();
+                if (wasDelete) {
+                    editor->updateLines();
+                }
                 std::unique_lock<std::mutex> lck(editor->mEvalMutex);
                 editor->mEvalConVar.wait(lck);
             }

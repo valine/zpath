@@ -777,6 +777,7 @@ void ZNodeView::draw() {
 void ZNodeView::clearInvalidateNode() {
     //setBackgroundColor(white);  // Turn this to another color to debug invalidation logic.
     mInvalid = false;
+    mRecursiveInvalidate = false;
 }
 
 /**
@@ -805,13 +806,17 @@ void ZNodeView::invalidateForDelete() {
 void ZNodeView::invalidateNodeRecursive() {
     invalidateSingleNode();
 
-    for (const vector<pair<ZNodeView *, int>> &outputSocket : mOutputIndices) {
-        for (pair<ZNodeView *, int> child : outputSocket) {
-            if (child.first == nullptr) {
-                continue;
-            }
-            if (!child.first->isInvalid()) {
-                child.first->invalidateNodeRecursive();
+    if (!mRecursiveInvalidate) {
+
+        mRecursiveInvalidate = true;
+        for (const vector<pair<ZNodeView *, int>> &outputSocket : mOutputIndices) {
+            for (pair<ZNodeView *, int> child : outputSocket) {
+                if (child.first == nullptr) {
+                    continue;
+                }
+                if (!child.first->isInvalid()) {
+                    child.first->invalidateNodeRecursive();
+                }
             }
         }
     }
