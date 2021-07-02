@@ -613,7 +613,13 @@ void ZNodeEditor::addTestNodes() {
 
 void ZNodeEditor::onCreate() {
     ZView::onCreate();
+    mEvaluateRunning = true;
 
+}
+
+void ZNodeEditor::onExit() {
+    ZView::onExit();
+    mEvaluateRunning = false;
 }
 
 void ZNodeEditor::onLayoutFinished() {
@@ -624,11 +630,7 @@ void ZNodeEditor::onLayoutFinished() {
  * Starts the evaluation background thread
  */
 void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
-
-    // Todo: end loop when window closes
-    bool shouldRun = true;
-
-    while(shouldRun) {
+    while(editor->mEvaluateRunning) {
         set<ZNodeView*> nodesToUpdate;
         bool wasDelete = false;
         while (!editor->mEvalSet.empty()) {
