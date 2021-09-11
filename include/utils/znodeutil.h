@@ -75,6 +75,14 @@ public:
             nodeString += "\n";
         }
 
+        if (node->getSocketCount().x > 0) {
+            nodeString += "mag:";
+            for (int i = 0; i < node->getSocketCount().x; i++) {
+                nodeString += to_string(node->getInputMagnitude(i)) + ",";
+            }
+            nodeString += "\n";
+        }
+
         // Parse inner group node
         if (type == ZNodeView::Type::GROUP) {
             nodeString+="group:";
@@ -117,6 +125,8 @@ public:
             ZNodeView::Type type = ZNodeView::Type::LAST;
             vec2 pos;
             vec2 size;
+            vector<float> inputs;
+            vector<float> magnitudes;
             int id;
             string edges;
             for (const auto& attr : attrs) {
@@ -140,6 +150,16 @@ public:
                     id = stoi(value);
                 } else if (key == "edges") {
                     edges = value;
+                } else if (key == "defaultin") {
+                    vector<string> inputsS = split(value, ',');
+                    for (const string& input : inputsS) {
+                        inputs.push_back(stof(input));
+                    }
+                } else if (key == "mag") {
+                    vector<string> magnitudesS = split(value, ',');
+                    for (const string& magnitude : magnitudesS) {
+                        magnitudes.push_back(stoi(magnitude));
+                    }
                 }
             }
 
@@ -151,6 +171,18 @@ public:
             nodeMap.insert({id, node});
             edgeMap.insert({id, edges});
 
+            int index = 0;
+            for (float input : inputs) {
+                int magnitude = 1;
+
+                // Older versions don't have magnitude so check for it exists
+                if (magnitudes.size() > index) {
+                    magnitude = magnitudes.at(index);
+                }
+
+                node->setConstantValueInput(index, input, magnitude);
+                index++;
+            }
             nodes.insert(node);
         }
 
