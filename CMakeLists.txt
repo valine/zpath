@@ -134,7 +134,6 @@ if (COMPILE_DEPS)
     add_dependencies(zpath png)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/include)
 
-
     #
     #   assimp
     #
@@ -190,23 +189,41 @@ if (COMPILE_DEPS)
     add_dependencies(zpath freetype2b)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b/include)
 
+    #
+    #   JSON
+    #
+    set(json_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/json")
+    set(json_install_dir "${json_prefix}")
+    set(json_cmake_args  "-DCMAKE_INSTALL_PREFIX=${json_install_dir}")
+    externalproject_add(json
+            PREFIX         ${json_prefix}
+            GIT_REPOSITORY https://github.com/nlohmann/json.git
+            UPDATE_COMMAND ""
+            GIT_SHALLOW 1
+            INSTALL_DIR    ${json_install_dir}
+            CMAKE_ARGS     ${json_cmake_args}
+            LOG_DOWNLOAD ON
+            )
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/json/include)
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/json/lib)
+    add_dependencies(zpath json)
 
 else(COMPILE_DEPS)
-
-    set(zdep_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep")
-    set(zdep_install_dir "${zdep_prefix}")
-    set(zdep_cmake_args  "-DCMAKE_INSTALL_PREFIX=${zlib_install_dir}")
-    externalproject_add(zdep
-            PREFIX         ${zdep_prefix}
-            GIT_REPOSITORY https://github.com/valine/zpath-deps.git
-            GIT_SHALLOW 1
-            BUILD_COMMAND ""
-            UPDATE_COMMAND ""
-            INSTALL_COMMAND ""
-            LOG_DOWNLOAD ON)
-    add_dependencies(zpath zdep)
-
 endif(COMPILE_DEPS)
+
+set(zdep_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep")
+set(zdep_install_dir "${zdep_prefix}")
+set(zdep_cmake_args  "-DCMAKE_INSTALL_PREFIX=${zlib_install_dir}")
+externalproject_add(zdep
+        PREFIX         ${zdep_prefix}
+        GIT_REPOSITORY https://github.com/valine/zpath-deps.git
+        GIT_SHALLOW 1
+        BUILD_COMMAND ""
+        UPDATE_COMMAND ""
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD ON)
+add_dependencies(zpath zdep)
+
 
 #Opengl
 find_package (OpenGL REQUIRED)
@@ -251,9 +268,8 @@ if (APPLE)
         else()
             set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/macos-arm")
             set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
-
-
         endif()
+
         find_package(BZip2 REQUIRED)
         find_package(BLAS REQUIRED)
         add_definitions(-D__APPLE__)
@@ -357,12 +373,16 @@ if (LINUX)
     message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
     include_directories(${X11_INCLUDE_DIR})
 
+    set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/linux")
     if (COMPILE_DEPS)
 
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b/include)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/include)
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib)
         include_directories(${ASSIMP_INCLUDE_DIR})
+
+        include_directories(${zdep_path}/giac/include)
+
         target_link_libraries (zpath
                 ${OPENGL_LIBRARIES}
                 "${glfw_install_dir}/lib/libglfw3.a"
@@ -372,10 +392,11 @@ if (LINUX)
                 "${assimp_install_dir}/lib/libassimp.so"
                 "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/lib/libpng.a"
                 "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib/libz.a"
-                "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b-build/libfreetype.a")
+                "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b-build/libfreetyped.a"
+                "${zdep_path}/giac/libgiac.so")
 
     else(COMPILE_DEPS)
-        set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/linux")
+
         message(STATUS "${zdep_path}")
 
         include_directories(${zdep_path}/glm)
