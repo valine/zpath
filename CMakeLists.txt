@@ -189,24 +189,36 @@ if (COMPILE_DEPS)
     add_dependencies(zpath freetype2b)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b/include)
 
-    #
-    #   JSON
-    #
-    set(json_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/json")
-    set(json_install_dir "${json_prefix}")
-    set(json_cmake_args  "-DCMAKE_INSTALL_PREFIX=${json_install_dir}")
-    externalproject_add(json
-            PREFIX         ${json_prefix}
+#    #
+#    #   JSON
+#    #
+#    set(json_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/json")
+#    set(json_install_dir "${json_prefix}")
+#    set(json_cmake_args  "-DCMAKE_INSTALL_PREFIX=${json_install_dir}")
+#    externalproject_add(json
+#            PREFIX         ${json_prefix}
+#            GIT_REPOSITORY https://github.com/nlohmann/json.git
+#            UPDATE_COMMAND ""
+#            GIT_SHALLOW 1
+#            INSTALL_DIR    ${json_install_dir}
+#            CMAKE_ARGS     ${json_cmake_args}
+#            LOG_DOWNLOAD ON
+#            )
+#    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/json/include)
+#    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/json/lib)
+#    add_dependencies(zpath json)
+
+    include(FetchContent)
+
+    FetchContent_Declare(json
             GIT_REPOSITORY https://github.com/nlohmann/json.git
-            UPDATE_COMMAND ""
-            GIT_SHALLOW 1
-            INSTALL_DIR    ${json_install_dir}
-            CMAKE_ARGS     ${json_cmake_args}
-            LOG_DOWNLOAD ON
-            )
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/json/include)
-    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/json/lib)
-    add_dependencies(zpath json)
+            GIT_TAG v3.7.3)
+
+    FetchContent_GetProperties(json)
+    if(NOT json_POPULATED)
+        FetchContent_Populate(json)
+        add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif()
 
 else(COMPILE_DEPS)
 endif(COMPILE_DEPS)
@@ -380,7 +392,7 @@ if (LINUX)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/png/include)
         link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib)
         include_directories(${ASSIMP_INCLUDE_DIR})
-
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/json/include)
         include_directories(${zdep_path}/giac/include)
 
         target_link_libraries (zpath
@@ -391,6 +403,7 @@ if (LINUX)
                 ${CMAKE_DL_LIBS}
                 "${assimp_install_dir}/lib/libassimp.so"
                 "${CMAKE_CURRENT_SOURCE_DIR}/deps/png/lib/libpng.a"
+                nlohmann_json::nlohmann_json
                 "${CMAKE_CURRENT_SOURCE_DIR}/deps/zlib/lib/libz.a"
                 "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b-build/libfreetyped.a"
                 "${zdep_path}/giac/libgiac.so")

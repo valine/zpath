@@ -3,6 +3,9 @@
 //
 // Created by lukas on 8/4/20.
 //
+//#include <nlohmann/json.hpp>
+//using json = nlohmann::json;
+
 
 #include <ui/zlineview.h>
 #include <ui/zlabel.h>
@@ -23,6 +26,7 @@
 #include "utils/casutil.h"
 #include "utils/zutil.h"
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
+
     setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
 
     vector<string> allTypes;

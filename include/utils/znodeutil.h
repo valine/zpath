@@ -75,10 +75,28 @@ public:
             nodeString += "\n";
         }
 
+        if (node->getSocketCount().y > 0) {
+            nodeString += "defaultout:";
+            for (int i = 0; i < node->getSocketCount().y; i++) {
+                nodeString += to_string(node->getConstantValue(i)) + ",";
+            }
+            if (!node->getConstantInputs().empty()) {
+                nodeString.pop_back();
+            }
+            nodeString += "\n";
+        }
+
         if (node->getSocketCount().x > 0) {
             nodeString += "mag:";
             for (int i = 0; i < node->getSocketCount().x; i++) {
                 nodeString += to_string(node->getInputMagnitude(i)) + ",";
+            }
+            nodeString += "\n";
+        }
+        if (node->getSocketCount().y > 0) {
+            nodeString += "magOut:";
+            for (int i = 0; i < node->getSocketCount().y; i++) {
+                nodeString += to_string(node->getOutputMagnitude(i)) + ",";
             }
             nodeString += "\n";
         }
@@ -126,7 +144,9 @@ public:
             vec2 pos;
             vec2 size;
             vector<float> inputs;
-            vector<float> magnitudes;
+            vector<float> outputs;
+            vector<float> magnitudesIn;
+            vector<float> magnitudesOut;
             int id;
             string edges;
             for (const auto& attr : attrs) {
@@ -155,10 +175,20 @@ public:
                     for (const string& input : inputsS) {
                         inputs.push_back(stof(input));
                     }
+                } else if (key == "defaultout") {
+                    vector<string> outputS = split(value, ',');
+                    for (const string& output : outputS) {
+                        outputs.push_back(stof(output));
+                    }
                 } else if (key == "mag") {
                     vector<string> magnitudesS = split(value, ',');
                     for (const string& magnitude : magnitudesS) {
-                        magnitudes.push_back(stoi(magnitude));
+                        magnitudesIn.push_back(stoi(magnitude));
+                    }
+                } else if (key == "magOut") {
+                    vector<string> magnitudesS = split(value, ',');
+                    for (const string& magnitude : magnitudesS) {
+                        magnitudesOut.push_back(stoi(magnitude));
                     }
                 }
             }
@@ -171,17 +201,29 @@ public:
             nodeMap.insert({id, node});
             edgeMap.insert({id, edges});
 
+            // Node constant inputs
             int index = 0;
             for (float input : inputs) {
                 int magnitude = 1;
 
                 // Older versions don't have magnitude so check for it exists
-                if (magnitudes.size() > index) {
-                    magnitude = magnitudes.at(index);
+                if (magnitudesIn.size() > index) {
+                    magnitude = magnitudesIn.at(index);
                 }
 
                 node->setConstantValueInput(index, input, magnitude);
                 index++;
+            }
+
+            // Node constant outputs
+            int oindex = 0;
+            for (float output : outputs) {
+                int magnitude = 1;
+                if (magnitudesOut.size() > index) {
+                    magnitude = magnitudesOut.at(index);
+                }
+                node->setConstantValue(index, output, magnitude);
+                oindex++;
             }
             nodes.insert(node);
         }
