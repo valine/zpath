@@ -51,6 +51,22 @@ public:
         return fullPathString;
     }
 
+    /**
+     * Renames a project at path to name
+     * @param fromPath Path to prject
+     * @param toName
+     * @return
+     */
+    string renameProject(const string& fromPath, const string& toName) {
+
+        string projectFolder = "resources/graphs/";
+        string path = ZSettingsStore::get().getResourcePath() + projectFolder;
+        string ext = ".zpath";
+        string toPath = path + toName + ext;
+        rename(fromPath.c_str(), toPath.c_str());
+        return toPath;
+    }
+
     vector<string> getProjectNames() {
         string projectFolder = "resources/graphs/";
         string path = ZSettingsStore::get().getResourcePath() + projectFolder;

@@ -63,6 +63,15 @@ void ZProjectView::addProject(string name) {
     project->setOnClick([this](ZView* sender){
         selectProject(sender);
     });
+
+    project->setOnReturn([this, project](string name) {
+        if (mOnProjectRenamed != nullptr) {
+            string path = mOnProjectRenamed(std::move(name), project->getIndexTag());
+            mNameMap.at(project->getIndexTag()) = path;
+            cout << path << endl;
+        }
+    });
+
     mProjectViews.push_back(project);
     project->setIndexTag(mProjectIdInc);
     mNameMap.insert({mProjectIdInc, name});

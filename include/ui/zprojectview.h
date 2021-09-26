@@ -22,11 +22,16 @@ public :
         mOnProjectSaved = listener;
     }
 
+    void setOnProjectRenamed(function<string(string name, int index)> rename) {
+        mOnProjectRenamed = rename;
+    }
+
     void onLayoutFinished() override;
 private:
     vector<ZTextField*> mProjectViews;
     function<vector<string>()> mModelInterface;
     function<void(int index, string path)> mOnProjectSelected = nullptr;
+    function<string(string name, int index)> mOnProjectRenamed = nullptr;
     function<string(string name, int index)> mOnProjectSaved = nullptr;
     int mProjectIdInc = 0;
     map<int, string> mNameMap;

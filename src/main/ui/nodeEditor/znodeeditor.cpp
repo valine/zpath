@@ -144,6 +144,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         return ZNodeStore::get().saveGraph(projectNodes, name, false);
     });
 
+    mProjectBrowser->setOnProjectRenamed([this](string name, int index){
+        return ZNodeStore::get().renameProject(mProjectPath, name);
+    });
 
     auto* headerBackground = new ZView(fillParent, 25, this);
     headerBackground->setBackgroundColor(darkerGrey);
