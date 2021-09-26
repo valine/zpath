@@ -202,6 +202,7 @@ private:
 
     void reindexNodes();
 
+    void selectProject(int index, string &path);
 };
 
 

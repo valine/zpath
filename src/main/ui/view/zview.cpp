@@ -393,6 +393,10 @@ void ZView::redrawCornerRadius() {
 }
 
 void ZView::drawShadow() {
+    if (mElevation < 0.01) {
+        return;
+    }
+
     float shadowRadius = 30 * mElevation;
     float offset = -5 * mElevation;
     if (mElevation > 0 && mShadowView == nullptr) {

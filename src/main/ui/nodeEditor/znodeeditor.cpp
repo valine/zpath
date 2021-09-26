@@ -97,43 +97,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mProjectBrowser->setMarginTop(200);
     mProjectBrowser->onWindowChange(getWindowWidth(), getWindowWidth());
     mProjectBrowser->setOnProjectSelected([this](int index, string path) {
-        mSelectedProject = index;
-        mProjectPath = path;
-
-        // Saved project selected
-        if (!path.empty()) {
-
-            set<ZNodeView*> toDelete;
-            for (auto node : mNodeViews) {
-                if (node->getProjectID() == index) {
-                    toDelete.insert(node);
-                } else if (node->getProjectID() != -1 ){
-                    node->setVisibility(false);
-                }
-            }
-
-            for (auto node : toDelete) {
-                deleteNode(node);
-            }
-
-            set<ZNodeView *> nodes = ZNodeStore::get().loadGraph(path);
-            for (auto node : nodes) {
-                node->setProjectID(mSelectedProject);
-                addNodeToView(node, false);
-            }
-        } else {
-            for (auto node : mNodeViews) {
-                if (node->getProjectID() == index) {
-                    node->setVisibility(true);
-                } else {
-                    node->setVisibility(false);
-                }
-            }
-        }
-
-        updateLines();
-        onWindowChange(getWindowWidth(), getWindowHeight());
+        selectProject(index, path);
     });
+
     mProjectBrowser->setOnProjectSaved([this](string name, int index){
         set<ZNodeView*> projectNodes;
         for (auto node : mNodeViews) {
@@ -146,6 +112,29 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mProjectBrowser->setOnProjectRenamed([this](string name, int index){
         return ZNodeStore::get().renameProject(mProjectPath, name);
+    });
+
+    mProjectBrowser->setOnProjectDelete([this](string path, int index){
+        bool success = true;
+        if (!path.empty()) {
+            success = ZNodeStore::get().deleteProject(path);
+        }
+
+        if (success) {
+            set<ZNodeView *> toDelete;
+            for (auto node : mNodeViews) {
+                if (node->getProjectID() == index) {
+                    toDelete.insert(node);
+                }
+            }
+            for (auto node : toDelete) {
+                deleteNode(node);
+            }
+        } else {
+            cout << "bad delete " << path << endl;
+        }
+
+        return success;
     });
 
     auto* headerBackground = new ZView(fillParent, 25, this);
@@ -313,6 +302,45 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
 //    testCorners();
+}
+
+void ZNodeEditor::selectProject(int index, string &path) {
+    mSelectedProject = index;
+    mProjectPath = path;
+
+    // Saved project selected
+    if (!path.empty()) {
+
+        set<ZNodeView*> toDelete;
+        for (auto node : mNodeViews) {
+            if (node->getProjectID() == index) {
+                toDelete.insert(node);
+            } else if (node->getProjectID() != -1 ){
+                node->setVisibility(false);
+            }
+        }
+
+        for (auto node : toDelete) {
+            deleteNode(node);
+        }
+
+        set<ZNodeView *> nodes = ZNodeStore::get().loadGraph(path);
+        for (auto node : nodes) {
+            node->setProjectID(mSelectedProject);
+            addNodeToView(node, false);
+        }
+    } else {
+        for (auto node : mNodeViews) {
+            if (node->getProjectID() == index) {
+                node->setVisibility(true);
+            } else {
+                node->setVisibility(false);
+            }
+        }
+    }
+
+    updateLines();
+    onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
 void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {

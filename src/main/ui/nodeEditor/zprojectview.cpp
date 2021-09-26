@@ -6,31 +6,75 @@
 
 #include "ui/zprojectview.h"
 #include "ui/ztextfield.h"
-ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZScrollView(120, fillParent, parent) {
+ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZView(120, fillParent, parent) {
+
+    mScrollView = new ZScrollView(fillParent, fillParent, this);
+    mScrollView->setInnerViewHeight(200);
+    mScrollView->setBackgroundColor(transparent);
+
     mModelInterface = model;
     setBackgroundColor(white);
     setElevation(1.0);
     setCornerRadius(vec4(5,1,1,1));
-    setInnerViewHeight(200);
 
-    auto newProject = new ZTextField(this);
-    newProject->setText("New Project");
-    newProject->setFocusMode(ZTextField::FocusMode::doubleClick);
-    newProject->setMaxWidth(200);
-    newProject->setCornerRadius(vec4(5));
-    newProject->setMargin(vec4(2, 2, 2, 0));
-    newProject->setBackgroundColor(grey);
-    newProject->setOnClick([this](ZView* sender){
+    auto newProjectBtn = new ZButton("New", this);
+    newProjectBtn->setMaxWidth(getMaxWidth() * 0.55);
+    newProjectBtn->setCornerRadius(vec4(5));
+    newProjectBtn->setMargin(vec4(2, 2, 2, 2));
+    newProjectBtn->setBackgroundColor(grey);
+    newProjectBtn->setGravity(bottomLeft);
+    newProjectBtn->setOnClick([this](ZView* sender){
         addUnsavedProject();
+    });
+
+    auto deleteProjectBtn = new ZButton("Delete", this);
+    deleteProjectBtn->setMaxWidth(getMaxWidth() * 0.40);
+    deleteProjectBtn->setCornerRadius(vec4(5));
+    deleteProjectBtn->setMargin(vec4(2, 2, 2, 2));
+    deleteProjectBtn->setBackgroundColor(grey);
+    deleteProjectBtn->setGravity(bottomRight);
+    deleteProjectBtn->setBackgroundColor(darkGrey);
+    deleteProjectBtn->setOnClick([this](ZView* sender){
+        if (mOnProjectDelete(mNameMap.at(mSelectedTag), mSelectedTag)) {
+            auto toDelete = mProjectViews.at(mSelectedTag);
+            mScrollView->getInnerView()->removeSubView(toDelete);
+            mRecycleBin.push(toDelete);
+            mScrollView->getInnerView()->refreshMargins();
+            toDelete->setIndexTag(-1);
+
+            ZView* lastProject = getLastProject();
+            if (lastProject == nullptr) {
+                addUnsavedProject();
+                selectProject(getLastProject());
+            } else {
+                selectProject(lastProject);
+            }
+            cout << mRecycleBin.size() << endl;
+        }
     });
 
     vector<string> names = model();
     for (const auto& name : names) {
         addProject(name);
     }
-
     addUnsavedProject();
-    getInnerView()->refreshMargins();
+    mScrollView->getInnerView()->refreshMargins();
+    mScrollView->setMarginBottom(newProjectBtn->getMaxHeight());
+}
+
+ZView* ZProjectView::getLastProject() {
+    if (mProjectViews.empty()) {
+        return nullptr;
+    }
+    int index = mProjectViews.size() - 1;
+    while (index >= 0 && mProjectViews.at(index)->getIndexTag() == -1 ) {
+        index--;
+    }
+
+    if (index < 0) {
+        return nullptr;
+    }
+    return mProjectViews.at(index);
 }
 
 void ZProjectView::reloadProjects() {
@@ -51,15 +95,16 @@ void ZProjectView::onLayoutFinished() {
     selectProject(mProjectViews.at(mProjectViews.size() - 1));
 }
 
-void ZProjectView::addProject(string name) {
-    auto project = new ZTextField(this);
+void ZProjectView::addProject(const string& name) {
+    auto project = newProjectView();
     project->setText(getFileName(name));
     project->setFocusMode(ZTextField::FocusMode::doubleClick);
     project->setTextMode(ZTextField::TextMode::field);
     project->setMaxWidth(200);
+    project->setElevation(0);
     project->setCornerRadius(vec4(5));
     project->setMargin(vec4(2, 2, 2, 0));
-    project->setBackgroundColor(white);
+    project->setBackgroundColor(transparent);
     project->setOnClick([this](ZView* sender){
         selectProject(sender);
     });
@@ -80,45 +125,63 @@ void ZProjectView::addProject(string name) {
 }
 
 void ZProjectView::addUnsavedProject() {
-    auto unsavedPrj = new ZTextField(this);
+    auto unsavedPrj = newProjectView();
+    unsavedPrj->setText("");
     unsavedPrj->setTitleText("Unsaved Project");
     unsavedPrj->setFocusMode(ZTextField::FocusMode::doubleClick);
-    unsavedPrj->setOutlineType(WireType::outline);
     unsavedPrj->setTextMode(ZTextField::TextMode::field);
     unsavedPrj->setMaxWidth(200);
     unsavedPrj->setCornerRadius(vec4(5));
-    unsavedPrj->setMargin(vec4(2, 2, 2, 0));
-    unsavedPrj->setBackgroundColor(white);
-    unsavedPrj->setOutlineColor(grey);
-    unsavedPrj->setLineWidth(0.5);
+    unsavedPrj->setMargin(vec4(2, 0, 0, 0));
+    unsavedPrj->setBackgroundColor(gold);
     unsavedPrj->setOnClick([this](ZView* sender){
         selectProject(sender);
     });
     mProjectViews.push_back(unsavedPrj);
     unsavedPrj->setOnReturn([this, unsavedPrj](string name) {
         if (mOnProjectSaved != nullptr) {
-           string path = mOnProjectSaved(name, unsavedPrj->getIndexTag());
+           string path = mOnProjectSaved(std::move(name), unsavedPrj->getIndexTag());
            mNameMap.at(unsavedPrj->getIndexTag()) = path;
-           unsavedPrj->setOutlineType(none);
+           unsavedPrj->setBackgroundColor(white);
            unsavedPrj->invalidate();
-           unsavedPrj->setLineWidth(0.0);
+           selectProject(unsavedPrj);
         }
-        cout << name << endl;
     });
     unsavedPrj->setIndexTag(mProjectIdInc);
     mNameMap.insert({mProjectIdInc, ""});
     mProjectIdInc++;
 }
 
+ZTextField* ZProjectView::newProjectView() {
+    if (mRecycleBin.empty()) {
+        return new ZTextField(mScrollView);
+    } else {
+        auto view = mRecycleBin.front();
+        mScrollView->addSubView(view);
+        mRecycleBin.pop();
+        return view;
+    }
+}
+
 void ZProjectView::selectProject(ZView *sender) {
     for (auto project : mProjectViews) {
-        project->setBackgroundColor(white);
+
+        if (project->getIndexTag() != -1) {
+            // Unsaved project
+            if (mNameMap.at(project->getIndexTag()).empty()) {
+                project->setBackgroundColor(gold);
+            } else {
+                project->setBackgroundColor(white);
+            }
+        }
     }
     sender->setBackgroundColor(highlight);
     if (mOnProjectSelected != nullptr) {
          mOnProjectSelected(sender->getIndexTag(),
                            mNameMap.at(sender->getIndexTag()));
     }
+
+    mSelectedTag = sender->getIndexTag();
 }
 
 string ZProjectView::getFileName(const string& s) {

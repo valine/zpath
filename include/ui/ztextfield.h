@@ -57,6 +57,7 @@ public:
 
     void setTitleText(string text) {
         mTitle->setText(text);
+        mTitle->drawText();
     }
 
     void setBackgroundColor(vec4 color) override;

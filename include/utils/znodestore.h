@@ -67,6 +67,16 @@ public:
         return toPath;
     }
 
+    /**
+     * Delete project. Return true when sucessful.
+     * @param path
+     * @return
+     */
+    bool deleteProject(const string& path) {
+        int status = remove(path.c_str());
+        return status == 0;
+    }
+
     vector<string> getProjectNames() {
         string projectFolder = "resources/graphs/";
         string path = ZSettingsStore::get().getResourcePath() + projectFolder;
