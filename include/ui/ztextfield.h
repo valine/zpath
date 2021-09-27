@@ -32,6 +32,7 @@ public:
     void onGlobalMouseUp(int key) override;
     void onDoubleClick() override;
     void setText(string text) override;
+    void setTextColor(vec3 color) override;
 
     void setOnReturn(function<void(string)> listener) {
         mOnReturn = listener;

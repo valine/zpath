@@ -345,6 +345,11 @@ void ZNodeEditor::selectProject(int index, string &path) {
 
 void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     ZView::onKeyPress(key, scancode, action, mods);
+
+    if (isViewInFocus()) {
+        return;
+    }
+
     if (key == GLFW_KEY_R && shiftKeyPressed() && action == GLFW_PRESS) {
         addNode(mLastType);
     }

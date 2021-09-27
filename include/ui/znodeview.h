@@ -28,11 +28,11 @@ using namespace std;
 #include <complex.h>
 #include <utils/zfft.h>
 #include <array>
-#include "zlabel.h"
 #include "neuralcore/mlmodel.h"
 #include "zbutton.h"
 #include <set>
 #include "utils/casutil.h"
+#include "ztextfield.h"
 #include "utils/zutil.h"
 
 class ZNodeView : public ZView {
@@ -77,6 +77,7 @@ public:
         NEURAL_CORE,
         SIGMOID,
         TANH,
+        COMMENT,
         GROUP,
         GROUP_IN,
         GROUP_OUT,
@@ -101,7 +102,8 @@ public:
         ENUM,
         NN,
         SYMBOLIC,
-        GROUP_SOCKET
+        GROUP_SOCKET,
+        TEXT
 
     };
 
@@ -114,7 +116,8 @@ public:
         LINE_1D,
         LINE_1D_2X,
         LINE_2D,
-        IMAGE
+        IMAGE,
+        TEXT_FIELD
     };
 
     //////////////////////////////////////////////////
@@ -174,6 +177,7 @@ public:
                 case GROUP_OUT: return {{mGroupOutSockets}, {}};
                 case MIN:
                 case MAX: return {{VAR, VAR}, {VAR, CON, CON}};
+                case COMMENT: return {{}, {}};
                 case LAST: return {{NONE}, {NONE}};
             }
         }
@@ -411,6 +415,8 @@ public:
                 return "in";
             case GROUP_OUT:
                 return "out";
+            case COMMENT:
+                return "comment";
             case LAST:
                 return "none";
         }
@@ -562,6 +568,7 @@ public:
         const vec4 mSymbolicColor = vec4(0.122923, 0.061397, 0.314665, 1.000000);
         const vec4 mVariableZColor = vec4(0.848084, 0.215260, 0.077509, 1.000000);
         const vec4 mGroupColor = vec4(0.04, 0.04, 0.04, 1.000000);
+        const vec4 mCommentColor = vec4(0.455475, 0.288508, 0.171833, 1.000000);
 
         switch (type) {
             case CON:
@@ -578,6 +585,8 @@ public:
                 return mSymbolicColor;
             case GROUP_SOCKET:
                 return mGroupColor;
+            case TEXT:
+                return mCommentColor;
             default:
                 return mVariableColor;
         }
@@ -603,6 +612,8 @@ public:
             case GROUP_IN:
             case GROUP_OUT:
                 return getSocketColor(GROUP_SOCKET);
+            case COMMENT:
+                return getSocketColor(TEXT);
             default:
                 return vec4(1);
         }
@@ -635,6 +646,8 @@ public:
             case LAPLACE_S:
             case HEAT_MAP:
                 return IMAGE;
+            case COMMENT:
+                return TEXT_FIELD;
         }
     }
 
@@ -1106,7 +1119,7 @@ private:
     vector<ZLabel *> mSockOutLabels;
 
     ZLabel *mOutputLabel = nullptr;
-    ZLabel *mNameLabel = nullptr;
+    ZTextField *mNameLabel = nullptr;
 
     ZLabel *mXMinLabel = nullptr;
     ZLabel *mXMaxLabel = nullptr;

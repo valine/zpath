@@ -28,7 +28,7 @@ public:
 
     void draw() override;
     void setTextSize(int textSize);
-    void setTextColor(vec3 color);
+    virtual void setTextColor(vec3 color);
     vec3 getTextColor();
     virtual void setText(string text);
     void setFont(string fontPath);

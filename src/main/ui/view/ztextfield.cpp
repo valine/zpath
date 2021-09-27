@@ -38,6 +38,13 @@ void ZTextField::updateTitle() {
     }
 }
 
+void ZTextField::setTextColor(vec3 color) {
+    ZLabel::setTextColor(color);
+    if (mTitle != nullptr) {
+        mTitle->setTextColor(color);
+    }
+}
+
 void ZTextField::setText(string text) {
     ZLabel::setText(text);
     updateTitle();

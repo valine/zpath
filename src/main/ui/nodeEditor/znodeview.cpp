@@ -48,8 +48,12 @@ void ZNodeView::onCreate() {
 void ZNodeView::init() {
     mChart = new ZLineChart(fillParent, fillParent, this);
 
-    mNameLabel = new ZLabel("Node", this);
+    mNameLabel = new ZTextField(this);
+    mNameLabel->setFocusMode(ZTextField::FocusMode::doubleClick);
     mNameLabel->setTextColor(black);
+    mNameLabel->setTextMode(ZTextField::TextMode::field);
+    mNameLabel->setCornerRadius(0.0);
+    mNameLabel->setBackgroundColor(transparent);
     setBackgroundColor(vec4(0.95, 0.95, 0.95, 1.0));
 
     mOutputLabel = new ZLabel("", this);
@@ -377,7 +381,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
     setMaxHeight(getNodeSize(mType).y);
     initializeEdges();
 
-    mNameLabel->setText(getName(mType));
+    mNameLabel->setTitleText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
 
 
@@ -522,10 +526,18 @@ void ZNodeView::refreshView(ZNodeView::Type &type) {
 
     int socketOffset = std::max(inSocketOffset, outSocketOffset);
     setMaxHeight(std::max(socketOffset + SOCKET_HEIGHT + CHART_TOP_MARGIN, (int) getMaxHeight()));
+
+    ChartType chartType = getChartType(type);
     if (getChartType(type) == LINE_2D) {
         mChart->setInputType(getChartType(getType()));
     } else {
         mChart->setInputType(getChartType(getType()));
+    }
+
+    if (chartType == TEXT_FIELD) {
+        mChart->setVisibility(false);
+    } else {
+        mChart->setVisibility(true);
     }
 
     mNameLabel->setXOffset(22);
@@ -841,7 +853,6 @@ void ZNodeView::setMaxWidth(int width) {
 
 void ZNodeView::onSizeChange() {
     ZView::onSizeChange();
-
     updateLabelVisibility();
 }
 

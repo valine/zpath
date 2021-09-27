@@ -70,10 +70,11 @@ void ZView::onKeyPress(int key, int scancode, int action, int mods) {
     }
 
     for (auto & mView : mViews) {
-        if ((isMouseInBounds(mView)) || (action == GLFW_RELEASE && modifier)) {
+        if ((isMouseInBounds(mView)) || (action == GLFW_RELEASE && modifier) || key == GLFW_KEY_BACKSPACE) {
             mView->onKeyPress(key, scancode, action, mods);
         }
     }
+
 }
 
 void ZView::onCharacterInput(unsigned int character) {
@@ -1282,7 +1283,7 @@ void ZView::clearFocus() {
 
 void ZView::removeSubView(ZView* view) {
     int index = 0;
-    clearFocus();
+    releaseFocus(view);
     for (ZView* aView : mViews) {
         if (aView == view) {
             removeSubView(index);
