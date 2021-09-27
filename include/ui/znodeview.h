@@ -1096,6 +1096,18 @@ public:
     }
 
     /**
+     * Returns the node name / text.
+     * @return Node text
+     */
+    string getText() {
+        return mNameLabel->getText();
+    }
+
+    void setText(string text) {
+        mNameLabel->setText(std::move(text));
+    }
+
+    /**
     * Internal group node graph
     */
     ZNodeView* mGroupInput = nullptr;

@@ -113,7 +113,22 @@ public:
             nodeString+="\n";
         }
 
+        if (!node->getText().empty()) {
+            nodeString+="name:";
+            nodeString+=escapeText(node->getText());
+            nodeString+="\n";
+        }
+
         return nodeString;
+    }
+
+    string escapeText(string text) {
+        string escape = "\\";
+        findAndReplace(text, "\n", escape + "\n");
+        findAndReplace(text, ":", escape + ":");
+        findAndReplace(text, "=", escape + "=");
+        findAndReplace(text, ",", escape + ",");
+        return text;
     }
 
     string serialize(set<ZNodeView*> nodes) {
@@ -147,6 +162,7 @@ public:
             vector<float> outputs;
             vector<float> magnitudesIn;
             vector<float> magnitudesOut;
+            string name = "";
             int id;
             string edges;
             for (const auto& attr : attrs) {
@@ -190,6 +206,11 @@ public:
                     for (const string& magnitude : magnitudesS) {
                         magnitudesOut.push_back(stoi(magnitude));
                     }
+                } else if (key == "name") {
+
+                    if (!value.empty()) {
+                        name = value;
+                    }
                 }
             }
 
@@ -198,6 +219,7 @@ public:
             node->setMaxWidth(size.x);
             node->setMaxHeight(size.y);
             node->setIndexTag(id);
+            node->setText(name);
             nodeMap.insert({id, node});
             edgeMap.insert({id, edges});
 
@@ -260,12 +282,27 @@ public:
     }
 
     vector<string> split(const string &s, char delim) {
+        char escape = '\\';
         vector<string> result;
         stringstream ss (s);
         string item;
 
-        while (getline (ss, item, delim)) {
-            result.push_back (item);
+        string last = "";
+        while (getline(ss, item, delim)) {
+
+            // Delimiter was escaped
+            if (!last.empty() && !result.empty() &&
+                    last.at(last.size() - 1) == escape) {
+
+                last = item;
+                int rsize = result.size() - 1;
+                result.at(rsize).erase( result.at(rsize).size() - 1);
+                result.at(result.size() - 1) += delim + item;
+            } else {
+                result.push_back(item);
+                last = item;
+            }
+
         }
         return result;
     }
@@ -349,6 +386,15 @@ public:
         }
 
         return duplicates;
+    }
+
+    void findAndReplace(std::string& subject, const std::string& search,
+                              const std::string& replace) {
+        size_t pos = 0;
+        while ((pos = subject.find(search, pos)) != std::string::npos) {
+            subject.replace(pos, search.length(), replace);
+            pos += replace.length();
+        }
     }
 
     void deleteNodes(vector<ZNodeView*> nodes) {

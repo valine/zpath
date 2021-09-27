@@ -381,7 +381,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
     setMaxHeight(getNodeSize(mType).y);
     initializeEdges();
 
-    mNameLabel->setTitleText(getName(mType));
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
 
 
@@ -536,8 +535,15 @@ void ZNodeView::refreshView(ZNodeView::Type &type) {
 
     if (chartType == TEXT_FIELD) {
         mChart->setVisibility(false);
+        mNameLabel->setFocusMode(ZTextField::FocusMode::doubleClick);
+        mNameLabel->setTextMode(ZTextField::TextMode::editor);
+        mNameLabel->setMaxHeight(fillParent);
     } else {
         mChart->setVisibility(true);
+        mNameLabel->setFocusMode(ZTextField::FocusMode::doubleClick);
+        mNameLabel->setTextMode(ZTextField::TextMode::field);
+        mNameLabel->setMaxHeight(mNameLabel->getLineHeight());
+        mNameLabel->setTitleText(getName(mType));
     }
 
     mNameLabel->setXOffset(22);

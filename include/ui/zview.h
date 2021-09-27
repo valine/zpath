@@ -196,7 +196,7 @@ class ZView {
         virtual void setGravity(ZView::Gravity gravity);
         Gravity getGravity();
 
-        void setVisibility(bool visible);
+        virtual void setVisibility(bool visible);
         bool getVisibility();
 
         virtual void setBackgroundColor(float color[4]);

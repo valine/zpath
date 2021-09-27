@@ -147,6 +147,12 @@ void ZTextField::applyEdit() {
     updateTitle();
 }
 
+void ZTextField::setVisibility(bool visible) {
+    ZView::setVisibility(visible);
+
+    releaseFocus(this);
+}
+
 void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
     ZView::onKeyPress(key, scancode, action, mods);
 
