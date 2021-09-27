@@ -116,7 +116,6 @@ void ZProjectView::addProject(const string& name) {
             cout << path << endl;
         }
     });
-
     mProjectViews.push_back(project);
     project->setIndexTag(mProjectIdInc);
     mNameMap.insert({mProjectIdInc, name});

@@ -225,6 +225,7 @@ public:
                 node->setConstantValue(index, output, magnitude);
                 oindex++;
             }
+
             nodes.insert(node);
         }
 

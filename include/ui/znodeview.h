@@ -1192,6 +1192,8 @@ private:
     void initializeGroup();
 
     vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
+
+    void onSizeChange() override;
 };
 
 

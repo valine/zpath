@@ -839,6 +839,12 @@ void ZNodeView::setMaxWidth(int width) {
     }
 }
 
+void ZNodeView::onSizeChange() {
+    ZView::onSizeChange();
+
+    updateLabelVisibility();
+}
+
 void ZNodeView::copyParameters(ZNodeView* node) {
    setOffset(node->getOffset());
    setMaxWidth(node->getMaxWidth());

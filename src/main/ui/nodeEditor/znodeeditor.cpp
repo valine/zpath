@@ -858,8 +858,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });
-
-
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
