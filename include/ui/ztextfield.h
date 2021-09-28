@@ -60,6 +60,8 @@ public:
         mTitle->setText(text);
     }
 
+    float getTextWidth() override;
+
     void setBackgroundColor(vec4 color) override;
 private:
 

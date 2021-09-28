@@ -44,7 +44,7 @@ public:
 
     int getLineHeight();
 
-    float getTextWidth();
+    virtual float getTextWidth();
 
     void computeLineWidth();
 

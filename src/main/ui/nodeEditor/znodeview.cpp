@@ -866,6 +866,7 @@ void ZNodeView::copyParameters(ZNodeView* node) {
    setOffset(node->getOffset());
    setMaxWidth(node->getMaxWidth());
    setMaxHeight(node->getMaxHeight());
+   setText(node->getText());
    onWindowChange(getWidth(), getHeight());
    mConstantValueOutput = node->mConstantValueOutput;
    mConstantValueInput = node->mConstantValueInput;

@@ -291,3 +291,12 @@ void ZTextField::onDoubleClick() {
         }
     }
 }
+
+float ZTextField::getTextWidth() {
+    float width = ZLabel::getTextWidth();
+    if (getText().empty()) {
+        return mTitle->getTextWidth();
+    }
+
+    return width;
+}
