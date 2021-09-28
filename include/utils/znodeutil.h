@@ -24,7 +24,7 @@ private:
      * Pull from delete nodes instead of creating new one
      */
     queue<ZNodeView*> mDeleteNodes;
-
+    set<ZNodeView*> mDeleteNodesSet;
 public:
     static ZNodeUtil& get(){
         static ZNodeUtil instance; // Guaranteed to be destroyed.
@@ -147,6 +147,7 @@ public:
 
         map<int, ZNodeView*> nodeMap;
         map<int, string> edgeMap;
+        map<int, string> groupMap;
         set<ZNodeView*> nodes;
         for (string snode : snodes) {
             if (snode.empty()) {
@@ -163,6 +164,7 @@ public:
             vector<float> magnitudesIn;
             vector<float> magnitudesOut;
             string name = "";
+            string groupIds = "";
             int id;
             string edges;
             for (const auto& attr : attrs) {
@@ -211,8 +213,10 @@ public:
                     if (!value.empty()) {
                         name = value;
                     }
+                } else if (key == "group") {
+                    groupIds = value;
                 }
-            }
+             }
 
             ZNodeView* node = newNode(type);
             node->setOffset(pos);
@@ -222,6 +226,7 @@ public:
             node->setText(name);
             nodeMap.insert({id, node});
             edgeMap.insert({id, edges});
+            groupMap.insert({id, groupIds});
 
             // Node constant inputs
             int index = 0;
@@ -252,7 +257,26 @@ public:
         }
 
         for (auto node : nodes) {
-            string edges = edgeMap.at(node->getIndexTag());
+            string edges = edgeMap[node->getIndexTag()];
+            string groupIds = groupMap[node->getIndexTag()];
+
+            if (!groupIds.empty()) {
+
+                vector<string> gids = split(groupIds, ',');
+                for (const string& gid : gids) {
+                    auto childNode = nodeMap[stoi(gid)];
+
+                    childNode->mIsPartOfGroup = true;
+                    childNode->mGroupParent = node;
+                    node->mGroupNodes.insert(childNode);
+                    if (childNode->getType() == ZNodeView::Type::GROUP_IN) {
+                        node->mGroupInput = childNode;
+                        node->mGroupInput->setInputProxy(node);
+                    } else if (childNode->getType() == ZNodeView::Type::GROUP_OUT) {
+                        node->mGroupOutput = childNode;
+                    }
+                }
+            }
 
             int socketIndex = 0;
             vector<string> sockets = split(edges, '|');
@@ -317,6 +341,7 @@ public:
             while (node == nullptr && !mDeleteNodes.empty()) {
                 node = mDeleteNodes.front();
                 mDeleteNodes.pop();
+                mDeleteNodesSet.erase(node);
             }
 
             if (node == nullptr) {
@@ -343,6 +368,7 @@ public:
                 dupNode->mGroupNodes = duplicateNodes(node->mGroupNodes);
                 for (ZNodeView* groupNode : dupNode->mGroupNodes) {
                     groupNode->mGroupParent = dupNode;
+                    groupNode->mIsPartOfGroup = true;
                     groupNode->setVisibility(false);
 
                     if (groupNode->getType() == ZNodeView::Type::GROUP_IN) {
@@ -403,7 +429,7 @@ public:
         }
     }
 
-    void deleteNodes(set<ZNodeView*> nodes) {
+    void deleteNodes(const set<ZNodeView*>& nodes) {
         for (ZNodeView* node : nodes) {
             deleteNode(node);
         }
@@ -414,23 +440,28 @@ public:
             return;
         }
 
+        node->mType = ZNodeView::Type::SIN;
+
         node->setVisibility(false);
         node->setLineWidth(0);
         deleteConnections(node);
 
         deleteNodes(node->getGroupNodes());
 
-        node->setGroupParent(nullptr);
+        node->mIsPartOfGroup = false;
+        node->mGroupParent = nullptr;
         node->mGroupOutput = nullptr;
         node->mGroupInput = nullptr;
         node->mInputProxy = nullptr;
         node->mGroupNodes.clear();
         node->setProjectID(-1);
         node->setIndexTag(-1);
+        node->mEditorInterface = nullptr;
 
         for (auto laplace : node->mHeadlessLaplaceNodes) {
             deleteNode(laplace);
         }
+
         node->mHeadlessLaplaceNodes.clear();
 
         ZNodeUtil::get().submitForRecycle(node);
@@ -474,7 +505,10 @@ public:
 
     void submitForRecycle(ZNodeView* node) {
         if (node != nullptr) {
-            mDeleteNodes.push(node);
+            if (mDeleteNodesSet.find(node) == mDeleteNodesSet.end()) {
+                mDeleteNodes.push(node);
+                mDeleteNodesSet.insert(node);
+            }
         }
     }
 

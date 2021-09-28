@@ -1265,25 +1265,27 @@ ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<
 }
 
 void ZNodeView::initializeGroup() {
-    if (mGroupInput == nullptr) {
-        mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
-        mGroupInput->setInputProxy(this);
-        mGroupNodes.insert(mGroupInput);
-        if (mEditorInterface != nullptr) {
-            mEditorInterface(mGroupInput, true);
+    if (!isDeleted()) {
+        if (mGroupInput == nullptr) {
+            mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
+            mGroupInput->setInputProxy(this);
+            mGroupNodes.insert(mGroupInput);
+            if (mEditorInterface != nullptr) {
+                mEditorInterface(mGroupInput, true);
+            }
         }
-    }
 
-    if (mGroupOutput == nullptr) {
-        mGroupOutput = ZNodeUtil::get().newNode(GROUP_OUT);
-        mGroupNodes.insert(mGroupOutput);
-        if (mEditorInterface != nullptr) {
-            mEditorInterface(mGroupOutput, true);
+        if (mGroupOutput == nullptr) {
+            mGroupOutput = ZNodeUtil::get().newNode(GROUP_OUT);
+            mGroupNodes.insert(mGroupOutput);
+            if (mEditorInterface != nullptr) {
+                mEditorInterface(mGroupOutput, true);
+            }
         }
-    }
 
-    if (getVisibility()) {
-        mGroupOutput->setVisibility(false);
-        mGroupInput->setVisibility(false);
+        if (getVisibility()) {
+            mGroupOutput->setVisibility(false);
+            mGroupInput->setVisibility(false);
+        }
     }
 }

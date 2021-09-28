@@ -307,8 +307,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 void ZNodeEditor::selectProject(int index, string &path) {
     mSelectedProject = index;
     mProjectPath = path;
+    mGroupMode = NO_GROUP;
 
-    // Saved project selected
+    // A saved project was selected
     if (!path.empty()) {
 
         set<ZNodeView*> toDelete;
@@ -733,7 +734,18 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     }
 
     deselectNode(node);
-    node->setVisibility(true);
+
+    if (!node->mIsPartOfGroup || mGroupMode == GROUP_SELECTED) {
+        node->setVisibility(true);
+    } else {
+        node->setVisibility(false);
+    }
+
+    if (node->getType() == ZNodeView::GROUP) {
+        for (ZNodeView *innerNode : node->getGroupNodes()) {
+            innerNode->setVisibility(false);
+        }
+    }
     node->setIsDeleted(false);
 
     node->setIndexTag(mNodeViews.size());
@@ -1421,9 +1433,12 @@ void ZNodeEditor::toggleGroupSelection() {
 
         for (ZNodeView* node : mNodeViews) {
 
+            if (node->getProjectID() != mSelectedProject) {
+                continue;
+            }
             // Check if node is part of a group before showing
             if (node->getType() != ZNodeView::GROUP_IN && node->getType() != ZNodeView::GROUP_OUT &&
-                node->getGroupParent() == nullptr) {
+                !node->mIsPartOfGroup) {
                 node->setVisibility(true);
             }
 

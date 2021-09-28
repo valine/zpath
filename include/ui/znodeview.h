@@ -1060,6 +1060,7 @@ public:
     void addGroupNode(ZNodeView* node) {
         mGroupNodes.insert(node);
         node->mGroupParent = this;
+        node->mIsPartOfGroup = true;
     }
 
     set<ZNodeView*> getGroupNodes() {
@@ -1110,6 +1111,7 @@ public:
     /**
     * Internal group node graph
     */
+    bool mIsPartOfGroup = false;
     ZNodeView* mGroupInput = nullptr;
     ZNodeView* mInputProxy = nullptr;
     ZNodeView* mGroupParent = nullptr;
@@ -1118,6 +1120,11 @@ public:
     vector<ZButton*> mButtons;
     ZNodeView* mGroupOutput = nullptr;
     Type mType = ADD;
+/**
+ * The view interface is used to allow the node to
+ * add other views to the parent editor.
+ */
+function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
 private:
     bool mInvalid = true;
     bool mRecursiveInvalidate = false;
@@ -1137,12 +1144,6 @@ private:
     ZLabel *mXMaxLabel = nullptr;
     ZLabel *mYMinLabel = nullptr;
     ZLabel *mYMaxLabel = nullptr;
-
-    /**
-     * The view interface is used to allow the node to
-     * add other views to the parent editor.
-     */
-    function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
 
     /**
      * The editor delete interface is used when the node whats to delete itself.
