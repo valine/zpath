@@ -198,7 +198,7 @@ void ZViewController::releaseFocus(ZView *forView) {
 }
 
 void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
-    if (isViewInFocus()) {
+    if (isViewInFocus() && mods != GLFW_MOD_CONTROL && mods != GLFW_MOD_SUPER) {
         mFocusedView->onKeyPress(key, scancode, action, mods);
     } else {
         if (getVisibility()) {

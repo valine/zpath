@@ -40,7 +40,7 @@ static const int GROUP_SELECTED = 1;
 #include <condition_variable>
 #include "zdrawer.h"
 #include "ui/ztextfield.h"
-
+#include "zprojectview.h"
 
 
 class ZNodeEditor : public ZView {
@@ -94,6 +94,8 @@ private:
     ZView* mLineContainer = nullptr;
     ZView* mNodeContainer = nullptr;
 
+    ZProjectView* mProjectBrowser;
+
     vec2 mInitialOffset{};
     vec2 mInitialSize{};
     int mDragNode = NO_SELECTION;
@@ -112,6 +114,7 @@ private:
     ZTextField* mExpressionField;
     int mSelectedProject = 0;
     string mProjectPath = "";
+    bool mSavePending = false;
 
     bool isSocketDrag();
 
@@ -203,6 +206,10 @@ private:
     void reindexNodes();
 
     void selectProject(int index, string &path);
+
+    void saveProject();
+
+    void requestSave();
 };
 
 

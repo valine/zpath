@@ -241,6 +241,8 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
         glfwSwapBuffers(window);
     }
 
+    viewController->onTerminate();
+
 }
 
 void ZApplication::setShouldPollEvents(bool shouldPoll) {

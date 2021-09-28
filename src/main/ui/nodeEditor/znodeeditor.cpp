@@ -87,7 +87,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
-    auto mProjectBrowser = new ZProjectView(this, []() {
+    mProjectBrowser = new ZProjectView(this, []() {
         return ZNodeStore::get().getProjectNames();
     });
 
@@ -305,6 +305,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 }
 
 void ZNodeEditor::selectProject(int index, string &path) {
+    saveProject();
+
     mSelectedProject = index;
     mProjectPath = path;
     mGroupMode = NO_GROUP;
@@ -316,7 +318,7 @@ void ZNodeEditor::selectProject(int index, string &path) {
         for (auto node : mNodeViews) {
             if (node->getProjectID() == index) {
                 toDelete.insert(node);
-            } else if (node->getProjectID() != -1 ){
+            } else if (node->getProjectID() != -1){
                 node->setVisibility(false);
             }
         }
@@ -346,8 +348,7 @@ void ZNodeEditor::selectProject(int index, string &path) {
 
 void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     ZView::onKeyPress(key, scancode, action, mods);
-
-    if (isViewInFocus()) {
+    if (isViewInFocus() && !controlKeyPressed()) {
         return;
     }
 
@@ -406,14 +407,25 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
     }
 
     else if (key == GLFW_KEY_S && controlKeyPressed() && action == GLFW_RELEASE) {
-        set<ZNodeView*> projectNodes;
-        for (auto node : mNodeViews) {
-            if (node->getProjectID() == mSelectedProject) {
-                projectNodes.insert(node);
-            }
-        }
-        ZNodeStore::get().saveGraph(projectNodes, mProjectPath, true);
+        requestSave();
     }
+}
+
+void ZNodeEditor::requestSave() {
+    mSavePending = true;
+    lock_guard<mutex> guard(mEvalMutex);;
+    mEvalConVar.notify_one();
+}
+
+void ZNodeEditor::saveProject() {
+    set<ZNodeView*> projectNodes;
+    for (auto node : mNodeViews) {
+        if (node->getProjectID() == mSelectedProject) {
+            projectNodes.insert(node);
+        }
+    }
+    ZNodeStore::get().saveGraph(projectNodes, mProjectPath, true);
+    mSavePending = false;
 }
 
 /**
@@ -660,6 +672,7 @@ void ZNodeEditor::onCreate() {
 
 void ZNodeEditor::onExit() {
     ZView::onExit();
+    saveProject();
     mEvaluateRunning = false;
 }
 
@@ -704,6 +717,11 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
                 if (wasDelete) {
                     editor->updateLines();
                 }
+
+                if (editor->mSavePending) {
+                    editor->saveProject();
+                }
+
                 std::unique_lock<std::mutex> lck(editor->mEvalMutex);
                 editor->mEvalConVar.wait(lck);
             }
@@ -875,6 +893,8 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });
+
+    requestSave();
 }
 
 void ZNodeEditor::duplicateSelectedNodes(){
@@ -1336,6 +1356,8 @@ void ZNodeEditor::onMouseUp(int button) {
     }
     exitBoxSelectMode();
     mWasDoubleClick = false;
+
+    requestSave();
 }
 
 void ZNodeEditor::resetNodeInitialPosition() {
@@ -1485,7 +1507,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
     // Scrolling with shift key is used for zooming charts
-    if (!shiftKeyPressed() && !isMouseInBounds(mDrawer)){
+    if (!shiftKeyPressed() && !isMouseInBounds(mDrawer) && !isMouseInBounds(mProjectBrowser)){
         float maxScale = 0.1;
         float minScale = 1.0;
         float scaleDelta = 1.0 + (y / 5.0);

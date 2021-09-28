@@ -49,7 +49,6 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &mode
             } else {
                 selectProject(lastProject);
             }
-            cout << mRecycleBin.size() << endl;
         }
     });
 
