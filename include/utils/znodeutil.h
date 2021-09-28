@@ -119,6 +119,16 @@ public:
             nodeString+="\n";
         }
 
+        if (node->isDynamicSockets(node->getType())) {
+            nodeString+="incount:";
+            nodeString+=to_string(node->getSocketCount().x);
+            nodeString+="\n";
+
+            nodeString+="outcount:";
+            nodeString+=to_string(node->getSocketCount().y);
+            nodeString+="\n";
+        }
+
         return nodeString;
     }
 
@@ -165,6 +175,7 @@ public:
             vector<float> magnitudesOut;
             string name = "";
             string groupIds = "";
+            ivec2 socketCount = ivec2(-1);
             int id;
             string edges;
             for (const auto& attr : attrs) {
@@ -215,6 +226,10 @@ public:
                     }
                 } else if (key == "group") {
                     groupIds = value;
+                } else if (key == "incount") {
+                    socketCount.x = stoi(value);
+                } else if (key == "outcount") {
+                    socketCount.y = stoi(value);
                 }
              }
 
@@ -228,6 +243,9 @@ public:
             edgeMap.insert({id, edges});
             groupMap.insert({id, groupIds});
 
+            if (socketCount.x >= 0 && socketCount.y >= 0) {
+                node->setSocketCount(socketCount);
+            }
             // Node constant inputs
             int index = 0;
             for (float input : inputs) {
@@ -255,6 +273,7 @@ public:
 
             nodes.insert(node);
         }
+
 
         for (auto node : nodes) {
             string edges = edgeMap[node->getIndexTag()];

@@ -332,7 +332,7 @@ void ZNodeEditor::selectProject(int index, string &path) {
         }
     } else {
         for (auto node : mNodeViews) {
-            if (node->getProjectID() == index) {
+            if (node->getProjectID() == index && !node->mIsPartOfGroup) {
                 node->setVisibility(true);
             } else {
                 node->setVisibility(false);
