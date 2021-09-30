@@ -54,7 +54,9 @@ set(OpenGL_GL_PREFERENCE GLVND)
 include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
 
 if (COMPILE_DEPS)
-
+    # #
+    # #   freetype
+    # #
     if (WIN32)
         set(freetype_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype")
         set(freetype_install_dir "${freetype_prefix}")
@@ -72,8 +74,21 @@ if (COMPILE_DEPS)
         include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype/src/freetype/include)
         add_dependencies(zpath freetype)
 
-    endif(WIN32)
+    else(WIN32)
 
+        set(freetype2b_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b")
+        set(freetype2b_install_dir "${freetype2b_prefix}")
+        ExternalProject_Add(
+                freetype2b
+                PREFIX  ${freetype2b_prefix}
+                GIT_REPOSITORY git://git.savannah.gnu.org/freetype/freetype2.git
+                GIT_SHALLOW 1
+                CMAKE_ARGS -DPNG_ARM_NEON=OFF -DCMAKE_INSTALL_PREFIX=${freetype2b_prefix} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DWITH_PNG=Off
+                UPDATE_COMMAND "")
+
+        add_dependencies(zpath freetype2b)
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b/include)
+    endif(WIN32)
 
     #glfw
     #
@@ -120,10 +135,14 @@ if (COMPILE_DEPS)
     set(png_install_dir "${png_prefix}")
     set(png_cmake_args  "-DCMAKE_INSTALL_PREFIX=${png_install_dir}")
     list(APPEND png_cmake_args "-DPNG_ARM_NEON=off")
+
+    if (WIN32)
+    list(APPEND png_cmake_args "-DZLIB_LIBRARY=${zlib_prefix}/lib/zlibd.lib")
+    list(APPEND png_cmake_args "-DZLIB_INCLUDE_DIR=${zlib_prefix}/include")
+    endif(WIN32)
     externalproject_add(png
             PREFIX         ${png_prefix}
             GIT_REPOSITORY https://github.com/glennrp/libpng.git
-            UPDATE_COMMAND ""
             GIT_SHALLOW 1
             INSTALL_DIR    ${png_install_dir}
             CMAKE_ARGS     ${png_cmake_args}
@@ -143,8 +162,8 @@ if (COMPILE_DEPS)
     externalproject_add(assimp
             PREFIX         ${assimp_prefix}
             GIT_REPOSITORY https://github.com/assimp/assimp.git
-            UPDATE_COMMAND ""
             GIT_SHALLOW 1
+            GIT_TAG v5.0.1
             INSTALL_DIR    ${assimp_install_dir}
             CMAKE_ARGS     ${assimp_cmake_args}
             LOG_DOWNLOAD ON
@@ -173,21 +192,6 @@ if (COMPILE_DEPS)
     add_dependencies(zpath glm)
 
 
-    # #
-    # #   freetype
-    # #
-    set(freetype2b_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b")
-    set(freetype2b_install_dir "${freetype2b_prefix}")
-    ExternalProject_Add(
-            freetype2b
-            PREFIX  ${freetype2b_prefix}
-            GIT_REPOSITORY git://git.savannah.gnu.org/freetype/freetype2.git
-            GIT_SHALLOW 1
-            CMAKE_ARGS -DPNG_ARM_NEON=OFF -DCMAKE_INSTALL_PREFIX=${freetype2b_prefix} -DCMAKE_PREFIX_PATH=${CMAKE_INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DWITH_PNG=Off
-            UPDATE_COMMAND "")
-
-    add_dependencies(zpath freetype2b)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/freetype2b/src/freetype2b/include)
 
 #    #
 #    #   JSON
