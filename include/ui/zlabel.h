@@ -66,7 +66,7 @@ private:
     float mFirstLineWidth = 0;
 
     /**
-     * Character coordinates for setting cursor location
+     * ZChar coordinates for setting cursor location
      */
     vector<pair<int, int>> mPoints;
     vector<int> mLineIndices;

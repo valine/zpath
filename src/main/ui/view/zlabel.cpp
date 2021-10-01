@@ -118,7 +118,7 @@ void ZLabel::drawText() {
         // Iterate through all characters
         std::string::const_iterator c;
         for (c = mText.begin(); c != mText.end(); c++) {
-            Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
+            ZChar ch = ZFontStore::getInstance().getCharacter(mFont, *c);
             int w = ch.Size.x;
             int h = ch.Size.y;
 
@@ -194,7 +194,7 @@ void ZLabel::computeLineWidth() {
     int lineHeight = getLineHeight();
 
     for (c = mText.begin(); c != mText.end(); c++) {
-        Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
+        ZChar ch = ZFontStore::getInstance().getCharacter(mFont, *c);
         int w = ch.Size.x;
 
         char ac = c[0];

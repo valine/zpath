@@ -66,7 +66,7 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
             // Now store character for later use
 
 
-            Character character = {
+            ZChar character = {
                     texture,
                     glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
                     glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
@@ -87,7 +87,7 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
     return mFonts.at(resourcePath);
 }
 
-Character ZFontStore::getCharacter(const string& resourcePath, GLchar c) {
+ZChar ZFontStore::getCharacter(const string& resourcePath, GLchar c) {
     string key = to_string(c) + resourcePath;
     if (mCharacters.count(key) == 0) {
         string defaultKey = to_string(' ') + resourcePath;

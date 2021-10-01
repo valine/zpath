@@ -4,6 +4,7 @@
 
 #ifndef ZPATH_CASUTIL_H
 #define ZPATH_CASUTIL_H
+
 #include <giac/config.h>
 #include <giac/giac.h>
 #include <iostream>

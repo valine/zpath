@@ -20,7 +20,7 @@ using namespace std;
 #include <unordered_map>
 
 /// Holds all state information relevant to a character as loaded using FreeType
-struct Character {
+struct ZChar {
     GLuint TextureID;   // ID handle of the glyph texture
     glm::vec2 Size;    // Size of glyph
     glm::vec2 Bearing;  // Offset from baseline to left/top of glyph
@@ -36,7 +36,7 @@ public:
         return instance;
     }
     FT_Face loadFont(string resourcePath, float dp);
-    Character getCharacter(const string& resourcePath, GLchar);
+    ZChar getCharacter(const string& resourcePath, GLchar);
 
     string getDefaultResource();
     void setDefaultResource(string);
@@ -45,7 +45,7 @@ private:
     ZFontStore();
     static ZFontStore *mInstance;
     FT_Library mFreetype{};
-    unordered_map<string, Character> mCharacters = unordered_map<string, Character>();
+    unordered_map<string, ZChar> mCharacters = unordered_map<string, ZChar>();
     map<string, FT_Face> mFonts;
     ZFontStore(ZFontStore const&);              // Don't Implement
     void operator=(ZFontStore const&); // Don't implement

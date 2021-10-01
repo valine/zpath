@@ -11,7 +11,7 @@
 
 #include <zlib.h>
 #include <ui/zchartrenderer.h>
-#include <pwd.h>
+//#include <pwd.h>
 #include "png.h"
 
 
@@ -230,9 +230,9 @@ void ZUtil::chart(double *p, int size, int mod, int offset, float max) {
 string ZUtil::getHomeFolder() {
     const char *homedir;
 
-    if ((homedir = getenv("HOME")) == NULL) {
-        homedir = getpwuid(getuid())->pw_dir;
-    }
+   // if ((homedir = getenv("HOME")) == NULL) {
+        //homedir = getpwuid(getuid())->pw_dir;
+   // }
 
     return homedir;
 }

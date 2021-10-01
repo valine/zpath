@@ -36,6 +36,8 @@ else(BUILD_LIB)
     add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/zpath/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/znodeview.cpp include/ui/znodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h src/main/utils/znodeutil.cpp include/utils/znodeutil.h src/main/utils/zshadowrenderer.cpp include/utils/zshadowrenderer.h src/main/ui/view/ztextfield.cpp include/ui/ztextfield.h src/main/ui/textEditor/ztextviewcontroller.cpp include/zpath/ztextviewcontroller.h src/main/ui/nodeEditor/zdrawer.cpp include/ui/zdrawer.h src/main/ui/viewController/ztileviewcontroller.cpp include/ui/ztileviewcontroller.h src/main/ui/nodeEditor/zcalculatorviewcontroller.cpp include/ui/zcalculatorviewcontroller.h src/main/utils/zcornerrenderer.cpp include/utils/zcornerrenderer.h src/main/ui/nodeEditor/zprojectview.cpp include/ui/zprojectview.h include/utils/znodestore.h src/main/ui/viewController/zdevviewcontroller.cpp include/ui/zdevviewcontroller.h)
     if (APPLE)
         target_compile_options(zpath PUBLIC -std=c++14 -Wall)
+    elseif(WIN32)
+        target_compile_options(zpath PUBLIC -Wall -std=c++17 )
     else()
         target_compile_options(zpath PUBLIC -std=c++17 -Wall)
     endif()
@@ -137,7 +139,7 @@ if (COMPILE_DEPS)
     list(APPEND png_cmake_args "-DPNG_ARM_NEON=off")
 
     if (WIN32)
-    list(APPEND png_cmake_args "-DZLIB_LIBRARY=${zlib_prefix}/lib/zlibd.lib")
+    list(APPEND png_cmake_args "-DZLIB_LIBRARY=${zlib_prefix}/lib/libzlibstatic.a")
     list(APPEND png_cmake_args "-DZLIB_INCLUDE_DIR=${zlib_prefix}/include")
     endif(WIN32)
     externalproject_add(png
@@ -159,6 +161,9 @@ if (COMPILE_DEPS)
     set(assimp_prefix      "${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp")
     set(assimp_install_dir "${assimp_prefix}")
     set(assimp_cmake_args  "-DCMAKE_INSTALL_PREFIX=${assimp_install_dir}")
+
+    list(APPEND assimp_cmake_args "-DASSIMP_BUILD_TESTS=OFF")
+    list(APPEND assimp_cmake_args "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
     externalproject_add(assimp
             PREFIX         ${assimp_prefix}
             GIT_REPOSITORY https://github.com/assimp/assimp.git
@@ -168,8 +173,9 @@ if (COMPILE_DEPS)
             CMAKE_ARGS     ${assimp_cmake_args}
             LOG_DOWNLOAD ON
             )
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/include)
+
     link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/lib)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/assimp/include)
     add_dependencies(zpath assimp)
 
     #
@@ -235,7 +241,6 @@ externalproject_add(zdep
         GIT_REPOSITORY https://github.com/valine/zpath-deps.git
         GIT_SHALLOW 1
         BUILD_COMMAND ""
-        UPDATE_COMMAND ""
         INSTALL_COMMAND ""
         LOG_DOWNLOAD ON)
 add_dependencies(zpath zdep)
@@ -288,7 +293,10 @@ if (APPLE)
 
         find_package(BZip2 REQUIRED)
         find_package(BLAS REQUIRED)
+
+        if(APPLE)
         add_definitions(-D__APPLE__)
+        endif(APPLE)
         remove_definitions(-DHAVE_GETTEXT)
 
         message(STATUS "${zdep_path}")
@@ -307,7 +315,6 @@ if (APPLE)
         include_directories(${zdep_path_include}/zlib/include)
         include_directories(${zdep_path_include}/assimp/include)
         include_directories(${zdep_path_include}/png/include)
-
         include_directories(${zdep_path}/giac/include/)
         include_directories(${zdep_path}/giac/include/other)
 
@@ -439,12 +446,13 @@ if (LINUX)
 endif (LINUX)
 
 if (WIN32)
+    remove_definitions(-DHAVE_UNISTD_H)
+
     #Opengl
     find_package (OpenGL REQUIRED)
     include_directories(zpath ${OPENGL_INCLUDE_DIR})
     link_libraries(zpath ${OPENGL_gl_LIBRARY})
     find_package (Threads)
-
 
     find_package(X11 REQUIRED)
     message(STATUS "X11_FOUND = ${X11_FOUND}")
@@ -452,15 +460,74 @@ if (WIN32)
     message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
     include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
 
+#    add_definitions(-DVISUALC)
+    add_definitions(-D__MINGW_H)
+    add_definitions(-DHAVE_NO_SYS_TIMES_H)
+    add_definitions(-D_USE_MATH_DEFINES)
+    add_definitions(-DHAVE_NO_SYS_RESOURCE_WAIT_H)
+
+    set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/windows")
+    set(zdep_path_include    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/headers")
+
+    include_directories(${zdep_path}/glm)
+    include_directories(${zdep_path}/glfw/include)
+    include_directories(${zdep_path}/freetype/mingw/include)
+    include_directories(${zdep_path}/freetype/mingw/include/freetype2)
+    include_directories(${zdep_path}/zlib/include)
+    include_directories(${zdep_path}/assimp/include)
+    include_directories(${zdep_path}/png/include)
+    include_directories(${zdep_path}/giac/include/)
+
+    #    target_link_libraries (zpath
+    #            "${zdep_path}/glfw/libglfw3.a"
+    #            "${zdep_path}/assimp/libassimp.a"
+    #            "${zdep_path}/png/libpng16.a"
+    #            "${zdep_path}/zlib/libz.a"
+    #            "${zdep_path}/giac/libsamplerate.a"
+    #            "${zdep_path}/giac/libcocoa.a"
+    #            "${zdep_path}/giac/libintl.a"
+    #            "${zdep_path}/giac/libmpfr.a"
+    #            "${zdep_path}/giac/libpari.a"
+    #            "${zdep_path}/giac/libgmp.a"
+    #            "${zdep_path}/giac/libgsl.a"
+    #            "${zdep_path}/giac/libgiac.a"
+    #            "${zdep_path}/freetype/libfreetyped.a")
+
+#
+#    target_link_libraries (zpath
+#                ${OPENGL_LIBRARIES}
+#                "${zdep_path}/glfw/glfw3.lib"
+#                "${zdep_path}/zlib/zlibstaticd.lib"
+#                "${zdep_path}/png/libpng16_staticd.lib"
+#                "${zdep_path}/assimp/assimp-vc141-mtd.lib"
+#                "${zdep_path}/freetype/freetype.lib"
+#                "${zdep_path}/giac/lib/libmpfr.dll.a"
+#                "${zdep_path}/giac/lib/libmpfi.a"
+#            "${zdep_path}/giac/lib/libgmpxx.dll.a"
+#            "${zdep_path}/giac/lib/libgmp.dll.a"
+#            "${zdep_path}/giac/lib/libgiac.a"
+#                ${X11_LIBRARIES}
+#                ${CMAKE_THREAD_LIBS_INIT}
+#                ${CMAKE_DL_LIBS}
+#              )
+
+    target_link_libraries(zpath -lmingw32)
     target_link_libraries (zpath
             ${OPENGL_LIBRARIES}
-            "${glfw_install_dir}/lib/glfw3.lib"
             ${X11_LIBRARIES}
             ${CMAKE_THREAD_LIBS_INIT}
             ${CMAKE_DL_LIBS}
-            ${CMAKE_CURRENT_SOURCE_DIR}/deps/png/src/png-build/png.lib
-            "${assimp_install_dir}/lib/assimp-vc140-mt.lib"
-            ${freetype_install_dir}/src/freetype/win32/freetype.lib)
+            "${zdep_path}/glfw/libglfw3.a"
+            "${zdep_path}/assimp/libassimp.dll.a"
+            "${zdep_path}/zlib/libzlib.dll.a"
+            "${zdep_path}/png/libpng.dll.a"
+            "${zdep_path}/freetype/mingw/libfreetype.dll.a"
+            "${zdep_path}/giac/lib/libgiac.a"
+            "${zdep_path}/giac/lib/libmpfr.dll.a"
+            "${zdep_path}/giac/lib/libmpfi.a"
+            "${zdep_path}/giac/lib/libgmpxx.dll.a"
+            "${zdep_path}/giac/lib/libgmp.dll.a"
+            )
 
 endif(WIN32)
 

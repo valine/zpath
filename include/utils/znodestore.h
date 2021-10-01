@@ -6,9 +6,12 @@
 #define ZPATH_ZNODESTORE_H
 
 #include <filesystem>
-#if __APPLE__
+#if defined(__APPLE__)
 using std::__fs::filesystem::directory_iterator;
 using std::__fs::filesystem::directory_entry;
+#elif defined(VISUALC)
+using std::experimental::filesystem::directory_iterator;
+using std::experimental::filesystem::directory_entry;
 #else
 using std::filesystem::directory_iterator;
 using std::filesystem::directory_entry;
@@ -83,7 +86,11 @@ public:
 
         vector<string> names;
         for (const auto &file : directory_iterator(path)) {
-            names.push_back(file.path());
+#ifdef VISUALC
+            names.push_back(file.path().string());
+#else
+            names.push_back(file.path().string());
+#endif
         }
 
         return names;

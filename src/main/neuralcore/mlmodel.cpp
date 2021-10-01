@@ -265,7 +265,7 @@ string MlModel::par(string input) {
 void  MlModel::resetNetwork() {
     for (vector<Neuron*> layer : mTrainable) {
         for (Neuron* node : layer) {
-            for (uint i = 0; i < node->getWeights().size(); i++) {
+            for (int i = 0; i < node->getWeights().size(); i++) {
                 node->setWeight(getInitialWeight(layer.size()), i);
                 node->setBias(getInitialWeight(layer.size()));
                 node->resetPending();

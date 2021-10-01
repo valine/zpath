@@ -9,6 +9,7 @@ class ZLabel;
 
 #include <queue>
 #include <set>
+#include <stack>
 #include "ui/znodeview.h"
 #include <string>
 
@@ -922,7 +923,7 @@ public:
 
         input.erase(std::remove_if(input.begin(), input.end(), ::isspace), input.end());
 
-        char testArray[input.length() + 1];
+        char* testArray = new char[input.length() + 1];
         strcpy(testArray, input.c_str());
         char *fullInput = strdup(testArray);
 
@@ -1043,7 +1044,7 @@ public:
                     return false;
                 }
 
-                // If 'e' is the last Character
+                // If 'e' is the last ZChar
                 if (i + 1 > str.length()) {
                     return false;
                 }

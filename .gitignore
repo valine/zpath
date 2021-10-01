@@ -17,3 +17,5 @@ TestTestfile.cmake
 cmake-build-debug/*
 cmake-build-release/*
 cmake-build-compiledeps/*
+cmake-build-builddeps/*
+cmake-build-debug-mingw/*
