@@ -289,6 +289,7 @@ if (APPLE)
         find_package(BZip2 REQUIRED)
         find_package(BLAS REQUIRED)
         add_definitions(-D__APPLE__)
+        add_definitions(-DNTL_SPMM_ULL)
         remove_definitions(-DHAVE_GETTEXT)
 
         message(STATUS "${zdep_path}")
@@ -309,6 +310,7 @@ if (APPLE)
         include_directories(${zdep_path_include}/png/include)
 
         include_directories(${zdep_path}/giac/include/)
+        include_directories(${zdep_path_include}/giac/include/)
         include_directories(${zdep_path}/giac/include/other)
 
         if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
