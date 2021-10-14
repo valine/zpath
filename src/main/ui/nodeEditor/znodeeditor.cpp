@@ -1265,10 +1265,10 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
                 }
 
             } else if (rightMouseIsDown() && !shiftKeyPressed()) {
-                mNodeViews.at(mDragNode)->setMaxWidth(
-                        mInitialSize.x + delta.x);
+                mNodeViews.at(mDragNode)->setMaxWidth(std::max(MIN_NODE_SIZE,
+                        mInitialSize.x + delta.x));
                 mNodeViews.at(mDragNode)->setMaxHeight(
-                        mInitialSize.y + delta.y);
+                        std::max(MIN_NODE_SIZE, mInitialSize.y + delta.y));
                 mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
                 mNodeViews.at(mDragNode)->invalidate();
 

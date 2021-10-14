@@ -128,7 +128,6 @@ public:
             nodeString+=to_string(node->getSocketCount().y);
             nodeString+="\n";
         }
-
         return nodeString;
     }
 

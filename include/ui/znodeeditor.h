@@ -30,6 +30,8 @@ static const double SELECTED_ELEVATION = 1.0;
 static const int NO_GROUP = -1;
 static const int GROUP_SELECTED = 1;
 
+static const float MIN_NODE_SIZE = 40.0f;
+
 #include <ui/zview.h>
 #include "znodeview.h"
 #include "zmagnitudepicker.h"
