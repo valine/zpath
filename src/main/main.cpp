@@ -21,6 +21,7 @@ using namespace std;
 #include <ui/ztileviewcontroller.h>
 #include <ui/zcalculatorviewcontroller.h>
 #include <ui/zdevviewcontroller.h>
+#include <ui/settingsviewcontroller.h>
 
 
 int main(int argc, char* argv[]) {
@@ -58,6 +59,9 @@ int main(int argc, char* argv[]) {
             } case 4: {
                 controller = new ZDevViewController(argv);
                 return controller;
+            } case 5: {
+                controller = new SettingsViewController(argv);
+                return controller;
             }
             default: {
                 controller = new ZViewController(argv);
@@ -65,7 +69,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-    }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator", "Developer"}, true, nullptr);
+    }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator", "Developer", "Settings"}, true, nullptr);
 
     ZApplication(tiles, "zpath", false, 1200, 800, "resources/icons/zpath.png", [tiles](){
 
