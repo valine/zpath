@@ -8,4 +8,5 @@ void SettingsViewController::onCreate() {
     ZViewController::onCreate();
 
     ZLabel* label = new ZLabel("Settings", this);
+    label->setMargin(vec4(10));
 }

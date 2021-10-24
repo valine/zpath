@@ -78,6 +78,7 @@ int main(int argc, char* argv[]) {
         auto viewport = calculator->triggerOverUnderSplit(0.5, 2, false);
         auto dev = calculator->getChild(0)->triggerOverUnderSplit(0.5, 4, false);
         auto textedit = viewport->triggerOverUnderSplit(0.5, 0, false);
+        auto settings = tiles->getChild(0)->triggerOverUnderSplit(1.0, 5, false);
 
     });
 

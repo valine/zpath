@@ -209,10 +209,8 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
                 onTileEdgeDrag(delta);
             } else if (mDragType == pendingHorizontalJoin) {
                 updateHorizontalJoinGuide();
-
             } else if (mDragType == pendingVerticalJoin) {
                 updateVerticalJoinGuide();
-
             }
         } else if (state == mouseUp) {
             setConsumeClicks(false);
@@ -222,9 +220,7 @@ void ZTileViewController::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int
 }
 
 void ZTileViewController::onTileEdgeDrag(const vec2 &delta) {
-
-    int margin = 50;
-
+    int margin = TILE_MARGIN;
     if (mSplitType == sideBySide) {
         if (mDragIndex <= 0) {
             return;
@@ -602,6 +598,8 @@ ZTileViewController * ZTileViewController::triggerOverUnderSplit(float percent, 
     ZTileViewController* bottomTile;
     ZTileViewController* topTile;
 
+    float margin = TILE_MARGIN;
+
     // Check if this needs to be a root tile
     if (mTileType != verticalTile) {
         removeSubView(mContent);
@@ -640,12 +638,12 @@ ZTileViewController * ZTileViewController::triggerOverUnderSplit(float percent, 
             bottomTile->setMaxHeight(getHeight() * percent);
         }
 
-        bottomTile->setYOffset(getHeight() * percentLeft);
+        bottomTile->setYOffset(std::max(margin, getHeight() * percentLeft));
         mChildrenTiles.push_back(bottomTile);
 
         topTile->setDrawingEnabled(false);
         topTile->setVisibility(true);
-        topTile->setMaxHeight(getHeight() * percentLeft);
+        topTile->setMaxHeight(std::max(margin, getHeight() * percentLeft));
         topTile->setYOffset(0);
         topTile->setParentView(this);
         topTile->mParentTile = this;
