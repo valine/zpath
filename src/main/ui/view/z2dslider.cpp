@@ -28,7 +28,7 @@ ZView(maxWidth, maxHeight){
     setBackgroundColor(parent->getBackgroundColor());
 }
 
-void Z2DSlider::setTextColor(vec3 color) {
+void Z2DSlider::setTextColor(ZColor color) {
     mLabel->setTextColor(color);
 }
 

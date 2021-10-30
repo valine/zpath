@@ -4,6 +4,7 @@
 #include <thread>
 #include <utils/zsettingsstore.h>
 #include <zconf.h>
+#include <utils/colormode.h>
 #include "ui/stb_image.h"
 
 static void error_callback(int error, const char* description) {
@@ -189,6 +190,21 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     ZFontStore::getInstance().setDefaultResource(resourceString);
     ZSettingsStore::getInstance().setResourcePath(viewController->getResourcePath());
 
+    // Set the color mode theme
+    ColorMode colorMode =
+            ZSettingsStore::get().getColorMode();
+    for (auto vc : mViewControllers) {
+        vc->setColorMode(colorMode);
+    }
+
+    ZSettingsStore::get().setOnThemeChange([this](){
+        ColorMode colorMode =
+                ZSettingsStore::get().getColorMode();
+        for (auto vc : mViewControllers) {
+            vc->setColorMode(colorMode);
+        }
+    });
+
     glEnable(GL_MULTISAMPLE);
 
     if (dpScale == 1) {
@@ -202,8 +218,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    vec4 background = viewController->getBackgroundColor();
-
+    vec4 background = viewController->getBackgroundColor().get(colorMode);
     glClearColor(background.r, background.g, background.b, background.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -250,7 +265,7 @@ void ZApplication::setShouldPollEvents(bool shouldPoll) {
 }
 
 void ZApplication::onWindowResize(int width, int height, ZViewController *viewController) {
-    vec4 background = viewController->getBackgroundColor();
+    vec4 background = viewController->getBackgroundColor().get(viewController->mColorMode);
     glClearColor(background.r, background.g, background.b, background.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     viewController->onWindowChange(width, height);

@@ -33,7 +33,7 @@ float ZSlider::getValue() {
 	return mValue;
 }
 
-void ZSlider::setTextColor(vec3 color) {
+void ZSlider::setTextColor(ZColor color) {
 	mLabel->setTextColor(color);
 }
 
@@ -94,7 +94,7 @@ ZSlider(maxWidth, maxHeight, title) {
 	
 	mLabel = new ZLabel(maxWidth, 18);
     mLabel->setOffset(0,0);
-    mLabel->setTextColor(vec4(1.0));
+    mLabel->setTextColor(white);
     mLabel->setGravity(ZView::topLeft);
     addSubView(mLabel);
     setValue(0.0);
@@ -289,16 +289,16 @@ void ZSlider::setValue(float value) {
 	valueChanged(newOffset);
 }
 
-void ZSlider::setLineColor(vec4 color) {
+void ZSlider::setLineColor(ZColor color) {
 	mLine->setBackgroundColor(color);
 }
 
 
-void ZSlider::setThumbColor(vec4 color) {
+void ZSlider::setThumbColor(ZColor color) {
 	mThumb->setBackgroundColor(color);
 }
 
-void ZSlider::setFillColor(vec4 color) {
+void ZSlider::setFillColor(ZColor color) {
     mHighlight->setBackgroundColor(color);
 }
 

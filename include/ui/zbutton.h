@@ -50,7 +50,7 @@ public:
 
     ZLabel *getLabel();
 
-    void setBackgroundColor(vec4 color);
+    void setBackgroundColor(ZColor color);
 
 private:
 int debug;

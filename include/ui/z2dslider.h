@@ -33,7 +33,7 @@ public:
 	void setIncrement(float);
 	vec2 getValue();
     void setOnSlide(function<void(ZView*, vec2, bool)> onSlide);
-    void setTextColor(vec3 color);
+    void setTextColor(ZColor color);
 private:
     function<void(ZView* sender, vec2 value, bool)> mSlideListener;
 

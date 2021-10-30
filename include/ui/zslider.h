@@ -34,11 +34,11 @@ public:
 	void setMinValue(float min);
 
 	void setValue(float value);
-	void setLineColor(vec4 color);
-	void setThumbColor(vec4 color);
+	void setLineColor(ZColor color);
+	void setThumbColor(ZColor color);
 	void setIncrement(float);
-	void setTextColor(vec3 color);
-	void setFillColor(vec4 color);
+	void setTextColor(ZColor color);
+	void setFillColor(ZColor color);
 
 	void setShowLabel(bool showLabel);
 	void setHighlightBackground(ZTexture* tex);

@@ -28,12 +28,11 @@ public:
 
     void draw() override;
     void setTextSize(int textSize);
-    virtual void setTextColor(vec3 color);
-    vec3 getTextColor();
+    ZColor getTextColor();
     virtual void setText(string text);
     void setFont(string fontPath);
     string getText();
-    void setBackgroundColor(vec4 color) override;
+    void setBackgroundColor(ZColor color) override;
 
     void drawText();
     pair<int,int> getEndPoint();
@@ -47,6 +46,7 @@ public:
     virtual float getTextWidth();
 
     void computeLineWidth();
+    virtual void setTextColor(ZColor color);
 
 private:
 
@@ -56,7 +56,7 @@ private:
 
     GLuint VAO, VBO;
     int mTextSize = 14;
-    vec3 mTextColor = vec3(1,1,1);
+    ZColor mTextColor = white;
     string mText = "";
     string mFontPath = "";
     string mFont;

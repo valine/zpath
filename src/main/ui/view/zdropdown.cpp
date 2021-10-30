@@ -16,7 +16,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 
     mTitle = new ZLabel("Dropdown", this);
     mTitle->setText("Dropdown");
-    mTitle->setTextColor(vec3(0));
+    mTitle->setTextColor(black);
     mTitle->setMarginLeft(10);
     mTitle->setTextColor(white);
     mTitle->setYOffset((mBackground->getMaxHeight() - mTitle->getLineHeight()) / 2);

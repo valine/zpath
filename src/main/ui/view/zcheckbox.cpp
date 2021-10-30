@@ -97,7 +97,7 @@ void ZCheckbox::setChecked(bool checked) {
 	}
 }
 
-void ZCheckbox::setCheckColor(vec4 color) {
+void ZCheckbox::setCheckColor(ZColor color) {
     mBox->setBackgroundColor(color);
     mCheck->setBackgroundColor(color);
 }

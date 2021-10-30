@@ -38,7 +38,7 @@ public:
 	void showLabel(bool);
 	void setHighlightColor(vec4);
 	void setBaseColor(vec4);
-	void setTextColor(vec3 color) {
+	void setTextColor(ZColor color) {
 	    mLabel->setTextColor(color);
 	}
 	ZButton* getButton(int index);
@@ -52,8 +52,8 @@ private:
 	ZOnClickListener* mListener = nullptr;
 	vector<string> mTitles;
 	bool mIsVertical = false;
-	vec4 mHighlightColor = ZSettingsStore::getInstance().getHighlightColor();
-	vec4 mBaseColor = ZSettingsStore::getInstance().getBaseColor();
+	ZColor mHighlightColor = ZSettingsStore::getInstance().getHighlightColor();
+	ZColor mBaseColor = ZSettingsStore::getInstance().getBaseColor();
 	vector<ZButton*> mButtons;
 
     void init(float maxWidth, float maxHeight, vector<string> &titles);

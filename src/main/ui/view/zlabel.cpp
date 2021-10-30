@@ -64,10 +64,12 @@ void ZLabel::updateFrameSize() {
     mFrameInvalid = false;
 }
 
-void ZLabel::setBackgroundColor(vec4 color) {
+void ZLabel::setBackgroundColor(ZColor color) {
     ZView::setBackgroundColor(color);
-    vec3 color3 = vec3(color.r,color.g,color.b);
-    if (glm::length(color3) < 0.8 && color.a != 0) {
+
+    vec4 color4 = color.get(mColorMode);
+    vec3 color3 = vec3(color4.r,color4.g,color4.b);
+    if (glm::length(color3) < 0.8 && color4.a != 0) {
         setTextColor(white);
     } else {
         setTextColor(black);
@@ -88,7 +90,9 @@ void ZLabel::drawText() {
 
     // Activate corresponding render state
     getTextShader()->use();
-    glUniform3f(glGetUniformLocation(getTextShader()->mID, "textColor"), mTextColor.x, mTextColor.y, mTextColor.z);
+
+    vec4 tColor = mTextColor.get(mColorMode);
+    glUniform3f(glGetUniformLocation(getTextShader()->mID, "textColor"), tColor.x, tColor.y, tColor.z);
 
     // Update scale, useful for zooming a view out
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(getWidth()), 0.0f,static_cast<GLfloat>(getHeight()));
@@ -263,13 +267,13 @@ void ZLabel::setTextSize(int textSize) {
 
 
 
-void ZLabel::setTextColor(vec3 color) {
+void ZLabel::setTextColor(ZColor color) {
     mTextColor = color;
     mTextInvalid = true;
     invalidate();
 }
 
-vec3 ZLabel::getTextColor() {
+ZColor ZLabel::getTextColor() {
     return mTextColor;
 }
 

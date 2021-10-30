@@ -38,7 +38,7 @@ void ZTextField::updateTitle() {
     }
 }
 
-void ZTextField::setTextColor(vec3 color) {
+void ZTextField::setTextColor(ZColor color) {
     ZLabel::setTextColor(color);
     if (mTitle != nullptr) {
         mTitle->setTextColor(color);
@@ -257,10 +257,12 @@ void ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) 
     }
 }
 
-void ZTextField::setBackgroundColor(vec4 color) {
+void ZTextField::setBackgroundColor(ZColor color) {
     ZLabel::setBackgroundColor(color);
-    vec3 color3 = vec3(color.r,color.g,color.b);
-    if (glm::length(color3) < 0.8 && color.a != 0) {
+
+    vec4 color4 = color.get(mColorMode);
+    vec3 color3 = vec3(color4.r,color4.g,color4.b);
+    if (glm::length(color3) < 0.8 && color4.a != 0) {
         mCursor->setBackgroundColor(white);
     } else {
         mCursor->setBackgroundColor(highlight);

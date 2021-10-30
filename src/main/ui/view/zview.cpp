@@ -1,6 +1,7 @@
 #include <utils/zsettingsstore.h>
 #include <ui/zviewcontroller.h>
 #include <utils/zcornerrenderer.h>
+#include <utils/colormode.h>
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
@@ -282,10 +283,10 @@ void ZView::draw() {
         vec2 absoluteScale = getScale();
         mat4 scaleMat = scale(projection, vec3(absoluteScale.x, absoluteScale.y, 0));
 
-        vec4 backgroundColor = max(vec4(0), mBackgroundColor);
+        vec4 backgroundColor = max(vec4(0), mBackgroundColor.get(mColorMode));
 
         if (mShowHighlight) {
-            backgroundColor = mHighlightColor;
+            backgroundColor = mHighlightColor.get(mColorMode);
         }
 
 
@@ -307,16 +308,16 @@ void ZView::draw() {
                 glBindVertexArray(mEdgeVAO);
                 glDrawElements(GL_LINES, EDGE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
             } else if (mDrawWire == outline) {
-
-
                 glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
                             backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+
                 glBindVertexArray(mVAO);
                 glDrawElements(GL_TRIANGLES, FACE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
 
+                vec4 outlineColor = mOutlineColor.get(mColorMode);
                 glBindVertexArray(mOutlineVAO);
                 glUniform4f(glGetUniformLocation(mShader->mID, "uColor"),
-                            mOutlineColor.r, mOutlineColor.g, mOutlineColor.b, mOutlineColor.a);
+                            outlineColor.r, outlineColor.g, outlineColor.b, outlineColor.a);
 
                 glDrawElements(GL_LINES, OUTLINE_INDEX_COUNT, GL_UNSIGNED_INT, nullptr);
 
@@ -331,7 +332,7 @@ void ZView::draw() {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, mRoundedRect->getID());
 
-            mImageShader->setVec4("uTint", white);
+            mImageShader->setVec4("uTint", white.get(mColorMode));
 
             // Update scale, useful for zooming a view out
             glUniformMatrix4fv(glGetUniformLocation(mImageShader->mID, "uVPMatrix"), 1,
@@ -344,7 +345,7 @@ void ZView::draw() {
         if (mBackgroundImage != nullptr) {
             mImageShader->use();
 
-            mImageShader->setVec4("uTint", mTint);
+            mImageShader->setVec4("uTint", mTint.get(mColorMode));
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
@@ -380,13 +381,15 @@ void ZView::redrawCornerRadius() {
             if (mRoundedRect == nullptr) {
                 auto tex = ZCornerRenderer::get().
                         createTexture(getWidth() * mDP, getHeight() * mDP,
-                                      max(vec4(0), getBackgroundColor()), mOutlineColor, mLineWidth * mDP, mCornerRadius * mDP);
+                                      max(vec4(0), getBackgroundColor().get(mColorMode)),
+                                      mOutlineColor.get(mColorMode), mLineWidth * mDP, mCornerRadius * mDP);
                 mRoundedRect = tex;
             } else {
                 ZCornerRenderer::get().
                         draw(getWidth() * mDP, getHeight() * mDP,
                              mCornerRadius * mDP,
-                             max(vec4(0), getBackgroundColor()), mOutlineColor, mLineWidth * mDP, mRoundedRect, false);
+                             max(vec4(0), getBackgroundColor().get(mColorMode)),
+                             mOutlineColor.get(mColorMode), mLineWidth * mDP, mRoundedRect, false);
             }
         }
 
@@ -757,6 +760,7 @@ void ZView::addSubView(ZView *view) {
     view->setParentView(this);
     view->setRootView(mRootView);
     view->onDpChange(mDP);
+    view->setColorMode(mColorMode);
     view->updateCornerRadius();
     if (mShader != nullptr) {
         view->setShader(mShader);
@@ -849,13 +853,13 @@ void ZView::setBackgroundColor(float color[4]) {
     invalidate();
 }
 
-void ZView::setBackgroundColor(vec4 color) {
+void ZView::setBackgroundColor(ZColor color) {
     mBackgroundColor = color;
     updateCornerRadius();
     invalidate();
 }
 
-vec4 ZView::getBackgroundColor() {
+ZColor ZView::getBackgroundColor() {
     return mBackgroundColor;
 }
 
@@ -1162,7 +1166,7 @@ void ZView::setInitialPosition(vec2 position) {
     mInitialPosition = position;
 }
 
-void ZView::setOutlineColor(vec4 color) {
+void ZView::setOutlineColor(ZColor color) {
     mOutlineColor = color;
     updateCornerRadius();
 }
@@ -1352,4 +1356,12 @@ void ZView::onDoubleClick() {
     for (ZView* child : getSubViews()) {
         child->onDoubleClick();
     }
+}
+
+void ZView::setColorMode(ColorMode colorMode) {
+    for (auto view : mViews) {
+        view->setColorMode(colorMode);
+    }
+
+    mColorMode = colorMode;
 }

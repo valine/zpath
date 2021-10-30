@@ -393,7 +393,8 @@ void ZLineChart::draw() {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, mHeatLUTBuffer);
 
-        mHeatShader->setVec4("uColor", green);
+        mHeatShader->setVec4("uColor", green.get(mColorMode));
+
         int triangles = 2;
 
         glBindVertexArray(mHeatVAO);
@@ -408,7 +409,8 @@ void ZLineChart::draw() {
 
     if (mInputType != HEAT_MAP) {
         // draw background grid
-        mShader->setVec4("uColor", grey);
+        mShader->setVec4("uColor", grey.get(mColorMode));
+
         glLineWidth(2.0);
 
         glBindVertexArray(mVAO);
@@ -417,7 +419,7 @@ void ZLineChart::draw() {
     }
 
     // draw grid
-    mShader->setVec4("uColor", red);
+    mShader->setVec4("uColor", red.get(mColorMode));
 
     glBindVertexArray(mGridVAO);
     glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);

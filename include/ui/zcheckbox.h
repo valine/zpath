@@ -35,9 +35,9 @@ public:
 	void setCheckBackground(ZTexture*);
 	void setChecked(bool);
 
-    void setCheckColor(vec4 color);
+    void setCheckColor(ZColor color);
     void setOnCheck(function<void(ZView *, bool)> onClick);
-    void setTextColor(vec3 color) {
+    void setTextColor(ZColor color) {
         mLabel->setTextColor(color);
     }
 

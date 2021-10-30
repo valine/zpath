@@ -25,7 +25,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mSlider->setYOffset(0);
     mSlider->setMaxHeight(20);
     mSlider->setGravity(bottomLeft);
-    mSlider->setTextColor(vec3(0));
+    mSlider->setTextColor(black);
     mSlider->setLineColor(grey);
     mSlider->setOnSlide([this](ZView* view, float v, bool mouseUp){
         if (mListener != nullptr) {
@@ -61,7 +61,7 @@ void ZMagnitudePicker::initializeRadioButtons() {
         mRadioButtonLabels.at(index)->setText(range);
         mRadioButtonLabels.at(index)->setOutlineType(outline);
         mRadioButtonLabels.at(index)->setMargin(vec4(0));
-        mRadioButtonLabels.at(index)->setTextColor(vec3(0));
+        mRadioButtonLabels.at(index)->setTextColor(black);
         mRadioButtonLabels.at(index)->setLineWidth(2);
         mRadioButtonLabels.at(index)->setOutlineColor(grey);
         mRadioButtonLabels.at(index)->setCornerRadius(vec4(2,2,2,2));

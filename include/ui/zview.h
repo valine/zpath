@@ -21,7 +21,9 @@
 #include <utils/zshadowrenderer.h>
 #include "utils/zsettingsstore.h"
 #include <functional>
+#include <utils/colormode.h>
 #include FT_FREETYPE_H
+#include "zcolor.h"
 
 using namespace std;
 using namespace glm;
@@ -200,9 +202,9 @@ class ZView {
         bool getVisibility();
 
         virtual void setBackgroundColor(float color[4]);
-        virtual void setBackgroundColor(vec4 color);
+        virtual void setBackgroundColor(ZColor color);
 
-        virtual void setHighlighColor(vec4 color) {
+        virtual void setHighlighColor(ZColor color) {
             mHighlightColor = color;
         }
 
@@ -210,9 +212,9 @@ class ZView {
             mShowHighlight = shouldShow;
         }
 
-        virtual vec4 getBackgroundColor();
+        virtual ZColor getBackgroundColor();
         void setBackgroundImage(ZTexture* background);
-        void setOutlineColor(vec4 color);
+        void setOutlineColor(ZColor color);
 
         void setTag(string);
         string getTag();
@@ -262,23 +264,23 @@ class ZView {
          * Color library. Useful for quickly setting a color to a view for testing
          *
          */
-        const vec4 white = vec4(1,1,1,1);
-        const vec4 black = vec4(0,0,0,1);
-        const vec4 red = vec4(1,0,0,1);
-        const vec4 blue = vec4(0,0,1,1);
-        const vec4 green = vec4(0,1,0,1);
-        const vec4 yellow = vec4(1,1,0,1);
-        const vec4 gold = vec4(1, 0.709230, 0, 1);
-        const vec4 grey = vec4(0.7, 0.7, 0.7, 1.0);
-        const vec4 darkGrey = vec4(0.5, 0.5, 0.5, 1.0);
-        const vec4 lightGrey = vec4(0.7, 0.72, 0.75, 1.0);
-        const vec4 darkerGrey = vec4(0.04, 0.04, 0.05, 1.0);
-        const vec4 transparent = vec4(0);
-        const vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
+         ZColor white = vec4(1,1,1,1);
+         ZColor black = vec4(0,0,0,1);
+         ZColor red = vec4(1,0,0,1);
+         ZColor blue = vec4(0,0,1,1);
+         ZColor green = vec4(0,1,0,1);
+         ZColor yellow = vec4(1,1,0,1);
+         ZColor gold = vec4(1, 0.709230, 0, 1);
+         ZColor grey = vec4(0.7, 0.7, 0.7, 1.0);
+         ZColor darkGrey = vec4(0.5, 0.5, 0.5, 1.0);
+         ZColor lightGrey = vec4(0.7, 0.72, 0.75, 1.0);
+         ZColor darkerGrey = vec4(0.04, 0.04, 0.05, 1.0);
+         ZColor transparent = ZColor(vec4(0));
+         ZColor faded = vec4(0.5, 0.5, 0.5, 0.2);
 
-        const vec4 bg = ZSettingsStore::get().getBackgroundColor();
-        const vec4 base =  ZSettingsStore::get().getBaseColor();
-        const vec4 highlight =  ZSettingsStore::get().getHighlightColor();
+        ZColor bg = ZSettingsStore::get().getBackgroundColor();
+        ZColor base =  ZSettingsStore::get().getBaseColor();
+        ZColor highlight =  ZSettingsStore::get().getHighlightColor();
 
         void setName(string name);
         string getName();
@@ -337,7 +339,7 @@ class ZView {
         return mCornerRadius;
     }
 
-    void setTint(vec4 tint) {
+    void setTint(ZColor tint) {
         mTint = tint;
     }
 
@@ -347,6 +349,9 @@ class ZView {
 
     bool controlKeyPressed();
 
+    void setColorMode(ColorMode colorMode);
+
+    ColorMode mColorMode = ColorMode::light;
 private:
 
         bool mBuffersInit = false;
@@ -373,10 +378,10 @@ private:
 		float mMaxWidth = 0; 
 		float mMaxHeight = 0;
 
-		vec4 mBackgroundColor = vec4(0);
-        vec4 mHighlightColor = vec4(0);
-        vec4 mTint = vec4(1);
-		vec4 mOutlineColor = transparent;
+    ZColor mBackgroundColor = ZColor(vec4(0));
+        ZColor mHighlightColor = ZColor(vec4(0));
+        ZColor mTint = ZColor(vec4(1));
+		ZColor mOutlineColor = transparent;
 		bool mShowHighlight = false;
 
 		GLuint mVAO = 0;
