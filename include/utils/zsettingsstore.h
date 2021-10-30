@@ -57,9 +57,9 @@ private:
 
     function<void()> mOnThemeChange = nullptr;
     ZColor mBaseColor = ZColor(vec4(0.9, 0.9, 0.92, 1.0),
-                               vec4(0.0, 0.1, 0.12, 1.0) );
+                               vec4(0.0, 0.01, 0.012, 1.0) );
     ZColor mBackgroundColor = ZColor(vec4(0.85, 0.85, 0.86, 1.0),
-                                     vec4(0.12, 0.14, 0.16, 1.0));
+                                     vec4(0.02, 0.022, 0.03, 1.0));
     ZColor mHighlightColor = vec4(0.036964, 0.260146, 0.679894, 1.000000);
     ZColor mInactiveColor = vec4(0.0,0.0,0.0,0.5);
     ZColor mHighlightTextColor = vec4(1.0,1.0,1.0, 1.0);

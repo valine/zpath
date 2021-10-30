@@ -1363,5 +1363,6 @@ void ZView::setColorMode(ColorMode colorMode) {
         view->setColorMode(colorMode);
     }
 
+    updateCornerRadius();
     mColorMode = colorMode;
 }

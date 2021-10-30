@@ -48,7 +48,7 @@ ZViewController::ZViewController(char **argv) : ZView(ZView::fillParent, ZView::
     mResourcePath = path;
     setRootView(this);
 
-    setBackgroundColor(white);
+    setBackgroundColor(bg);
 }
 
 
