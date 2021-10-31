@@ -383,7 +383,6 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     mOutputLabel->setVisibility(isOutputLabelVisible(mType));
 
-
     setBackgroundColor(getNodeColor(mType));
 
     if (isOutputLabelVisible(mType)) {
@@ -447,15 +446,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
     }
 
     refreshView(type);
-
-    vec4 bg = getBackgroundColor().get(mColorMode);
-    vec3 color3 = vec3(bg.r,bg.g,bg.b);
-    if (length(color3) < 0.8 && bg.a != 0) {
-        mNameLabel->setTextColor(ZColor(vec4(1)));
-    } else {
-        mNameLabel->setTextColor(ZColor(vec4(0,0,0,1)));
-    }
-
+    mNameLabel->setTextColor(getBackgroundColor().getTextColor());
     if (getChartType(mType) == LINE_1D_2X) {
         mChart->setLineCount(2);
     }

@@ -61,9 +61,57 @@ public:
         }
     }
 
+    /**
+     * Returns a suitable text color given the background value
+     * @return
+     */
+    ZColor getTextColor() {
+        vec4 colorLight = get(ColorMode::light);
+        vec4 colorDark = get(ColorMode::dark);
+        ZColor textColor = ZColor(vec4(0));
 
+        vec3 color3L = vec3(colorLight.r,colorLight.g,colorLight.b);
+        vec3 color3D = vec3(colorDark.r,colorDark.g,colorDark.b);
+        if (glm::length(color3L) < 0.8 && colorLight.a != 0) {
+            textColor.light = vec4(1);
+        } else {
+            textColor.light = vec4(0);
+        }
 
-   // vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
+        if (glm::length(color3D) < 0.8 && colorDark.a != 0) {
+            textColor.dark = vec4(1);
+        } else {
+            textColor.dark = vec4(0);
+        }
+        return textColor;
+    }
+
+    /**
+    * Returns a suitable text color given the background value
+    * @return
+    */
+    ZColor getHighlightColor(ZColor highlight) {
+        vec4 colorLight = get(ColorMode::light);
+        vec4 colorDark = get(ColorMode::dark);
+        ZColor textColor = ZColor(vec4(0));
+
+        vec3 color3L = vec3(colorLight.r,colorLight.g,colorLight.b);
+        vec3 color3D = vec3(colorDark.r,colorDark.g,colorDark.b);
+        if (glm::length(color3L) < 0.8 && colorLight.a != 0) {
+            textColor.light = highlight.light;
+        } else {
+            textColor.light = vec4(0);
+        }
+
+        if (glm::length(color3D) < 0.8 && colorDark.a != 0) {
+            textColor.dark = highlight.dark;
+        } else {
+            textColor.dark = vec4(0);
+        }
+        return textColor;
+    }
+
+    // vec4 faded = vec4(0.5, 0.5, 0.5, 0.2);
 };
 
 

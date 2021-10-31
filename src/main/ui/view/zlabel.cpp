@@ -70,14 +70,7 @@ void ZLabel::updateFrameSize() {
 
 void ZLabel::setBackgroundColor(ZColor color) {
     ZView::setBackgroundColor(color);
-
-    vec4 color4 = color.get(mColorMode);
-    vec3 color3 = vec3(color4.r,color4.g,color4.b);
-    if (glm::length(color3) < 0.8 && color4.a != 0) {
-        setTextColor(white);
-    } else {
-        setTextColor(black);
-    }
+    setTextColor(color.getTextColor());
 }
 
 void ZLabel::drawText() {

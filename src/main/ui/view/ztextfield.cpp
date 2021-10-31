@@ -259,14 +259,7 @@ void ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) 
 
 void ZTextField::setBackgroundColor(ZColor color) {
     ZLabel::setBackgroundColor(color);
-
-    vec4 color4 = color.get(mColorMode);
-    vec3 color3 = vec3(color4.r,color4.g,color4.b);
-    if (glm::length(color3) < 0.8 && color4.a != 0) {
-        mCursor->setBackgroundColor(white);
-    } else {
-        mCursor->setBackgroundColor(highlight);
-    }
+    mCursor->setBackgroundColor(highlight);
     updateTitle();
 }
 

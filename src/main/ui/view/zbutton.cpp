@@ -113,14 +113,7 @@ void ZButton::setOnClick(std::function<void()> onClick) {
 
 void ZButton::setBackgroundColor(ZColor color) {
     ZView::setBackgroundColor(color);
-
-    vec4 color4 = color.get(mColorMode);
-    vec3 color3 = vec3(color4.r,color4.g,color4.b);
-    if (glm::length(color3) < 0.8 && color4.a != 0) {
-        mLabel->setTextColor(vec4(1));
-    } else {
-        mLabel->setTextColor(vec4(0,0,0,1));
-    }
+    mLabel->setTextColor(color.getTextColor());
 }
 
 void ZButton::setOnClick(std::function<void(ZView *)> onClick) {
