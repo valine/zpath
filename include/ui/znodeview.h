@@ -560,7 +560,7 @@ public:
         }
     }
 
-    static vec4 getSocketColor(SocketType type) {
+    static ZColor getSocketColor(SocketType type) {
         const vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
         const vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
         const vec4 mEnumColor = vec4(0.038825, 0.538225, 0.048049, 1.000000);
@@ -592,7 +592,7 @@ public:
         }
     }
 
-    static vec4 getNodeColor(Type type) {
+    static ZColor getNodeColor(Type type) {
         switch (type) {
             case C:
             case CI:
@@ -615,7 +615,7 @@ public:
             case COMMENT:
                 return getSocketColor(TEXT);
             default:
-                return vec4(1);
+                return ZColor(vec4(1), vec4(vec3(0.15, 0.155, 0.16), 1.0));
         }
     }
 

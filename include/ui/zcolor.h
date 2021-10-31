@@ -39,7 +39,8 @@ public:
     }
 
     ZColor operator-(ZColor color) const {
-        return {light - color.light, dark - color.dark};
+        return {max(light - color.light, vec4(0)),
+                max(dark - color.dark, vec4(0))};
     }
 
 
@@ -48,7 +49,8 @@ public:
     }
 
     ZColor operator-(vec4 color) const {
-        return {light - color, dark - color};
+        return {max(light - color, vec4(0)),
+                max(dark - color, vec4(0))};
     }
 
     vec4 get(ColorMode colorMode) {

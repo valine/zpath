@@ -349,7 +349,7 @@ class ZView {
 
     bool controlKeyPressed();
 
-    void setColorMode(ColorMode colorMode);
+    virtual void setColorMode(ColorMode colorMode);
 
     ColorMode mColorMode = ColorMode::light;
 private:

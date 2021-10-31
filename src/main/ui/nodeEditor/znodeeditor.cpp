@@ -30,7 +30,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
 
     vector<string> allTypes;
-    vector<vec4> allColors;
+    vector<ZColor> allColors;
     for (int i = 0; i != ZNodeView::Type::LAST; i++) {
         auto type = static_cast<ZNodeView::Type>(i);
         if (ZNodeView::showInDrawer(type)) {

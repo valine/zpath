@@ -80,6 +80,7 @@ private:
 
     void onCreate();
 
+    void setColorMode(ColorMode colorMode);
 };
 
 #endif

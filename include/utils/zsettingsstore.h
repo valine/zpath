@@ -62,8 +62,8 @@ private:
                                      vec4(0.02, 0.022, 0.03, 1.0));
     ZColor mHighlightColor = vec4(0.036964, 0.260146, 0.679894, 1.000000);
     ZColor mInactiveColor = vec4(0.0,0.0,0.0,0.5);
-    ZColor mHighlightTextColor = vec4(1.0,1.0,1.0, 1.0);
-    ZColor mBaseTextColor = vec4(0,0,0, 1.0);
+    ZColor mHighlightTextColor = ZColor(vec4(1), vec4(0));
+    ZColor mBaseTextColor = ZColor(vec4(0), vec4(1));
 
     string mResourcePath;
     ZSettingsStore();

@@ -8,7 +8,7 @@
 
 #include "ui/zdrawer.h"
 
-ZDrawer::ZDrawer(ZView *parent, vector<string> names, vector<vec4> colors) : ZScrollView(100, fillParent, parent) {
+ZDrawer::ZDrawer(ZView *parent, vector<string> names, vector<ZColor> colors) : ZScrollView(100, fillParent, parent) {
     setBackgroundColor(bg);
     setElevation(0.5);
 

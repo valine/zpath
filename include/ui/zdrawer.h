@@ -16,11 +16,11 @@ static const int BUTTON_MARGIN = 3;
 class ZDrawer : public ZScrollView {
 
 public:
-    ZDrawer(ZView *parent, vector<string> names, vector<vec4> colors);
+    ZDrawer(ZView *parent, vector<string> names, vector<ZColor> colors);
 
 
     vector<string> mNames;
-    vector<vec4> mColors;
+    vector<ZColor> mColors;
     vector<ZView*> mButtons;
     bool mActionTriggered = false;
     int mSelected = -1;

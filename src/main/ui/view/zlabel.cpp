@@ -29,7 +29,6 @@ void ZLabel::onCreate() {
     ZView::onCreate();
 }
 
-
 void ZLabel::setup(const string &font) {
     mFont = font;
     // Configure VAO/VBO for texture quads
@@ -44,6 +43,11 @@ void ZLabel::setup(const string &font) {
     glBindVertexArray(0);
 }
 
+void ZLabel::setColorMode(ColorMode colorMode) {
+    ZView::setColorMode(colorMode);
+    drawText();
+    mTextInvalid = true;
+}
 
 void ZLabel::createFBO() {
     glGenFramebuffers(1, &mFBO);
@@ -264,8 +268,6 @@ void ZLabel::setTextSize(int textSize) {
     mTextSize = textSize;
     invalidate();
 }
-
-
 
 void ZLabel::setTextColor(ZColor color) {
     mTextColor = color;
