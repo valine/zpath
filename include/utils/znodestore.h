@@ -63,6 +63,7 @@ public:
         string path = ZSettingsStore::get().getResourcePath() + projectFolder;
         string ext = ".zpath";
         string toPath = path + toName + ext;
+        cout << "Project renamed: from path:" << fromPath << " to path: " << toPath << endl;
         rename(fromPath.c_str(), toPath.c_str());
         return toPath;
     }

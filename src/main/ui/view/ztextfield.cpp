@@ -11,7 +11,7 @@ ZTextField::ZTextField(ZView *parent)
         : ZLabel("", parent) {
 
     mCursor = new ZView(2, 12, this);
-    mCursor->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
+    mCursor->setBackgroundColor(ZSettingsStore::get().getBaseTextColor());
     mCursor->setVisibility(false);
     drawText();
 
@@ -155,7 +155,6 @@ void ZTextField::setVisibility(bool visible) {
 
 void ZTextField::onKeyPress(int key, int scancode, int action, int mods) {
     ZView::onKeyPress(key, scancode, action, mods);
-
     if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
         if (mTextMode == editor) {
             applyEdit();
@@ -259,7 +258,12 @@ void ZTextField::onMouseEvent(int button, int action, int mods, int sx, int sy) 
 
 void ZTextField::setBackgroundColor(ZColor color) {
     ZLabel::setBackgroundColor(color);
-    mCursor->setBackgroundColor(highlight);
+    if (color.light == highlight.light) {
+        mCursor->setBackgroundColor(white);
+    } else {
+        mCursor->setBackgroundColor(highlight);
+    }
+
     updateTitle();
 }
 
@@ -274,6 +278,11 @@ void ZTextField::startEdit() {
 void ZTextField::onGlobalMouseUp(int key) {
     ZView::onGlobalMouseUp(key);
     if (!isMouseInBounds(this)) {
+        if (mInitialText != getText() && mCursor->getVisibility()) {
+            if (mOnReturn != nullptr) {
+                mOnReturn(getText());
+            }
+        }
         applyEdit();
     }
 }

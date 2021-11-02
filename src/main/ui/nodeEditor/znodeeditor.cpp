@@ -111,7 +111,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     });
 
     mProjectBrowser->setOnProjectRenamed([this](string name, int index){
-        return ZNodeStore::get().renameProject(mProjectPath, name);
+        mProjectPath =  ZNodeStore::get().renameProject(mProjectPath, name);
+        return mProjectPath;
     });
 
     mProjectBrowser->setOnProjectDelete([this](string path, int index){
@@ -304,8 +305,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 }
 
 void ZNodeEditor::selectProject(int index, string &path) {
-    saveProject();
-
     mSelectedProject = index;
     mProjectPath = path;
     mGroupMode = NO_GROUP;
@@ -417,6 +416,7 @@ void ZNodeEditor::requestSave() {
 }
 
 void ZNodeEditor::saveProject() {
+    cout << "saving" << endl;
     set<ZNodeView*> projectNodes;
     for (auto node : mNodeViews) {
         if (node->getProjectID() == mSelectedProject) {
