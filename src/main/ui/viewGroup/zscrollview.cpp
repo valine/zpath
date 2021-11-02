@@ -24,7 +24,7 @@ void ZScrollView::init() {
 	addSubView(mInnerView);
 	mInnerView->setMargin(0,0,7,0);
 
-	setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
+	setBackgroundColor(bg);
 	setInnerViewHeight(1000);
 
 	mInnerView->resetCursor();

@@ -101,8 +101,10 @@ void ZLabel::drawText() {
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
+    float centerOffset = mLineTopMargin * mDP;
+
     GLfloat x = getCornerRadius().x * mDP;
-    GLfloat y = (-13 * mDP) + 17;
+    GLfloat y = (-13 * mDP) + 17 - centerOffset;
 
     float vHeight = getHeight();
     int lineHeight = getLineHeight();

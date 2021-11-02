@@ -67,7 +67,9 @@ void ZPathViewController::onCreate() {
     });
 
     tab1->getInnerView()->refreshMargins();
-    mTileView = new ZTiledView(mScene, ZView::fillParent,  ZView::fillParent, 1, 1, getResourcePath());
+    mTileView = new ZTiledView(mScene,
+                               ZView::fillParent,  ZView::fillParent,
+                               1, 1, getResourcePath());
     mIsQuadView = false;
     mTileView->setOffset(tab1->getWidth(), 0);
     mTileView->setGravity(ZView::topRight);

@@ -13,7 +13,7 @@
 ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent) {
 
     setCornerRadius(10);
-    setBackgroundColor(white);
+    setBackgroundColor(grey0);
     setElevation(1.0);
 
     // Slider example
@@ -26,7 +26,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mSlider->setMaxHeight(20);
     mSlider->setGravity(bottomLeft);
     mSlider->setTextColor(black);
-    mSlider->setLineColor(grey);
+
     mSlider->setOnSlide([this](ZView* view, float v, bool mouseUp){
         if (mListener != nullptr) {
             mListener(mSocketIndex, v, mIsInput, mSelectedMagnitude);

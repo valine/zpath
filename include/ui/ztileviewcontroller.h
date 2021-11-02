@@ -8,7 +8,7 @@
 
 static const int DRAG_THRESHOLD = 5;
 
-static const int BOTTOM_MARGIN = 25;
+static const int BOTTOM_MARGIN = 26;
 
 static const int TILE_MARGIN = 25;
 

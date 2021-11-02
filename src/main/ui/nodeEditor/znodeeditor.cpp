@@ -138,7 +138,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     });
 
     auto* headerBackground = new ZView(fillParent, 25, this);
-    headerBackground->setBackgroundColor(darkerGrey);
+    headerBackground->setBackgroundColor(grey1);
 
     mHeader = new ZView(fillParent, fillParent, this);
 
@@ -259,7 +259,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mExpressionField = new ZTextField(this);
     mExpressionField->setGravity(Gravity::bottomLeft);
-    mExpressionField->setBackgroundColor(white);
     mExpressionField->setMaxWidth(360);
     mExpressionField->setXOffset(mDrawer->getMaxWidth() + 5);
     mExpressionField->setOutlineType(WireType::outline);
@@ -1425,7 +1424,7 @@ void ZNodeEditor::toggleGroupSelection() {
             ZNodeView *node = (*mSelectedNodes.begin());
             if (node->getType() == ZNodeView::GROUP) {
                 mGroupMode = node->getIndexTag();
-                setBackgroundColor(darkGrey);
+                setBackgroundColor(grey2);
 
                 for (ZNodeView* globalNode : mNodeViews) {
                     globalNode->setVisibility(false);

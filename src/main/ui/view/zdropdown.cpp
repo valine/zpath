@@ -10,15 +10,14 @@
 ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
     mBackground = new ZView(200, 25, this);
-    mBackground->setBackgroundColor(darkerGrey);
+    mBackground->setBackgroundColor(grey1);
     mBackground->setCornerRadius(4);
     mButtonHeight = maxHeight;
 
     mTitle = new ZLabel("Dropdown", this);
     mTitle->setText("Dropdown");
-    mTitle->setTextColor(black);
+    mTitle->setTextColor(grey1.getTextColor());
     mTitle->setMarginLeft(10);
-    mTitle->setTextColor(white);
     mTitle->setYOffset((mBackground->getMaxHeight() - mTitle->getLineHeight()) / 2);
     mTitle->setOnClick([this](ZView* sender){
         handleClick();
@@ -27,7 +26,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     addSubView(mTitle);
 
     mDrawer = new ZScrollView(maxWidth, 0, this);
-    mDrawer->setBackgroundColor(bg - vec4(0.05,0.05,0.05, 0.0));
+    mDrawer->setBackgroundColor(bg);
     mDrawer->setOffset(0, DEFAULT_OFFSET);
     mDrawer->setVisibility(false);
     mDrawer->setElevation(1.0);
@@ -43,7 +42,8 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
         auto* button = new ZButton(item, mDrawer);
         button->setIndexTag(index);
         button->setCornerRadius(0);
-        button->setBackgroundColor(vec4(0,0,0,0));
+        button->setBackgroundColor(ZColor(vec4(1,1,1,0),
+                                   vec4(0,0,0,0)));
         button->setClickMode(ZButton::ClickMode::upAndDown);
         button->setOnClick([this, item](ZView* sender){
             selectItem(sender->getIndexTag());

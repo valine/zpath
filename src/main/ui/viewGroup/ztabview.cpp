@@ -11,7 +11,6 @@ ZTabView::ZTabView(float maxWidth1, float maxHeight1, const vector<ZView*>& tabs
     vector<string> names;
     for (ZView* tab : tabs) {
         names.push_back(tab->getName());
-        tab->setBackgroundColor(grey);
         tab->setVisibility(false);
         tab->setMarginBottom(25);
     }

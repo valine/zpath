@@ -28,7 +28,8 @@ ZTileViewController::ZTileViewController(string path, std::function<ZViewControl
 void ZTileViewController::onLayoutFinished() {
     ZViewController::onLayoutFinished();
 
-    setBackgroundColor(darkerGrey);
+    setOutlineType(WireType::outline);
+    setBackgroundColor(grey1);
 
     int defaultController = 1;
 
@@ -47,7 +48,7 @@ void ZTileViewController::onLayoutFinished() {
 
     setIndexTag(defaultController);
 
-    int boarder = 1;
+    int boarder = 0;
     mContent->setDrawingEnabled(false);
     mContent->setOutlineType(outline);
     mContent->setLineWidth(2);
@@ -62,7 +63,7 @@ void ZTileViewController::onLayoutFinished() {
 
     mDropDown = new ZDropDown(100, 300, mNames, this);
     mDropDown->setGravity(bottomLeft);
-    mDropDown->setYOffset(0);
+    mDropDown->setYOffset(1);
     mDropDown->setXOffset(boarder);
     mDropDown->selectItem(defaultController);
 

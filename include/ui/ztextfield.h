@@ -63,9 +63,10 @@ public:
     float getTextWidth() override;
 
     void setBackgroundColor(ZColor color) override;
-private:
 
     ZLabel* mTitle = nullptr;
+private:
+
     ZView* mCursor = nullptr;
     int mCursorIndex = 0;
     int mLineIndex = 0;

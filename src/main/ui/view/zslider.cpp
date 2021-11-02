@@ -8,7 +8,7 @@ ZView(maxWidth, maxHeight) {
 	mLine = new ZView(getWidth(), lineHeight);
     mLine->setCornerRadius(SLIDER_THUMB_SIZE / 2);
 	mLine->setOffset(0,getHeight() / 2 - (lineHeight / 2));
-	mLine->setBackgroundColor(ZSettingsStore::getInstance().getInactiveColor());
+	mLine->setBackgroundColor(grey1);
 	mLine->setGravity(ZView::bottomLeft);
 	addSubView(mLine);
 
@@ -21,7 +21,7 @@ ZView(maxWidth, maxHeight) {
 
 	mThumb = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
     mThumb->setCornerRadius(2);
-	mThumb->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
+	mThumb->setBackgroundColor(grey2);
 	mThumb->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
 	mThumb->setGravity(ZView::bottomLeft);
 	addSubView(mThumb);
@@ -52,7 +52,7 @@ ZView(ZView::fillParent, 40, parent){
     mLine = new ZView(getWidth(), lineHeight);
     mLine->setCornerRadius(SLIDER_THUMB_SIZE / 2);
     mLine->setOffset(0, Y_OFFSET - (lineHeight / 2));
-    mLine->setBackgroundColor(ZSettingsStore::getInstance().getInactiveColor());
+    mLine->setBackgroundColor(grey1);
     mLine->setGravity(ZView::bottomLeft);
     addSubView(mLine);
 
@@ -69,7 +69,7 @@ ZView(ZView::fillParent, 40, parent){
     mThumb->setCornerRadius(SLIDER_THUMB_SIZE / 2);
     mThumb->setLineWidth(0.0);
     mThumb->setOutlineColor(transparent);
-    mThumb->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
+    mThumb->setBackgroundColor(grey2);
     mThumb->setOffset(0, Y_OFFSET - (SLIDER_THUMB_SIZE / 2));
     mThumb->setGravity(ZView::bottomLeft);
     addSubView(mThumb);

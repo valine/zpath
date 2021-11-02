@@ -135,7 +135,7 @@ void ZNodeView::init() {
     mXMinLabel->setCornerRadius(mXMinLabel->getMaxHeight()/2);
     mXMinLabel->setElevation(1.0);
     mXMinLabel->setMargin(vec4(2));
-   // mXMinLabel->setOutlineColor(darkerGrey);
+   // mXMinLabel->setOutlineColor(grey3);
     //mXMinLabel->setLineWidth(0.0001);
 
     mXMaxLabel = new ZLabel("xmax", mChart);
@@ -149,7 +149,7 @@ void ZNodeView::init() {
     mXMaxLabel->setCornerRadius(mXMaxLabel->getMaxHeight()/2);
     mXMaxLabel->setElevation(1.0);
     mXMaxLabel->setMargin(vec4(2));
-   // mXMaxLabel->setOutlineColor(darkerGrey);
+   // mXMaxLabel->setOutlineColor(grey3);
     //mXMaxLabel->setLineWidth(0.0001);
 
     mYMinLabel = new ZLabel("ymin", mChart);
@@ -162,7 +162,7 @@ void ZNodeView::init() {
     mYMinLabel->setCornerRadius(mYMinLabel->getMaxHeight()/2);
     mYMinLabel->setElevation(1.0);
     mYMinLabel->setMargin(vec4(2));
-    //mYMinLabel->setOutlineColor(darkerGrey);
+    //mYMinLabel->setOutlineColor(grey3);
     //mYMinLabel->setLineWidth(0.0001);
 
     mYMaxLabel = new ZLabel("ymax", mChart);
@@ -173,7 +173,7 @@ void ZNodeView::init() {
     mYMaxLabel->setCornerRadius(mYMaxLabel->getMaxHeight()/2);
     mYMaxLabel->setElevation(1.0);
     mYMaxLabel->setMargin(vec4(2));
-   // mYMaxLabel->setOutlineColor(darkerGrey);
+   // mYMaxLabel->setOutlineColor(grey3);
    // mYMaxLabel->setLineWidth(0.0001);
 
     updateLabelVisibility();
@@ -181,7 +181,7 @@ void ZNodeView::init() {
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         if (i >= mSocketInLabels.size()) {
             auto *label = new ZLabel("", this);
-            label->setTextColor(darkGrey);
+            label->setTextColor(grey2);
             label->setMaxWidth(100);
             label->setClippingEnabled(false);
             mSocketInLabels.push_back(label);
@@ -447,6 +447,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     refreshView(type);
     mNameLabel->setTextColor(getBackgroundColor().getTextColor());
+    mOutputLabel->setTextColor(getBackgroundColor().getTextColor());
     if (getChartType(mType) == LINE_1D_2X) {
         mChart->setLineCount(2);
     }
@@ -713,7 +714,7 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
             // display an error message.
             if (x.at(0).size() <= size.x) {
                 //mOutputLabel->setText(to_string(size.x) + " inputs needed, got " + to_string(x.size()));
-                mOutputLabel->setTextColor(white);
+                mOutputLabel->setTextColor(getBackgroundColor().getTextColor());
                 return vector<vector<float>>();
             } else {
                 auto socketType = getSocketType();

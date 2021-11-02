@@ -6,14 +6,14 @@
 
 #include "ui/zprojectview.h"
 #include "ui/ztextfield.h"
-ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZView(120, fillParent, parent) {
+ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZView(125, fillParent, parent) {
 
     mScrollView = new ZScrollView(fillParent, fillParent, this);
     mScrollView->setInnerViewHeight(200);
     mScrollView->setBackgroundColor(transparent);
 
     mModelInterface = model;
-    setBackgroundColor(white);
+    setBackgroundColor(grey1);
     setElevation(1.0);
     setCornerRadius(vec4(5,1,1,1));
 
@@ -21,7 +21,7 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &mode
     newProjectBtn->setMaxWidth(getMaxWidth() * 0.55);
     newProjectBtn->setCornerRadius(vec4(5));
     newProjectBtn->setMargin(vec4(2, 2, 2, 2));
-    newProjectBtn->setBackgroundColor(grey);
+    newProjectBtn->setBackgroundColor(grey0);
     newProjectBtn->setGravity(bottomLeft);
     newProjectBtn->setOnClick([this](ZView* sender){
         addUnsavedProject();
@@ -31,9 +31,8 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &mode
     deleteProjectBtn->setMaxWidth(getMaxWidth() * 0.40);
     deleteProjectBtn->setCornerRadius(vec4(5));
     deleteProjectBtn->setMargin(vec4(2, 2, 2, 2));
-    deleteProjectBtn->setBackgroundColor(grey);
     deleteProjectBtn->setGravity(bottomRight);
-    deleteProjectBtn->setBackgroundColor(darkGrey);
+    deleteProjectBtn->setBackgroundColor(grey0);
     deleteProjectBtn->setOnClick([this](ZView* sender){
         if (mOnProjectDelete(mNameMap.at(mSelectedTag), mSelectedTag)) {
             auto toDelete = mProjectViews.at(mSelectedTag);
@@ -100,6 +99,8 @@ void ZProjectView::addProject(const string& name) {
     project->setFocusMode(ZTextField::FocusMode::doubleClick);
     project->setTextMode(ZTextField::TextMode::field);
     project->setMaxWidth(200);
+    project->setMaxHeight(24);
+    project->setLineTopMargin(2.5);
     project->setElevation(0);
     project->setCornerRadius(vec4(5));
     project->setMargin(vec4(2, 2, 2, 0));
@@ -129,8 +130,11 @@ void ZProjectView::addUnsavedProject() {
     unsavedPrj->setFocusMode(ZTextField::FocusMode::doubleClick);
     unsavedPrj->setTextMode(ZTextField::TextMode::field);
     unsavedPrj->setMaxWidth(200);
+    unsavedPrj->setMaxHeight(24);
+    unsavedPrj->setLineTopMargin(2.5);
+    unsavedPrj->mTitle->setLineTopMargin(2.5);
     unsavedPrj->setCornerRadius(vec4(5));
-    unsavedPrj->setMargin(vec4(2, 0, 0, 0));
+    unsavedPrj->setMargin(vec4(2, 2, 0, 0));
     unsavedPrj->setBackgroundColor(gold);
     unsavedPrj->setOnClick([this](ZView* sender){
         selectProject(sender);
@@ -140,7 +144,7 @@ void ZProjectView::addUnsavedProject() {
         if (mOnProjectSaved != nullptr) {
            string path = mOnProjectSaved(std::move(name), unsavedPrj->getIndexTag());
            mNameMap.at(unsavedPrj->getIndexTag()) = path;
-           unsavedPrj->setBackgroundColor(white);
+           unsavedPrj->setBackgroundColor(grey1);
            unsavedPrj->invalidate();
            selectProject(unsavedPrj);
         }
@@ -148,6 +152,7 @@ void ZProjectView::addUnsavedProject() {
     unsavedPrj->setIndexTag(mProjectIdInc);
     mNameMap.insert({mProjectIdInc, ""});
     mProjectIdInc++;
+    mScrollView->getInnerView()->refreshMargins();
 }
 
 ZTextField* ZProjectView::newProjectView() {
@@ -169,7 +174,7 @@ void ZProjectView::selectProject(ZView *sender) {
             if (mNameMap.at(project->getIndexTag()).empty()) {
                 project->setBackgroundColor(gold);
             } else {
-                project->setBackgroundColor(white);
+                project->setBackgroundColor(grey1);
             }
         }
     }

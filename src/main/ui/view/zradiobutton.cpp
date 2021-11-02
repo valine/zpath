@@ -57,9 +57,11 @@ void ZRadioButton::init(float maxWidth, float maxHeight, vector<string> &titles)
 
         if (i == 0) {
             button->setBackgroundColor(mHighlightColor);
+            button->setHighlighColor(mHighlightColor + vec4(vec3(0.1), 0.0));
             mHighlighted = button;
         } else {
             button->setBackgroundColor(mBaseColor);
+            button->setHighlighColor(mBaseColor + vec4(vec3(0.1), 0.0));
         }
 
         button->setText(titles.at(i));
@@ -110,6 +112,7 @@ void ZRadioButton::onClick(ZButton* sender) {
         ZView* view = getSubViews().at(i);
         if (i > 0) {
 	       view->setBackgroundColor(mBaseColor);
+	       view->setHighlighColor(mBaseColor + vec4(vec3(0.1), 0.0));
 	       if (view == sender) {
 	           index = i - 1;
 	       }
@@ -118,6 +121,7 @@ void ZRadioButton::onClick(ZButton* sender) {
     
     mHighlighted = sender;
     sender->setBackgroundColor(mHighlightColor);
+    sender->setHighlighColor(mHighlightColor + vec4(vec3(0.1), 0.0));
 
     // cout << "radio" << endl;
    	if (mListener != nullptr) {

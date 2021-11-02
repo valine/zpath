@@ -72,13 +72,13 @@ public:
 
         vec3 color3L = vec3(colorLight.r,colorLight.g,colorLight.b);
         vec3 color3D = vec3(colorDark.r,colorDark.g,colorDark.b);
-        if (glm::length(color3L) < 0.8 && colorLight.a != 0) {
+        if (glm::length(color3L) < 0.8) {
             textColor.light = vec4(1);
         } else {
             textColor.light = vec4(0);
         }
 
-        if (glm::length(color3D) < 0.8 && colorDark.a != 0) {
+        if (glm::length(color3D) < 0.8) {
             textColor.dark = vec4(1);
         } else {
             textColor.dark = vec4(0);

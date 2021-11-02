@@ -16,7 +16,7 @@ ZTextField::ZTextField(ZView *parent)
     drawText();
 
     cursorToEnd();
-    setBackgroundColor(white);
+    setBackgroundColor(grey0);
     setCornerRadius(getMaxHeight() / 2);
 
     mTitle = new ZLabel("", this);

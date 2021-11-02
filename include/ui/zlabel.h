@@ -48,6 +48,10 @@ public:
     void computeLineWidth();
     virtual void setTextColor(ZColor color);
 
+    void setLineTopMargin(float margin) {
+        mLineTopMargin = margin;
+        mTextInvalid = true;
+    }
 private:
 
     bool mInit = false;
@@ -56,6 +60,7 @@ private:
 
     GLuint VAO, VBO;
     int mTextSize = 14;
+    float mLineTopMargin = 0;
     ZColor mTextColor = white;
     string mText = "";
     string mFontPath = "";
