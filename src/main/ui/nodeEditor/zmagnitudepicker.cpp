@@ -37,6 +37,7 @@ ZMagnitudePicker::ZMagnitudePicker(ZView *parent) : ZView(MAG_WIDTH, 70, parent)
     mName = new ZLabel("", this);
     mName->setYOffset(25);
     mName->setXOffset(5);
+    mName->setTextColor(grey0.getTextColor());
 
     mRangeContainer = new ZView(fillParent, 30, this);
     mRangeContainer->setGravity(topLeft);

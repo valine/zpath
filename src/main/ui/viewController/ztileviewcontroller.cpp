@@ -29,6 +29,7 @@ void ZTileViewController::onLayoutFinished() {
     ZViewController::onLayoutFinished();
 
     setOutlineType(WireType::outline);
+    setOutlineColor(grey2);
     setBackgroundColor(grey1);
 
     int defaultController = 1;
@@ -50,7 +51,6 @@ void ZTileViewController::onLayoutFinished() {
 
     int boarder = 0;
     mContent->setDrawingEnabled(false);
-    mContent->setOutlineType(outline);
     mContent->setLineWidth(2);
     mContent->setYOffset(boarder);
     mContent->setXOffset(boarder);
@@ -93,8 +93,6 @@ void ZTileViewController::selectController(int index) {
         mControllers.at(index) = mControllerFactory(index);
         mContent = mControllers.at(index);
         mContent->setDrawingEnabled(false);
-        mContent->setOutlineType(outline);
-        mContent->setLineWidth(2);
         mContent->setYOffset(1);
         mContent->setXOffset(1);
         mContent->setMarginBottom(BOTTOM_MARGIN);

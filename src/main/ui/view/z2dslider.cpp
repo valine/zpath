@@ -7,7 +7,7 @@ ZView(maxWidth, maxHeight){
     mLabel = new ZLabel(ZView::fillParent, 18);
     mLabel->setOffset(0,0);
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
+    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
     addSubView(mLabel);
 
     mLineH = new ZView(ZView::fillParent, LINE_WIDTH, this);
