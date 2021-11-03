@@ -69,7 +69,7 @@ ZView(ZView::fillParent, 40, parent){
     mThumb->setCornerRadius(SLIDER_THUMB_SIZE / 2);
     mThumb->setLineWidth(0.0);
     mThumb->setOutlineColor(transparent);
-    mThumb->setBackgroundColor(grey2);
+    mThumb->setBackgroundColor(white);
     mThumb->setOffset(0, Y_OFFSET - (SLIDER_THUMB_SIZE / 2));
     mThumb->setGravity(ZView::bottomLeft);
     addSubView(mThumb);

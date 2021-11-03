@@ -334,6 +334,7 @@ void ZNodeEditor::selectProject(int index, string &path) {
         for (auto node : mNodeViews) {
             if (node->getProjectID() == index && !node->mIsPartOfGroup) {
                 node->setVisibility(true);
+                node->invalidateSingleNode();
             } else {
                 node->setVisibility(false);
             }
@@ -416,7 +417,6 @@ void ZNodeEditor::requestSave() {
 }
 
 void ZNodeEditor::saveProject() {
-    cout << "saving" << endl;
     set<ZNodeView*> projectNodes;
     for (auto node : mNodeViews) {
         if (node->getProjectID() == mSelectedProject) {

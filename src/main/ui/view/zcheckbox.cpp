@@ -56,7 +56,6 @@ ZCheckbox::ZCheckbox(string label, ZView *parent)  :
     setVisibility(true);
     parent->addSubView(this);
     mCheck->setTint(highlight);
-    mBox->setTint(highlight);
 }
 
 
