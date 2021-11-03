@@ -588,6 +588,17 @@ void ZView::setMargin(vec4 margin) {
     invalidate();
 }
 
+void ZView::setMargin(float margin) {
+    mMarginLeft = margin;
+    mMarginTop = margin;
+    mMarginRight =  margin;
+    mMarginBottom =  margin;
+
+    computeBounds();
+    invalidate();
+}
+
+
 void ZView::setOffset(double x, double y) {
     mOffsetX = x;
     mOffsetY = y;

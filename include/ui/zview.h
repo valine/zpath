@@ -358,6 +358,9 @@ class ZView {
     virtual void setColorMode(ColorMode colorMode);
 
     ColorMode mColorMode = ColorMode::light;
+
+    void setMargin(float margin);
+
 private:
 
         bool mBuffersInit = false;
