@@ -51,6 +51,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mCheckerView->setBackgroundImage(tex);
     mCheckerView->setYOffset(NODE_CONTAINER_OFFSET);
     mCheckerView->setXOffset(0);
+    mCheckerView->getBackgroundImage()->setScaleOffset(GRID_SCALE, vec2(0));
 
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
@@ -1539,12 +1540,12 @@ void ZNodeEditor::onScrollChange(double x, double y) {
         int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
 
 
-        mCheckerView->getBackgroundImage()->setScaleOffset(newScale.x * 30.0, vec2(0));
+        mCheckerView->getBackgroundImage()->setScaleOffset(newScale.x * GRID_SCALE, vec2(0));
         mCheckerView->computeBounds();
 
         if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
                 !(newScale.y == maxScale && originalScale.y == maxScale)) {
-            mNodeContainer->setYOffset(margin);
+            mNodeContainer->setYOffset(margin / 2);
             mNodeContainer->setInnerTranslation(delta);
         }
         mNodeContainer->onWindowChange(getWidth(), getHeight());

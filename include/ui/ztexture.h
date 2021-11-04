@@ -18,6 +18,8 @@ class ZTexture {
 
 public:
 
+    ZTexture(int id, int idDark);
+
     enum FillMode {
         stretch,
         clip
@@ -32,6 +34,7 @@ public:
 	uint getID();
 	void updateTexture(float* pixels, int width, int height);
 	void setID(int);
+    void setID(int light, int dark);
 	void save();
 
 	void setScaleOffset(float scale, vec2 offset) {
@@ -51,8 +54,12 @@ public:
          mFillMode = fillMode;
      }
 
+    uint getIDDark();
+
 private:
 	uint mTextureID;
+    uint mTextureIDDark;
+
 };
 
 #endif

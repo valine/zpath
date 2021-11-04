@@ -19,7 +19,7 @@ public:
         return instance;
     }
 
-    int draw(int texId) {
+    int draw(int texId, float alpha) {
 
         int res = 4;
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
@@ -31,6 +31,7 @@ public:
 
         glBindVertexArray(mVAO);
         mShader->use();
+        mShader->setFloat("uAlpha", alpha);
 
         mat4 matrix = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
 //        matrix = glm::translate(matrix, vec3(0.5, 0.5, 0));
@@ -58,15 +59,20 @@ public:
     }
 
     void update(ZTexture texture) {
-        draw(texture.getID());
+        draw(texture.getID(), 0.1);
+        draw(texture.getIDDark(), 0.5);
     }
 
     ZTexture *create() {
         unsigned int buffer;
         glGenTextures(1, &buffer);
-        draw(buffer);
+        draw(buffer, 0.2);
 
-        auto* tex = new ZTexture(buffer);
+        unsigned int bufferDark;
+        glGenTextures(1, &bufferDark);
+        draw(bufferDark, 0.5);
+
+        auto* tex = new ZTexture(buffer, bufferDark);
         tex->setFillMode(ZTexture::clip);
         tex->mWidth = 4;
         tex->mHeight = 4;

@@ -615,7 +615,7 @@ public:
             case COMMENT:
                 return getSocketColor(TEXT);
             default:
-                return ZColor(vec4(1), vec4(vec3(0.15, 0.155, 0.16), 1.0));
+                return ZColor(vec4(1), vec4(vec3(0.15, 0.155, 0.17), 1.0));
         }
     }
 

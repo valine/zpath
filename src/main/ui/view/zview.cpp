@@ -347,7 +347,12 @@ void ZView::draw() {
             mImageShader->setVec4("uTint", mTint.get(mColorMode));
 
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
+
+            if (mColorMode == light) {
+                glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
+            } else {
+                glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getIDDark());
+            }
 
             mImageShader->setFloat("uTexScale", mBackgroundImage->mScale);
             // Update scale, useful for zooming a view out
@@ -769,7 +774,6 @@ void ZView::computeBounds() {
         if (mBackgroundImage->mFillMode == ZTexture::FillMode::clip) {
             texCoorX = widthMultiple;
             texCoorY = heightMultiple;
-
 
             float mTexCoords[4*4] = {-texCoorX,-texCoorY,
                                      texCoorX,-texCoorY,

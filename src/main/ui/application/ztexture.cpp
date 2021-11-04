@@ -7,14 +7,24 @@
 
 ZTexture::ZTexture(string path) {
     mTextureID = loadTexture(path.c_str());
+    mTextureIDDark = mTextureID;
 }
 
 ZTexture::ZTexture(int id) {
     mTextureID = id;
+    mTextureIDDark = id;
 }
+
+
+ZTexture::ZTexture(int id, int idDark) {
+    mTextureID = id;
+    mTextureIDDark = idDark;
+}
+
 
 ZTexture::ZTexture(float* pixels, int width, int height) {
     mTextureID = loadTexture(pixels, width, height);
+    mTextureIDDark = mTextureID;
     mWidth = width;
     mHeight = height;
 }
@@ -23,8 +33,13 @@ uint ZTexture::getID() {
     return mTextureID;
 }
 
+uint ZTexture::getIDDark() {
+    return mTextureIDDark;
+}
+
 void ZTexture::setID(int id) {
     mTextureID = id;
+    mTextureIDDark = id;
 }
 
 unsigned int ZTexture::loadTexture(char const * path){
@@ -88,4 +103,9 @@ unsigned int ZTexture::loadTexture(float* pixels, int width, int height){
 void ZTexture::save() {
     string path =  ZSettingsStore::getInstance().getResourcePath() + "/../../../debug.png";
     ZUtil::saveGlTex(path.c_str(), mTextureID, mWidth, mHeight);
+}
+
+void ZTexture::setID(int light, int dark) {
+    mTextureID = light;
+    mTextureIDDark = dark;
 }
