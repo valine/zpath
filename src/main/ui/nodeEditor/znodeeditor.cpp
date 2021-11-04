@@ -23,6 +23,7 @@
 #include <utils/znodeutil.h>
 #include <utils/znodestore.h>
 #include <ui/zprojectview.h>
+#include <utils/zgridrenderer.h>
 #include "utils/casutil.h"
 #include "utils/zutil.h"
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
@@ -41,6 +42,15 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         auto type = static_cast<ZNodeView::Type>(i);
         allColors.push_back(ZNodeView::getNodeColor(type));
     }
+
+    // Checkered background
+    mCheckerView = new ZView(fillParent, fillParent, this);
+    mCheckerView->setBackgroundColor(bg);
+    ZGridRenderer renderer = ZGridRenderer::get();
+    auto tex = renderer.create();
+    mCheckerView->setBackgroundImage(tex);
+    mCheckerView->setYOffset(NODE_CONTAINER_OFFSET);
+    mCheckerView->setXOffset(0);
 
     mNodeContainer = new ZView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
@@ -175,7 +185,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     //viewDropDown->wrapTitle();
     viewDropDown->setDynamicTitle(false);
     viewDropDown->setOnItemChange([this](int index){
-        // Center view
+        // Center mCheckerView
         if (index == 0) {
             snapViewToNodes();
         }
@@ -1523,9 +1533,14 @@ void ZNodeEditor::onScrollChange(double x, double y) {
         mNodeContainer->setScale(newScale);
         mLineContainer->setScale(newScale);
 
+
         vec2 delta = (offset) / newScale;
 
         int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
+
+
+        mCheckerView->getBackgroundImage()->setScaleOffset(newScale.x * 30.0, vec2(0));
+        mCheckerView->computeBounds();
 
         if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
                 !(newScale.y == maxScale && originalScale.y == maxScale)) {

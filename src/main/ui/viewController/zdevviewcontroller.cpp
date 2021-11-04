@@ -15,11 +15,8 @@ void ZDevViewController::onCreate() {
     auto* view = new ZView(100, 100, this);
     view->setBackgroundColor(bg);
     view->setMargin(5);
-
     ZGridRenderer renderer = ZGridRenderer::get();
-
-    auto tex = renderer.create(100, 100);
-    view->setTextureSize(3);
+    auto tex = renderer.create();
     view->setBackgroundImage(tex);
 
 }

@@ -19,7 +19,7 @@ static const int DEFAULT_NODE_X = 10;
 static const int DEFAULT_NODE_Y = 10;
 static const int NODE_MARGIN = 10;
 
-static const int NODE_CONTAINER_OFFSET = 30;
+static const int NODE_CONTAINER_OFFSET = 25;
 
 static const int DRAG_THRESHOLD = 5;
 
@@ -95,6 +95,7 @@ private:
     ZView* mHeader = nullptr;
     ZView* mLineContainer = nullptr;
     ZView* mNodeContainer = nullptr;
+    ZView* mCheckerView = nullptr;
 
     ZProjectView* mProjectBrowser;
 

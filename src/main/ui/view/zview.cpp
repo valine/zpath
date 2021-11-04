@@ -349,6 +349,7 @@ void ZView::draw() {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, mBackgroundImage->getID());
 
+            mImageShader->setFloat("uTexScale", mBackgroundImage->mScale);
             // Update scale, useful for zooming a view out
             glUniformMatrix4fv(glGetUniformLocation(mImageShader->mID, "uVPMatrix"), 1,
                     GL_FALSE, glm::value_ptr(scaleMat));
@@ -439,21 +440,8 @@ void ZView::init() {
     computeBounds();
 }
 
-void ZView::setTextureSize(int size) {
-    mVertices[2] = mTexCoords[0] * size;
-    mVertices[3] = mTexCoords[1] * size;
-
-    mVertices[6] = mTexCoords[2] * size;
-    mVertices[7] = mTexCoords[3] * size;
-
-    mVertices[10] = mTexCoords[4] * size;
-    mVertices[11] = mTexCoords[5] * size;
-
-    mVertices[14] = mTexCoords[6] * size;
-    mVertices[15] = mTexCoords[7] * size;
-
+void ZView::setTextureSize() {
     mVertsInvalid = true;
-
 }
 
 void ZView::initBuffers() {
@@ -718,6 +706,9 @@ void ZView::setBackgroundImage(ZTexture* background) {
     mBackgroundImage = background;
 }
 
+ZTexture* ZView::getBackgroundImage() {
+    return mBackgroundImage;
+}
 int ZView::getWindowHeight() {
     return mWindowHeight;
 }
@@ -749,6 +740,54 @@ void ZView::computeBounds() {
 
     mVertices[12] = getRight();
     mVertices[13] = getBottom();
+
+
+    // Texture coordinates
+    if (mBackgroundImage != nullptr) {
+        float size = 1.0f / (float) mBackgroundImage->mScale;
+        vec2 offset = mBackgroundImage->mOffset / vec2(getWidth(), getHeight());
+
+        float texWidth = mBackgroundImage->mWidth;
+        float texHeight = mBackgroundImage->mHeight;
+
+        float viewWidth = getWidth();
+        float viewHeight = getHeight();
+
+        float maxWidth = getMaxWidth();
+
+        float widthMultiple = viewWidth / texWidth; // equals 1 when perfect
+        float heightMultiple = viewHeight / texHeight; // equals 1 when perfect
+
+        float texAspct = texWidth / texHeight;
+        float viewAspect= viewWidth / viewHeight;
+
+        bool isHorStretch = texAspct < viewAspect;
+
+        float texCoorX = 1;
+        float texCoorY = 1;
+
+        if (mBackgroundImage->mFillMode == ZTexture::FillMode::clip) {
+            texCoorX = widthMultiple;
+            texCoorY = heightMultiple;
+
+
+            float mTexCoords[4*4] = {-texCoorX,-texCoorY,
+                                     texCoorX,-texCoorY,
+                                     -texCoorX,texCoorY,
+                                     texCoorX,texCoorY};
+
+            mVertices[2] = (mTexCoords[0]);
+            mVertices[3] = (mTexCoords[1]);
+            mVertices[6] = (mTexCoords[2]);
+            mVertices[7] = (mTexCoords[3]);
+            mVertices[10] = (mTexCoords[4]);
+            mVertices[11] = (mTexCoords[5]);
+            mVertices[14] = (mTexCoords[6]);
+            mVertices[15] = (mTexCoords[7]);
+        }
+
+    }
+
 
     mVertsInvalid = true;
 

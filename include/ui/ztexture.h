@@ -17,6 +17,13 @@ using namespace std;
 class ZTexture {
 
 public:
+
+    enum FillMode {
+        stretch,
+        clip
+    };
+
+
 	ZTexture(string path);
 	ZTexture(int id);
 	ZTexture(float* pixels, int width, int height);
@@ -25,11 +32,25 @@ public:
 	uint getID();
 	void updateTexture(float* pixels, int width, int height);
 	void setID(int);
-
 	void save();
+
+	void setScaleOffset(float scale, vec2 offset) {
+	    mOffset = offset;
+	    mScale = scale;
+	}
 
     int mWidth = 0;
     int mHeight = 0;
+
+    vec2 mOffset = vec2(0);
+    float mScale = 1;
+
+     FillMode mFillMode = stretch;
+
+     void setFillMode(FillMode fillMode) {
+         mFillMode = fillMode;
+     }
+
 private:
 	uint mTextureID;
 };

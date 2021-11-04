@@ -19,7 +19,7 @@ public:
         return instance;
     }
 
-    int draw(int texId, int viewWidth, int viewHeight){
+    int draw(int texId) {
 
         int res = 4;
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
@@ -57,16 +57,20 @@ public:
         return texId;
     }
 
-    void update(ZTexture texture, int viewWidth, int viewHeight) {
-        draw(texture.getID(), viewWidth, viewHeight);
+    void update(ZTexture texture) {
+        draw(texture.getID());
     }
 
-    ZTexture* create(int viewWidth, int viewHeight) {
+    ZTexture *create() {
         unsigned int buffer;
         glGenTextures(1, &buffer);
-        draw(buffer, viewWidth, viewHeight);
+        draw(buffer);
 
         auto* tex = new ZTexture(buffer);
+        tex->setFillMode(ZTexture::clip);
+        tex->mWidth = 4;
+        tex->mHeight = 4;
+        tex->setScaleOffset(0.1, vec2(0));
         return tex;
     }
 

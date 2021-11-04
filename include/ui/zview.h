@@ -361,7 +361,9 @@ class ZView {
 
     void setMargin(float margin);
 
-    void setTextureSize(int size);
+    void setTextureSize();
+
+    ZTexture *getBackgroundImage();
 
 private:
 
