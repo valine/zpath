@@ -344,7 +344,6 @@ void ZView::draw() {
 
         if (mBackgroundImage != nullptr) {
             mImageShader->use();
-
             mImageShader->setVec4("uTint", mTint.get(mColorMode));
 
             glActiveTexture(GL_TEXTURE0);
@@ -440,6 +439,23 @@ void ZView::init() {
     computeBounds();
 }
 
+void ZView::setTextureSize(int size) {
+    mVertices[2] = mTexCoords[0] * size;
+    mVertices[3] = mTexCoords[1] * size;
+
+    mVertices[6] = mTexCoords[2] * size;
+    mVertices[7] = mTexCoords[3] * size;
+
+    mVertices[10] = mTexCoords[4] * size;
+    mVertices[11] = mTexCoords[5] * size;
+
+    mVertices[14] = mTexCoords[6] * size;
+    mVertices[15] = mTexCoords[7] * size;
+
+    mVertsInvalid = true;
+
+}
+
 void ZView::initBuffers() {
     if (!mBuffersInit) {
         mBuffersInit = true;
@@ -462,6 +478,7 @@ void ZView::initBuffers() {
         glGenBuffers(1, &mTexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, mTexBuffer);
         glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(float), mTexCoords, GL_STATIC_DRAW);
+
 
         glGenVertexArrays(1, &mVAO);
         glBindVertexArray(mVAO);

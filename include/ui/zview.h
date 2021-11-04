@@ -361,6 +361,8 @@ class ZView {
 
     void setMargin(float margin);
 
+    void setTextureSize(int size);
+
 private:
 
         bool mBuffersInit = false;
@@ -409,6 +411,7 @@ private:
 
         float mVertices[4*4] = {0,0,0,0,  0,0,1,0,  0,0,0,1, 0,0,1,1};
 		float mTexCoords[2*4] = {-1,-1, -1,1, 1,-1, 1,1};
+        float mInitialTexCoords[2*4] = {0,0, 1,0, 0,1, 1,1};
 
 		int mFaceIndices[6] = {2,1,0,1,2,3};
         int mEdgeIndices[10] = {2,1,1,0,0,1,1,2,2,3};

@@ -19,82 +19,54 @@ public:
         return instance;
     }
 
-    int draw(int texId, int viewWidth, int viewHeight, float radius) {
-        int resRatio = 5;
-        viewWidth /= resRatio;
-        viewHeight /= resRatio;
-        radius /= resRatio;
+    int draw(int texId, int viewWidth, int viewHeight){
 
-        int shadowWidth = viewWidth  + (int) radius;
-        int shadowHeight = viewHeight + (int) radius;
+        int res = 4;
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
-        glBindTexture(GL_TEXTURE_2D, mTexBuffer);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, shadowWidth, shadowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexBuffer, 0);
+        glBindTexture(GL_TEXTURE_2D, texId);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_FLOAT, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texId, 0);
 
         glBindVertexArray(mVAO);
         mShader->use();
 
-        double vw = (double) viewWidth;
-        double vh = (double) viewHeight;
-        double marginSide = (vw / ((vw + radius)));
-        double marginTop = (vh / ((vh + radius)));
-
-
         mat4 matrix = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
-        matrix = glm::translate(matrix, vec3(0.5, 0.5, 0));
-        matrix = glm::scale(matrix, vec3(marginSide, marginTop, 1.0));
-        matrix = glm::translate(matrix, vec3(-0.5, -0.5, 0));
+//        matrix = glm::translate(matrix, vec3(0.5, 0.5, 0));
+//        matrix = glm::scale(matrix, vec3(marginSide, marginTop, 1.0));
+//        matrix = glm::translate(matrix, vec3(-0.5, -0.5, 0));
         mShader->setMat4("uMatrix", matrix);
 
-        glViewport(0,0, shadowWidth, shadowHeight);
+        glViewport(0,0, res, res);
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         int triangles = 2;
+
+        float tileSize = res/2.0;
+        glViewport(0,0, tileSize, tileSize);
         glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
-        // Render blur
-        mBlurShader->use();
-        mat4 blurMat = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
-        mBlurShader->setMat4("uMatrix", blurMat);
-        mBlurShader->setFloat("uRadiusX", (0.5 / (viewWidth + radius)) * radius);
-        mBlurShader->setFloat("uRadiusY", (0.5 / (viewHeight + radius)) * radius);
-
-        glBindTexture(GL_TEXTURE_2D, texId);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, shadowWidth, shadowHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texId, 0);
-
-        glViewport(0,0, shadowWidth, shadowHeight);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, mTexBuffer);
-
+        glViewport(tileSize,tileSize,tileSize,tileSize);
         glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
         glBindVertexArray(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         return texId;
-
     }
 
-    void updateShadow(ZTexture texture, int viewWidth, int viewHeight, float radius) {
-        draw(texture.getID(), viewWidth, viewHeight, radius);
+    void update(ZTexture texture, int viewWidth, int viewHeight) {
+        draw(texture.getID(), viewWidth, viewHeight);
     }
 
-    ZTexture* createShadow(int viewWidth, int viewHeight, float radius) {
-        unsigned int blurBuffer;
-        glGenTextures(1, &blurBuffer);
-        draw(blurBuffer, viewWidth, viewHeight, radius);
+    ZTexture* create(int viewWidth, int viewHeight) {
+        unsigned int buffer;
+        glGenTextures(1, &buffer);
+        draw(buffer, viewWidth, viewHeight);
 
-        auto* tex = new ZTexture(blurBuffer);
+        auto* tex = new ZTexture(buffer);
         return tex;
     }
 
@@ -135,36 +107,28 @@ private:
 
         // Frame buffer and texture
         glGenFramebuffers(1, &mFBO);
-        glGenTextures(1, &mTexBuffer);
-
 
         // Shader
-        mShader = new ZShader(shadow_vs, shadow_fs);
-        mBlurShader = new ZShader(shadow_vs, shadow_blur_fs);
+        mShader = new ZShader(vertex_shader, fragment_shader);
     }
 
     ZShader* mShader;
-    ZShader* mBlurShader;
 
     unsigned int mFBO;
-    unsigned int mTexBuffer;
 
     unsigned int mVAO;
     unsigned int mVertBuffer;
     unsigned int mEdgeBuffer;
 
     // Shader code
-    const string shadow_vs =
-#include "shaders/shadow.vs"
+    const string vertex_shader =
+#include "shaders/grid.vs"
     ;
 
-    const string shadow_fs =
-#include "shaders/shadow.fs"
+    const string fragment_shader =
+#include "shaders/grid.fs"
     ;
 
-    const string shadow_blur_fs =
-#include "shaders/shadowblur.fs"
-    ;
 
 };
 
