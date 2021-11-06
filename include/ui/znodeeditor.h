@@ -96,7 +96,7 @@ private:
 
     ZView* mHeader = nullptr;
     ZView* mLineContainer = nullptr;
-    ZView* mNodeContainer = nullptr;
+    ZScrollView* mNodeContainer = nullptr;
     ZView* mCheckerView = nullptr;
 
     ZProjectView* mProjectBrowser;

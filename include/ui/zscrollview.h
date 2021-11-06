@@ -28,6 +28,10 @@ public:
     ZLinearLayout *getInnerView();
 
     void scrollTo(int x, int y);
+    void setUseDynamicSize(bool dynamic) {
+        mDynamicSize = dynamic;
+        mInnerView->mAutoOffset = dynamic;
+    }
 
 private:
 
@@ -35,6 +39,7 @@ private:
 	ZView* mScrollBar;
 	ZView* mScrollBarBackground;
 	ZLinearLayout* mInnerView;
+	bool mDynamicSize = true;
 
 };
 

@@ -44,12 +44,9 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     }
 
 
-    auto* mNodeScrollView = new ZScrollView(fillParent, fillParent, this);
-    mNodeScrollView->setInnerViewHeight(2000);
-
 
     // Checkered background
-    mCheckerView = new ZView(fillParent, fillParent, mNodeScrollView);
+    mCheckerView = new ZView(fillParent, fillParent, this);
     mCheckerView->setBackgroundColor(bg);
     ZGridRenderer renderer = ZGridRenderer::get();
     auto tex = renderer.create();
@@ -58,10 +55,13 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mCheckerView->setXOffset(0);
     mCheckerView->getBackgroundImage()->setScaleOffset(GRID_SCALE, vec2(0));
 
-    mNodeContainer = new ZView(fillParent, fillParent, mNodeScrollView);
-    mLineContainer = new ZView(fillParent, fillParent, mNodeScrollView);
+    mNodeContainer = new ZScrollView(fillParent, fillParent, this);
+    mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
     mNodeContainer->setXOffset(100);
+    mNodeContainer->setUseDynamicSize(false);
+    mNodeContainer->setInnerViewHeight(5000);
+    mNodeContainer->setBackgroundColor(transparent);
 
     mTmpLine = new ZLineView(vec2(20, 20), vec2(200, 200), mLineContainer);
     mTmpLine->setVisibility(false);
@@ -1522,7 +1522,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
     if (ZSettings::get().getWheelMode() == scroll) {
-
+        updateLines();
     } else {
         // Scrolling with shift key is used for zooming charts
         if (!shiftKeyPressed() && !isMouseInBounds(mDrawer) && !isMouseInBounds(mProjectBrowser)) {

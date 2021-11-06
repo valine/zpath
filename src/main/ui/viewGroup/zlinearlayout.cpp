@@ -11,9 +11,11 @@ ZLinearLayout::ZLinearLayout(float maxWidth, float maxHeight) :
 
 void ZLinearLayout::addSubView(ZView* view) {
     ZView::addSubView(view);
-    view->setYOffset(mPos);
-    int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
-    mPos += offset;
+    if (mAutoOffset) {
+        view->setYOffset(mPos);
+        int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
+        mPos += offset;
+    }
 }
 
 void ZLinearLayout::resetCursor() {
@@ -22,11 +24,14 @@ void ZLinearLayout::resetCursor() {
 
 void ZLinearLayout::refreshMargins() {
     resetCursor();
-    for (ZView* view : getSubViews()) {
-        view->setYOffset(mPos);
-        int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
-        mPos += offset;
-    }
 
-    setMaxHeight(mPos);
+    if(mAutoOffset) {
+        for (ZView *view : getSubViews()) {
+            view->setYOffset(mPos);
+            int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
+            mPos += offset;
+        }
+
+        setMaxHeight(mPos);
+    }
 }

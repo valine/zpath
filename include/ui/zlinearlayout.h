@@ -18,12 +18,10 @@ public:
 	ZLinearLayout(float maxWidth, float maxHeight, ZView *parent);
     ZLinearLayout(float maxWidth, float maxHeight);
 	void addSubView(ZView* view);
-
-
     void resetCursor();
-
     void refreshMargins();
 
+    bool mAutoOffset = true;
 private:
 	int mPos = 0;
 

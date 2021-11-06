@@ -25,8 +25,6 @@ void ZScrollView::init() {
 	mInnerView->setMargin(0,0,7,0);
 
 	setBackgroundColor(bg);
-	setInnerViewHeight(1000);
-
 	mInnerView->resetCursor();
 }
 
@@ -38,8 +36,10 @@ void ZScrollView::addSubView(ZView* view) {
 		ZView::addSubView(view);
 	} else {
 		mInnerView->addSubView(view);
-		mInnerView->setMaxHeight(view->getOffsetY() + view->getMaxHeight() +
-		view->getMarginTop() + view->getMarginBottom());
+		if (mDynamicSize) {
+            mInnerView->setMaxHeight(view->getOffsetY() + view->getMaxHeight() +
+                                     view->getMarginTop() + view->getMarginBottom());
+        }
 	}
 }
 
