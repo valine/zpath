@@ -5,72 +5,72 @@
 #include <iostream>
 #include <fstream>
 #include "utils/zsettingsstore.h"
-#include "utils/colormode.h"
+#include "utils/enums/colormode.h"
 using namespace std;
 
-ZSettingsStore::ZSettingsStore() {
+ZSettings::ZSettings() {
 
 }
 
-ZColor ZSettingsStore::getHighlightColor() {
+ZColor ZSettings::getHighlightColor() {
     return mHighlightColor;
 }
-ZColor ZSettingsStore::getBaseColor() {
+ZColor ZSettings::getBaseColor() {
     return mBaseColor;
 }
 
-void ZSettingsStore::setBaseColor(ZColor color) {
+void ZSettings::setBaseColor(ZColor color) {
     mBaseColor = color;
 }
 
-void ZSettingsStore::setHighlightColor(ZColor color) {
+void ZSettings::setHighlightColor(ZColor color) {
     mHighlightColor = color;
 }
 
-ZColor ZSettingsStore::getInactiveColor() {
+ZColor ZSettings::getInactiveColor() {
     return mInactiveColor;
 }
 
-void ZSettingsStore::setInactiveColor(ZColor color) {
+void ZSettings::setInactiveColor(ZColor color) {
     mInactiveColor = color;
 }
 
-ZColor ZSettingsStore::getBackgroundColor() {
+ZColor ZSettings::getBackgroundColor() {
     return mBackgroundColor;
 }
 
-void ZSettingsStore::setBackgroundColor(ZColor color) {
+void ZSettings::setBackgroundColor(ZColor color) {
     mBackgroundColor = color;
 }
 
-ZColor ZSettingsStore::getHighlightTextColor() {
+ZColor ZSettings::getHighlightTextColor() {
     return mHighlightTextColor;
 }
 
-ZColor ZSettingsStore::getBaseTextColor() {
+ZColor ZSettings::getBaseTextColor() {
     return mBaseTextColor;
 }
 
-void ZSettingsStore::setHighlightTextColor(ZColor color) {
+void ZSettings::setHighlightTextColor(ZColor color) {
     mHighlightTextColor = color;
 }
 
-void ZSettingsStore::setBaseTextColor(ZColor color) {
+void ZSettings::setBaseTextColor(ZColor color) {
     mBaseTextColor = color;
 }
 
-string ZSettingsStore::getResourcePath() {
+string ZSettings::getResourcePath() {
     return mResourcePath;
 }
 
-void ZSettingsStore::setResourcePath(string path) {
+void ZSettings::setResourcePath(string path) {
     mResourcePath = path;
 }
 
-void ZSettingsStore::setColorMode(ColorMode mode) {
+void ZSettings::setColorMode(ColorMode mode) {
 
     string projectFolder = "resources/settings/";
-    string path = ZSettingsStore::get().getResourcePath() + projectFolder;
+    string path = ZSettings::get().getResourcePath() + projectFolder;
     string name = "theme";
     string ext = ".csv";
     string fullPathString = path + name + ext;
@@ -91,9 +91,9 @@ void ZSettingsStore::setColorMode(ColorMode mode) {
     }
 }
 
-ColorMode ZSettingsStore::getColorMode() {
+ColorMode ZSettings::getColorMode() {
     string projectFolder = "resources/settings/";
-    string path = ZSettingsStore::get().getResourcePath() + projectFolder;
+    string path = ZSettings::get().getResourcePath() + projectFolder;
     string name = "theme";
     string ext = ".csv";
     string fullPathString = path + name + ext;
@@ -112,5 +112,49 @@ ColorMode ZSettingsStore::getColorMode() {
             return light;
         case DARK:
             return dark;
+    }
+}
+
+void ZSettings::setWheelMode(WheelMode mode) {
+    // Todo switch to JSON when we need more options in settings
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "settings";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    ofstream out(fullPathString);
+    switch (mode) {
+        case zoom:
+            out << ZOOM;
+            break;
+        case scroll:
+            out << SCROLL;
+            break;
+    }
+    out.close();
+}
+
+WheelMode ZSettings::getWheelMode() {
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "settings";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    std::ifstream t(fullPathString);
+    std::string dataString;
+    t.seekg(0, std::ios::end);
+    dataString.reserve(t.tellg());
+    t.seekg(0, std::ios::beg);
+    dataString.assign((std::istreambuf_iterator<char>(t)),
+                      std::istreambuf_iterator<char>());
+
+    int index = stoi(dataString);
+    switch (index) {
+        case ZOOM:
+            return zoom;
+        case SCROLL:
+            return scroll;
     }
 }

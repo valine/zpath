@@ -44,7 +44,7 @@ bool CsvUtils::fileExists (const std::string& name) {
 }
 
 MlModel * CsvUtils::loadModel(const string &fileName, string testName) {
-    string path = ZSettingsStore::get().getResourcePath() + "resources/models/" + fileName + ".txt";
+    string path = ZSettings::get().getResourcePath() + "resources/models/" + fileName + ".txt";
     std::ifstream t(path);
     std::string dataString;
     t.seekg(0, std::ios::end);
@@ -142,7 +142,7 @@ vector<string> CsvUtils::getModels() {
 }
 
 void CsvUtils::incCounter() {
-    string path = ZSettingsStore::get().getResourcePath() + "resources/models/count.txt";
+    string path = ZSettings::get().getResourcePath() + "resources/models/count.txt";
 
     std::ifstream t(path);
     std::string dataString;
@@ -162,7 +162,7 @@ void CsvUtils::incCounter() {
 }
 
 int CsvUtils::getCount() {
-    string path = ZSettingsStore::get().getResourcePath() + "resources/models/count.txt";
+    string path = ZSettings::get().getResourcePath() + "resources/models/count.txt";
 
     std::ifstream t(path);
     std::string dataString;
@@ -179,7 +179,7 @@ int CsvUtils::getCount() {
 }
 
 void CsvUtils::saveModel(MlModel* model, string fileName) {
-    string path = ZSettingsStore::get().getResourcePath() + "resources/models/" + fileName + to_string(getCount()) + ".txt";
+    string path = ZSettings::get().getResourcePath() + "resources/models/" + fileName + to_string(getCount()) + ".txt";
     incCounter();
     string dataString;
 
@@ -229,7 +229,7 @@ void CsvUtils::saveModel(MlModel* model, string fileName) {
 }
 
 vector<pair<vector<double>, vector<double>>> CsvUtils::loadCsv(string fileName) {
-    string path = ZSettingsStore::get().getResourcePath() + "resources/training/" + fileName + ".csv";
+    string path = ZSettings::get().getResourcePath() + "resources/training/" + fileName + ".csv";
 
     std::ifstream t(path);
     std::string dataString;
@@ -343,7 +343,7 @@ vector<pair<vector<double>, vector<double>>> CsvUtils::loadCsv(string fileName) 
 }
 
 void CsvUtils::saveCsv(const vector<pair<vector<double>, vector<double>>>& data, string fileName) {
-    string path = ZSettingsStore::get().getResourcePath() + "resources/training/" + fileName + ".csv";
+    string path = ZSettings::get().getResourcePath() + "resources/training/" + fileName + ".csv";
 
     string dataString;
     for (const pair<vector<double>, vector<double>>& dataPair : data) {

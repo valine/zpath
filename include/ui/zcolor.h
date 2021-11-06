@@ -6,7 +6,7 @@
 #define ZPATH_ZCOLOR_H
 
 #include <glm/glm.hpp>
-#include "utils/colormode.h"
+#include "utils/enums/colormode.h"
 
 using namespace glm;
 

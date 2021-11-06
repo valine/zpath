@@ -12,7 +12,7 @@ ZLineView::ZLineView(vec2 point1, vec2 point2, ZView *parent): ZView(fillParent,
 }
 
 void ZLineView::init() {
-    setBackgroundColor(ZSettingsStore::getInstance().getHighlightColor());
+    setBackgroundColor(ZSettings::getInstance().getHighlightColor());
 
     if (mDP > 1.0) {
         setOutlineType(none);

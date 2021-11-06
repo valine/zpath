@@ -39,7 +39,7 @@ public:
         string sgraph = ZNodeUtil::get().serialize(graph);
 
         string projectFolder = "resources/graphs/";
-        string path = ZSettingsStore::get().getResourcePath() + projectFolder;
+        string path = ZSettings::get().getResourcePath() + projectFolder;
         string ext = ".zpath";
         string fullPathString = path + name + ext;
         if (fullPath) {
@@ -60,7 +60,7 @@ public:
     string renameProject(const string& fromPath, const string& toName) {
 
         string projectFolder = "resources/graphs/";
-        string path = ZSettingsStore::get().getResourcePath() + projectFolder;
+        string path = ZSettings::get().getResourcePath() + projectFolder;
         string ext = ".zpath";
         string toPath = path + toName + ext;
         rename(fromPath.c_str(), toPath.c_str());
@@ -79,7 +79,7 @@ public:
 
     vector<string> getProjectNames() {
         string projectFolder = "resources/graphs/";
-        string path = ZSettingsStore::get().getResourcePath() + projectFolder;
+        string path = ZSettings::get().getResourcePath() + projectFolder;
 
         vector<string> names;
         for (const auto &file : directory_iterator(path)) {
@@ -91,7 +91,7 @@ public:
 
     set<ZNodeView*> loadGraph(string name) {
         //string projectFolder = "resources/graphs/";
-        //string path = ZSettingsStore::get().getResourcePath() + projectFolder + name;
+        //string path = ZSettings::get().getResourcePath() + projectFolder + name;
 
         std::ifstream t(name);
         std::string dataString;

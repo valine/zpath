@@ -8,7 +8,7 @@ ZTiledView::ZTiledView(ZScene* scene, float maxWidth, float maxHeight, int tiles
    	mScene = scene;
    	mResourcePath = std::move(resourcePath);
 	setTileCount(tilesX, tilesY);
-    setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
+    setBackgroundColor(ZSettings::getInstance().getBackgroundColor());
 }
 
 void ZTiledView::setTileCount(int tilesX, int tilesY) {

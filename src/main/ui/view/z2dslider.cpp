@@ -7,17 +7,17 @@ ZView(maxWidth, maxHeight){
     mLabel = new ZLabel(ZView::fillParent, 18);
     mLabel->setOffset(0,0);
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    mLabel->setTextColor(ZSettings::getInstance().getBaseTextColor());
     addSubView(mLabel);
 
     mLineH = new ZView(ZView::fillParent, LINE_WIDTH, this);
     mLineH->setOffset(0, getHeight() / 2);
-    mLineH->setBackgroundColor(ZSettingsStore::getInstance().getHighlightColor());
+    mLineH->setBackgroundColor(ZSettings::getInstance().getHighlightColor());
     mLineH->setGravity(ZView::bottomLeft);
   
     mLineV = new ZView(LINE_WIDTH, ZView::fillParent, this);
     mLineV->setOffset(getWidth() / 2, 0);
-    mLineV->setBackgroundColor(ZSettingsStore::getInstance().getHighlightColor());
+    mLineV->setBackgroundColor(ZSettings::getInstance().getHighlightColor());
     mLineV->setGravity(ZView::bottomLeft);
 
     setMargin(vec4(5));

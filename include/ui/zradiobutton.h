@@ -30,6 +30,7 @@ public:
 	void onCursorPosChange(double x, double y);
 	void setText(string text);
 	void setVertical(bool);
+    void setSelected(int index);
 
 	void setOnClickListener(ZOnClickListener* listener);
 	void computeBounds();
@@ -52,12 +53,13 @@ private:
 	ZOnClickListener* mListener = nullptr;
 	vector<string> mTitles;
 	bool mIsVertical = false;
-	ZColor mHighlightColor = ZSettingsStore::getInstance().getHighlightColor();
-	ZColor mBaseColor = ZSettingsStore::getInstance().getBaseColor();
+	ZColor mHighlightColor = ZSettings::getInstance().getHighlightColor();
+	ZColor mBaseColor = ZSettings::getInstance().getBaseColor();
 	vector<ZButton*> mButtons;
 
     void init(float maxWidth, float maxHeight, vector<string> &titles);
     function<void(ZView*, int)> mOnClick;
+
 };
 
 #endif

@@ -19,7 +19,7 @@ ZTabbedViewController::ZTabbedViewController(char **argv, vector<ZViewController
 
 ZTabbedViewController::ZTabbedViewController(string path, vector<ZViewController *> controllers) : ZViewController(path) {
     mControllers = std::move(controllers);
-    setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
+    setBackgroundColor(ZSettings::getInstance().getBackgroundColor());
 }
 
 void ZTabbedViewController::onCreate() {
@@ -46,7 +46,7 @@ void ZTabbedViewController::onCreate() {
     ZRadioButton* tabBar = new ZRadioButton("", names, this);
     tabBar->showLabel(false);
     tabBar->setGravity(ZView::bottomLeft);
-    tabBar->setBackgroundColor(ZSettingsStore::getInstance().getBackgroundColor());
+    tabBar->setBackgroundColor(ZSettings::getInstance().getBackgroundColor());
     tabBar->setText("");
     tabBar->setMargin(0,0,0,0);
     tabBar->setMaxWidth(100 * mControllers.size());
@@ -59,7 +59,7 @@ void ZTabbedViewController::onCreate() {
         mControllers.at(index)->invalidate();
     });
 
-    setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
+    setBackgroundColor(ZSettings::get().getBackgroundColor());
 
 }
 

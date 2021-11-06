@@ -28,7 +28,7 @@
 #include "utils/zutil.h"
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
-    setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
+    setBackgroundColor(ZSettings::get().getBackgroundColor());
 
     vector<string> allTypes;
     vector<ZColor> allColors;
@@ -43,8 +43,13 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         allColors.push_back(ZNodeView::getNodeColor(type));
     }
 
+
+    auto* mNodeScrollView = new ZScrollView(fillParent, fillParent, this);
+    mNodeScrollView->setInnerViewHeight(2000);
+
+
     // Checkered background
-    mCheckerView = new ZView(fillParent, fillParent, this);
+    mCheckerView = new ZView(fillParent, fillParent, mNodeScrollView);
     mCheckerView->setBackgroundColor(bg);
     ZGridRenderer renderer = ZGridRenderer::get();
     auto tex = renderer.create();
@@ -53,8 +58,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mCheckerView->setXOffset(0);
     mCheckerView->getBackgroundImage()->setScaleOffset(GRID_SCALE, vec2(0));
 
-    mNodeContainer = new ZView(fillParent, fillParent, this);
-    mLineContainer = new ZView(fillParent, fillParent, this);
+    mNodeContainer = new ZView(fillParent, fillParent, mNodeScrollView);
+    mLineContainer = new ZView(fillParent, fillParent, mNodeScrollView);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
     mNodeContainer->setXOffset(100);
 
@@ -63,7 +68,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mBoxSelect = new ZView(100, 100, mLineContainer);
     mBoxSelect->setOutlineType(WireType::outline);
-    mBoxSelect->setOutlineColor(ZSettingsStore::get().getHighlightColor());
+    mBoxSelect->setOutlineColor(ZSettings::get().getHighlightColor());
     mBoxSelect->setVisibility(false);
     mBoxSelect->setAllowNegativeSize(true);
 
@@ -1516,44 +1521,48 @@ void ZNodeEditor::onDoubleClick() {
 void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
-    // Scrolling with shift key is used for zooming charts
-    if (!shiftKeyPressed() && !isMouseInBounds(mDrawer) && !isMouseInBounds(mProjectBrowser)){
-        float maxScale = 0.1;
-        float minScale = 1.0;
-        float scaleDelta = 1.0 + (y / 5.0);
-        vec2 originalScale = mNodeContainer->getRelativeScale();
-        vec2 newScale = max(vec2(maxScale), min(vec2(minScale), originalScale * vec2(scaleDelta)));
-        vec2 initialPos = mNodeContainer->getInnerTranslation();
-        vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
+    if (ZSettings::get().getWheelMode() == scroll) {
 
-        vec2 scaled = ((initialPos - origin) * newScale) + origin;
-        vec2 scaledZero = (initialPos * newScale);
+    } else {
+        // Scrolling with shift key is used for zooming charts
+        if (!shiftKeyPressed() && !isMouseInBounds(mDrawer) && !isMouseInBounds(mProjectBrowser)) {
+            float maxScale = 0.1;
+            float minScale = 1.0;
+            float scaleDelta = 1.0 + (y / 5.0);
+            vec2 originalScale = mNodeContainer->getRelativeScale();
+            vec2 newScale = max(vec2(maxScale), min(vec2(minScale), originalScale * vec2(scaleDelta)));
+            vec2 initialPos = mNodeContainer->getInnerTranslation();
+            vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
 
-        vec2 offset = scaled - scaledZero;
+            vec2 scaled = ((initialPos - origin) * newScale) + origin;
+            vec2 scaledZero = (initialPos * newScale);
 
-        mNodeContainer->setScale(newScale);
-        mLineContainer->setScale(newScale);
+            vec2 offset = scaled - scaledZero;
 
-
-        vec2 delta = (offset) / newScale;
-
-        int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
+            mNodeContainer->setScale(newScale);
+            mLineContainer->setScale(newScale);
 
 
-        mCheckerView->getBackgroundImage()->setScaleOffset(newScale.x * GRID_SCALE, vec2(0));
-        mCheckerView->computeBounds();
+            vec2 delta = (offset) / newScale;
 
-        if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
+            int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
+
+
+            mCheckerView->getBackgroundImage()->setScaleOffset(newScale.x * GRID_SCALE, vec2(0));
+            mCheckerView->computeBounds();
+
+            if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
                 !(newScale.y == maxScale && originalScale.y == maxScale)) {
-            mNodeContainer->setYOffset(margin / 2);
-            mNodeContainer->setInnerTranslation(delta);
+                mNodeContainer->setYOffset(margin / 2);
+                mNodeContainer->setInnerTranslation(delta);
+            }
+            mNodeContainer->onWindowChange(getWidth(), getHeight());
+
+            updateLines();
+            mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
+            getParentView()->getParentView()->getParentView()->invalidate();
+
         }
-        mNodeContainer->onWindowChange(getWidth(), getHeight());
-
-        updateLines();
-        mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
-        getParentView()->getParentView()->getParentView()->invalidate();
-
     }
 }
 

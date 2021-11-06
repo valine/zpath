@@ -21,7 +21,7 @@
 #include <utils/zshadowrenderer.h>
 #include "utils/zsettingsstore.h"
 #include <functional>
-#include <utils/colormode.h>
+#include <utils/enums/colormode.h>
 #include FT_FREETYPE_H
 #include "zcolor.h"
 
@@ -284,9 +284,9 @@ class ZView {
          ZColor transparent = ZColor(vec4(0));
          ZColor faded = vec4(0.5, 0.5, 0.5, 0.2);
 
-        ZColor bg = ZSettingsStore::get().getBackgroundColor();
-        ZColor base =  ZSettingsStore::get().getBaseColor();
-        ZColor highlight =  ZSettingsStore::get().getHighlightColor();
+        ZColor bg = ZSettings::get().getBackgroundColor();
+        ZColor base =  ZSettings::get().getBaseColor();
+        ZColor highlight =  ZSettings::get().getHighlightColor();
 
         void setName(string name);
         string getName();

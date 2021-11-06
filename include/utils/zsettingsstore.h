@@ -8,25 +8,29 @@
 static const int LIGHT = 0;
 static const int DARK = 1;
 
+static const int ZOOM = 0;
+static const int SCROLL = 1;
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
+#include <utils/enums/wheelmode.h>
 #include "ui/zcolor.h"
 
 using namespace glm;
 using namespace std;
 
-class ZSettingsStore {
+class ZSettings {
 
 public:
-    static ZSettingsStore& getInstance(){
-        static ZSettingsStore instance; // Guaranteed to be destroyed.
+    static ZSettings& getInstance(){
+        static ZSettings instance; // Guaranteed to be destroyed.
         // Instantiated on first use.
         return instance;
     }
 
-    static ZSettingsStore& get(){
+    static ZSettings& get(){
         return getInstance();
     }
 
@@ -49,12 +53,14 @@ public:
     void setColorMode(ColorMode mode);
     ColorMode getColorMode();
 
+    void setWheelMode(WheelMode mode);
+    WheelMode getWheelMode();
+
     void setOnThemeChange(function<void()> fn) {
         mOnThemeChange = fn;
     }
 
 private:
-
     function<void()> mOnThemeChange = nullptr;
     ZColor mBaseColor = ZColor(vec4(0.9, 0.9, 0.92, 1.0),
                                vec4(0.01, 0.01, 0.011, 1.0) );
@@ -66,10 +72,10 @@ private:
     ZColor mBaseTextColor = ZColor(vec4(0), vec4(1));
 
     string mResourcePath;
-    ZSettingsStore();
-    static ZSettingsStore *mInstance;
-    ZSettingsStore(ZSettingsStore const&);              // Don't Implement
-    void operator=(ZSettingsStore const&); // Don't implement
+    ZSettings();
+    static ZSettings *mInstance;
+    ZSettings(ZSettings const&);              // Don't Implement
+    void operator=(ZSettings const&); // Don't implement
 
 };
 

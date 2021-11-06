@@ -14,7 +14,7 @@ ZView(maxWidth, maxHeight) {
 
 	mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
     mHighlight->setCornerRadius(SLIDER_THUMB_SIZE / 2);
-	setFillColor(ZSettingsStore::getInstance().getHighlightColor());
+	setFillColor(ZSettings::getInstance().getHighlightColor());
 	mHighlight->setOffset(0,getHeight() / 2 - (SLIDER_THUMB_SIZE / 2));
 	mHighlight->setGravity(ZView::bottomLeft);
 	addSubView(mHighlight);
@@ -60,7 +60,7 @@ ZView(ZView::fillParent, 40, parent){
     mHighlight = new ZView(SLIDER_THUMB_SIZE, SLIDER_THUMB_SIZE);
     mHighlight->setCornerRadius(vec4(cr, 0,0, cr));
 
-    setFillColor(ZSettingsStore::getInstance().getHighlightColor());
+    setFillColor(ZSettings::getInstance().getHighlightColor());
     mHighlight->setOffset(0, Y_OFFSET - (SLIDER_THUMB_SIZE / 2));
     mHighlight->setGravity(ZView::bottomLeft);
     addSubView(mHighlight);
@@ -85,7 +85,7 @@ ZView(ZView::fillParent, 40, parent){
     setMaxValue(max);
     setMinValue(min);
 
-    setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    setTextColor(ZSettings::getInstance().getBaseTextColor());
     setValue(value);
 }
 

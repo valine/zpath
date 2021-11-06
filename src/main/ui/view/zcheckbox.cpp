@@ -12,7 +12,7 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	addSubView(mBox);
 
 	mCheck = new ZView(maxHeight, maxHeight);
-	mCheck->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
+	mCheck->setBackgroundColor(ZSettings::getInstance().getBaseColor());
 	mCheck->setVisibility(mIsChecked);
 	addSubView(mCheck);
 
@@ -20,7 +20,7 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 	mLabel->setOffset(maxHeight + 10, 1);
 	mLabel->setText("Checkbox");
 	mLabel->setGravity(ZView::topLeft);
-	mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+	mLabel->setTextColor(ZSettings::getInstance().getBaseTextColor());
 	addSubView(mLabel);
 
 	setClickable(true);
@@ -29,13 +29,13 @@ ZCheckbox::ZCheckbox(float maxWidth, float maxHeight, string resourcePath) :
 ZCheckbox::ZCheckbox(string label, ZView *parent)  :
         ZView(ZView::fillParent, CB_HEIGHT) {
 
-    string resourcePath = ZSettingsStore::getInstance().getResourcePath();
+    string resourcePath = ZSettings::getInstance().getResourcePath();
     mBox = new ZView(CB_HEIGHT, CB_HEIGHT);
     mBox->setBackgroundColor(vec4(1));
     addSubView(mBox);
 
     mCheck = new ZView(CB_HEIGHT, CB_HEIGHT);
-    mCheck->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
+    mCheck->setBackgroundColor(ZSettings::getInstance().getBaseColor());
     mCheck->setVisibility(mIsChecked);
     addSubView(mCheck);
 
@@ -43,7 +43,7 @@ ZCheckbox::ZCheckbox(string label, ZView *parent)  :
     mLabel->setOffset(CB_HEIGHT + 10, 1);
     mLabel->setText(label);
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    mLabel->setTextColor(ZSettings::getInstance().getBaseTextColor());
     addSubView(mLabel);
 
     setCheckBackground(new ZTexture(resourcePath +
@@ -52,7 +52,7 @@ ZCheckbox::ZCheckbox(string label, ZView *parent)  :
                                   "resources/icons/box.png"));
 
     setMargin(5,5,5,5);
-    setCheckColor(ZSettingsStore::getInstance().getBaseColor());
+    setCheckColor(ZSettings::getInstance().getBaseColor());
     setVisibility(true);
     parent->addSubView(this);
     mCheck->setTint(highlight);
@@ -67,7 +67,7 @@ ZView(ZView::fillParent, CB_HEIGHT) {
     addSubView(mBox);
 
     mCheck = new ZView(CB_HEIGHT, CB_HEIGHT);
-    mCheck->setBackgroundColor(ZSettingsStore::getInstance().getBaseColor());
+    mCheck->setBackgroundColor(ZSettings::getInstance().getBaseColor());
     mCheck->setVisibility(mIsChecked);
     addSubView(mCheck);
 
@@ -75,14 +75,14 @@ ZView(ZView::fillParent, CB_HEIGHT) {
     mLabel->setOffset(CB_HEIGHT + 10, 1);
     mLabel->setText(label);
     mLabel->setGravity(ZView::topLeft);
-    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    mLabel->setTextColor(ZSettings::getInstance().getBaseTextColor());
     addSubView(mLabel);
     
     setCheckBackground(new ZTexture(resourcePath + "resources/icons/check.png"));
     setBoxBackground(new ZTexture(resourcePath + "resources/icons/box.png"));
 
     setMargin(5,5,5,5);
-    setCheckColor(ZSettingsStore::getInstance().getBaseColor());
+    setCheckColor(ZSettings::getInstance().getBaseColor());
     setVisibility(true);
     parent->addSubView(this);
 

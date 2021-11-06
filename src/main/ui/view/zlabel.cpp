@@ -13,7 +13,7 @@ ZLabel::ZLabel(string label, ZView *parent)
         : ZView(ZView::fillParent, getLineHeight()) {
     mFont = ZFontStore::getInstance().getDefaultResource();
     setText(std::move(label));
-    setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    setTextColor(ZSettings::getInstance().getBaseTextColor());
     parent->addSubView(this);
 
     setWindowHeight(parent->getWindowHeight());

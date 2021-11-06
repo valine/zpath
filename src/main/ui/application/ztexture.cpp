@@ -101,7 +101,7 @@ unsigned int ZTexture::loadTexture(float* pixels, int width, int height){
 }
 
 void ZTexture::save() {
-    string path =  ZSettingsStore::getInstance().getResourcePath() + "/../../../debug.png";
+    string path = ZSettings::getInstance().getResourcePath() + "/../../../debug.png";
     ZUtil::saveGlTex(path.c_str(), mTextureID, mWidth, mHeight);
 }
 

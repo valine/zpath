@@ -3,6 +3,7 @@
 //
 
 #include <ui/zscrollview.h>
+#include <ui/zradiobutton.h>
 #include "ui/settingsviewcontroller.h"
 
 void SettingsViewController::onCreate() {
@@ -13,14 +14,39 @@ void SettingsViewController::onCreate() {
     label->setMargin(vec4(5, 5, 5,5));
 
     auto* darkModeCb = new ZCheckbox("Dark Mode", scrollView);
-    darkModeCb->setChecked(ZSettingsStore::get().getColorMode() == ColorMode::dark);
+    darkModeCb->setChecked(ZSettings::get().getColorMode() == ColorMode::dark);
     darkModeCb->setOnCheck([this](ZView* sender, bool isChecked){
         if (isChecked) {
-            ZSettingsStore::get().setColorMode(ColorMode::dark);
+            ZSettings::get().setColorMode(ColorMode::dark);
         } else {
-            ZSettingsStore::get().setColorMode(ColorMode::light);
+            ZSettings::get().setColorMode(ColorMode::light);
         }
     });
 
+    auto* mouseWheel = new ZRadioButton("Mouse Wheel", {"Zoom", "Scroll"}, scrollView);
+
+    switch(ZSettings::get().getWheelMode()) {
+        case (zoom):
+            mouseWheel->setSelected(0);
+            break;
+        case (scroll):
+            mouseWheel->setSelected(1);
+            break;
+    }
+
+    mouseWheel->setMaxWidth(100);
+    mouseWheel->setOnClick([this](ZView* sender, int index){
+        switch (index) {
+            case 0:
+                ZSettings::get().setWheelMode(zoom);
+                break;
+            case 1:
+                ZSettings::get().setWheelMode(scroll);
+                break;
+        }
+    });
+
+
+    // Update margins for linear layout view
     scrollView->getInnerView()->refreshMargins();
 }

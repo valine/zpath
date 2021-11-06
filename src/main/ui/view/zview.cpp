@@ -1,7 +1,7 @@
 #include <utils/zsettingsstore.h>
 #include <ui/zviewcontroller.h>
 #include <utils/zcornerrenderer.h>
-#include <utils/colormode.h>
+#include <utils/enums/colormode.h>
 #include "ui/zview.h"
 
 ZView::ZView(float maxWidth, float maxHeight) {
@@ -32,7 +32,7 @@ ZView::ZView(float maxWidth, float maxHeight, ZView* parent, bool isScrollable) 
 }
 
 void ZView::setup(float maxWidth, float maxHeight, ZView *parent) {
-    setOutlineColor(ZSettingsStore::getInstance().getInactiveColor());
+    setOutlineColor(ZSettings::getInstance().getInactiveColor());
     mMaxWidth = maxWidth;
     mMaxHeight = maxHeight;
     mWindowHeight = parent->getWindowHeight();

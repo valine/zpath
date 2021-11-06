@@ -6,7 +6,7 @@
 
 ZViewController::ZViewController(string resourcePath) : ZView(ZView::fillParent, ZView::fillParent) {
     mResourcePath = std::move(resourcePath);
-    setBackgroundColor(ZSettingsStore::get().getBackgroundColor());
+    setBackgroundColor(ZSettings::get().getBackgroundColor());
     setDrawingEnabled(false);
     setRootView(this);
 }

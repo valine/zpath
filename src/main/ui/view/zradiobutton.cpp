@@ -22,7 +22,7 @@ ZRadioButton::ZRadioButton(float maxWidth, float maxHeight, vector<ZTexture *> b
 	mLabel->setOffset(0, 0);
 	mLabel->setText("");
 	mLabel->setGravity(ZView::topLeft);
-	mLabel->setTextColor(ZSettingsStore::getInstance().getHighlightTextColor());
+	mLabel->setTextColor(ZSettings::getInstance().getHighlightTextColor());
 	addSubView(mLabel);
 
 	for (uint i = 0; i < tags.size(); i++) {
@@ -49,7 +49,7 @@ void ZRadioButton::init(float maxWidth, float maxHeight, vector<string> &titles)
     mLabel->setOffset(0, 0);
     mLabel->setText("Radio Button");
     mLabel->setGravity(topLeft);
-    mLabel->setTextColor(ZSettingsStore::getInstance().getBaseTextColor());
+    mLabel->setTextColor(ZSettings::getInstance().getBaseTextColor());
     addSubView(mLabel);
 
     for (uint i = 0; i < titles.size(); i++) {
@@ -103,6 +103,19 @@ void ZRadioButton::setBaseColor(vec4 color) {
     if (mHighlighted != nullptr) {
     	mHighlighted->setBackgroundColor(mHighlightColor);
 	}
+}
+
+void ZRadioButton::setSelected(int index) {
+    for (uint i = 0; i < mButtons.size(); i++) {
+        if (i == index) {
+            mButtons.at(i)->setBackgroundColor(mHighlightColor);
+            mButtons.at(i)->setHighlighColor(mHighlightColor + vec4(vec3(0.1), 0.0));
+            mHighlighted = mButtons.at(i);
+        } else {
+            mButtons.at(i)->setBackgroundColor(mBaseColor);
+            mButtons.at(i)->setHighlighColor(mBaseColor + vec4(vec3(0.1), 0.0));
+        }
+    }
 }
 
 void ZRadioButton::onClick(ZButton* sender) {

@@ -11,7 +11,7 @@ ZTextField::ZTextField(ZView *parent)
         : ZLabel("", parent) {
 
     mCursor = new ZView(2, 12, this);
-    mCursor->setBackgroundColor(ZSettingsStore::get().getBaseTextColor());
+    mCursor->setBackgroundColor(ZSettings::get().getBaseTextColor());
     mCursor->setVisibility(false);
     drawText();
 

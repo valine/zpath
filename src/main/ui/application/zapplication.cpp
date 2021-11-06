@@ -4,7 +4,7 @@
 #include <thread>
 #include <utils/zsettingsstore.h>
 #include <zconf.h>
-#include <utils/colormode.h>
+#include <utils/enums/colormode.h>
 #include "ui/stb_image.h"
 
 static void error_callback(int error, const char* description) {
@@ -188,18 +188,18 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     string resourceString = viewController->getResourcePath() + "resources/fonts/roboto/Roboto-Bold.ttf";
     ZFontStore::getInstance().loadFont(resourceString, dpScale);
     ZFontStore::getInstance().setDefaultResource(resourceString);
-    ZSettingsStore::getInstance().setResourcePath(viewController->getResourcePath());
+    ZSettings::getInstance().setResourcePath(viewController->getResourcePath());
 
     // Set the color mode theme
     ColorMode colorMode =
-            ZSettingsStore::get().getColorMode();
+            ZSettings::get().getColorMode();
     for (auto vc : mViewControllers) {
         vc->setColorMode(colorMode);
     }
 
-    ZSettingsStore::get().setOnThemeChange([this](){
+    ZSettings::get().setOnThemeChange([this](){
         ColorMode colorMode =
-                ZSettingsStore::get().getColorMode();
+                ZSettings::get().getColorMode();
         for (auto vc : mViewControllers) {
             vc->setColorMode(colorMode);
         }

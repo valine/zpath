@@ -71,7 +71,7 @@ void ZMagnitudePicker::initializeRadioButtons() {
         mRadioButtonLabels.at(index)->setXOffset(rangeWidth * index);
 
         if (index == mSelectedMagnitude) {
-            mRadioButtonLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
+            mRadioButtonLabels.at(index)->setBackgroundColor(ZSettings::get().getHighlightColor());
         } else {
             mRadioButtonLabels.at(index)->setBackgroundColor(getBackgroundColor());
         }
@@ -167,7 +167,7 @@ void ZMagnitudePicker::selectMagnitude(int index) {
         label->setBackgroundColor(getBackgroundColor());
     }
 
-    mRadioButtonLabels.at(index)->setBackgroundColor(ZSettingsStore::get().getHighlightColor());
+    mRadioButtonLabels.at(index)->setBackgroundColor(ZSettings::get().getHighlightColor());
     mSlider->setMaxValue(mRanges.at(index));
     mSlider->setMinValue(-mRanges.at(index));
     mSlider->setIncrement(mRanges.at(index) / 10000.0);
