@@ -1522,16 +1522,21 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     ZView::onScrollChange(x, y);
 
     if (ZSettings::get().getWheelMode() == scroll) {
+        mNodeContainer->setEnableScroll(true);
         updateLines();
     } else {
+        mNodeContainer->setEnableScroll(false);
+
         // Scrolling with shift key is used for zooming charts
         if (!shiftKeyPressed() && !isMouseInBounds(mDrawer) && !isMouseInBounds(mProjectBrowser)) {
             float maxScale = 0.1;
             float minScale = 1.0;
             float scaleDelta = 1.0 + (y / 5.0);
-            vec2 originalScale = mNodeContainer->getRelativeScale();
+            ZView* view = mNodeContainer;
+            ZView* innerView = mNodeContainer->getInnerView();
+            vec2 originalScale = view->getRelativeScale();
             vec2 newScale = max(vec2(maxScale), min(vec2(minScale), originalScale * vec2(scaleDelta)));
-            vec2 initialPos = mNodeContainer->getInnerTranslation();
+            vec2 initialPos = view->getInnerTranslation();
             vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
 
             vec2 scaled = ((initialPos - origin) * newScale) + origin;
@@ -1539,7 +1544,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
             vec2 offset = scaled - scaledZero;
 
-            mNodeContainer->setScale(newScale);
+            view->setScale(newScale);
             mLineContainer->setScale(newScale);
 
 
@@ -1553,8 +1558,11 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
             if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
                 !(newScale.y == maxScale && originalScale.y == maxScale)) {
-                mNodeContainer->setYOffset(margin / 2);
-                mNodeContainer->setInnerTranslation(delta);
+//                view->setYOffset(margin / 2);
+//                view->setInnerTranslation(delta);
+
+                innerView->setYOffset(margin / 2);
+                innerView->setInnerTranslation(delta);
             }
             mNodeContainer->onWindowChange(getWidth(), getHeight());
 

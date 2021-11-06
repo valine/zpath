@@ -33,6 +33,9 @@ public:
         mInnerView->mAutoOffset = dynamic;
     }
 
+    void setEnableScroll(bool enable) {
+        mEnableScroll = enable;
+    }
 private:
 
 	void init();
@@ -40,6 +43,7 @@ private:
 	ZView* mScrollBarBackground;
 	ZLinearLayout* mInnerView;
 	bool mDynamicSize = true;
+	bool mEnableScroll = true;
 
 };
 
