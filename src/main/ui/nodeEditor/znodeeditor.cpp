@@ -59,6 +59,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mLineContainer = new ZView(fillParent, fillParent, this);
     mNodeContainer->setYOffset(NODE_CONTAINER_OFFSET);
     mNodeContainer->setXOffset(100);
+
     mNodeContainer->setUseDynamicSize(false);
     mNodeContainer->setInnerViewHeight(5000);
     mNodeContainer->setBackgroundColor(transparent);
@@ -82,8 +83,10 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mDrawer = new ZDrawer(this, allTypes, allColors);
     mDrawer->setMarginTop(25);
     mDrawer->setOnItemSelected([this, allTypes](int index){
-        vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getScale()) - mNodeContainer->getInnerTranslation();
-        vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop() - mDrawer->getMaxWidth(), 0);
+        vec2 scrollOffset = mNodeContainer->getInnerView()->getTranslation();
+
+        vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getInnerView()->getScale()) - mNodeContainer->getInnerView()->getInnerTranslation();
+        vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop() - mDrawer->getMaxWidth(), 0) - scrollOffset;
         // startPosition.x = std::max((int) mDrawer->getWidth(), (int) startPosition.x);
         startPosition.y -= 40;
         startPosition.x -= 35;
@@ -458,7 +461,7 @@ void ZNodeEditor::snapViewToNodes() {
 
         vec2 center = (maxPos - minPos) / vec2(2);
         vec2 viewCenter = (vec2(mNodeContainer->getWidth(),
-                                mNodeContainer->getHeight()) * mNodeContainer->getScale()) / vec2(2);
+                                mNodeContainer->getHeight()) * mNodeContainer->getInnerView()->getScale()) / vec2(2);
         vec2 offset = viewCenter - center;
 
         for (ZNodeView *node : mNodeViews) {
@@ -786,11 +789,12 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     mNodeViews.push_back(node);
     vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
 
-    vec2 scale = mNodeContainer->getScale();
-    vec2 translation = mNodeContainer->getInnerTranslation();
+    vec2 scale = mNodeContainer->getInnerView()->getScale();
+    vec2 translation = mNodeContainer->getInnerView()->getInnerTranslation();
 
     if (autoPosition) {
-        node->setOffset(mAddNodePosition - translation);
+        vec2 scrollOffset = mNodeContainer->getInnerView()->getTranslation();
+        node->setOffset(mAddNodePosition - scrollOffset - translation);
         node->setInitialPosition((node->getOffset()));
         if (mAddNodePosition.x + NODE_MARGIN + nodeSize.x >= getWidth() / scale.x) {
             mAddNodePosition.x = DEFAULT_NODE_X;
@@ -1132,7 +1136,7 @@ void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, 
         mMagnitudePicker->setVisibility(false);
     }
 
-    vec2 scale = mNodeContainer->getRelativeScale();
+    vec2 scale = mNodeContainer->getInnerView()->getRelativeScale();
     absolute /= scale;
     start /= scale;
     delta /= scale;
@@ -1532,11 +1536,10 @@ void ZNodeEditor::onScrollChange(double x, double y) {
             float maxScale = 0.1;
             float minScale = 1.0;
             float scaleDelta = 1.0 + (y / 5.0);
-            ZView* view = mNodeContainer;
             ZView* innerView = mNodeContainer->getInnerView();
-            vec2 originalScale = view->getRelativeScale();
+            vec2 originalScale = innerView->getRelativeScale();
             vec2 newScale = max(vec2(maxScale), min(vec2(minScale), originalScale * vec2(scaleDelta)));
-            vec2 initialPos = view->getInnerTranslation();
+            vec2 initialPos = innerView->getInnerTranslation();
             vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
 
             vec2 scaled = ((initialPos - origin) * newScale) + origin;
@@ -1544,7 +1547,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
             vec2 offset = scaled - scaledZero;
 
-            view->setScale(newScale);
+            innerView->setScale(newScale);
             mLineContainer->setScale(newScale);
 
 
@@ -1561,7 +1564,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 //                view->setYOffset(margin / 2);
 //                view->setInnerTranslation(delta);
 
-                innerView->setYOffset(margin / 2);
+                //innerView->setYOffset(margin / 2);
                 innerView->setInnerTranslation(delta);
             }
             mNodeContainer->onWindowChange(getWidth(), getHeight());
@@ -1581,7 +1584,7 @@ void ZNodeEditor::enterBoxSelectMode() {
     mBoxMode = BOX_SELECT;
     mCursorView->setVisibility(true);
     mBoxSelect->setVisibility(false);
-    mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
+    mCursorView->setPosition((getMouse()) / mNodeContainer->getInnerView()->getScale());
 }
 
 void ZNodeEditor::exitBoxSelectMode() {
@@ -1595,26 +1598,25 @@ void ZNodeEditor::enterBoxSelect2nd() {
     mBoxMode = BOX_SELECT_2;
     mCursorView->setVisibility(false);
     mBoxSelect->setVisibility(true);
-    mBoxSelect->setOffset(getRelativeMouse() / mNodeContainer->getScale());
+    vec2 scrollOffset = mNodeContainer->getInnerTranslation();
+    mBoxSelect->setOffset((getRelativeMouse()) / mNodeContainer->getInnerView()->getScale());
     mBoxSelect->setMaxWidth(0);
     mBoxSelect->setMaxHeight(0);
 }
 
 void ZNodeEditor::updateBoxSelect() {
-    vec2 p1 = mBoxSelect->getOffset();
+    vec2 p1 = vec2(mBoxSelect->getLeft(), mBoxSelect->getTop());
     vec2 p2 = p1 + mBoxSelect->getSize();
 
     vec2 min1 = vec2(std::min(p1.x, p2.x), std::min(p1.y, p2.y));
     vec2 max1 = vec2(std::max(p1.x, p2.x), std::max(p1.y, p2.y));
 
     for (ZNodeView* node : mNodeViews) {
-        vec2 p3 = node->getOffset() + mNodeContainer->getOffset();
-        vec2 p4 = p3 + node->getSize();
+        vec2 p3 = (vec2(node->getLeft(), node->getTop()));
+        vec2 p4 = (p3 + node->getSize());
 
-        vec2 min2  = vec2(std::min(p3.x, p4.x), std::min(p3.y, p4.y)) +
-                mNodeContainer->getInnerTranslation();
-        vec2 max2  = vec2(std::max(p3.x, p4.x), std::max(p3.y, p4.y)) +
-                mNodeContainer->getInnerTranslation();
+        vec2 min2  = vec2(std::min(p3.x, p4.x), std::min(p3.y, p4.y));
+        vec2 max2  = vec2(std::max(p3.x, p4.x), std::max(p3.y, p4.y));
 
         bool xOverlap = max1.x >= min2.x && max2.x >= min1.x;
         bool yOverlap = max1.y >= min2.y && max2.y >= min1.y;
@@ -1629,8 +1631,8 @@ void ZNodeEditor::onCursorPosChange(double x, double y) {
     ZView::onCursorPosChange(x, y);
     if (mGrab || anyMouseDown() || altKeyPressed()) {
         if (!mMagnitudePicker->getVisibility()) {
-            onMouseMove(vec2(x, y) / mNodeContainer->getScale(),
-                    vec2(x - mInitialOffset.x, y - mInitialOffset.y) / mNodeContainer->getScale());
+            onMouseMove(vec2(x, y) / mNodeContainer->getInnerView()->getScale(),
+                    vec2(x - mInitialOffset.x, y - mInitialOffset.y) / mNodeContainer->getInnerView()->getScale());
 
             if (!anyMouseDown()) {
                 updateLines();
@@ -1640,15 +1642,17 @@ void ZNodeEditor::onCursorPosChange(double x, double y) {
 
     // Draw giant giant cursor around mouse for box select mode
     if (mBoxMode == BOX_SELECT)  {
-        mCursorView->setPosition(getMouse() / mNodeContainer->getScale());
+        mCursorView->setPosition(getMouse() / mNodeContainer->getInnerView()->getScale());
         mCursorView->onWindowChange(getWindowWidth(), getWindowHeight());
         mCursorView->getParentView()->invalidate();
         invalidate();
     } else if (mBoxMode == BOX_SELECT_2) {
 
-        vec2 mouse = getRelativeMouse() / mNodeContainer->getScale();
-        int mouseX = (int) mouse.x;
-        int mouseY = (int) mouse.y;
+        vec2 scrollOffset = mNodeContainer->getInnerTranslation();
+
+        vec2 mouse = getRelativeMouse() / mNodeContainer->getInnerView()->getScale();
+        int mouseX = (int) mouse.x + scrollOffset.x;
+        int mouseY = (int) mouse.y + scrollOffset.y;
         mBoxSelect->setMaxWidth(mouseX - (int) mBoxSelect->getOffsetX());
         mBoxSelect->setMaxHeight(mouseY - (int) mBoxSelect->getOffsetY());
         mBoxSelect->setBackgroundColor(faded);
