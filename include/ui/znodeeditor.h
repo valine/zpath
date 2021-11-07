@@ -32,7 +32,7 @@ static const int GROUP_SELECTED = 1;
 
 static const float MIN_NODE_SIZE = 40.0f;
 
-static const double GRID_SCALE = 15.0;
+static const double GRID_SCALE = 13.0;
 
 #include <ui/zview.h>
 #include "znodeview.h"

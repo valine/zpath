@@ -750,7 +750,7 @@ void ZView::computeBounds() {
     // Texture coordinates
     if (mBackgroundImage != nullptr) {
         float size = 1.0f / (float) mBackgroundImage->mScale;
-        vec2 offset = mBackgroundImage->mOffset / vec2(getWidth(), getHeight());
+        vec2 offset = mBackgroundImage->mOffset;
 
         float texWidth = mBackgroundImage->mWidth;
         float texHeight = mBackgroundImage->mHeight;
@@ -772,13 +772,14 @@ void ZView::computeBounds() {
         float texCoorY = 1;
 
         if (mBackgroundImage->mFillMode == ZTexture::FillMode::clip) {
+            offset *= vec2(widthMultiple, heightMultiple);
             texCoorX = widthMultiple;
             texCoorY = heightMultiple;
 
-            float mTexCoords[4*4] = {-texCoorX,-texCoorY,
-                                     texCoorX,-texCoorY,
-                                     -texCoorX,texCoorY,
-                                     texCoorX,texCoorY};
+            float mTexCoords[4*4] = {-texCoorX + offset.x, -texCoorY + offset.y,
+                                     texCoorX + offset.x, -texCoorY + offset.y,
+                                     -texCoorX + offset.x, texCoorY + offset.y,
+                                     texCoorX + offset.x, texCoorY + offset.y};
 
             mVertices[2] = (mTexCoords[0]);
             mVertices[3] = (mTexCoords[1]);

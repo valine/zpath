@@ -76,7 +76,7 @@ public:
         tex->setFillMode(ZTexture::clip);
         tex->mWidth = 4;
         tex->mHeight = 4;
-        tex->setScaleOffset(0.1, vec2(0));
+        tex->setScale(0.1);
         return tex;
     }
 

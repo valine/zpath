@@ -37,9 +37,12 @@ public:
     void setID(int light, int dark);
 	void save();
 
-	void setScaleOffset(float scale, vec2 offset) {
-	    mOffset = offset;
+	void setScale(float scale) {
 	    mScale = scale;
+	}
+
+	void setOffset(vec2 offset) {
+	    mOffset = offset;
 	}
 
     int mWidth = 0;

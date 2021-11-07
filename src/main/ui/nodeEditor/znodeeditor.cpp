@@ -52,7 +52,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mCheckerView->setBackgroundImage(tex);
     mCheckerView->setYOffset(NODE_CONTAINER_OFFSET);
     mCheckerView->setXOffset(100);
-    mCheckerView->getBackgroundImage()->setScaleOffset(GRID_SCALE, vec2(0));
+    mCheckerView->getBackgroundImage()->setScale(GRID_SCALE);
 
     mNodeContainer = new ZScrollView(fillParent, fillParent, this);
     mLineContainer = new ZView(fillParent, fillParent, this);
@@ -1529,6 +1529,12 @@ void ZNodeEditor::onScrollChange(double x, double y) {
     if (ZSettings::get().getWheelMode() == scroll) {
         mNodeContainer->setEnableScroll(true);
         updateLines();
+
+        vec2 scroll = mNodeContainer->getInnerView()->getTranslation();
+        vec2 offset = mNodeContainer->getInnerView()->getScale() * vec2(-2.0) * scroll / vec2(mCheckerView->getWidth(), mCheckerView->getHeight());
+        mCheckerView->getBackgroundImage()->setOffset(offset);
+        mCheckerView->computeBounds();
+
     } else {
         mNodeContainer->setEnableScroll(false);
 
@@ -1556,7 +1562,8 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
             int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
 
-            mCheckerView->getBackgroundImage()->setScaleOffset(newScale.x * GRID_SCALE, vec2(0));
+            mCheckerView->getBackgroundImage()->setScale(newScale.x * GRID_SCALE);
+            mCheckerView->getBackgroundImage()->setOffset(vec3(0));
             mCheckerView->computeBounds();
 
             if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
