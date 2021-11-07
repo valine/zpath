@@ -38,12 +38,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             allTypes.push_back(ZNodeView::getName(type));
         }
     }
+
     for (int i = 0; i != ZNodeView::Type::LAST; i++) {
         auto type = static_cast<ZNodeView::Type>(i);
         allColors.push_back(ZNodeView::getNodeColor(type));
     }
-
-
 
     // Checkered background
     mCheckerView = new ZView(fillParent, fillParent, this);
@@ -52,7 +51,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto tex = renderer.create();
     mCheckerView->setBackgroundImage(tex);
     mCheckerView->setYOffset(NODE_CONTAINER_OFFSET);
-    mCheckerView->setXOffset(0);
+    mCheckerView->setXOffset(100);
     mCheckerView->getBackgroundImage()->setScaleOffset(GRID_SCALE, vec2(0));
 
     mNodeContainer = new ZScrollView(fillParent, fillParent, this);
@@ -1283,6 +1282,8 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
                     selected->invalidate();
                 }
 
+                updateLines();
+
             } else if (rightMouseIsDown() && !shiftKeyPressed()) {
                 mNodeViews.at(mDragNode)->setMaxWidth(std::max(MIN_NODE_SIZE,
                         mInitialSize.x + delta.x));
@@ -1540,7 +1541,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
             vec2 originalScale = innerView->getRelativeScale();
             vec2 newScale = max(vec2(maxScale), min(vec2(minScale), originalScale * vec2(scaleDelta)));
             vec2 initialPos = innerView->getInnerTranslation();
-            vec2 origin = vec2(getWidth() / 2, getHeight() / 2);
+            vec2 origin = vec2(mNodeContainer->getWidth() / 2, mNodeContainer->getHeight() / 2);
 
             vec2 scaled = ((initialPos - origin) * newScale) + origin;
             vec2 scaledZero = (initialPos * newScale);
@@ -1555,16 +1556,11 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
             int margin = (int) ((float) NODE_CONTAINER_OFFSET / newScale.y);
 
-
             mCheckerView->getBackgroundImage()->setScaleOffset(newScale.x * GRID_SCALE, vec2(0));
             mCheckerView->computeBounds();
 
             if (!(newScale.y == 1.0 && originalScale.y == 1.0) &&
                 !(newScale.y == maxScale && originalScale.y == maxScale)) {
-//                view->setYOffset(margin / 2);
-//                view->setInnerTranslation(delta);
-
-                //innerView->setYOffset(margin / 2);
                 innerView->setInnerTranslation(delta);
             }
             mNodeContainer->onWindowChange(getWidth(), getHeight());
