@@ -21,7 +21,8 @@ public:
 
     int draw(int texId, float alpha) {
 
-        int res = 4;
+        int innerTiles = 16;
+        int res = innerTiles;
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glBindTexture(GL_TEXTURE_2D, texId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_FLOAT, nullptr);
@@ -34,24 +35,42 @@ public:
         mShader->setFloat("uAlpha", alpha);
 
         mat4 matrix = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
-//        matrix = glm::translate(matrix, vec3(0.5, 0.5, 0));
-//        matrix = glm::scale(matrix, vec3(marginSide, marginTop, 1.0));
-//        matrix = glm::translate(matrix, vec3(-0.5, -0.5, 0));
         mShader->setMat4("uMatrix", matrix);
 
         glViewport(0,0, res, res);
         glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        int triangles = 2;
 
-        float tileSize = res/2.0;
+        int triangles = 2;
+        float tileSize = (float) res / 2.0f;
+        float tileSizeHalf = (float) res / (float) innerTiles;
+
+        mShader->setFloat("uAlpha", alpha * 0.8);
+
         glViewport(0,0, tileSize, tileSize);
         glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
         glViewport(tileSize,tileSize,tileSize,tileSize);
         glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
+        mShader->setFloat("uAlpha", alpha);
+
+        for (int y = 0; y < innerTiles; y+=1) {
+            for (int x = 0; x < innerTiles; x+=2) {
+
+                if (y % 2 == 1) {
+                    glViewport((x + 1) * tileSizeHalf,y * tileSizeHalf, tileSizeHalf, tileSizeHalf);
+                    glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+                } else {
+                    glViewport(x * tileSizeHalf,y * tileSizeHalf, tileSizeHalf, tileSizeHalf);
+                    glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+                }
+
+            }
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
