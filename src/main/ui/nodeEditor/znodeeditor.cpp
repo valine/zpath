@@ -1100,9 +1100,23 @@ void ZNodeEditor::updateLines() {
                             continue;
                         }
                         ZLineView *line = getLine(lineIndex++);
-                        line->setPoints(outSockets.at(outputIndex)->getCenter(),
-                                        inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter());
-                        line->setVisibility(true);
+                        vec2 point = outSockets.at(outputIndex)->getCenter();
+                        vec2 point2 =  inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter();
+
+                        if (point.y <= mNodeContainer->getTop()) {
+                            point.y = mNodeContainer->getTop() - 2;
+                        }
+                        if (point2.y <= mNodeContainer->getTop()) {
+                            point2.y = mNodeContainer->getTop() - 2;
+                        }
+
+                        if (point.y >= mNodeContainer->getBottom() && point2.y >= mNodeContainer->getBottom()) {
+                            line->setVisibility(false);
+                        } else {
+                            line->setVisibility(true);
+                        }
+
+                        line->setPoints(point,point2);
                     }
                 }
                 outputIndex++;
