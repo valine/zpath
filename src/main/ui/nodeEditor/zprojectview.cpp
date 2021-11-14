@@ -90,7 +90,9 @@ void ZProjectView::reloadProjects() {
 
 void ZProjectView::onLayoutFinished() {
     ZView::onLayoutFinished();
-    selectProject(mProjectViews.at(mProjectViews.size() - 1));
+    if (mSelectedTag == -1) {
+        selectProject(mProjectViews.at(mProjectViews.size() - 1));
+    }
 }
 
 void ZProjectView::addProject(const string& name) {
@@ -104,7 +106,7 @@ void ZProjectView::addProject(const string& name) {
     project->setElevation(0);
     project->setCornerRadius(vec4(5));
     project->setMargin(vec4(2, 2, 2, 0));
-    project->setBackgroundColor(transparent);
+    project->setBackgroundColor(grey1);
     project->setOnClick([this](ZView* sender){
         selectProject(sender);
     });
