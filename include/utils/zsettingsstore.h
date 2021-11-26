@@ -17,7 +17,7 @@ static const int SCROLL = 1;
 #include <string>
 #include <utils/enums/wheelmode.h>
 #include "ui/zcolor.h"
-
+#include <functional>
 using namespace glm;
 using namespace std;
 
