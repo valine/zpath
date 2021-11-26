@@ -79,6 +79,7 @@ public:
         TANH,
         COMMENT,
         GROUP,
+        NEURAL_GROUP,
         GROUP_IN,
         GROUP_OUT,
         LAST // Fake enum to allow easy iteration
@@ -172,7 +173,9 @@ public:
                 case COMBINE: return {{VAR, VAR}, {VAR}};
                 case SPLIT: return {{VAR}, {VAR, VAR}};
                 case NEURAL_CORE: return {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
-                case GROUP: return {mGroupInSockets, mGroupOutSockets};
+                case GROUP:
+                case NEURAL_GROUP:
+                    return {mGroupInSockets, mGroupOutSockets};
                 case GROUP_IN: return {{},{mGroupInSockets}};
                 case GROUP_OUT: return {{mGroupOutSockets}, {}};
                 case MIN:
@@ -210,6 +213,17 @@ public:
             case GROUP_IN:
             case GROUP_OUT:
             case GROUP:
+            case NEURAL_GROUP:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    static bool isGroup(Type type) {
+        switch(type) {
+            case GROUP:
+            case NEURAL_GROUP:
                 return true;
             default:
                 return false;
@@ -253,6 +267,7 @@ public:
             case NEURAL_CORE:
                 return {0.0, 0.0, 0.05, -5, -1, 0, 0};
             case GROUP:
+            case NEURAL_GROUP:
                 return {0.0};
             default:
                 return vector<float>(MAX_INPUT_COUNT, 0.0);
@@ -407,6 +422,8 @@ public:
                 return "tanh";
             case GROUP:
                 return "group";
+            case NEURAL_GROUP:
+                return "n-group";
             case MIN:
                 return "min";
             case MAX:
@@ -603,6 +620,7 @@ public:
             case Z:
                 return getSocketColor(VAR_Z);
             case NEURAL_CORE:
+            case NEURAL_GROUP:
             case TANH:
             case SIGMOID:
                 return getSocketColor(NN);

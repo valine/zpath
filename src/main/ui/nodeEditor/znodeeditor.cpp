@@ -776,7 +776,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
         node->setVisibility(false);
     }
 
-    if (node->getType() == ZNodeView::GROUP) {
+    if (ZNodeView::isGroup(node->getType())) {
         for (ZNodeView *innerNode : node->getGroupNodes()) {
             innerNode->setVisibility(false);
         }
@@ -1457,7 +1457,7 @@ void ZNodeEditor::toggleGroupSelection() {
         // Enter group selection
         if (mSelectedNodes.size() == 1) {
             ZNodeView *node = (*mSelectedNodes.begin());
-            if (node->getType() == ZNodeView::GROUP) {
+            if (ZNodeView::isGroup(node->getType())) {
                 mGroupMode = node->getIndexTag();
                 setBackgroundColor(grey2);
 
@@ -1498,7 +1498,7 @@ void ZNodeEditor::toggleGroupSelection() {
                 node->setVisibility(true);
             }
 
-            if (node->getType() == ZNodeView::GROUP) {
+            if (ZNodeView::isGroup(node->getType())) {
                 node->getGroupInput()->setVisibility(false);
                 node->getGroupOutput()->setVisibility(false);
             }

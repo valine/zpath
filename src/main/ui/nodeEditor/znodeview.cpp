@@ -1226,6 +1226,7 @@ ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<
                 return {{returnValue, chartBound.x, chartWidth},
                         {x.at(REAL).at(0),      chartBound.x, chartWidth}};
             }
+            case NEURAL_GROUP:
             case GROUP: {
                 initializeGroup();
                 return mGroupOutput->evaluate(rootInput, nullptr, rootInput);

@@ -102,7 +102,7 @@ public:
         }
 
         // Parse inner group node
-        if (type == ZNodeView::Type::GROUP) {
+        if (ZNodeView::isGroup(type)) {
             nodeString+="group:";
 
             auto groupNodes = node->getGroupNodes();
