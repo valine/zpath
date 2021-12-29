@@ -6,6 +6,8 @@
 #define ZPATH_ZPROJECTVIEW_H
 
 
+static const double TOP_MARGIN = 2.0;
+
 #include "zview.h"
 #include "zscrollview.h"
 #include "ui/ztextfield.h"

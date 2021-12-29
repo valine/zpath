@@ -102,7 +102,7 @@ void ZProjectView::addProject(const string& name) {
     project->setTextMode(ZTextField::TextMode::field);
     project->setMaxWidth(200);
     project->setMaxHeight(24);
-    project->setLineTopMargin(2.5);
+    project->setLineTopMargin(TOP_MARGIN);
     project->setElevation(0);
     project->setCornerRadius(vec4(5));
     project->setMargin(vec4(2, 2, 2, 0));
@@ -134,8 +134,8 @@ void ZProjectView::addUnsavedProject() {
     unsavedPrj->setTextMode(ZTextField::TextMode::field);
     unsavedPrj->setMaxWidth(200);
     unsavedPrj->setMaxHeight(24);
-    unsavedPrj->setLineTopMargin(2.5);
-    unsavedPrj->mTitle->setLineTopMargin(2.5);
+    unsavedPrj->setLineTopMargin(TOP_MARGIN);
+    unsavedPrj->mTitle->setLineTopMargin(TOP_MARGIN);
     unsavedPrj->setCornerRadius(vec4(5));
     unsavedPrj->setMargin(vec4(2, 2, 0, 0));
     unsavedPrj->setBackgroundColor(gold);
