@@ -56,6 +56,10 @@ public:
     void setWheelMode(WheelMode mode);
     WheelMode getWheelMode();
 
+    void setComputationDevice() {
+
+    }
+
     void setOnThemeChange(function<void()> fn) {
         mOnThemeChange = fn;
     }
