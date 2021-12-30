@@ -158,3 +158,47 @@ WheelMode ZSettings::getWheelMode() {
             return scroll;
     }
 }
+
+void ZSettings::setComputationDevice(CompDevice cd) {
+    // Todo switch to JSON when we need more options in settings
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "compdevice";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    ofstream out(fullPathString);
+    switch (cd) {
+        case glsl:
+            out << GLSL;
+            break;
+        case cpu:
+            out << CPU;
+            break;
+    }
+    out.close();
+}
+
+CompDevice ZSettings::getCompDevice() {
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "compdevice";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    std::ifstream t(fullPathString);
+    std::string dataString;
+    t.seekg(0, std::ios::end);
+    dataString.reserve(t.tellg());
+    t.seekg(0, std::ios::beg);
+    dataString.assign((std::istreambuf_iterator<char>(t)),
+                      std::istreambuf_iterator<char>());
+
+    int index = stoi(dataString);
+    switch (index) {
+        case CPU:
+            return cpu;
+        case GLSL:
+            return glsl;
+    }
+}

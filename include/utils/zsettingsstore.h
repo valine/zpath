@@ -11,11 +11,17 @@ static const int DARK = 1;
 static const int ZOOM = 0;
 static const int SCROLL = 1;
 
+static const int CPU = 0;
+
+static const int GLSL = 1;
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <utils/enums/wheelmode.h>
+#include <utils/enums/compdevice.h>
+
 #include "ui/zcolor.h"
 #include <functional>
 using namespace glm;
@@ -56,9 +62,8 @@ public:
     void setWheelMode(WheelMode mode);
     WheelMode getWheelMode();
 
-    void setComputationDevice() {
-
-    }
+    void setComputationDevice(CompDevice cd);
+    CompDevice getCompDevice();
 
     void setOnThemeChange(function<void()> fn) {
         mOnThemeChange = fn;
