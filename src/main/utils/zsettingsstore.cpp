@@ -160,6 +160,8 @@ WheelMode ZSettings::getWheelMode() {
 }
 
 void ZSettings::setComputationDevice(CompDevice cd) {
+    mCompDevice = cd;
+
     // Todo switch to JSON when we need more options in settings
     string projectFolder = "resources/settings/";
     string path = ZSettings::get().getResourcePath() + projectFolder;
@@ -180,25 +182,31 @@ void ZSettings::setComputationDevice(CompDevice cd) {
 }
 
 CompDevice ZSettings::getCompDevice() {
-    string projectFolder = "resources/settings/";
-    string path = ZSettings::get().getResourcePath() + projectFolder;
-    string name = "compdevice";
-    string ext = ".csv";
-    string fullPathString = path + name + ext;
+    if (mCompDevice == unset) {
+        string projectFolder = "resources/settings/";
+        string path = ZSettings::get().getResourcePath() + projectFolder;
+        string name = "compdevice";
+        string ext = ".csv";
+        string fullPathString = path + name + ext;
 
-    std::ifstream t(fullPathString);
-    std::string dataString;
-    t.seekg(0, std::ios::end);
-    dataString.reserve(t.tellg());
-    t.seekg(0, std::ios::beg);
-    dataString.assign((std::istreambuf_iterator<char>(t)),
-                      std::istreambuf_iterator<char>());
+        std::ifstream t(fullPathString);
+        std::string dataString;
+        t.seekg(0, std::ios::end);
+        dataString.reserve(t.tellg());
+        t.seekg(0, std::ios::beg);
+        dataString.assign((std::istreambuf_iterator<char>(t)),
+                          std::istreambuf_iterator<char>());
 
-    int index = stoi(dataString);
-    switch (index) {
-        case CPU:
-            return cpu;
-        case GLSL:
-            return glsl;
+        int index = stoi(dataString);
+        switch (index) {
+            case CPU:
+                mCompDevice = cpu;
+                return cpu;
+            case GLSL:
+                mCompDevice = glsl;
+                return glsl;
+        }
     }
+
+    return mCompDevice;
 }
