@@ -48,7 +48,7 @@ void SettingsViewController::onCreate() {
     });
 
     // Mouse wheel
-    auto* compDevice = new ZRadioButton("Computation Mode", {"CPU", "GLSL"}, scrollView);
+    auto* compDevice = new ZRadioButton("Compute Mode", {"CPU", "GLSL"}, scrollView);
     switch(ZSettings::get().getCompDevice()) {
         case (cpu):
             compDevice->setSelected(0);
