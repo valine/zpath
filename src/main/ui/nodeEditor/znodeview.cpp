@@ -107,7 +107,6 @@ void ZNodeView::init() {
                 return vector<float>(2, 0);
             }
             vector<float> point;
-
             point.push_back(mPointCache.at(x.at(0)).at(0));
             point.push_back(mPointCache.at(x.at(0)).at(1));
 
@@ -778,6 +777,12 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
 
 void ZNodeView::draw() {
     ZView::draw();
+
+    // GLSL mode computes the graph in the draw step.
+    if (ZSettings::get().getCompDevice() == glsl) {
+
+    }
+
 
     if (getType() == ZNodeView::Type::T) {
         invalidateNodeRecursive();

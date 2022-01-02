@@ -921,7 +921,6 @@ public:
         for (int ei = 0; ei < resolution; ei++) {
             for (int fi = 0; fi < resolution; fi++) {
 
-
                 float freq = ((float) mix(yBounds.x, yBounds.y, (float) fi / fres)) * 2.0 * M_PI;
                 float expo = ((float) mix(xBounds.x, xBounds.y, (float) ei / fres));
                 complex<float> sum = {0, 0};
