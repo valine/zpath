@@ -7,7 +7,8 @@
 
 enum CompDevice {
     cpu,
-    glsl
+    glsl,
+    unset
 };
 
 #endif //ZPATH_COMPDEVICE_H

@@ -86,6 +86,7 @@ private:
     ZSettings(ZSettings const&);              // Don't Implement
     void operator=(ZSettings const&); // Don't implement
 
+    CompDevice mCompDevice = unset;
 };
 
 
