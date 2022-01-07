@@ -780,9 +780,10 @@ void ZNodeView::draw() {
 
     // GLSL mode computes the graph in the draw step.
     if (ZSettings::get().getCompDevice() == glsl) {
-
+        mChart->setGpuMode(true);
+    } else {
+        mChart->setGpuMode(false);
     }
-
 
     if (getType() == ZNodeView::Type::T) {
         invalidateNodeRecursive();

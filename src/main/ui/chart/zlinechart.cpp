@@ -286,7 +286,6 @@ void ZLineChart::updateFBOSize() {
 
 void ZLineChart::updateChart2D() {
     vector<float> verts;
-
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
         vector<float> output;
         for (uint i = 0; i < mResolution; i++) {
@@ -322,7 +321,6 @@ void ZLineChart::updateChart2D() {
         glBindBuffer(GL_ARRAY_BUFFER, mPoints.at(lineIndex));
         glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
     }
-
 }
 
 void ZLineChart::updateChart1D() {
@@ -366,6 +364,25 @@ void ZLineChart::updateChart1D() {
 }
 
 void ZLineChart::draw() {
+    if (mGpuMode) {
+        glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+        glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
+        glViewport(0, 0, getWidth(), getHeight());
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glBindVertexArray(0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    } else {
+        drawCpu();
+    }
+
+    ZView::draw();
+}
+
+void ZLineChart::drawCpu() {
     initView();
     if (mDataInvalid) {
         mDataInvalid = false;
@@ -378,8 +395,10 @@ void ZLineChart::draw() {
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+
+
     // draw heat map. Heat map update is triggered by a second thread,
-    // so check that everything is initialized before drawing.
+// so check that everything is initialized before drawing.
     if (mInputType == HEAT_MAP && mHeatInitialized) {
         mHeatShader->use();
         mHeatShader->setMat4("uVPMatrix", mTransform);
@@ -443,8 +462,6 @@ void ZLineChart::draw() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    ZView::draw();
 }
 
 void ZLineChart::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {

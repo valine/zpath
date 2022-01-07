@@ -107,7 +107,15 @@ public:
 
     void setDefaultMat(vec4 defaultBounds);
 
+    /**
+     * False to use cpu rendering
+     * @param mode Gpu mode
+     */
+    void setGpuMode(bool mode) {
+        mGpuMode = mode;
+    }
 private:
+    bool mGpuMode = false;
     function<void()> mInvalidateListener;
     function<vector<float>(vector<int>, int index)> mListener = nullptr;
 
@@ -206,6 +214,7 @@ private:
 
     void onCreate();
 
+    void drawCpu();
 };
 
 
