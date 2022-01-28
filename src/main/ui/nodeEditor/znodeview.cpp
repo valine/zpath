@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <mutex>
 #include "utils/znodeutil.h"
+#include "utils/dataimportutil.h"
 
 ZNodeView::ZNodeView(ZNodeView::Type type) : ZView(10, 10){
     init();
@@ -1123,6 +1124,7 @@ ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<
                 return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                         {x.at(IMAG).at(0), chartBound.x, chartWidth}};
             case FILE:
+                DataImportUtil::get().testJson();
                 return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                         {0,                chartBound.x, chartWidth}};
                 break;

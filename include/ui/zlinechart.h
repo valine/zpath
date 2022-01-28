@@ -29,7 +29,12 @@ public:
 
     // This might not be needed
     void setChartListener(function<vector<float>(vector<int>, int index)> listener){
-        mListener = move(listener);
+        mPointListener = move(listener);
+    }
+
+    // This might not be needed
+    void setShaderListener(function<ZShader()> listener){
+        mShaderListener = move(listener);
     }
 
     void computeChartBounds() {
@@ -117,7 +122,12 @@ public:
 private:
     bool mGpuMode = false;
     function<void()> mInvalidateListener;
-    function<vector<float>(vector<int>, int index)> mListener = nullptr;
+
+    // Retrieve individual points from view parent. Used for CPU rendering
+    function<vector<float>(vector<int>, int index)> mPointListener = nullptr;
+
+    // Retrieve shader from view parent. Used for GPU rendering
+    function<ZShader()> mShaderListener = nullptr;
 
     bool mViewInit = false;
     float defaultRange = 5.0;

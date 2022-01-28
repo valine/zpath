@@ -128,7 +128,7 @@ void ZLineChart::initHeatLUT()  {
 
 void ZLineChart::updateHeatMap() {
 
-    if (mListener == nullptr) {
+    if (mPointListener == nullptr) {
         return;
     }
                         // pos,  texture
@@ -144,7 +144,7 @@ void ZLineChart::updateHeatMap() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHeatEdgeBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
 
-    vector<float> pixels = mListener({(int) 0, (int) 0}, 0);
+    vector<float> pixels = mPointListener({(int) 0, (int) 0}, 0);
 
     glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, std::min(mResolution, mMaxResolution),
@@ -160,7 +160,7 @@ void ZLineChart::updateHeatMap() {
 
 void ZLineChart::updateData() {
     // Run from UI thread
-    if (mListener == nullptr) {
+    if (mPointListener == nullptr) {
         return;
     }
     if (mInputType == LINE || mInputType == LINE_2X) {
@@ -289,7 +289,7 @@ void ZLineChart::updateChart2D() {
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
         vector<float> output;
         for (uint i = 0; i < mResolution; i++) {
-            output = mListener({(int) i}, lineIndex);
+            output = mPointListener({(int) i}, lineIndex);
             verts.push_back(output.at(0));
             verts.push_back(output.at(1));
             verts.push_back(0);
@@ -327,7 +327,7 @@ void ZLineChart::updateChart1D() {
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
         vector<float> verts;
         for (uint i = 0; i < mResolution; i++) {
-            vector<float> y = mListener({(int) i}, lineIndex);
+            vector<float> y = mPointListener({(int) i}, lineIndex);
             verts.push_back(((float) i / (float) (mResolution - 1)));
             verts.push_back(y.at(0));
             verts.push_back(0);
@@ -375,6 +375,8 @@ void ZLineChart::draw() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        // Todo: Retrieve constant parameters from node and pass to shader as uniform
     } else {
         drawCpu();
     }
@@ -394,8 +396,6 @@ void ZLineChart::drawCpu() {
     glViewport(0, 0, getWidth(), getHeight());
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
-
-
 
     // draw heat map. Heat map update is triggered by a second thread,
 // so check that everything is initialized before drawing.
