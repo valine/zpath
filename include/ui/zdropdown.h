@@ -46,6 +46,10 @@ public:
 
     void setItems(vector<string> items);
 
+    int getSelectedItem() {
+        return mSelected;
+    }
+
 private:
 	ZLabel* mTitle;
 	ZScrollView* mDrawer;
@@ -57,6 +61,7 @@ private:
     std::function<void(int item)> mOnItemChange = nullptr;
     std::function<void()> mOnOpen = nullptr;
     void handleClick();
+    int mSelected = -1;
 
 };
 

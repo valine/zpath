@@ -19,8 +19,8 @@ void ZDataViewController::onFileDrop(int count, const char** paths) {
 
     if (ext == "json") {
         cout << "Data importing..." << endl;
-        json j = DataStore::parseJsonFromFile(path);
-        DataStore::storeJson(j);
+        json j = DataStore::get().parseJsonFromFile(path);
+        DataStore::get().storeJson(j, std::string());
         mListView->addItem(path);
     } else {
         cout << "File type: " << ext << " not supported" << endl;

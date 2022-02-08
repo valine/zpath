@@ -9,7 +9,7 @@
 
 ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZView *parent) : ZView(maxWidth, fillParent, parent) {
 
-    mBackground = new ZView(200, maxHeight, this);
+    mBackground = new ZView(maxWidth, maxHeight, this);
     mBackground->setBackgroundColor(grey1);
     mBackground->setCornerRadius(2);
     mButtonHeight = maxHeight;
@@ -18,6 +18,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
     mTitle->setText("Dropdown");
     mTitle->setTextColor(grey1.getTextColor());
     mTitle->setMarginLeft(10);
+    mTitle->setMaxWidth(maxWidth);
     mTitle->setYOffset((mBackground->getMaxHeight() - mTitle->getLineHeight()) / 2);
     mTitle->setOnClick([this](ZView* sender){
         handleClick();
@@ -42,6 +43,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
         auto* button = new ZButton(item, mDrawer);
         button->setIndexTag(index);
         button->setCornerRadius(0);
+        button->setMaxWidth(getMaxWidth());
         button->setBackgroundColor(ZColor(vec4(1,1,1,0),
                                    vec4(0,0,0,0)));
         button->setClickMode(ZButton::ClickMode::upAndDown);
@@ -68,8 +70,7 @@ void ZDropDown::setItems(vector<string> items) {
     for (const string& item : items) {
 
         ZButton* button;
-
-        if (mButtons.size() - 1 < index) {
+        if (mButtons.size() <= index) {
             button = new ZButton(item, mDrawer);
         } else {
             button = mButtons.at(index);
@@ -104,7 +105,7 @@ void ZDropDown::wrapTitle() {
 void ZDropDown::selectItem(int index) {
     mDrawer->setVisibility(false);
     getParentView()->invalidate();
-
+    mSelected = index;
     if (mDynamicTitle) {
         mTitle->setText(mNames.at(index));
     }

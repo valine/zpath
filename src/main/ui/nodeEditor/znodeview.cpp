@@ -444,16 +444,17 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     if (isDropDownVisible(type)) {
         if (mDropDown == nullptr) {
-            mDropDown = new ZDropDown(120, 18, {"Empty", "Empty 2", "Empty 3"}, this);
+            mDropDown = new ZDropDown(220, 18, {" "}, this);
             mDropDown->setTitle("Choose file...");
             mDropDown->setMarginLeft(25);
+            mDropDown->setMarginRight(25);
             mDropDown->setMarginTop(2);
             mDropDown->setOnOpen([this](){
-                mDropDown->setItems({"test"});
-
+                vector<string> list = DataStore::get().getFileNameList();
+                mDropDown->setItems(list);
             });
             mDropDown->setOnItemChange([this](int item){
-                cout << "hello" << endl;
+
             });
 
         } else {
@@ -1143,11 +1144,14 @@ ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<
             case Z:
                 return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                         {x.at(IMAG).at(0), chartBound.x, chartWidth}};
-            case FILE:
-                DataStore::get().testJson();
-                return {{x.at(REAL).at(0), chartBound.x, chartWidth},
-                        {0,                chartBound.x, chartWidth}};
+            case FILE: {
+                int fileIndex = mDropDown->getSelectedItem();
+
+                float point = DataStore::get().getDataAtIndex(fileIndex, x.at(REAL).at(0));
+                return {{point, chartBound.x, chartWidth},
+                        {0, chartBound.x, chartWidth}};
                 break;
+            }
             case FFT: {
                 auto fft = computeFft(in.at(1), in.at(2), in.at(3));
                 return {{fft.first,  chartWidth, in.at(3)},
