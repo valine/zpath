@@ -11,7 +11,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 
     mBackground = new ZView(200, maxHeight, this);
     mBackground->setBackgroundColor(grey1);
-    mBackground->setCornerRadius(4);
+    mBackground->setCornerRadius(2);
     mButtonHeight = maxHeight;
 
     mTitle = new ZLabel("Dropdown", this);
@@ -27,12 +27,12 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
 
     mDrawer = new ZScrollView(maxWidth, 0, this);
     mDrawer->setBackgroundColor(bg);
-    mDrawer->setOffset(0, DEFAULT_OFFSET);
+    mDrawer->setOffset(0, maxHeight);
     mDrawer->setVisibility(false);
     mDrawer->setElevation(1.0);
     mDrawer->setAllowNegativeSize(true);
     mDrawer->setClippingEnabled(false);
-    mDrawer->setCornerRadius(4);
+    mDrawer->setCornerRadius(2);
 
     addSubView(mDrawer);
 
@@ -111,11 +111,11 @@ void ZDropDown::handleClick() {
         if (getGravity() == bottomLeft) {
 
             mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
-            mDrawer->setYOffset(DEFAULT_OFFSET);
+            mDrawer->setYOffset(mBackground->getMaxHeight());
         } else {
-            mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (DEFAULT_OFFSET * 2),
+            mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (mBackground->getMaxHeight() * 2),
                           mDrawer->getInnerView()->getMaxHeight()));
-            mDrawer->setYOffset(DEFAULT_OFFSET);
+            mDrawer->setYOffset(mBackground->getMaxHeight());
         }
 
         mDrawer->onWindowChange(getWindowWidth(), getWindowHeight());

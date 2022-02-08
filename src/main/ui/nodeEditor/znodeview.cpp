@@ -447,8 +447,9 @@ void ZNodeView::setType(ZNodeView::Type type) {
 
     if (isDropDownVisibly(type)) {
         if (mDropDown == nullptr) {
-            mDropDown = new ZDropDown(120, 20, {"Empty", "Empty 2", "Empty 3"}, this);
+            mDropDown = new ZDropDown(120, 16, {"Empty", "Empty 2", "Empty 3"}, this);
             mDropDown->setMarginLeft(25);
+            mDropDown->setMarginTop(2);
             mDropDown->setOnItemChange([this](int item){
                 cout << "hello" << endl;
 
