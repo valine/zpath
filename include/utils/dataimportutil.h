@@ -46,26 +46,26 @@ public:
      */
     void storeJson(json data, string path) {
         mDataList.push_back(path);
-        vector<float> list = data["IndefiniteStreaming"][0]["TimeDomainData"];
+        vector<float> list = data["BrainSenseTimeDomain"][0]["TimeDomainData"];
         mDataMap.insert({path, list});
     }
 
     float getDataAtIndex(unsigned int fileIndex, float x) {
-//        if (fileIndex != -1 && mDataList.size() < fileIndex) {
-//            string path = mDataList.at(fileIndex);
-//            if (mDataMap.count(path) > 0) {
-//                vector<float> points = mDataMap.at(path);
-//                float size = points.size() - 1;
-//                float leftX = std::min(size, std::max(0.0f, floor(x)));
-//                float rightX = std::min(size, std::max(0.0f, ceil(x)));
-//                float factor = x - floor(x);
-//
-//                float leftY = mDataMap.at(path).at((int) leftX);
-//                float rightY = mDataMap.at(path).at((int) rightX);
-//
-//                return leftY + ((rightY - leftY) * factor);
-//            }
-//        }
+        if (fileIndex != -1 && mDataList.size() > fileIndex) {
+            string path = mDataList.at(fileIndex);
+            if (mDataMap.count(path) > 0) {
+                vector<float> points = mDataMap.at(path);
+                float size = points.size() - 1;
+                float leftX = std::min(size, std::max(0.0f, floor(x)));
+                float rightX = std::min(size, std::max(0.0f, ceil(x)));
+                float factor = x - floor(x);
+
+                float leftY = mDataMap.at(path).at((int) leftX);
+                float rightY = mDataMap.at(path).at((int) rightX);
+
+                return leftY + ((rightY - leftY) * factor);
+            }
+        }
         return 0;
     }
 
