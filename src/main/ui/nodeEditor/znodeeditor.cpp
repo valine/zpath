@@ -161,7 +161,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mHeader = new ZView(fillParent, fillParent, this);
 
-    auto* dropDown = new ZDropDown(100,800, allTypes, mHeader);
+    auto* dropDown = new ZDropDown(100,25, allTypes, mHeader);
     dropDown->setOffset(0, 0);
     dropDown->setTitle("Nodes");
     //dropDown->wrapTitle();
@@ -177,7 +177,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             ZNodeView::Type::COS,
             ZNodeView::Type::TAN,
             ZNodeView::Type::EXP,};
-    auto* complexDropdown = new ZDropDown(100,800, getNodeTypeNames(complexTypes), mHeader);
+    auto* complexDropdown = new ZDropDown(100,25, getNodeTypeNames(complexTypes), mHeader);
     complexDropdown->setTitle("Trig");
     complexDropdown->setOffset(dropDown->getLocalRight(), 0);
    // complexDropdown->wrapTitle();
@@ -187,7 +187,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         addNode(type);
     });
 
-    auto* viewDropDown = new ZDropDown(100,800, {"Snap to Nodes"}, mHeader);
+    auto* viewDropDown = new ZDropDown(100,25, {"Snap to Nodes"}, mHeader);
     viewDropDown->setOffset(complexDropdown->getLocalRight(), 0);
     viewDropDown->setTitle("View");
     //viewDropDown->wrapTitle();

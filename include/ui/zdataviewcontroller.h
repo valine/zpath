@@ -7,13 +7,17 @@
 
 
 #include "zviewcontroller.h"
-
+#include "ui/zlistview.h"
 class ZDataViewController : public ZViewController{
 public:
     ZDataViewController(char **const pString) : ZViewController(pString) {}
 
 private:
     void onCreate() override;
+
+    void onFileDrop(int count, const char **paths) override;
+    ZListView* mListView;
+    string getFileExtension(string path);
 };
 
 

@@ -34,6 +34,7 @@ using namespace std;
 #include "utils/casutil.h"
 #include "ztextfield.h"
 #include "utils/zutil.h"
+#include "zdropdown.h"
 
 class ZNodeView : public ZView {
 public:
@@ -478,6 +479,15 @@ public:
         switch (type) {
             case C:
             case CI:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    static bool isDropDownVisibly(Type type) {
+        switch (type) {
+            case FILE:
                 return true;
             default:
                 return false;
@@ -1153,6 +1163,9 @@ private:
 
     vector<ZLabel *> mSocketInLabels;
     vector<ZLabel *> mSockOutLabels;
+
+
+    ZDropDown* mDropDown = nullptr;
 
     ZLabel *mOutputLabel = nullptr;
     ZTextField *mNameLabel = nullptr;

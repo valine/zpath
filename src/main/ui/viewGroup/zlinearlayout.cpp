@@ -27,9 +27,11 @@ void ZLinearLayout::refreshMargins() {
 
     if(mAutoOffset) {
         for (ZView *view : getSubViews()) {
-            view->setYOffset(mPos);
-            int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
-            mPos += offset;
+            if (view->getVisibility()) {
+                view->setYOffset(mPos);
+                int offset = view->getMaxHeight() + view->getMarginTop() + view->getMarginBottom();
+                mPos += offset;
+            }
         }
 
         setMaxHeight(mPos);

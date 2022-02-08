@@ -61,7 +61,7 @@ void ZTileViewController::onLayoutFinished() {
     mHandle->setGravity(topRight);
     mHandle->setBackgroundImage(new ZTexture(getResourcePath() + "resources/icons/tile.png"));
 
-    mDropDown = new ZDropDown(100, 300, mNames, this);
+    mDropDown = new ZDropDown(100, 25, mNames, this);
     mDropDown->setGravity(bottomLeft);
     mDropDown->setYOffset(1);
     mDropDown->setXOffset(boarder);

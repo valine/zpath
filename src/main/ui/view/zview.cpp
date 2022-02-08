@@ -918,6 +918,15 @@ vector<ZView*> ZView::getSubViews() {
     return mViews;
 }
 
+void ZView::subviewToBack(ZView *view) {
+    for (ZView* subView : mViews) {
+        if (subView == view) {
+            removeSubView(view);
+            mViews.push_back(subView);
+            return;
+        }
+    }
+}
 
 void ZView::setBackgroundColor(float color[4]) {
     mBackgroundColor = vec4(color[0], color[1], color[2], color[3]);
@@ -959,8 +968,10 @@ bool ZView::anyMouseDown() {
 }
 
 void ZView::onFileDrop(int count, const char** paths) {
-    for (auto & mView : mViews) {
-        mView->onFileDrop(count, paths);
+    for (auto & view : mViews) {
+        if (isMouseInBounds(view)) {
+            view->onFileDrop(count, paths);
+        }
     }
 }
 
@@ -1392,7 +1403,9 @@ void ZView::requestFocus(ZView* view) {
 }
 
 void ZView::releaseFocus(ZView *forView) {
-    getParentView()->releaseFocus(forView);
+    if (getParentView() != this) {
+        getParentView()->releaseFocus(forView);
+    }
 }
 
 void ZView::onFocusChanged(ZView *viewWithFocus) {

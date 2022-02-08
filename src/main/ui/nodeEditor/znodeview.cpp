@@ -445,6 +445,23 @@ void ZNodeView::setType(ZNodeView::Type type) {
         buttonIndex++;
     }
 
+    if (isDropDownVisibly(type)) {
+        if (mDropDown == nullptr) {
+            mDropDown = new ZDropDown(120, 20, {"Empty", "Empty 2", "Empty 3"}, this);
+            mDropDown->setMarginLeft(25);
+            mDropDown->setOnItemChange([this](int item){
+                cout << "hello" << endl;
+
+            });
+        } else {
+            mDropDown->setVisibility(true);
+        }
+    } else {
+        if (mDropDown != nullptr) {
+            mDropDown->setVisibility(false);
+        }
+    }
+
     refreshView(type);
     mNameLabel->setTextColor(getBackgroundColor().getTextColor());
     mOutputLabel->setTextColor(getBackgroundColor().getTextColor());
@@ -1124,7 +1141,7 @@ ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<
                 return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                         {x.at(IMAG).at(0), chartBound.x, chartWidth}};
             case FILE:
-                DataImportUtil::get().testJson();
+                DataStore::get().testJson();
                 return {{x.at(REAL).at(0), chartBound.x, chartWidth},
                         {0,                chartBound.x, chartWidth}};
                 break;

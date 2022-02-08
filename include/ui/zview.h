@@ -365,6 +365,8 @@ class ZView {
 
     ZTexture *getBackgroundImage();
 
+    void subviewToBack(ZView *view);
+
 private:
 
         bool mBuffersInit = false;

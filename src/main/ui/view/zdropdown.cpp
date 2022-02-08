@@ -7,9 +7,9 @@
 #include "ui/zdropdown.h"
 
 
-ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
+ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZView *parent) : ZView(maxWidth, fillParent, parent) {
 
-    mBackground = new ZView(200, 25, this);
+    mBackground = new ZView(200, maxHeight, this);
     mBackground->setBackgroundColor(grey1);
     mBackground->setCornerRadius(4);
     mButtonHeight = maxHeight;
@@ -51,6 +51,7 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
             if (mOnItemChange != nullptr) {
                 mOnItemChange(sender->getIndexTag());
             }
+            releaseFocus(this);
         });
 
         index++;
@@ -109,21 +110,21 @@ void ZDropDown::handleClick() {
 
         if (getGravity() == bottomLeft) {
 
-        mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
-        mDrawer->setYOffset(DEFAULT_OFFSET);
-                } else {
-        mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (DEFAULT_OFFSET * 2),
-                                  mDrawer->getInnerView()->getMaxHeight()));
-        mDrawer->setYOffset(DEFAULT_OFFSET);
-                }
+            mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
+            mDrawer->setYOffset(DEFAULT_OFFSET);
+        } else {
+            mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (DEFAULT_OFFSET * 2),
+                          mDrawer->getInnerView()->getMaxHeight()));
+            mDrawer->setYOffset(DEFAULT_OFFSET);
+        }
 
         mDrawer->onWindowChange(getWindowWidth(), getWindowHeight());
-                if (mDrawer->getVisibility()) {
-                    requestFocus(this);
-                } else {
-                    releaseFocus(this);
-                }
-            } else {
+        if (mDrawer->getVisibility()) {
+            requestFocus(this);
+        } else {
+            releaseFocus(this);
+        }
+    } else {
         releaseFocus(this);
     }
 }
