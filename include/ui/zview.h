@@ -272,7 +272,7 @@ class ZView {
          ZColor yellow = vec4(1,1,0,1);
          ZColor gold = vec4(0.940430, 0.591194, 0.066042, 1);
          ZColor grey = vec4(0.7, 0.7, 0.7, 1.0);
-
+         ZColor whiteFaded = vec4(1,1,1,0.2);
          ZColor grey0 = ZColor(vec4(0.95, 0.952, 0.955, 1.0),
                           vec4(0.005, 0.005, 0.0052, 1.0));
          ZColor grey1 = ZColor(vec4(0.7, 0.72, 0.75, 1.0),

@@ -9,6 +9,7 @@ static const int MARGIN = 30;
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 #include "zlabel.h"
 #include "zlinearlayout.h"
 #include "zscrollview.h"
@@ -37,18 +38,26 @@ public:
     void setDynamicTitle(bool dynamic);
 
     void wrapTitle();
+    void setOnOpen(std::function<void()> l) {
+        mOnOpen = std::move(l);
+    }
 
     ZView* mBackground;
+
+    void setItems(vector<string> items);
+
 private:
 	ZLabel* mTitle;
 	ZScrollView* mDrawer;
 	vector<string> mNames;
 	float mButtonHeight;
 
+	vector<ZButton*> mButtons;
 	bool mDynamicTitle = true;
-    std::function<void(int item)> mOnItemChange;
-
+    std::function<void(int item)> mOnItemChange = nullptr;
+    std::function<void()> mOnOpen = nullptr;
     void handleClick();
+
 };
 
 #endif

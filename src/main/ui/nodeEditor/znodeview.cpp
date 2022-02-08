@@ -130,8 +130,7 @@ void ZNodeView::init() {
     mXMinLabel->setMaxWidth(boundLabelWidth);
     mXMinLabel->setGravity(bottomLeft);
     mXMinLabel->setTextColor(boundColor);
-    mXMinLabel->setTextColor(boundColor);
-    mXMinLabel->setBackgroundColor(white);
+    mXMinLabel->setBackgroundColor(whiteFaded);
     mXMinLabel->setCornerRadius(mXMinLabel->getMaxHeight()/2);
     mXMinLabel->setElevation(1.0);
     mXMinLabel->setMargin(vec4(2));
@@ -144,8 +143,7 @@ void ZNodeView::init() {
     mXMaxLabel->setMargin(vec4(0));
     mXMaxLabel->setXOffset(-0);
     mXMaxLabel->setTextColor(boundColor);
-    mXMaxLabel->setTextColor(boundColor);
-    mXMaxLabel->setBackgroundColor(white);
+    mXMaxLabel->setBackgroundColor(whiteFaded);
     mXMaxLabel->setCornerRadius(mXMaxLabel->getMaxHeight()/2);
     mXMaxLabel->setElevation(1.0);
     mXMaxLabel->setMargin(vec4(2));
@@ -157,8 +155,7 @@ void ZNodeView::init() {
     mYMinLabel->setGravity(bottomLeft);
     mYMinLabel->setYOffset(20);
     mYMinLabel->setTextColor(boundColor);
-    mYMinLabel->setTextColor(boundColor);
-    mYMinLabel->setBackgroundColor(white);
+    mYMinLabel->setBackgroundColor(whiteFaded);
     mYMinLabel->setCornerRadius(mYMinLabel->getMaxHeight()/2);
     mYMinLabel->setElevation(1.0);
     mYMinLabel->setMargin(vec4(2));
@@ -169,7 +166,7 @@ void ZNodeView::init() {
     mYMaxLabel->setMaxWidth(boundLabelWidth);
     mYMaxLabel->setGravity(topLeft);
     mYMaxLabel->setTextColor(boundColor);
-    mYMaxLabel->setBackgroundColor(white);
+    mYMaxLabel->setBackgroundColor(whiteFaded);
     mYMaxLabel->setCornerRadius(mYMaxLabel->getMaxHeight()/2);
     mYMaxLabel->setElevation(1.0);
     mYMaxLabel->setMargin(vec4(2));
@@ -445,15 +442,20 @@ void ZNodeView::setType(ZNodeView::Type type) {
         buttonIndex++;
     }
 
-    if (isDropDownVisibly(type)) {
+    if (isDropDownVisible(type)) {
         if (mDropDown == nullptr) {
-            mDropDown = new ZDropDown(120, 16, {"Empty", "Empty 2", "Empty 3"}, this);
+            mDropDown = new ZDropDown(120, 18, {"Empty", "Empty 2", "Empty 3"}, this);
+            mDropDown->setTitle("Choose file...");
             mDropDown->setMarginLeft(25);
             mDropDown->setMarginTop(2);
-            mDropDown->setOnItemChange([this](int item){
-                cout << "hello" << endl;
+            mDropDown->setOnOpen([this](){
+                mDropDown->setItems({"test"});
 
             });
+            mDropDown->setOnItemChange([this](int item){
+                cout << "hello" << endl;
+            });
+
         } else {
             mDropDown->setVisibility(true);
         }

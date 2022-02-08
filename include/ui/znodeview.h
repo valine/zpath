@@ -450,6 +450,7 @@ public:
             case FFT:
             case HARTLEY:
             case IFFT:
+            case FILE:
                 return vec2(200, 200);
             case LAPLACE:
             case LAPLACE_S:
@@ -470,6 +471,8 @@ public:
             case IFFT:
             case HARTLEY:
                 return vec4(0,10,-5,5);
+            case FILE:
+                return vec4(0,10,0,10);
             default:
                 return (vec4(-5,5,-5,5));
         }
@@ -485,7 +488,7 @@ public:
         }
     }
 
-    static bool isDropDownVisibly(Type type) {
+    static bool isDropDownVisible(Type type) {
         switch (type) {
             case FILE:
                 return true;

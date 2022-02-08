@@ -54,6 +54,44 @@ ZDropDown::ZDropDown(float maxWidth, float maxHeight, vector<string> items, ZVie
             releaseFocus(this);
         });
 
+        mButtons.push_back(button);
+        index++;
+    }
+}
+
+void ZDropDown::setItems(vector<string> items) {
+    for (ZButton* button : mButtons) {
+        button->setVisibility(false);
+    }
+    mNames = items;
+    int index = 0;
+    for (const string& item : items) {
+
+        ZButton* button;
+
+        if (mButtons.size() - 1 < index) {
+            button = new ZButton(item, mDrawer);
+        } else {
+            button = mButtons.at(index);
+            button->setText(item);
+            button->setVisibility(true);
+        }
+
+        button->setIndexTag(index);
+        button->setCornerRadius(0);
+        button->setBackgroundColor(ZColor(vec4(1,1,1,0),
+                                          vec4(0,0,0,0)));
+        button->setClickMode(ZButton::ClickMode::upAndDown);
+        button->setOnClick([this, item](ZView* sender){
+            selectItem(sender->getIndexTag());
+
+            if (mOnItemChange != nullptr) {
+                mOnItemChange(sender->getIndexTag());
+            }
+            releaseFocus(this);
+        });
+
+        mButtons.push_back(button);
         index++;
     }
 }
@@ -105,11 +143,13 @@ void ZDropDown::onMouseEvent(int button, int action, int mods, int x, int y) {
 void ZDropDown::handleClick() {
     if (isMouseInBounds(mBackground)) {
         mDrawer->setVisibility(!mDrawer->getVisibility());
-
         mDrawer->scrollTo(0, 0);
 
-        if (getGravity() == bottomLeft) {
+        if (mDrawer->getVisibility() && mOnOpen != nullptr) {
+            mOnOpen();
+        }
 
+        if (getGravity() == bottomLeft) {
             mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
             mDrawer->setYOffset(mBackground->getMaxHeight());
         } else {
