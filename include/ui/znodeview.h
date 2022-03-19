@@ -692,7 +692,8 @@ public:
         }
     }
 
-    vector<vector<float>> compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<float>> rootInput);
+    vector<vector<float>> compute(vector<vector<float>> x, ZNodeView::Type type,
+                                  vector<vector<float>> rootInput);
 
     ///////////////////////////////////////////
     ///////// End node definition /////////////

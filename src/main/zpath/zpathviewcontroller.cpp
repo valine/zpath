@@ -95,6 +95,44 @@ void ZPathViewController::onFileDrop(int count, const char** paths) {
             ZObjLoader loader = ZObjLoader();
             vector<ZObject *> objects = loader.loadObjects(path);
             for (auto object : objects) {
+                vector<float> values = {0.89514427239342287,-0.25154754277912028,0.36802250654414603,0,0.019779637883225627,0.84717594146634989,0.5309441497236902,0,-0.44533750967828623,-0.46799226267363686,0.76332021101969494,0,-11.671092767852002,2.7236628775207024,-4.846421617962136,1};
+                float* a = &values[0];
+                mat4 mat = make_mat4(a);
+                object->setTransform(mat);
+
+                mScene->addObject(object);
+            }
+
+            vector<ZObject *> objects2 = loader.loadObjects(path);
+            for (auto object : objects2) {
+                vector<float> values = {0.89514427239342287,-0.25154754277912028,0.36802250654414603,0,0.019779637883225627,0.84717594146634989,0.5309441497236902,0,-0.44533750967828623,-0.46799226267363686,0.76332021101969494,0,-11.671092767852002,2.7236628775207024,-4.846421617962136,1};
+                float* a = &values[0];
+
+
+                mat4 mat = make_mat4(a);
+                for (int x = 0; x < 4; x++) {
+                    for (int y = 0; y < 4; y++) {
+                        float f = mat[x][y];
+                        cout << to_string(f) << ",";
+                    }
+                }
+                cout << endl;
+
+                mat4 rot = glm::rotate(mat, -90.0f, vec3(0,1,0));
+
+                for (int x = 0; x < 4; x++) {
+                    for (int y = 0; y < 4; y++) {
+                        float f = rot[x][y];
+                        cout << to_string(f) << ",";
+                    }
+                }
+                cout << endl;
+
+                object->setTransform(rot);
+                object->getMaterial()->setColor(vec4(1,0,0,1));
+
+
+
                 mScene->addObject(object);
             }
         }

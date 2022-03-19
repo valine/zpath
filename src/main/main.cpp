@@ -23,6 +23,7 @@ using namespace std;
 #include <ui/zdevviewcontroller.h>
 #include <ui/settingsviewcontroller.h>
 #include <ui/zdataviewcontroller.h>
+#include <ui/zjsoneditorviewcontroller.h>
 
 int main(int argc, char* argv[]) {
 
@@ -65,6 +66,9 @@ int main(int argc, char* argv[]) {
             } case 6: {
                 controller = new ZDataViewController(argv);
                 return controller;
+            } case 7: {
+                controller = new ZJsonEditorViewController(argv);
+                return controller;
             }
             default: {
                 controller = new ZViewController(argv);
@@ -72,14 +76,14 @@ int main(int argc, char* argv[]) {
             }
         }
 
-    }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator", "Developer", "Settings", "Data Import"}, true, nullptr);
+    }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator", "Developer", "Settings", "Data Import", "JSON Editor"}, true, nullptr);
 
     ZApplication(tiles, "zpath", false, 1200, 800, "resources/icons/zpath.png", [tiles](){
 
         // Calculator
         auto calculator = tiles->triggerSideSplit(0.25, 3);
         auto viewport = calculator->triggerOverUnderSplit(0.5, 2, false);
-        auto dev = calculator->getChild(0)->triggerOverUnderSplit(0.5, 4, false);
+        auto dev = calculator->getChild(0)->triggerOverUnderSplit(0.5, 7, false);
 
         auto data = calculator->getChild(0)->triggerOverUnderSplit(0.5, 6, false);
 
