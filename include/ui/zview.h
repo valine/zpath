@@ -277,6 +277,8 @@ class ZView {
                           vec4(0.005, 0.005, 0.0052, 1.0));
          ZColor grey1 = ZColor(vec4(0.7, 0.72, 0.75, 1.0),
                                vec4(0.04, 0.04, 0.05, 1.0));
+		ZColor grey1p5 = ZColor(vec4(0.6, 0.62, 0.65, 1.0),
+							  vec4(0.08, 0.08, 0.1, 1.0));
          ZColor grey2 = ZColor(vec4(0.5, 0.5, 0.5, 1.0),
                                vec4(0.2, 0.2, 0.2, 1.0));
          ZColor grey3 = ZColor(vec4(0.04, 0.04, 0.05, 1.0),

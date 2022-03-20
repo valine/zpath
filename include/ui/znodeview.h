@@ -1212,7 +1212,6 @@ private:
 
     vector<complex<float>> mFftCache;
     vector<complex<float>> mMlCache;
-
     vector<vector<float>> mLaplaceCache;
 
     int mProjectID = -1;

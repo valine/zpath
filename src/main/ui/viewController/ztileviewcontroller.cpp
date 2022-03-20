@@ -29,7 +29,7 @@ void ZTileViewController::onLayoutFinished() {
     ZViewController::onLayoutFinished();
 
     setOutlineType(WireType::outline);
-    setOutlineColor(grey2);
+    setOutlineColor(grey1p5);
     setBackgroundColor(grey1);
 
     int defaultController = 1;
@@ -49,11 +49,12 @@ void ZTileViewController::onLayoutFinished() {
 
     setIndexTag(defaultController);
 
-    int boarder = 0;
+    float boarder = 2;
     mContent->setDrawingEnabled(false);
-    mContent->setLineWidth(2);
-    mContent->setYOffset(boarder);
-    mContent->setXOffset(boarder);
+    mContent->setMarginTop(boarder);
+    mContent->setMarginLeft(boarder);
+    mContent->setMarginRight(boarder);
+
     mContent->setMarginBottom(BOTTOM_MARGIN);
     addSubView(mContent);
 
@@ -66,9 +67,10 @@ void ZTileViewController::onLayoutFinished() {
     mDropDown->setYOffset(1);
     mDropDown->setXOffset(boarder);
     mDropDown->selectItem(defaultController);
+    mDropDown->setMarginTop(boarder);
 
     mJoinGuide = new ZView(fillParent,fillParent, this);
-    mJoinGuide->setBackgroundColor(vec4(0.1,0.1,0.1,0.4));
+    mJoinGuide->setBackgroundColor(grey0);
     mJoinGuide->setVisibility(false);
 
     mDropDown->setOnItemChange([this](int index){
