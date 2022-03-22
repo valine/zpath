@@ -240,7 +240,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             string exp = ZNodeUtil::get().graphToExpString(root, true);
             string diff = "diff(" + exp + ")";
             string result = ZUtil::replace(CasUtil::get().evaluate(diff), "\n", "");
-            addNodeGraph(ZNodeUtil::get().expStringToGraph(result).at(0), vec2(10), 0);
+            addNodeGraph(ZNodeUtil::get().expStringToGraph(result).at(0),
+                         vec2(10), 0);
         }
     });
 
