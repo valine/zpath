@@ -4,7 +4,7 @@
 
 #include "ui/zjsoneditorviewcontroller.h"
 #include <ui/zlineview.h>
-#include <ui/znodeeditor.h>
+#include <ui/zjsonnodeeditor.h>
 #include <utils/zshadowrenderer.h>
 
 void ZJsonEditorViewController::onCreate() {
@@ -13,7 +13,7 @@ void ZJsonEditorViewController::onCreate() {
 
     ZViewController::onCreate();
 
-    auto* nodeView = new ZNodeEditor(fillParent, fillParent, this);
+    auto* nodeView = new ZJsonNodeEditor(fillParent, fillParent, this);
 }
 
 

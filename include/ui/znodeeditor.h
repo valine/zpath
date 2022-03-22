@@ -34,6 +34,8 @@ static const float MIN_NODE_SIZE = 40.0f;
 
 static const double GRID_SCALE = 50.0;
 
+static const int DRAWER_WIDTH = 100;
+
 #include <ui/zview.h>
 #include "znodeview.h"
 #include "zmagnitudepicker.h"
@@ -45,6 +47,7 @@ static const double GRID_SCALE = 50.0;
 #include "zdrawer.h"
 #include "ui/ztextfield.h"
 #include "zprojectview.h"
+#include "ui/nodetype.h"
 
 
 class ZNodeEditor : public ZView {
@@ -67,7 +70,10 @@ public:
     void onExit() override;
     void onCreate() override;
     void onKeyPress(int key, int scancode, int action,int mods) override;
+    void setNodeTypes(vector<NodeType> nodeTypes);
 private:
+
+    vector<NodeType> mNodeTypes;
 
     bool mEvaluateRunning = true;
     vector<string> mRadioButtonNames = {"e-6", "e-5", "e-4", "e-3", "0.01", "0.1", "1", "10", "100", "e3", "e4", "e5", "e6"};

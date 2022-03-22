@@ -26,23 +26,12 @@
 #include <utils/zgridrenderer.h>
 #include "utils/casutil.h"
 #include "utils/zutil.h"
+#include "ui/nodetype.h"
+
 ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
 
     setBackgroundColor(ZSettings::get().getBackgroundColor());
 
-    vector<string> allTypes;
-    vector<ZColor> allColors;
-    for (int i = 0; i != ZNodeView::Type::LAST; i++) {
-        auto type = static_cast<ZNodeView::Type>(i);
-        if (ZNodeView::showInDrawer(type)) {
-            allTypes.push_back(ZNodeView::getName(type));
-        }
-    }
-
-    for (int i = 0; i != ZNodeView::Type::LAST; i++) {
-        auto type = static_cast<ZNodeView::Type>(i);
-        allColors.push_back(ZNodeView::getNodeColor(type));
-    }
 
     // Checkered background
     mCheckerView = new ZView(fillParent, fillParent, this);
@@ -78,32 +67,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     auto* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
-
-    mDrawer = new ZDrawer(this, allTypes, allColors);
-    mDrawer->setMarginTop(25);
-    mDrawer->setOnItemSelected([this, allTypes](int index){
-        vec2 scrollOffset = mNodeContainer->getInnerView()->getTranslation();
-
-        vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getInnerView()->getScale()) - mNodeContainer->getInnerView()->getInnerTranslation();
-        vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop() - mDrawer->getMaxWidth(), 0) - scrollOffset;
-        // startPosition.x = std::max((int) mDrawer->getWidth(), (int) startPosition.x);
-        startPosition.y -= 40;
-        startPosition.x -= 35;
-        auto type = static_cast<ZNodeView::Type>(index);
-        ZNodeView* node = addNode(type);
-        node->setOffset(startPosition);
-
-        selectNode(node);
-        mDragNode = node->getIndexTag();
-        node->setInitialPosition(startPosition);
-        enterGrabMode();
-
-    });
-
-    mDrawer->setOnItemClicked([this, allTypes](int index){
-        auto type = static_cast<ZNodeView::Type>(index);
-        addNode(type);
-    });
 
     mProjectBrowser = new ZProjectView(this, []() {
         return ZNodeStore::get().getProjectNames();
@@ -161,16 +124,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mHeader = new ZView(fillParent, fillParent, this);
 
-    auto* dropDown = new ZDropDown(100,25, allTypes, mHeader);
-    dropDown->setOffset(0, 0);
-    dropDown->setTitle("Nodes");
-    //dropDown->wrapTitle();
-    dropDown->setDynamicTitle(false);
-    dropDown->setOnItemChange([this](int index){
-        auto type = static_cast<ZNodeView::Type>(index);
-        addNode(type);
-    });
-
     vector<ZNodeView::Type> complexTypes = {
             ZNodeView::Type::Z,
             ZNodeView::Type::SIN,
@@ -179,7 +132,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
             ZNodeView::Type::EXP,};
     auto* complexDropdown = new ZDropDown(100,25, getNodeTypeNames(complexTypes), mHeader);
     complexDropdown->setTitle("Trig");
-    complexDropdown->setOffset(dropDown->getLocalRight(), 0);
+    complexDropdown->setOffset(0, 0);
    // complexDropdown->wrapTitle();
     complexDropdown->setDynamicTitle(false);
     complexDropdown->setOnItemChange([this, complexTypes](int index){
@@ -280,7 +233,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     mExpressionField = new ZTextField(this);
     mExpressionField->setGravity(Gravity::bottomLeft);
     mExpressionField->setMaxWidth(360);
-    mExpressionField->setXOffset(mDrawer->getMaxWidth() + 5);
+    mExpressionField->setXOffset(DRAWER_WIDTH + 5);
     mExpressionField->setOutlineType(WireType::outline);
     mExpressionField->setMaxHeight(20);
     mExpressionField->setMargin(vec4(2));
@@ -321,6 +274,43 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     // Test computer algebra system library
 //    CasUtil::get().testCompute();
 //    testCorners();
+}
+
+void ZNodeEditor::setNodeTypes(vector<NodeType> nodeTypes) {
+    vector<string> allTypes;
+    vector<ZColor> allColors;
+    for (auto type : nodeTypes) {
+        if (type.mShowInDrawer) {
+            allTypes.push_back(type.mName);
+            allColors.push_back(type.mColor);
+        }
+    }
+
+    mDrawer = new ZDrawer(this, allTypes, allColors);
+    mDrawer->setMarginTop(25);
+    mDrawer->setOnItemSelected([this, allTypes](int index){
+        vec2 scrollOffset = mNodeContainer->getInnerView()->getTranslation();
+
+        vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getInnerView()->getScale()) - mNodeContainer->getInnerView()->getInnerTranslation();
+        vec2 startPosition = (mousePosition) + vec2(mNodeContainer->getMarginTop() - mDrawer->getMaxWidth(), 0) - scrollOffset;
+        // startPosition.x = std::max((int) mDrawer->getWidth(), (int) startPosition.x);
+        startPosition.y -= 40;
+        startPosition.x -= 35;
+        auto type = static_cast<ZNodeView::Type>(index);
+        ZNodeView* node = addNode(type);
+        node->setOffset(startPosition);
+
+        selectNode(node);
+        mDragNode = node->getIndexTag();
+        node->setInitialPosition(startPosition);
+        enterGrabMode();
+
+    });
+
+    mDrawer->setOnItemClicked([this, allTypes](int index){
+        auto type = static_cast<ZNodeView::Type>(index);
+        addNode(type);
+    });
 }
 
 void ZNodeEditor::selectProject(int index, string &path) {
@@ -783,7 +773,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
         }
     }
     node->setIsDeleted(false);
-
     node->setIndexTag(mNodeViews.size());
 
     mNodeViews.push_back(node);

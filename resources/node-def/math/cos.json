@@ -1,7 +1,6 @@
 {
-  "name" : "sin",
-  "socketCountIn" : 3,
-  "socketCountOut" : 3,
+  "name" : "cos",
+  "socketCount" : [3,3],
   "isDynamicSocket" : false,
   "isGroupNode" : false,
   "defaultInput" : [0.0, 1.0, 1.0],
