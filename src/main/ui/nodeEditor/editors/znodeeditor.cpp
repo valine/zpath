@@ -124,24 +124,24 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mHeader = new ZView(fillParent, fillParent, this);
 
-    vector<ZNodeView::Type> complexTypes = {
-            ZNodeView::Type::Z,
-            ZNodeView::Type::SIN,
-            ZNodeView::Type::COS,
-            ZNodeView::Type::TAN,
-            ZNodeView::Type::EXP,};
-    auto* complexDropdown = new ZDropDown(100,25, getNodeTypeNames(complexTypes), mHeader);
-    complexDropdown->setTitle("Trig");
-    complexDropdown->setOffset(0, 0);
-   // complexDropdown->wrapTitle();
-    complexDropdown->setDynamicTitle(false);
-    complexDropdown->setOnItemChange([this, complexTypes](int index){
-        ZNodeView::Type type = complexTypes.at(index);
-        addNode(type);
-    });
+//    vector<ZNodeView::Type> complexTypes = {
+//            ZNodeView::Type::Z,
+//            ZNodeView::Type::SIN,
+//            ZNodeView::Type::COS,
+//            ZNodeView::Type::TAN,
+//            ZNodeView::Type::EXP,};
+//    auto* complexDropdown = new ZDropDown(100,25, getNodeTypeNames(complexTypes), mHeader);
+//    complexDropdown->setTitle("Trig");
+//    complexDropdown->setOffset(0, 0);
+//   // complexDropdown->wrapTitle();
+//    complexDropdown->setDynamicTitle(false);
+//    complexDropdown->setOnItemChange([this, complexTypes](int index){
+//        ZNodeView::Type type = complexTypes.at(index);
+//        addNode(type);
+//    });
 
     auto* viewDropDown = new ZDropDown(100,25, {"Snap to Nodes"}, mHeader);
-    viewDropDown->setOffset(complexDropdown->getLocalRight(), 0);
+    viewDropDown->setOffset(0, 0);
     viewDropDown->setTitle("View");
     //viewDropDown->wrapTitle();
     viewDropDown->setDynamicTitle(false);
@@ -276,19 +276,25 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 //    testCorners();
 }
 
-void ZNodeEditor::setNodeTypes(vector<NodeType> nodeTypes) {
+void ZNodeEditor::setNodeTypes(vector<NodeType*> nodeTypes) {
     vector<string> allTypes;
     vector<ZColor> allColors;
+
+    vector<NodeType*> nodesInDrawer;
+
+    int index = 0;
     for (auto type : nodeTypes) {
-        if (type.mShowInDrawer) {
-            allTypes.push_back(type.mName);
-            allColors.push_back(type.mColor);
+        if (type->mShowInDrawer) {
+            nodesInDrawer.push_back(type);
+            allTypes.push_back(type->mName);
+            allColors.push_back(type->mColor);
+            index++;
         }
     }
 
     mDrawer = new ZDrawer(this, allTypes, allColors);
     mDrawer->setMarginTop(25);
-    mDrawer->setOnItemSelected([this, allTypes](int index){
+    mDrawer->setOnItemSelected([this, allTypes, nodesInDrawer](int index){
         vec2 scrollOffset = mNodeContainer->getInnerView()->getTranslation();
 
         vec2 mousePosition = (getRelativeMouse() / mNodeContainer->getInnerView()->getScale()) - mNodeContainer->getInnerView()->getInnerTranslation();
@@ -297,7 +303,7 @@ void ZNodeEditor::setNodeTypes(vector<NodeType> nodeTypes) {
         startPosition.y -= 40;
         startPosition.x -= 35;
         auto type = static_cast<ZNodeView::Type>(index);
-        ZNodeView* node = addNode(type);
+        ZNodeView* node = addNode(nodesInDrawer.at(index));
         node->setOffset(startPosition);
 
         selectNode(node);
@@ -307,9 +313,9 @@ void ZNodeEditor::setNodeTypes(vector<NodeType> nodeTypes) {
 
     });
 
-    mDrawer->setOnItemClicked([this, allTypes](int index){
+    mDrawer->setOnItemClicked([this, allTypes, nodesInDrawer](int index){
         auto type = static_cast<ZNodeView::Type>(index);
-        addNode(type);
+        addNode(nodesInDrawer.at(index));
     });
 }
 
@@ -523,7 +529,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
 
     for (ZNodeView* node : children) {
         if (node != nullptr) {
-            vec2 nodeSize = node->getNodeSize(node->getType());
+            vec2 nodeSize = node->getType()->mNodeSize;
             addNodeGraph(node, vec2(position.x,
                                     mTmpNodeOffsetYR.at(depth)) -
                                (vec2(nodeSize.x, 0) + vec2(margin, 0)),
@@ -630,46 +636,13 @@ void ZNodeEditor::deleteNodeRecursive(ZNodeView* root) {
     deleteNodeAsync(root);
 }
 
-vector<string> ZNodeEditor::getNodeTypeNames(vector<ZNodeView::Type> types) {
+vector<string> ZNodeEditor::getNodeTypeNames(vector<NodeType*> types) {
     vector<string> names;
-    for (ZNodeView::Type type : types) {
-        names.push_back(ZNodeView::getName(type));
+    for (NodeType* type : types) {
+        names.push_back(type->mName);
     }
 
     return names;
-}
-
-void ZNodeEditor::addTestNodes() {
-
-    ZNodeView *sin = addNode(ZNodeView::SIN);
-    ZNodeView *exp = addNode(ZNodeView::COS);
-
-    ZNodeView *laplace = addNode(ZNodeView::LAPLACE);
-
-    connectNodes(0, 0, sin, laplace);
-    connectNodes(0, 0, exp, laplace);
-
-    ZNodeView *x = addNode(ZNodeView::X);
-    ZNodeView *c = addNode(ZNodeView::C);
-    ZNodeView *s = addNode(ZNodeView::SIN);
-    ZNodeView *co = addNode(ZNodeView::COS);
-    ZNodeView *chart0 = addNode(ZNodeView::CHART_2D);
-
-    connectNodes(0, 0, c, s);
-    connectNodes(0, 0, x, s);
-    connectNodes(0, 0, x, co);
-    connectNodes(0, 0, s, chart0);
-    connectNodes(0, 1, co, chart0);
-
-    ZNodeView *lastChart = chart0;
-    for (int i = 0; i < 2; i++) {
-        ZNodeView *chart1 = addNode(ZNodeView::CHART_2D);
-        connectNodes(0, 0, lastChart, chart1);
-        connectNodes(1, 1, lastChart, chart1);
-        lastChart = chart1;
-    }
-
-    updateLines();
 }
 
 void ZNodeEditor::onCreate() {
@@ -737,7 +710,7 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
     }
 }
 
-ZNodeView * ZNodeEditor::addNode(ZNodeView::Type type) {
+ZNodeView * ZNodeEditor::addNode(NodeType* type) {
     mLastType = type;
     ZNodeView* node = ZNodeUtil::get().newNode(type);
     addNodeToView(node, true);
@@ -767,7 +740,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
         node->setVisibility(false);
     }
 
-    if (ZNodeView::isGroup(node->getType())) {
+    if (node->getType()->mIsGroupNode) {
         for (ZNodeView *innerNode : node->getGroupNodes()) {
             innerNode->setVisibility(false);
         }
@@ -776,7 +749,7 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setIndexTag(mNodeViews.size());
 
     mNodeViews.push_back(node);
-    vec2 nodeSize = ZNodeView::getNodeSize(node->getType());
+    vec2 nodeSize = node->getType()->mNodeSize;
 
     vec2 scale = mNodeContainer->getInnerView()->getScale();
     vec2 translation = mNodeContainer->getInnerView()->getInnerTranslation();
@@ -1045,14 +1018,14 @@ void ZNodeEditor::quickConnectNodes(ZNodeView* firstNode, ZNodeView* secondNode)
     int minInputIndex = 0;
     int minOutputIndex = 0;
 
-    for (int i = 0; i < firstNode->getSocketCount().y; i++) {
+    for (int i = 0; i < firstNode->getType()->mSocketCount.y; i++) {
         if (firstNode->mOutputIndices.at(i).size() < minOutputCount) {
             minOutputCount = firstNode->mOutputIndices.at(i).size();
             minOutputIndex = i;
         }
     }
 
-    for (int i = 0; i < secondNode->getSocketCount().x; i++) {
+    for (int i = 0; i < secondNode->getType()->mSocketCount.x; i++) {
         if (secondNode->mInputIndices.at(i).size() < minInputCount) {
             minInputCount = secondNode->mInputIndices.at(i).size();
             minInputIndex = i;
@@ -1195,9 +1168,9 @@ void ZNodeEditor::onMouseDown() {
             }
 
 
-            for (int j = 0; j < node->getSocketCount().x; j++) {
+            for (int j = 0; j < node->getType()->mSocketCount.x; j++) {
                 ZView *socket = node->getSocketsIn().at(j);
-                bool magPicker = (shiftKeyPressed() || node->getSocketType().at(0).at(j) == ZNodeView::SocketType::CON);
+                bool magPicker = (shiftKeyPressed() || node->getType()->mSocketType.at(0).at(j) == SocketType::CON);
 
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
 
@@ -1447,7 +1420,7 @@ void ZNodeEditor::toggleGroupSelection() {
         // Enter group selection
         if (mSelectedNodes.size() == 1) {
             ZNodeView *node = (*mSelectedNodes.begin());
-            if (ZNodeView::isGroup(node->getType())) {
+            if (node->getType()->mIsGroupNode) {
                 mGroupMode = node->getIndexTag();
                 setBackgroundColor(grey2);
 
@@ -1483,12 +1456,12 @@ void ZNodeEditor::toggleGroupSelection() {
                 continue;
             }
             // Check if node is part of a group before showing
-            if (node->getType() != ZNodeView::GROUP_IN && node->getType() != ZNodeView::GROUP_OUT &&
+            if (!node->getType()->mShowInDrawer &&
                 !node->mIsPartOfGroup) {
                 node->setVisibility(true);
             }
 
-            if (ZNodeView::isGroup(node->getType())) {
+            if (node->getType()->mIsGroupNode) {
                 node->getGroupInput()->setVisibility(false);
                 node->getGroupOutput()->setVisibility(false);
             }
@@ -1497,8 +1470,8 @@ void ZNodeEditor::toggleGroupSelection() {
         for (ZNodeView* innerNode : groupNode->getGroupNodes()) {
             innerNode->setVisibility(false);
         }
-        groupNode->setSocketCount(vec2(groupNode->getGroupInput()->getSocketCount().y,
-                                       groupNode->getGroupOutput()->getSocketCount().x));
+        groupNode->setSocketCount(vec2(groupNode->getGroupInput()->getType()->mSocketCount.y,
+                                       groupNode->getGroupOutput()->getType()->mSocketCount.x));
         selectNode(groupNode);
         groupNode->invalidateNodeRecursive();
 

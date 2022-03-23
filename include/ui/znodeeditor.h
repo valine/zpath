@@ -53,7 +53,7 @@ static const int DRAWER_WIDTH = 100;
 class ZNodeEditor : public ZView {
 public:
     ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
-    ZNodeView * addNode(ZNodeView::Type type);
+    ZNodeView * addNode(NodeType* type);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
 
@@ -70,10 +70,10 @@ public:
     void onExit() override;
     void onCreate() override;
     void onKeyPress(int key, int scancode, int action,int mods) override;
-    void setNodeTypes(vector<NodeType> nodeTypes);
+    void setNodeTypes(vector<NodeType*> nodeTypes);
 private:
 
-    vector<NodeType> mNodeTypes;
+    vector<NodeType*> mNodeTypes;
 
     bool mEvaluateRunning = true;
     vector<string> mRadioButtonNames = {"e-6", "e-5", "e-4", "e-3", "0.01", "0.1", "1", "10", "100", "e3", "e4", "e5", "e6"};
@@ -115,7 +115,7 @@ private:
     vector<ZLineView*> mLineBucket;
     vec2 mAddNodePosition = vec2(DEFAULT_NODE_X, DEFAULT_NODE_Y);
 
-    ZNodeView::Type mLastType = ZNodeView::Type::SIN;
+    NodeType* mLastType;
 
     int mTmpNodeOffsetY = 0;
     int mTmpNodeOffsetX = 0;
@@ -188,7 +188,7 @@ private:
 
     void resetCursor();
 
-    vector<string> getNodeTypeNames(vector<ZNodeView::Type> types);
+    vector<string> getNodeTypeNames(vector<NodeType*> types);
 
     void addNodeToView(ZNodeView *node, bool autoPosition);
 

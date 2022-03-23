@@ -1,6 +1,10 @@
 {
   "name" : "sin",
   "socketCount" : [3,3],
+  "socketType" : {
+    "input" : ["VAR", "CON", "CON"],
+    "output" : ["VAR", "CON", "CON"]
+  },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
   "defaultInput" : [0.0, 1.0, 1.0],

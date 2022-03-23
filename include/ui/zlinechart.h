@@ -11,11 +11,8 @@
 
 
 static const int LINE = 0;
-
 static const int LINE_2X = 1;
-
-static const int LINE_2D = 2;
-
+static const int LINE_2DD = 2;
 static const int HEAT_MAP = 3;
 
 #include "zview.h"

@@ -21,6 +21,9 @@
 #include <mutex>
 #include <complex>
 #include "utils/zsettingsstore.h"
+#include "ui/zview.h"
+#include "ui/charttype.h"
+#include "ui/sockettype.h"
 
 using namespace glm;
 using namespace std;
@@ -31,6 +34,7 @@ class NodeType {
 public:
     string mName;
     vec2 mSocketCount;
+    vector<vector<SocketType>> mSocketType;
     bool mIsDynamicSocket;
     bool mIsGroupNode;
     vector<float> mDefaultInput;
@@ -44,7 +48,7 @@ public:
     vector<string> mButtonNames;
     ZColor mColor = ZColor(vec4(1));
     bool mAdaptiveRes;
-    string mChartType;
+    ChartType mChartType;
     bool mShowInDrawer;
 
     NodeType() {}
@@ -52,22 +56,27 @@ public:
     std::function<vector<vector<float>>(
             vector<vector<float>> x,
             vector<vector<float>> rootInput,
-            vector<float>& cache,
+            vector<complex<float>>& cache,
             float chartStart,
             float chartWidth)> mCompute;
 
+    vector<function<void(ZView* sender)>> mOnButtonClick;
+
     void setCompute(std::function<vector<vector<float>>(
             vector<vector<float>> x, vector<vector<float>> rootInput,
-            vector<float>& cache,
+            vector<complex<float>>& cache,
             float chartStart,
             float chartWidth)> compute) {
         mCompute = std::move(compute);
     }
 
+    function<void(ZView* sender)> getButtonCallback(int index) {
+        return mOnButtonClick.at(index);
+    }
 
     static NodeType fromFile(string path, std::function<vector<vector<float>>(
             vector<vector<float>> x, vector<vector<float>> rootInput,
-            vector<float>& cache,
+            vector<complex<float>>& cache,
             float chartStart,
             float chartWidth)> compute) {
         string resources = ZSettings::get().getResourcePath();
@@ -154,11 +163,62 @@ public:
         nodeType.mColor = color;
 
         nodeType.mAdaptiveRes = j["adaptiveResolution"];
-        nodeType.mChartType = j["chartType"];
+
+        string charttpye = j["chartType"];
+        if (charttpye == "LINE_1D") {
+            nodeType.mChartType = LINE_1D;
+        } else if (charttpye == "LINE_1D_2X") {
+            nodeType.mChartType = LINE_1D_2X;
+        } else if (charttpye == "LINE_2D") {
+            nodeType.mChartType = LINE_2D;
+        } else if (charttpye == "IMAGE") {
+            nodeType.mChartType = IMAGE;
+        } else if (charttpye == "TEXT_FIELD") {
+            nodeType.mChartType = TEXT_FIELD;
+        }
+
         nodeType.mShowInDrawer = j["showInDrawer"];
+
+        vector<SocketType> inputs;
+        for (string type : j["socketType"]["input"]) {
+            inputs.push_back(socketTypeFromString(type));
+        }
+
+        vector<SocketType> outputs;
+        for (string type : j["socketType"]["output"]) {
+            outputs.push_back(socketTypeFromString(type));
+        }
+
+        vector<vector<SocketType>> socketTypes = {inputs, outputs};
+        nodeType.mSocketType = socketTypes;
 
         return nodeType;
     }
+
+
+    static SocketType socketTypeFromString(string jString) {
+        if (jString == "NONE") {
+            return NONE;
+        } else if (jString == "CON") {
+            return CON;
+        } else if (jString == "VAR") {
+            return VAR;
+        } else if (jString == "VAR_Z") {
+            return VAR_Z;
+        } else if (jString == "ENUM") {
+            return ENUM;
+        } else if (jString == "NN") {
+            return NN;
+        } else if (jString == "SYMBOLIC") {
+            return SYMBOLIC;
+        } else if (jString == "GROUP_SOCKET") {
+            return GROUP_SOCKET;
+        } else if (jString == "TEXT") {
+            return TEXT;
+        }
+        return SocketType::NONE;
+    }
+
 
 };
 
