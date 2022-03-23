@@ -1,23 +1,23 @@
 {
-  "name" : "cos",
+  "name" : "fft",
   "socketType" : {
-    "input" : ["VAR", "CON", "CON"],
+    "input" : ["VAR", "VAR", "CON", "CON"],
     "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
-  "defaultInput" : [0.0, 1.0, 1.0],
+  "defaultInput" : [0.0, 0.0, 0.0, 1.0],
   "defaultMagnitude" : [7],
-  "socketNames" : ["X", "Frequency", "Height"],
+  "socketNames" : ["X", "A", "Window Start", "Window Size"],
   "enumNames" : [],
-  "nodeSize" : [80, 70],
-  "chartBounds" : [-5,5,-5,5],
+  "nodeSize" : [200, 200],
+  "chartBounds" : [0,10,-5,5],
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : false,
   "buttonNames" : [],
   "colorDark" : [0.15, 0.155, 0.17, 1.0],
   "colorLight" : [1.0, 1.0, 1.0, 1.0],
-  "adaptiveResolution" : true,
+  "adaptiveResolution" : false,
   "chartType" : "LINE_1D_2X",
   "showInDrawer" : true
 }

@@ -10,7 +10,8 @@ enum ChartType {
     LINE_1D_2X,
     LINE_2D,
     IMAGE,
-    TEXT_FIELD
+    TEXT_FIELD,
+    NO_CHART
 
 };
 

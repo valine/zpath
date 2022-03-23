@@ -687,7 +687,9 @@ void ZNodeEditor::startEvaluation(ZNodeEditor* editor) {
         if (editor->mLineContainer != nullptr) {
             for (ZNodeView* node : nodesToUpdate) {
                 if (node->getIndexTag() != -1) {
-                    node->updateChart();
+                    if (node->getType()->mCompute != nullptr) {
+                        node->updateChart();
+                    }
                 }
             }
         }

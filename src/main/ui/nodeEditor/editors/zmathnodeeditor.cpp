@@ -4,12 +4,12 @@
 
 #include "ui/zmathnodeeditor.h"
 #include "ui/nodetype.h"
-#include "ui/zmathnodedef.h"
+#include "ui/znodedefstore.h"
 
 ZMathNodeEditor::ZMathNodeEditor(float maxWidth, float maxHeight, ZView *parent) :
     ZNodeEditor(maxWidth, maxHeight, parent) {
 
-    auto nodeTypes = ZMathNodeDef::get().getNodeTypes();
+    auto nodeTypes = ZNodeDefStore::get().getNodeTypes();
 
     setNodeTypes(nodeTypes);
 

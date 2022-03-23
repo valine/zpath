@@ -1,14 +1,14 @@
 {
-  "name" : "cos",
+  "name" : "tan",
   "socketType" : {
-    "input" : ["VAR", "CON", "CON"],
+    "input" : ["VAR"],
     "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
   "defaultInput" : [0.0, 1.0, 1.0],
   "defaultMagnitude" : [7],
-  "socketNames" : ["X", "Frequency", "Height"],
+  "socketNames" : ["X"],
   "enumNames" : [],
   "nodeSize" : [80, 70],
   "chartBounds" : [-5,5,-5,5],

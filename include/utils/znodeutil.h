@@ -11,6 +11,7 @@ class ZLabel;
 #include <set>
 #include "ui/znodeview.h"
 #include <string>
+#include "ui/znodedefstore.h"
 
 using namespace std;
 
@@ -475,7 +476,6 @@ public:
         node->setProjectID(-1);
         node->setIndexTag(-1);
         node->mEditorInterface = nullptr;
-
         for (auto laplace : node->mHeadlessLaplaceNodes) {
             deleteNode(laplace);
         }
@@ -531,13 +531,14 @@ public:
     }
 
     ZNodeUtil() {
-        for (int i = 0; i != ZNodeView::Type::LAST; i++) {
-            auto type = static_cast<ZNodeView::Type>(i);
+        vector<NodeType*> types = ZNodeDefStore::get().getNodeTypes();
+        for (NodeType* type : types) {
             mTypes.insert({type->mName, type});
             mFunctions.insert(type->mName);
         }
-
-        mTypes.insert({"^", mTypes.at("pow")});
+        if (mTypes.count("pow") > 0) {
+            mTypes.insert({"^", mTypes.at("pow")});
+        }
     }
 
     int getNodePriority(ZNodeView* node) {

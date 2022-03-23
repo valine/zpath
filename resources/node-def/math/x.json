@@ -1,22 +1,22 @@
 {
-  "name" : "cos",
+  "name" : "x",
   "socketType" : {
-    "input" : ["VAR", "CON", "CON"],
+    "input" : [],
     "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
-  "defaultInput" : [0.0, 1.0, 1.0],
+  "defaultInput" : [],
   "defaultMagnitude" : [7],
-  "socketNames" : ["X", "Frequency", "Height"],
+  "socketNames" : [],
   "enumNames" : [],
   "nodeSize" : [80, 70],
   "chartBounds" : [-5,5,-5,5],
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : false,
   "buttonNames" : [],
-  "colorDark" : [0.15, 0.155, 0.17, 1.0],
-  "colorLight" : [1.0, 1.0, 1.0, 1.0],
+  "colorDark" : [1, 0.611956, 0.052950, 1],
+  "colorLight" : [1, 0.611956, 0.052950, 1],
   "adaptiveResolution" : true,
   "chartType" : "LINE_1D_2X",
   "showInDrawer" : true

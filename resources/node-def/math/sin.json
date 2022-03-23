@@ -1,6 +1,5 @@
 {
   "name" : "sin",
-  "socketCount" : [3,3],
   "socketType" : {
     "input" : ["VAR", "CON", "CON"],
     "output" : ["VAR", "CON", "CON"]
@@ -18,7 +17,7 @@
   "buttonNames" : [],
   "colorDark" : [0.15, 0.155, 0.17, 1.0],
   "colorLight" : [1.0, 1.0, 1.0, 1.0],
-  "adaptiveResolution" : false,
+  "adaptiveResolution" : true,
   "chartType" : "LINE_1D_2X",
   "showInDrawer" : true
 }

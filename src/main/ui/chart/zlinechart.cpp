@@ -165,7 +165,7 @@ void ZLineChart::updateData() {
     }
     if (mInputType == LINE || mInputType == LINE_2X) {
         updateChart1D();
-    } else if (mInputType == LINE_2D) {
+    } else if (mInputType == LINE_2DD) {
         updateChart2D();
     } else if (mInputType == HEAT_MAP){
         updateHeatMap();

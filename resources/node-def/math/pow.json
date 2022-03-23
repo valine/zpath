@@ -1,7 +1,7 @@
 {
-  "name" : "cos",
+  "name" : "^",
   "socketType" : {
-    "input" : ["VAR", "CON", "CON"],
+    "input" : ["VAR", "VAR"],
     "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,

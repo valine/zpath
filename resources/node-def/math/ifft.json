@@ -1,17 +1,17 @@
 {
-  "name" : "cos",
+  "name" : "ifft",
   "socketType" : {
-    "input" : ["VAR", "CON", "CON"],
-    "output" : ["VAR", "CON", "CON"]
+    "input" : ["VAR", "VAR", "CON", "CON"],
+    "output" : ["VAR", "VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
-  "defaultInput" : [0.0, 1.0, 1.0],
+  "defaultInput" : [0.0, 0.0, 1.0, 1.0],
   "defaultMagnitude" : [7],
-  "socketNames" : ["X", "Frequency", "Height"],
+  "socketNames" : ["X", "A", "Window Start", "Window Size"],
   "enumNames" : [],
-  "nodeSize" : [80, 70],
-  "chartBounds" : [-5,5,-5,5],
+  "nodeSize" : [200, 200],
+  "chartBounds" : [0,10,-5,5],
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : false,
   "buttonNames" : [],

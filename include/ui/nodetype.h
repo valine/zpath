@@ -29,6 +29,8 @@ using namespace glm;
 using namespace std;
 using namespace nlohmann;
 
+class ZNodeView;
+
 class NodeType {
 
 public:
@@ -56,17 +58,19 @@ public:
     std::function<vector<vector<float>>(
             vector<vector<float>> x,
             vector<vector<float>> rootInput,
-            vector<complex<float>>& cache,
+            const vector<complex<float>>& cache,
             float chartStart,
-            float chartWidth)> mCompute;
+            float chartWidth,
+            ZNodeView* node)> mCompute = nullptr;
 
     vector<function<void(ZView* sender)>> mOnButtonClick;
 
     void setCompute(std::function<vector<vector<float>>(
             vector<vector<float>> x, vector<vector<float>> rootInput,
-            vector<complex<float>>& cache,
+            const vector<complex<float>>& cache,
             float chartStart,
-            float chartWidth)> compute) {
+            float chartWidth,
+            ZNodeView* node)> compute) {
         mCompute = std::move(compute);
     }
 
@@ -74,11 +78,12 @@ public:
         return mOnButtonClick.at(index);
     }
 
-    static NodeType fromFile(string path, std::function<vector<vector<float>>(
+    static NodeType* fromFile(string path, std::function<vector<vector<float>>(
             vector<vector<float>> x, vector<vector<float>> rootInput,
-            vector<complex<float>>& cache,
+            const vector<complex<float>>& cache,
             float chartStart,
-            float chartWidth)> compute) {
+            float chartWidth,
+            ZNodeView* node)> compute) {
         string resources = ZSettings::get().getResourcePath();
         string fullPath = resources + "resources/node-def/" + path;
         std::ifstream t(fullPath);
@@ -89,12 +94,12 @@ public:
         dataString.assign((std::istreambuf_iterator<char>(t)),
                           std::istreambuf_iterator<char>());
         json j = json::parse(dataString);
-        NodeType type = fromJSON(j);;
-        type.setCompute(std::move(compute));
+        NodeType* type = fromJSON(j);;
+        type->setCompute(std::move(compute));
         return type;
     }
 
-    static NodeType fromFile(string path) {
+    static NodeType* fromFile(string path) {
         string resources = ZSettings::get().getResourcePath();
         string fullPath = resources + "resources/node-def/" + path;
         std::ifstream t(fullPath);
@@ -108,20 +113,31 @@ public:
         return fromJSON(j);
     }
 
-    static NodeType fromJSON(json j) {
-        NodeType nodeType = NodeType();
-        nodeType.mName = j["name"];
-        nodeType.mSocketCount.x = j["socketCount"][0];
-        nodeType.mSocketCount.y = j["socketCount"][1];
-        nodeType.mIsDynamicSocket = j["isDynamicSocket"];
-        nodeType.mIsGroupNode = j["isGroupNode"];
-        for (int i = 0; i < (int) nodeType.mSocketCount.x; i++) {
-            nodeType.mDefaultInput.push_back(j["defaultInput"][i]);
-            nodeType.mSocketNames.push_back(j["socketNames"][i]);
+    static NodeType* fromJSON(json j) {
+        auto* nodeType = new NodeType();
+        nodeType->mName = j["name"];
+
+        vector<SocketType> inputs;
+        for (string type : j["socketType"]["input"]) {
+            inputs.push_back(socketTypeFromString(type));
+        }
+
+        vector<SocketType> outputs;
+        for (string type : j["socketType"]["output"]) {
+            outputs.push_back(socketTypeFromString(type));
+        }
+
+        nodeType->mSocketCount.x = inputs.size();
+        nodeType->mSocketCount.y = outputs.size();
+        nodeType->mIsDynamicSocket = j["isDynamicSocket"];
+        nodeType->mIsGroupNode = j["isGroupNode"];
+        for (int i = 0; i < (int) nodeType->mSocketCount.x; i++) {
+            nodeType->mDefaultInput.push_back(j["defaultInput"][i]);
+            nodeType->mSocketNames.push_back(j["socketNames"][i]);
         }
 
         for (const json& inner : j["defaultMagnitude"]) {
-            nodeType.mDefaultMagnitude.push_back(inner);
+            nodeType->mDefaultMagnitude.push_back(inner);
         }
 
         for (const json& enums : j["enumNames"]) {
@@ -129,22 +145,22 @@ public:
             for (const json& aEnum : enums) {
                 names.push_back(aEnum);
             }
-            nodeType.mEnumNames.push_back(names);
+            nodeType->mEnumNames.push_back(names);
         }
 
-        nodeType.mNodeSize.x = j["nodeSize"][0];
-        nodeType.mNodeSize.y = j["nodeSize"][1];
+        nodeType->mNodeSize.x = j["nodeSize"][0];
+        nodeType->mNodeSize.y = j["nodeSize"][1];
 
-        nodeType.mChartBounds.x = j["chartBounds"][0];
-        nodeType.mChartBounds.y = j["chartBounds"][1];
-        nodeType.mChartBounds.z = j["chartBounds"][2];
-        nodeType.mChartBounds.a = j["chartBounds"][3];
+        nodeType->mChartBounds.x = j["chartBounds"][0];
+        nodeType->mChartBounds.y = j["chartBounds"][1];
+        nodeType->mChartBounds.z = j["chartBounds"][2];
+        nodeType->mChartBounds.a = j["chartBounds"][3];
 
-        nodeType.mIsOutputLabelVisible = j["isOutputLabelVisible"];
-        nodeType.mIsDropDownVisible = j["isDropDownVisible"];
+        nodeType->mIsOutputLabelVisible = j["isOutputLabelVisible"];
+        nodeType->mIsDropDownVisible = j["isDropDownVisible"];
 
         for (const json& button : j["buttonNames"]) {
-            nodeType.mButtonNames.push_back(button);
+            nodeType->mButtonNames.push_back(button);
         }
 
         vec4 colorLight;
@@ -160,37 +176,28 @@ public:
         colorDark.a = j["colorDark"][3];
 
         ZColor color = ZColor(colorLight, colorDark);
-        nodeType.mColor = color;
+        nodeType->mColor = color;
 
-        nodeType.mAdaptiveRes = j["adaptiveResolution"];
+        nodeType->mAdaptiveRes = j["adaptiveResolution"];
 
         string charttpye = j["chartType"];
         if (charttpye == "LINE_1D") {
-            nodeType.mChartType = LINE_1D;
+            nodeType->mChartType = LINE_1D;
         } else if (charttpye == "LINE_1D_2X") {
-            nodeType.mChartType = LINE_1D_2X;
+            nodeType->mChartType = LINE_1D_2X;
         } else if (charttpye == "LINE_2D") {
-            nodeType.mChartType = LINE_2D;
+            nodeType->mChartType = LINE_2D;
         } else if (charttpye == "IMAGE") {
-            nodeType.mChartType = IMAGE;
+            nodeType->mChartType = IMAGE;
         } else if (charttpye == "TEXT_FIELD") {
-            nodeType.mChartType = TEXT_FIELD;
+            nodeType->mChartType = TEXT_FIELD;
         }
 
-        nodeType.mShowInDrawer = j["showInDrawer"];
+        nodeType->mShowInDrawer = j["showInDrawer"];
 
-        vector<SocketType> inputs;
-        for (string type : j["socketType"]["input"]) {
-            inputs.push_back(socketTypeFromString(type));
-        }
-
-        vector<SocketType> outputs;
-        for (string type : j["socketType"]["output"]) {
-            outputs.push_back(socketTypeFromString(type));
-        }
 
         vector<vector<SocketType>> socketTypes = {inputs, outputs};
-        nodeType.mSocketType = socketTypes;
+        nodeType->mSocketType = socketTypes;
 
         return nodeType;
     }

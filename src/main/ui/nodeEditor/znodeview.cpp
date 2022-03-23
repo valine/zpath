@@ -780,7 +780,7 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
 
     int newRes = (int) (getWidth() / 1.0);
     if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
-        if (getChartResolutionMode(getType()) == ADAPTIVE) {
+        if (getType()->mAdaptiveRes) {
             mChart->setResolution(newRes);
         }
         invalidateSingleNode();
@@ -797,7 +797,7 @@ void ZNodeView::draw() {
         mChart->setGpuMode(false);
     }
 
-    if (getType() == ZNodeView::Type::T) {
+    if (getType()->mName == "t") {
         invalidateNodeRecursive();
     }
 }
@@ -884,7 +884,7 @@ void ZNodeView::copyParameters(ZNodeView* node) {
    mConstantMagnitudeOutput = node->mConstantMagnitudeOutput;
    setOutputLabel(mConstantValueOutput.at(0));
 
-   setSocketCount(node->getSocketCount());
+   setSocketCount(node->getType()->mSocketCount);
 }
 
 void ZNodeView::setOutputLabel(float output) {
@@ -972,7 +972,7 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
         vector<float> in = x.at(d);
         vector<float> out;
 
-        vector<vector<float>> result = type->mCompute(x, rootInput, mCache, chartBound.x, chartWidth);
+        vector<vector<float>> result = type->mCompute(x, rootInput, mCache, chartBound.x, chartWidth, this);
         return result;
 
 //        switch (type) {
@@ -993,22 +993,6 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //                x.at(IMAG).at(1) = chartBound.x;
 //                x.at(IMAG).at(2) = chartWidth;
 //                return x;
-//            }
-//            case SIN: {
-//                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-//                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-//                complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
-//                complex<float> out0 = sin(in0 * in1) * in2;
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
-//            }
-//            case COS: {
-//                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-//                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-//                complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
-//                complex<float> out0 = cos(in0 * in1) * in2;
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
 //            }
 //            case TAN: {
 //                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
@@ -1284,7 +1268,8 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 void ZNodeView::initializeGroup() {
     if (!isDeleted()) {
         if (mGroupInput == nullptr) {
-            mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
+            mGroupInput = ZNodeUtil::get().newNode(
+                    ZNodeDefStore::get().getNodeType("in"));
             mGroupInput->setInputProxy(this);
             mGroupNodes.insert(mGroupInput);
             if (mEditorInterface != nullptr) {
@@ -1293,7 +1278,8 @@ void ZNodeView::initializeGroup() {
         }
 
         if (mGroupOutput == nullptr) {
-            mGroupOutput = ZNodeUtil::get().newNode(GROUP_OUT);
+            mGroupOutput = ZNodeUtil::get().newNode(
+                    ZNodeDefStore::get().getNodeType("out"));
             mGroupNodes.insert(mGroupOutput);
             if (mEditorInterface != nullptr) {
                 mEditorInterface(mGroupOutput, true);
