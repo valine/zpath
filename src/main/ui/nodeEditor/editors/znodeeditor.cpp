@@ -1472,8 +1472,8 @@ void ZNodeEditor::toggleGroupSelection() {
         for (ZNodeView* innerNode : groupNode->getGroupNodes()) {
             innerNode->setVisibility(false);
         }
-        groupNode->setSocketCount(vec2(groupNode->getGroupInput()->getType()->mSocketCount.y,
-                                       groupNode->getGroupOutput()->getType()->mSocketCount.x));
+        groupNode->setSocketCount(vec2(groupNode->getGroupInput()->getSocketCount().y,
+                                       groupNode->getGroupOutput()->getSocketCount().x));
         selectNode(groupNode);
         groupNode->invalidateNodeRecursive();
 

@@ -475,7 +475,7 @@ void ZNodeView::setType(NodeType* type) {
 }
 
 void ZNodeView::refreshView(NodeType* type) {
-    ivec2 socketCount = type->mSocketCount;
+    ivec2 socketCount = getSocketCount();
 
     auto socketType = type->mSocketType;
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
@@ -556,15 +556,15 @@ void ZNodeView::refreshView(NodeType* type) {
     mNameLabel->setYOffset(1);
     mChart->setMargin(vec4(MIN_MARGIN, CHART_TOP_MARGIN, MIN_MARGIN, MIN_MARGIN));
 
-    if (type->mSocketCount.x == 0) {
+    if (getSocketCount().x == 0) {
         mNameLabel->setXOffset(MIN_MARGIN);
     }
 
-    if (type->mSocketCount.x > 1) {
+    if (getSocketCount().x > 1) {
         mChart->setMarginLeft(CHART_SIDE_MARGIN_WIDE);
     }
 
-    if (type->mSocketCount.y > 1) {
+    if (getSocketCount().y > 1) {
         mChart->setMarginRight(MIN_MARGIN);
     }
 
@@ -679,7 +679,7 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, vector<vector
 
 vector<vector<float>>
 ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput) {
-    ivec2 size = mType->mSocketCount;
+    ivec2 size = getSocketCount();
 
     if (mInputIndices.empty()) {
         return x;
@@ -765,7 +765,7 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView *ro
     if (root == this) {
         return vector<vector<float>>(MAX_INPUT_COUNT, vector<float>(MAX_INPUT_COUNT, 0));
     }
-    ivec2 size = mType->mSocketCount;
+    ivec2 size = getSocketCount();
     if (size.x == 0) {
         x = compute(x, mType, rootInput);
     }
@@ -887,7 +887,7 @@ void ZNodeView::copyParameters(ZNodeView* node) {
    mConstantMagnitudeOutput = node->mConstantMagnitudeOutput;
    setOutputLabel(mConstantValueOutput.at(0));
 
-   setSocketCount(node->getType()->mSocketCount);
+   setSocketCount(node->getSocketCount());
 }
 
 void ZNodeView::setOutputLabel(float output) {
@@ -917,7 +917,7 @@ void ZNodeView::onCursorPosChange(double x, double y) {
     int size = SOCKET_HEIGHT + SOCKET_HEIGHT;
     if (mouse.x < size && mouse.x > -size && mouse.y > 0 && mouse.y < getMaxHeight()) {
         int index = 0;
-        if (mType->mSocketCount.x > 0) {
+        if (getSocketCount().x > 0) {
             for (const string &name : mType->mSocketNames) {
                 mSocketInLabels.at(index)->setText(name);
                 mSocketInLabels.at(index)->setXOffset((int) -mSocketInLabels.at(index)->getTextWidth());

@@ -172,24 +172,24 @@ public:
 
     ivec2 mSocketCount = ivec2(0);
 
-//    /**
-//     * First value is input count, second value is output count. If input count is zero node
-//     * is an input node like a constant or number range. If output count is zero the node is
-//     * an output node like a plot or label.
-//     * @return Vector with node socket input and output count
-//     */
-//    ivec2 getSocketCount() {
-//
-//        if (mSocketCount == ivec2(0)) {
-//            mSocketCount = ivec2(getSocketType().at(0).size(),
-//                                 getSocketType().at(1).size());
-//
-//            if (isDynamicSockets(mType)) {
-//                mSocketCount = glm::min(mSocketCount, ivec2(1));
-//            }
-//        }
-//        return mSocketCount;
-//    }
+    /**
+     * First value is input count, second value is output count. If input count is zero node
+     * is an input node like a constant or number range. If output count is zero the node is
+     * an output node like a plot or label.
+     * @return Vector with node socket input and output count
+     */
+    ivec2 getSocketCount() {
+
+        if (mSocketCount == ivec2(0)) {
+            mSocketCount = ivec2(mType->mSocketCount.x,
+                                 mType->mSocketCount.y);
+
+            if (mType->mIsDynamicSocket) {
+                mSocketCount = glm::min(mSocketCount, ivec2(1));
+            }
+        }
+        return mSocketCount;
+    }
 
 //   // static bool isDynamicSockets(Type type) {
 //        switch (type) {
