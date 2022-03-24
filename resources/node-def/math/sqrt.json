@@ -1,7 +1,7 @@
 {
-  "name" : "^",
+  "name" : "sqrt",
   "socketType" : {
-    "input" : ["CON", "CON"],
+    "input" : ["VAR"],
     "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,

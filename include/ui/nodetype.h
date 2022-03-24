@@ -63,7 +63,7 @@ public:
             float chartWidth,
             ZNodeView* node)> mCompute = nullptr;
 
-    vector<function<void(ZView* sender)>> mOnButtonClick;
+    vector<function<void(ZNodeView* sender)>> mOnButtonClick;
 
     void setCompute(std::function<vector<vector<float>>(
             vector<vector<float>> x, vector<vector<float>> rootInput,
@@ -74,8 +74,19 @@ public:
         mCompute = std::move(compute);
     }
 
-    function<void(ZView* sender)> getButtonCallback(int index) {
+    function<void(ZNodeView* sender)> getButtonCallback(int index) {
         return mOnButtonClick.at(index);
+    }
+
+    static NodeType* fromFile(string path, std::function<vector<vector<float>>(
+            vector<vector<float>> x, vector<vector<float>> rootInput,
+            const vector<complex<float>>& cache,
+            float chartStart,
+            float chartWidth,
+            ZNodeView* node)> compute, vector<function<void(ZNodeView* sender)>> onClick) {
+        NodeType* type = fromFile(std::move(path), std::move(compute));
+        type->mOnButtonClick = std::move(onClick);
+        return type;
     }
 
     static NodeType* fromFile(string path, std::function<vector<vector<float>>(

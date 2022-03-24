@@ -1,12 +1,12 @@
 {
-  "name" : "^",
+  "name" : "+",
   "socketType" : {
     "input" : ["CON", "CON"],
     "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
-  "defaultInput" : [0.0, 1.0, 1.0],
+  "defaultInput" : [0.0, 0.0],
   "defaultMagnitude" : [7],
   "socketNames" : ["", ""],
   "enumNames" : [],

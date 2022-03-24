@@ -419,7 +419,10 @@ void ZNodeView::setType(NodeType* type) {
         } else {
             button = mButtons.at(buttonIndex);
         }
-        button->setOnClick(type->mOnButtonClick.at(buttonIndex));
+
+        button->setOnClick([this, type, buttonIndex](ZView* sender){
+            type->getButtonCallback(buttonIndex)(this);
+        });
         button->setMaxWidth(button->getLabel()->getTextWidth() / mDP + 18);
         button->setMaxHeight(18);
         button->setYOffset(2);
@@ -966,13 +969,13 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x,
 vector<vector<float>>
 ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>> rootInput) {
     vec2 chartBound = mChart->getXBounds();
-    float chartWidth = chartBound.y - chartBound.x;
+    float width = chartBound.y - chartBound.x;
     vector<vector<float>> output;
     for (uint d = 0; d < x.size(); d++) {
         vector<float> in = x.at(d);
         vector<float> out;
 
-        vector<vector<float>> result = type->mCompute(x, rootInput, mCache, chartBound.x, chartWidth, this);
+        vector<vector<float>> result = type->mCompute(x, rootInput, mCache, chartBound.x, width, this);
         return result;
 
 //        switch (type) {
@@ -986,57 +989,57 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //                float out0 = (term3 * pow(in0, 3)) + (term2 * pow(in0, 2)) + (term1 * in0) + term0;
 //
 //                x.at(REAL).at(0) = out0;
-//                x.at(REAL).at(1) = chartBound.x;
-//                x.at(REAL).at(2) = chartWidth;
+//                x.at(REAL).at(1) = start;
+//                x.at(REAL).at(2) = width;
 //
 //                x.at(IMAG).at(0) = 0.0;
-//                x.at(IMAG).at(1) = chartBound.x;
-//                x.at(IMAG).at(2) = chartWidth;
+//                x.at(IMAG).at(1) = start;
+//                x.at(IMAG).at(2) = width;
 //                return x;
 //            }
 //            case TAN: {
 //                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
 //                complex<float> out0 = tan(in0);
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
+//                return {{out0.real(), start, width},
+//                        {out0.imag(), start, width}};
 //            }
 //            case ABS: {
 //                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
 //                complex<float> out0 = abs(in0);
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
+//                return {{out0.real(), start, width},
+//                        {out0.imag(), start, width}};
 //            }
 //            case EXP: {
 //                complex<float> comIn = {x.at(REAL).at(0), x.at(IMAG).at(0)};
 //                complex<float> comOut = exp(comIn);
-//                return {{comOut.real(), chartBound.x, chartWidth},
-//                        {comOut.imag(), chartBound.x, chartWidth}};
+//                return {{comOut.real(), start, width},
+//                        {comOut.imag(), start, width}};
 //            }
 //            case SIGMOID: {
 //                float in =x.at(REAL).at(0);
 //                float out = 1.0 / (1.0 + exp(-in));
-//                return {{out, chartBound.x, chartWidth},
-//                        {0.0, chartBound.x, chartWidth}};
+//                return {{out, start, width},
+//                        {0.0, start, width}};
 //            }
 //            case TANH: {
 //                float in =x.at(REAL).at(0);
 //                float out = tanh(in);
-//                return {{out, chartBound.x, chartWidth},
-//                        {0.0, chartBound.x, chartWidth}};
+//                return {{out, start, width},
+//                        {0.0, start, width}};
 //            }
 //
 //            case SQRT: {
 //                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
 //                complex<float> out0 = sqrt(in0);
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
+//                return {{out0.real(), start, width},
+//                        {out0.imag(), start, width}};
 //            }
 //            case POW: {
 //                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
 //                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
 //                complex<float> out0 = pow(in0, in1);
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
+//                return {{out0.real(), start, width},
+//                        {out0.imag(), start, width}};
 //            }
 //            case GAUSSIAN: {
 //                complex<float> in0 = {x.at(REAL).at(0), 0};
@@ -1044,8 +1047,8 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //                complex<float> in2 = {x.at(REAL).at(2), 0};
 //                complex<float> two = {2.0, 0};
 //                complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
+//                return {{out0.real(), start, width},
+//                        {out0.imag(), start, width}};
 //            }
 //            case MORLET: {
 //                auto real = (float) (
@@ -1057,27 +1060,27 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //                        sin(in.at(0) * in.at(4)) * // sinusoid
 //                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
 //                        pow(2 * in.at(1), 2))));
-//                return {{real,      chartBound.x, chartWidth},
-//                        {imaginary, chartBound.x, chartWidth}};
+//                return {{real,      start, width},
+//                        {imaginary, start, width}};
 //            }
 //
 //            case ADD: {
 //                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
 //                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
 //                complex<float> out0 = in0 + in1;
-//                return {{out0.real(), chartBound.x, chartWidth},
-//                        {out0.imag(), chartBound.x, chartWidth}};
+//                return {{out0.real(), start, width},
+//                        {out0.imag(), start, width}};
 //            }
 //            case SUBTRACT:
-//                out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
+//                out = {in.at(0) - in.at(1), start, width};
 //                break;
 //            case MULTIPLY: {
 //                complex<float> a = {x.at(REAL).at(0), x.at(IMAG).at(0)};
 //                complex<float> b = {x.at(REAL).at(1), x.at(IMAG).at(1)};
 //
 //                auto result = a * b;
-//                return {{result.real(), chartBound.x, chartWidth},
-//                        {result.imag(), chartBound.x, chartWidth}};
+//                return {{result.real(), start, width},
+//                        {result.imag(), start, width}};
 //            }
 //            case DIVIDE: {
 //                float a = x.at(REAL).at(1);
@@ -1089,13 +1092,13 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //
 //                float r = (c * a + b * e) / denom;
 //                float img = (a * d - c * e) / denom;
-//                return {{r, chartBound.x, chartWidth},
-//                        {{img, chartBound.x, chartWidth}}};
+//                return {{r, start, width},
+//                        {{img, start, width}}};
 //            }
 //            case C:
 //                x.at(REAL) = mConstantValueOutput;
 //                x.at(IMAG).at(0) = 0;
-//                return x;
+//                return x;F
 //
 //            case CI:
 //                x.at(REAL).at(0) = 0;
@@ -1107,42 +1110,42 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //            }
 //            case X:
 //                x.at(REAL).at(0) = x.at(REAL).at(0);
-//                x.at(REAL).at(1) = chartBound.x;
-//                x.at(REAL).at(2) = chartWidth;
+//                x.at(REAL).at(1) = start;
+//                x.at(REAL).at(2) = width;
 //
 //                x.at(IMAG).at(0) = 0;
-//                x.at(IMAG).at(1) = chartBound.x;
-//                x.at(IMAG).at(2) = chartWidth;
+//                x.at(IMAG).at(1) = start;
+//                x.at(IMAG).at(2) = width;
 //                return x;
 //            case Y:
-//                return {{x.at(IMAG).at(0),chartBound.x, chartWidth},
-//                        {0, chartBound.x, chartWidth}};
+//                return {{x.at(IMAG).at(0),start, width},
+//                        {0, start, width}};
 //            case Z:
-//                return {{x.at(REAL).at(0), chartBound.x, chartWidth},
-//                        {x.at(IMAG).at(0), chartBound.x, chartWidth}};
+//                return {{x.at(REAL).at(0), start, width},
+//                        {x.at(IMAG).at(0), start, width}};
 //            case FILE: {
 //                int fileIndex = mDropDown->getSelectedItem();
 //
 //                float point = DataStore::get().getDataAtIndex(fileIndex, x.at(REAL).at(0));
-//                return {{point, chartBound.x, chartWidth},
-//                        {0, chartBound.x, chartWidth}};
+//                return {{point, start, width},
+//                        {0, start, width}};
 //                break;
 //            }
 //            case FFT: {
 //                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-//                return {{fft.first,  chartWidth, in.at(3)},
-//                        {fft.second, chartWidth, in.at(3)}};
+//                return {{fft.first,  width, in.at(3)},
+//                        {fft.second, width, in.at(3)}};
 //            }
 //            case IFFT: {
 //                auto fft = computeInverseFft(in.at(1), in.at(2), in.at(3));
-//                return {{fft.first,  chartBound.x, chartWidth},
-//                        {fft.second, chartBound.x, chartWidth}};
+//                return {{fft.first,  start, width},
+//                        {fft.second, start, width}};
 //            }
 //            case HARTLEY: {
 //                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
 //                return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)),
-//                         chartWidth, in.at(3)},
-//                        {0.0, chartWidth, in.at(3)}};
+//                         width, in.at(3)},
+//                        {0.0, width, in.at(3)}};
 //            }
 //            case LAPLACE: {
 //              //  mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
@@ -1161,21 +1164,21 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //                         vector<float>(MAX_INPUT_COUNT, x.at(IMAG).at(1))}, rootInput);
 //
 //                mChart->setZBound(vec2(x.at(0).at(2), x.at(0).at(3)));
-//                out = {sx.at(0).at(0), chartBound.x, chartWidth};
+//                out = {sx.at(0).at(0), start, width};
 //                break;
 //            }
 //            case FIRST_DIFF: {
 //                float diff = computeFirstDifference(in.at(0), in.at(1));
-//                out = {diff, chartBound.x, chartWidth};
+//                out = {diff, start, width};
 //                break;
 //            }
 //            case DOT:
 //                return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)),
-//                             vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
+//                             vec2(x.at(0).at(1), x.at(1).at(1))), start, width}};
 //            case CROSS:
 //                return {
 //                        {dot(vec2(x.at(0).at(0), x.at(1).at(0)),
-//                             vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}
+//                             vec2(x.at(0).at(1), x.at(1).at(1))), start, width}
 //                };
 //                break;
 //            case CHART_2D: {
@@ -1183,8 +1186,8 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //
 //                x.at(REAL).at(0) = in.at(0);
 //                x.at(REAL).at(1) = in.at(1);
-//                x.at(REAL).at(2) = chartBound.x;
-//                x.at(REAL).at(3) = chartWidth;
+//                x.at(REAL).at(2) = start;
+//                x.at(REAL).at(3) = width;
 //
 //                x.at(IMAG).at(0) = 0.0;
 //                x.at(IMAG).at(1) = 0.0;
@@ -1195,7 +1198,7 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //
 //            case HEAT_MAP: {
 //                mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
-//                out = {x.at(0).at(0), chartBound.x, chartWidth};
+//                out = {x.at(0).at(0), start, width};
 //                break;
 //            }
 //            case COMBINE: {
@@ -1231,8 +1234,8 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //                    returnValue = mMlModel->getOutputAt(0);
 //                }
 //
-//                return {{returnValue, chartBound.x, chartWidth},
-//                        {x.at(REAL).at(0),      chartBound.x, chartWidth}};
+//                return {{returnValue, start, width},
+//                        {x.at(REAL).at(0),      start, width}};
 //            }
 //            case NEURAL_GROUP:
 //            case GROUP: {
@@ -1250,11 +1253,11 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 //                return x;
 //            }
 //            case MIN:
-//                return {{std::min(x.at(REAL).at(0), x.at(REAL).at(1)), chartBound.x, chartWidth},
-//                        {std::min(x.at(IMAG).at(0), x.at(IMAG).at(1)), chartBound.x, chartWidth}};
+//                return {{std::min(x.at(REAL).at(0), x.at(REAL).at(1)), start, width},
+//                        {std::min(x.at(IMAG).at(0), x.at(IMAG).at(1)), start, width}};
 //            case MAX:
-//                return {{std::max(x.at(REAL).at(0), x.at(REAL).at(1)), chartBound.x, chartWidth},
-//                        {std::max(x.at(IMAG).at(0), x.at(IMAG).at(1)), chartBound.x, chartWidth}};
+//                return {{std::max(x.at(REAL).at(0), x.at(REAL).at(1)), start, width},
+//                        {std::max(x.at(IMAG).at(0), x.at(IMAG).at(1)), start, width}};
 //            case LAST:
 //                break;
 //        }

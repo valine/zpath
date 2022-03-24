@@ -1139,6 +1139,12 @@ public:
  * add other views to the parent editor.
  */
 function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
+    vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
+
+    void initializeGroup();
+
+    vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
+
 private:
     bool mInvalid = true;
     bool mRecursiveInvalidate = false;
@@ -1175,7 +1181,6 @@ private:
     vector<vector<float>> mPointCache;
     vector<float> mPointCache1D;
 
-    vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
     vector<float> mConstantValueInput = vector<float>(MAX_INPUT_COUNT, 0.0);
 
     // Center magnitude is at index 6
@@ -1230,10 +1235,6 @@ private:
     void onCreate();
 
     void refreshView(NodeType* type);
-
-    void initializeGroup();
-
-    vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
 
     void onSizeChange() override;
 };

@@ -1,22 +1,22 @@
 {
-  "name" : "^",
+  "name" : "ci",
   "socketType" : {
-    "input" : ["CON", "CON"],
-    "output" : ["VAR", "CON", "CON"]
+    "input" : [],
+    "output" : ["CON", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
-  "defaultInput" : [0.0, 1.0, 1.0],
+  "defaultInput" : [],
   "defaultMagnitude" : [7],
-  "socketNames" : ["", ""],
+  "socketNames" : [],
   "enumNames" : [],
-  "nodeSize" : [80, 70],
+  "nodeSize" : [80, 20],
   "chartBounds" : [-5,5,-5,5],
-  "isOutputLabelVisible" : false,
+  "isOutputLabelVisible" : true,
   "isDropDownVisible" : false,
   "buttonNames" : [],
-  "colorDark" : [0.15, 0.155, 0.17, 1.0],
-  "colorLight" : [1.0, 1.0, 1.0, 1.0],
+  "colorDark" : [1, 0.437324, 0.419652, 1],
+  "colorLight" : [1, 0.437324, 0.419652, 1],
   "adaptiveResolution" : true,
   "chartType" : "LINE_1D_2X",
   "showInDrawer" : true
