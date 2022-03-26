@@ -766,9 +766,9 @@ public:
 
             }
             mMlModel->computeAsync(job, [this](vector<vector<float>> outputs) {
-                mMlCache.clear();
+                mCache.clear();
                 for (vector<float> output : outputs) {
-                    mMlCache.emplace_back(output.at(0), output.at(0));
+                    mCache.emplace_back(output.at(0), output.at(0));
                 }
 
                 invalidateNodeRecursive();
@@ -1145,6 +1145,8 @@ function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
 
     vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
 
+// Todo: remove  these
+ZLineChart *mChart = nullptr;
 private:
     bool mInvalid = true;
     bool mRecursiveInvalidate = false;
@@ -1176,8 +1178,6 @@ private:
     /**
      * Number of line segments on the chart
      */
-    // Todo: remove  these
-    ZLineChart *mChart = nullptr;
     vector<vector<float>> mPointCache;
     vector<float> mPointCache1D;
 
@@ -1197,9 +1197,8 @@ private:
 
     function<void(ZNodeView *node)> mInvalidateListener = nullptr;
 
-    const vector<complex<float>> &mCache = vector<complex<float>>();
+    vector<complex<float>> mCache = vector<complex<float>>();
     vector<complex<float>> mFftCache;
-    vector<complex<float>> mMlCache;
     vector<vector<float>> mLaplaceCache;
 
     int mProjectID = -1;

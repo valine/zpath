@@ -367,6 +367,7 @@ void ZNodeView::updateChart1D2X() {
 }
 
 void ZNodeView::setType(NodeType* type) {
+    mType = type;
     mSocketType = NONE_TYPE;
     mSocketCount = ivec2(0);
 

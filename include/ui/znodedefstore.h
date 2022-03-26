@@ -178,6 +178,99 @@ private:
             return returnValue;
         }));
 
+        mNodeTypes.push_back(NodeType::fromFile("math/abs.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+            complex<float> out0 = abs(in0);
+            vector<vector<float>> returnValue = {{out0.real(), start, width},
+                                                 {out0.imag(), start, width}};
+            return returnValue;
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/exp.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+            complex<float> out0 = exp(in0);
+            vector<vector<float>> returnValue = {{out0.real(), start, width},
+                                                 {out0.imag(), start, width}};
+            return returnValue;
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/min.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+            vector<vector<float>> returnValue = {{std::min(x.at(REAL).at(0), x.at(REAL).at(1)), start, width},
+                        {std::min(x.at(IMAG).at(0), x.at(IMAG).at(1)), start, width}};
+            return returnValue;
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/max.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+            vector<vector<float>> returnValue = {{std::max(x.at(REAL).at(0), x.at(REAL).at(1)), start, width},
+                                                 {std::max(x.at(IMAG).at(0), x.at(IMAG).at(1)), start, width}};
+            return returnValue;
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/gaussian.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+            complex<float> in0 = {x.at(REAL).at(0), 0};
+                complex<float> in1 = {x.at(REAL).at(1), 0};
+                complex<float> in2 = {x.at(REAL).at(2), 0};
+                complex<float> two = {2.0, 0};
+                complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
+            vector<vector<float>> returnValue =  {{out0.real(), start, width},
+                        {out0.imag(), start, width}};
+
+            return returnValue;
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/morlet.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+
+            vector<float> in = x.at(0);
+            auto real = (float) (
+                    cos(in.at(0) * in.at(4)) * // sinusoid
+                    (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
+                    pow(2 * in.at(1), 2))));
+
+            auto imaginary = (float) (
+                    sin(in.at(0) * in.at(4)) * // sinusoid
+                    (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
+                    pow(2 * in.at(1), 2))));
+            vector<vector<float>> returnValue  {{real,      start, width},
+                    {imaginary, start, width}};
+            return returnValue;
+        }));
+
         mNodeTypes.push_back(NodeType::fromFile("math/c.json", [](
                 vector<vector<float>> x,
                 const vector<vector<float>>& rootInput,
@@ -200,6 +293,18 @@ private:
             x.at(IMAG) = nodeView->mConstantValueOutput;
             x.at(REAL).at(0) = 0;
             return x;
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/t.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+                x.at(REAL).at(0) = glfwGetTime() * x.at(REAL).at(0);
+                nodeView->invalidateNodeRecursive();
+                return x;
         }));
 
         mNodeTypes.push_back(NodeType::fromFile("math/x.json", [](
@@ -357,6 +462,58 @@ private:
                 sender->setSocketCount(count);
             }
         }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/neuralcore.json", [](
+                vector<vector<float>> x,
+                const vector<vector<float>>& rootInput,
+                const vector<complex<float>>& cache,
+                float start,
+                float width,
+                ZNodeView* nodeView) {
+                if (nodeView->mMlModel == nullptr) {
+                    nodeView->initializeNNModel();
+                }
+
+                float returnValue;
+                if (nodeView->mMlModel->getTrainingInProgress()) {
+                    vec2 thisChartBounds = nodeView->mChart->getXBounds();
+                    float span = thisChartBounds.y - thisChartBounds.x;
+                    float inX = ((x.at(REAL).at(1) - thisChartBounds.x) / span) * cache.size();
+                    if (span > 0) {
+                        int xIndex = 0;
+                        if (inX >= 0 && (inX) < cache.size() && !cache.empty()) {
+                            xIndex = (int) inX;
+                            complex<float> y = cache.at(xIndex);
+                            returnValue = y.real();
+                        }
+                    }
+
+                } else {
+                    nodeView->mMlModel->setInput(x.at(REAL).at(1), 0);
+                    nodeView->mMlModel->compute();
+                    returnValue = nodeView->mMlModel->getOutputAt(0);
+                }
+
+                vector<vector<float>> returnValueVector = {
+                            {returnValue, start, width},
+                            {x.at(REAL).at(0),start, width}};
+                return returnValueVector;
+
+        }, {
+                [](ZNodeView* sender) -> void {
+                    // Train the network
+                    sender->trainNN(sender);
+                },
+                [](ZNodeView* sender) -> void {
+                    sender->mMlModel->resetNetwork();
+                },
+                [](ZNodeView* sender) -> void {
+                    cout<< sender->mMlModel->toFunctionString() << endl;
+                }
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/comment.json"));
+
         // Index nodes for name lookup
         indexNodes();
     }
@@ -366,7 +523,6 @@ private:
             mNameMap.insert({nodeType->mName, nodeType});
         }
     }
-
 };
 
 
