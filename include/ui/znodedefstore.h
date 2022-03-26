@@ -32,231 +32,137 @@ private:
     ZNodeDefStore() {
 
         /// Sin node
-        mNodeTypes.push_back(NodeType::fromFile("math/sin.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float chartStart,
-                float chartWidth,
-                ZNodeView* nodeView) {
-
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-            complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-            complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+        mNodeTypes.push_back(NodeType::fromFile("math/sin.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
+            complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
+            complex<float> in2 = {fn.x.at(REAL).at(2), fn.x.at(IMAG).at(2)};
             complex<float> out0 = sin(in0 * in1) * in2;
             vector<vector<float>> returnValue =
-                    {{out0.real(), chartStart, chartWidth},
-                     {out0.imag(), chartStart, chartWidth}};
+                    {{out0.real(), fn.start, fn.width},
+                     {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
         /// Cos node
-        mNodeTypes.push_back(NodeType::fromFile("math/cos.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-            complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-            complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
+        mNodeTypes.push_back(NodeType::fromFile("math/cos.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
+            complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
+            complex<float> in2 = {fn.x.at(REAL).at(2), fn.x.at(IMAG).at(2)};
             complex<float> out0 = cos(in0 * in1) * in2;
 
             vector<vector<float>> returnValue =
-                    {{out0.real(), start, width},
-                     {out0.imag(), start, width}};
+                    {{out0.real(), fn.start, fn.width},
+                     {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/tan.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+        mNodeTypes.push_back(NodeType::fromFile("math/tan.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
 
             complex<float> out0 = tan(in0);
             vector<vector<float>> returnValue = {
-                {out0.real(), start, width},
-                {out0.imag(), start, width}
+                {out0.real(), fn.start, fn.width},
+                {out0.imag(), fn.start, fn.width}
             };
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/add.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+        mNodeTypes.push_back(NodeType::fromFile("math/add.json", [](FuncIn fn) {
+                complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
+                complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
                 complex<float> out0 = in0 + in1;
-                vector<vector<float>> returnValue =   {{out0.real(), start, width},
-                        {out0.imag(), start, width}};
+                vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
+                        {out0.imag(), fn.start, fn.width}};
                 return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/subtract.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-            complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+        mNodeTypes.push_back(NodeType::fromFile("math/subtract.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
+            complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
             complex<float> out0 = in0 - in1;
-            vector<vector<float>> returnValue =   {{out0.real(), start, width},
-                                                   {out0.imag(), start, width}};
+            vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
+                                                   {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/multiply.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-            complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+        mNodeTypes.push_back(NodeType::fromFile("math/multiply.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
+            complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
             complex<float> out0 = in0 * in1;
-            vector<vector<float>> returnValue =   {{out0.real(), start, width},
-                                                   {out0.imag(), start, width}};
+            vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
+                                                   {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/divide.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-            complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+        mNodeTypes.push_back(NodeType::fromFile("math/divide.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
+            complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
             complex<float> out0 = in0 / in1;
-            vector<vector<float>> returnValue =   {{out0.real(), start, width},
-                                                   {out0.imag(), start, width}};
+            vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
+                                                   {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/pow.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/pow.json", [](FuncIn fn) {
 
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
+                complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
                 complex<float> out0 = pow(in0, in1);
-            vector<vector<float>> returnValue =  {{out0.real(), start, width},
-                        {out0.imag(), start, width}};
+            vector<vector<float>> returnValue =  {{out0.real(), fn.start, fn.width},
+                        {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/sqrt.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+        mNodeTypes.push_back(NodeType::fromFile("math/sqrt.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
                 complex<float> out0 = sqrt(in0);
-            vector<vector<float>> returnValue = {{out0.real(), start, width},
-                        {out0.imag(), start, width}};
+            vector<vector<float>> returnValue = {{out0.real(), fn.start, fn.width},
+                        {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/abs.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+        mNodeTypes.push_back(NodeType::fromFile("math/abs.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
             complex<float> out0 = abs(in0);
-            vector<vector<float>> returnValue = {{out0.real(), start, width},
-                                                 {out0.imag(), start, width}};
+            vector<vector<float>> returnValue = {{out0.real(), fn.start, fn.width},
+                                                 {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/exp.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
+        mNodeTypes.push_back(NodeType::fromFile("math/exp.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
             complex<float> out0 = exp(in0);
-            vector<vector<float>> returnValue = {{out0.real(), start, width},
-                                                 {out0.imag(), start, width}};
+            vector<vector<float>> returnValue = {{out0.real(), fn.start, fn.width},
+                                                 {out0.imag(), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/min.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            vector<vector<float>> returnValue = {{std::min(x.at(REAL).at(0), x.at(REAL).at(1)), start, width},
-                        {std::min(x.at(IMAG).at(0), x.at(IMAG).at(1)), start, width}};
+        mNodeTypes.push_back(NodeType::fromFile("math/min.json", [](FuncIn fn) {
+            vector<vector<float>> returnValue = {{std::min(fn.x.at(REAL).at(0), fn.x.at(REAL).at(1)), fn.start, fn.width},
+                        {std::min(fn.x.at(IMAG).at(0), fn.x.at(IMAG).at(1)), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/max.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            vector<vector<float>> returnValue = {{std::max(x.at(REAL).at(0), x.at(REAL).at(1)), start, width},
-                                                 {std::max(x.at(IMAG).at(0), x.at(IMAG).at(1)), start, width}};
+        mNodeTypes.push_back(NodeType::fromFile("math/max.json", [](FuncIn fn) {
+            vector<vector<float>> returnValue = {{std::max(fn.x.at(REAL).at(0), fn.x.at(REAL).at(1)), fn.start, fn.width},
+                                                 {std::max(fn.x.at(IMAG).at(0), fn.x.at(IMAG).at(1)), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/gaussian.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            complex<float> in0 = {x.at(REAL).at(0), 0};
-                complex<float> in1 = {x.at(REAL).at(1), 0};
-                complex<float> in2 = {x.at(REAL).at(2), 0};
+        mNodeTypes.push_back(NodeType::fromFile("math/gaussian.json", [](FuncIn fn) {
+            complex<float> in0 = {fn.x.at(REAL).at(0), 0};
+                complex<float> in1 = {fn.x.at(REAL).at(1), 0};
+                complex<float> in2 = {fn.x.at(REAL).at(2), 0};
                 complex<float> two = {2.0, 0};
                 complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
-            vector<vector<float>> returnValue =  {{out0.real(), start, width},
-                        {out0.imag(), start, width}};
+            vector<vector<float>> returnValue =  {{out0.real(), fn.start, fn.width},
+                        {out0.imag(), fn.start, fn.width}};
 
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/morlet.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-
-            vector<float> in = x.at(0);
+        mNodeTypes.push_back(NodeType::fromFile("math/morlet.json", [](FuncIn fn) {
+            vector<float> in = fn.x.at(0);
             auto real = (float) (
                     cos(in.at(0) * in.at(4)) * // sinusoid
                     (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
@@ -266,168 +172,102 @@ private:
                     sin(in.at(0) * in.at(4)) * // sinusoid
                     (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
                     pow(2 * in.at(1), 2))));
-            vector<vector<float>> returnValue  {{real,      start, width},
-                    {imaginary, start, width}};
+            vector<vector<float>> returnValue  {{real,      fn.start, fn.width},
+                    {imaginary, fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/c.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            x.at(REAL) = nodeView->mConstantValueOutput;
-            x.at(IMAG).at(0) = 0;
-            return x;
+        mNodeTypes.push_back(NodeType::fromFile("math/c.json", [](FuncIn fn) {
+            fn.x.at(REAL) = fn.nodeView->mConstantValueOutput;
+            fn.x.at(IMAG).at(0) = 0;
+            return fn.x;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/ci.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            x.at(IMAG) = nodeView->mConstantValueOutput;
-            x.at(REAL).at(0) = 0;
-            return x;
+        mNodeTypes.push_back(NodeType::fromFile("math/ci.json", [](FuncIn fn) {
+            fn.x.at(IMAG) = fn.nodeView->mConstantValueOutput;
+            fn.x.at(REAL).at(0) = 0;
+            return fn.x;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/t.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-                x.at(REAL).at(0) = glfwGetTime() * x.at(REAL).at(0);
-                nodeView->invalidateNodeRecursive();
-                return x;
+        mNodeTypes.push_back(NodeType::fromFile("math/t.json", [](FuncIn fn) {
+                fn.x.at(REAL).at(0) = glfwGetTime() * fn.x.at(REAL).at(0);
+                fn.nodeView->invalidateNodeRecursive();
+                return fn.x;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/x.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/x.json", [](FuncIn fn) {
 
-            x.at(REAL).at(0) = x.at(REAL).at(0);
-            x.at(REAL).at(1) = start;
-            x.at(REAL).at(2) = width;
+            fn.x.at(REAL).at(0) = fn.x.at(REAL).at(0);
+            fn.x.at(REAL).at(1) = fn.start;
+            fn.x.at(REAL).at(2) = fn.width;
 
-            x.at(IMAG).at(0) = 0;
-            x.at(IMAG).at(1) = start;
-            x.at(IMAG).at(2) = width;
-            return x;
+            fn.x.at(IMAG).at(0) = 0;
+            fn.x.at(IMAG).at(1) = fn.start;
+            fn.x.at(IMAG).at(2) = fn.width;
+            return fn.x;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/y.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/y.json", [](FuncIn fn) {
             vector<vector<float>> returnValue = {
-                    {x.at(IMAG).at(0), start, width},
-                        {0, start, width}};
+                    {fn.x.at(IMAG).at(0), fn.start, fn.width},
+                        {0, fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/z.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/z.json", [](FuncIn fn) {
             vector<vector<float>> returnValue =
-                    {{x.at(REAL).at(0), start, width},
-                        {x.at(IMAG).at(0), start, width}};
+                    {{fn.x.at(REAL).at(0), fn.start, fn.width},
+                        {fn.x.at(IMAG).at(0), fn.start, fn.width}};
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/fft.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/fft.json", [](FuncIn fn) {
 
-            vector<float> in = x.at(0);
+            vector<float> in = fn.x.at(0);
 
-            auto fft = nodeView->computeFft(in.at(1), in.at(2), in.at(3));
-            vector<vector<float>> returnValue =  {{fft.first,  width, in.at(3)},
-                        {fft.second, width, in.at(3)}};
+            auto fft = fn.nodeView->computeFft(in.at(1), in.at(2), in.at(3));
+            vector<vector<float>> returnValue =  {{fft.first,  fn.width, in.at(3)},
+                        {fft.second, fn.width, in.at(3)}};
             return returnValue;
 
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/hartley.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/hartley.json", [](FuncIn fn) {
 
-            vector<float> in = x.at(0);
+            vector<float> in = fn.x.at(0);
 
-            auto fft = nodeView->computeFft(in.at(1), in.at(2), in.at(3));
+            auto fft = fn.nodeView->computeFft(in.at(1), in.at(2), in.at(3));
             vector<vector<float>> returnValue =
                     {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)),
-                         width, in.at(3)},
-                        {0.0, width, in.at(3)}};
+                         fn.width, in.at(3)},
+                        {0.0, fn.width, in.at(3)}};
 
             return returnValue;
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/ifft.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/ifft.json", [](FuncIn fn) {
 
-            vector<float> in = x.at(0);
-            auto fft = nodeView->computeInverseFft(
+            vector<float> in = fn.x.at(0);
+            auto fft = fn.nodeView->computeInverseFft(
                     in.at(1), in.at(2), in.at(3));
-                vector<vector<float>> returnValue = {{fft.first,  start, width},
-                        {fft.second, start, width}};
+                vector<vector<float>> returnValue = {{fft.first,  fn.start, fn.width},
+                        {fft.second, fn.start, fn.width}};
             return returnValue;
 
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/group.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            nodeView->initializeGroup();
-            return nodeView->mGroupOutput->evaluate(rootInput, nullptr, rootInput);
+        mNodeTypes.push_back(NodeType::fromFile("math/group.json", [](FuncIn fn) {
+            fn.nodeView->initializeGroup();
+            return fn.nodeView->mGroupOutput->evaluate(fn.rootInput, nullptr, fn.rootInput);
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/in.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
+        mNodeTypes.push_back(NodeType::fromFile("math/in.json", [](FuncIn fn) {
 
-            if (nodeView->mInputProxy != nullptr) {
-                return nodeView->mInputProxy->sumAllInputs(
-                        x, nullptr, vector<vector<float>>());
+            if (fn.nodeView->mInputProxy != nullptr) {
+                return fn.nodeView->mInputProxy->sumAllInputs(
+                        fn.x, nullptr, vector<vector<float>>());
             } else {
-                return x;
+                return fn.x;
             }
         }, {
             [](ZNodeView* sender) -> void {
@@ -442,14 +282,8 @@ private:
             }
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/out.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-            return x;
+        mNodeTypes.push_back(NodeType::fromFile("math/out.json", [](FuncIn fn) {
+            return fn.x;
         }, {
             [](ZNodeView* sender) -> void {
                 // Plus button
@@ -463,40 +297,34 @@ private:
             }
         }));
 
-        mNodeTypes.push_back(NodeType::fromFile("math/neuralcore.json", [](
-                vector<vector<float>> x,
-                const vector<vector<float>>& rootInput,
-                const vector<complex<float>>& cache,
-                float start,
-                float width,
-                ZNodeView* nodeView) {
-                if (nodeView->mMlModel == nullptr) {
-                    nodeView->initializeNNModel();
+        mNodeTypes.push_back(NodeType::fromFile("math/neuralcore.json", [](FuncIn fn) {
+                if (fn.nodeView->mMlModel == nullptr) {
+                    fn.nodeView->initializeNNModel();
                 }
 
                 float returnValue;
-                if (nodeView->mMlModel->getTrainingInProgress()) {
-                    vec2 thisChartBounds = nodeView->mChart->getXBounds();
+                if (fn.nodeView->mMlModel->getTrainingInProgress()) {
+                    vec2 thisChartBounds = fn.nodeView->mChart->getXBounds();
                     float span = thisChartBounds.y - thisChartBounds.x;
-                    float inX = ((x.at(REAL).at(1) - thisChartBounds.x) / span) * cache.size();
+                    float inX = ((fn.x.at(REAL).at(1) - thisChartBounds.x) / span) * fn.cache.size();
                     if (span > 0) {
                         int xIndex = 0;
-                        if (inX >= 0 && (inX) < cache.size() && !cache.empty()) {
+                        if (inX >= 0 && (inX) < fn.cache.size() && !fn.cache.empty()) {
                             xIndex = (int) inX;
-                            complex<float> y = cache.at(xIndex);
+                            complex<float> y = fn.cache.at(xIndex);
                             returnValue = y.real();
                         }
                     }
 
                 } else {
-                    nodeView->mMlModel->setInput(x.at(REAL).at(1), 0);
-                    nodeView->mMlModel->compute();
-                    returnValue = nodeView->mMlModel->getOutputAt(0);
+                    fn.nodeView->mMlModel->setInput(fn.x.at(REAL).at(1), 0);
+                    fn.nodeView->mMlModel->compute();
+                    returnValue = fn.nodeView->mMlModel->getOutputAt(0);
                 }
 
                 vector<vector<float>> returnValueVector = {
-                            {returnValue, start, width},
-                            {x.at(REAL).at(0),start, width}};
+                            {returnValue, fn.start, fn.width},
+                            {fn.x.at(REAL).at(0),fn.start, fn.width}};
                 return returnValueVector;
 
         }, {
@@ -510,6 +338,18 @@ private:
                 [](ZNodeView* sender) -> void {
                     cout<< sender->mMlModel->toFunctionString() << endl;
                 }
+        }));
+
+        mNodeTypes.push_back(NodeType::fromFile("math/laplace.json", [](FuncIn fn) {
+            vector<float> in = fn.x.at(0);
+            fn.nodeView->mChart->setZBound(vec2(fn.x.at(REAL).at(4), fn.x.at(REAL).at(5)));
+            // Static resolution for now
+            auto laplace = fn.nodeView->computeLaplace(fn.x.at(REAL).at(1),
+                                                      fn.x.at(IMAG).at(1), in.at(2), in.at(3),
+                                                      fn.nodeView->mChart->getMaxResolution());
+
+            fn.x.at(REAL).at(0) = laplace.first;
+            return fn.x;
         }));
 
         mNodeTypes.push_back(NodeType::fromFile("math/comment.json"));

@@ -24,6 +24,7 @@
 #include "ui/zview.h"
 #include "ui/charttype.h"
 #include "ui/sockettype.h"
+#include "ui/funcin.h"
 
 using namespace glm;
 using namespace std;
@@ -55,22 +56,11 @@ public:
 
     NodeType() {}
 
-    std::function<vector<vector<float>>(
-            vector<vector<float>> x,
-            vector<vector<float>> rootInput,
-            const vector<complex<float>>& cache,
-            float chartStart,
-            float chartWidth,
-            ZNodeView* node)> mCompute = nullptr;
-
+    std::function<vector<vector<float>>(FuncIn x)> mCompute = nullptr;
     vector<function<void(ZNodeView* sender)>> mOnButtonClick;
 
     void setCompute(std::function<vector<vector<float>>(
-            vector<vector<float>> x, vector<vector<float>> rootInput,
-            const vector<complex<float>>& cache,
-            float chartStart,
-            float chartWidth,
-            ZNodeView* node)> compute) {
+            FuncIn c)> compute) {
         mCompute = std::move(compute);
     }
 
@@ -78,23 +68,17 @@ public:
         return mOnButtonClick.at(index);
     }
 
-    static NodeType* fromFile(string path, std::function<vector<vector<float>>(
-            vector<vector<float>> x, vector<vector<float>> rootInput,
-            const vector<complex<float>>& cache,
-            float chartStart,
-            float chartWidth,
-            ZNodeView* node)> compute, vector<function<void(ZNodeView* sender)>> onClick) {
+    static NodeType* fromFile(string path, function<vector<vector<float>>(FuncIn x)> compute,
+                              vector<function<void(ZNodeView* sender)>> onClick) {
+
+
         NodeType* type = fromFile(std::move(path), std::move(compute));
         type->mOnButtonClick = std::move(onClick);
         return type;
     }
 
-    static NodeType* fromFile(string path, std::function<vector<vector<float>>(
-            vector<vector<float>> x, vector<vector<float>> rootInput,
-            const vector<complex<float>>& cache,
-            float chartStart,
-            float chartWidth,
-            ZNodeView* node)> compute) {
+    static NodeType* fromFile(string path,
+                              function<vector<vector<float>>(FuncIn x)> compute) {
         string resources = ZSettings::get().getResourcePath();
         string fullPath = resources + "resources/node-def/" + path;
         std::ifstream t(fullPath);

@@ -976,7 +976,8 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
         vector<float> in = x.at(d);
         vector<float> out;
 
-        vector<vector<float>> result = type->mCompute(x, rootInput, mCache, chartBound.x, width, this);
+        FuncIn compute = FuncIn(x, rootInput, mCache, chartBound.x, width, this);
+        vector<vector<float>> result = type->mCompute(compute);
         return result;
 
 //        switch (type) {

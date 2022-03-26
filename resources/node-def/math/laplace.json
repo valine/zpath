@@ -1,0 +1,23 @@
+{
+  "name" : "ztransform",
+  "socketType" : {
+    "input" : ["VAR", "VAR_Z", "CON", "CON", "CON", "CON"],
+    "output" : ["VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [0.0, 0.0, 0.0, 1.0, -1.0, 1.0],
+  "defaultMagnitude" : [0, 0, 5, 6, 6, 1],
+  "socketNames" : ["X", "Z", "Window Start", "Window Size", "Z Min", "Z Max"],
+  "enumNames" : [],
+  "nodeSize" : [400, 400],
+  "chartBounds" : [0,10,-5,5],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : false,
+  "buttonNames" : [],
+  "colorDark" : [0.122923, 0.061397, 0.314665, 1.000000],
+  "colorLight" : [0.122923, 0.061397, 0.314665, 1.000000],
+  "adaptiveResolution" : true,
+  "chartType" : "IMAGE",
+  "showInDrawer" : true
+}

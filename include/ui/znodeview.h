@@ -39,6 +39,8 @@ using namespace std;
 #include "ui/charttype.h"
 #include "ui/sockettype.h"
 
+class FuncIn;
+
 class ZNodeView : public ZView {
 public:
 
