@@ -9,6 +9,7 @@
 #include "ui/nodetype.h"
 #include <vector>
 #include "ui/znodeview.h"
+#include "utils/datastore.h"
 
 class ZNodeDefStore {
 public:
@@ -270,6 +271,16 @@ private:
             return returnValue;
         }));
 
+        mNodeTypes.push_back(NodeType::fromFile("math/file.json", [](FuncIn fn) {
+
+            int fileIndex = fn.nodeView->mDropDown->getSelectedItem();
+
+            float point = DataStore::get().getDataAtIndex(fileIndex, fn.x.at(REAL).at(0));
+            vector<vector<float>> returnValue = {{point, fn.start, fn.width},
+                                                 {0, fn.start, fn.width}};
+            return returnValue;
+        }));
+
         mNodeTypes.push_back(NodeType::fromFile("math/c.json", [](FuncIn fn) {
             fn.x.at(REAL) = fn.nodeView->mConstantValueOutput;
             fn.x.at(IMAG).at(0) = 0;
@@ -368,32 +379,32 @@ private:
                 return fn.x;
             }
         }, {
-                                                        [](ZNodeView* sender) -> void {
-                                                            // Plus button
-                                                            ivec2 count = sender->mSocketCount + ivec2(0,1);
-                                                            sender->setSocketCount(count);
-                                                        },
-                                                        [](ZNodeView* sender) -> void {
-                                                            // Minus button
-                                                            ivec2 count = sender->mSocketCount - ivec2(0,1);
-                                                            sender->setSocketCount(count);
-                                                        }
-                                                }));
+                [](ZNodeView* sender) -> void {
+                    // Plus button
+                    ivec2 count = sender->mSocketCount + ivec2(0,1);
+                    sender->setSocketCount(count);
+                },
+                [](ZNodeView* sender) -> void {
+                    // Minus button
+                    ivec2 count = sender->mSocketCount - ivec2(0,1);
+                    sender->setSocketCount(count);
+                }
+        }));
 
         mNodeTypes.push_back(NodeType::fromFile("math/out.json", [](FuncIn fn) {
             return fn.x;
         }, {
-                                                        [](ZNodeView* sender) -> void {
-                                                            // Plus button
-                                                            ivec2 count = sender->mSocketCount + ivec2(1,0);
-                                                            sender->setSocketCount(count);
-                                                        },
-                                                        [](ZNodeView* sender) -> void {
-                                                            // Minus button
-                                                            ivec2 count = sender->mSocketCount - ivec2(1,0);
-                                                            sender->setSocketCount(count);
-                                                        }
-                                                }));
+                [](ZNodeView* sender) -> void {
+                    // Plus button
+                    ivec2 count = sender->mSocketCount + ivec2(1,0);
+                    sender->setSocketCount(count);
+                },
+                [](ZNodeView* sender) -> void {
+                    // Minus button
+                    ivec2 count = sender->mSocketCount - ivec2(1,0);
+                    sender->setSocketCount(count);
+                }
+        }));
 
         mNodeTypes.push_back(NodeType::fromFile("math/neuralcore.json", [](FuncIn fn) {
             if (fn.nodeView->mMlModel == nullptr) {

@@ -166,8 +166,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     laplaceBtn->setCornerRadius(vec4(cr, cr, 0, 0));
     laplaceBtn->setMaxHeight(22);
     laplaceBtn->setOnClick([this](){
-
-        cout << mSelectedNodes.size() << endl;
         // Only works if one node selected
         if (mSelectedNodes.size() == 1) {
             ZNodeView *root = (*mSelectedNodes.begin());
@@ -186,7 +184,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     derivativeBtn->setMaxHeight(22);
     derivativeBtn->setMarginTop(1);
     derivativeBtn->setOnClick([this](){
-        cout << mSelectedNodes.size() << endl;
         // Only works if one node selected
         if (mSelectedNodes.size() == 1) {
             ZNodeView *root = (*mSelectedNodes.begin());
@@ -204,7 +201,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     simplifyBtn->setMaxHeight(22);
     simplifyBtn->setMarginTop(1);
     simplifyBtn->setOnClick([this](){
-        cout << mSelectedNodes.size() << endl;
         // Only works if one node selected
         if (mSelectedNodes.size() == 1) {
             ZNodeView *root = (*mSelectedNodes.begin());
@@ -1456,9 +1452,10 @@ void ZNodeEditor::toggleGroupSelection() {
                 continue;
             }
             // Check if node is part of a group before showing
-            if (!node->getType()->mShowInDrawer &&
+            if (node->getType()->mShowInDrawer &&
                 !node->mIsPartOfGroup) {
                 node->setVisibility(true);
+                cout << "showing node: " << node->getType()->mName << endl;
             }
 
             if (node->getType()->mIsGroupNode) {
@@ -1469,6 +1466,7 @@ void ZNodeEditor::toggleGroupSelection() {
 
         for (ZNodeView* innerNode : groupNode->getGroupNodes()) {
             innerNode->setVisibility(false);
+            cout << "hide node: " << innerNode->getType()->mName << endl;
         }
         groupNode->setSocketCount(vec2(groupNode->getGroupInput()->getSocketCount().y,
                                        groupNode->getGroupOutput()->getSocketCount().x));
