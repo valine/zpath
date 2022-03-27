@@ -135,6 +135,7 @@ public:
             nodeType->mDefaultMagnitude.push_back(inner);
         }
 
+
         for (const json& enums : j["enumNames"]) {
             vector<string> names;
             for (const json& aEnum : enums) {

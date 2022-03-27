@@ -302,7 +302,6 @@ void ZNodeEditor::setNodeTypes(vector<NodeType*> nodeTypes) {
         // startPosition.x = std::max((int) mDrawer->getWidth(), (int) startPosition.x);
         startPosition.y -= 40;
         startPosition.x -= 35;
-        auto type = static_cast<ZNodeView::Type>(index);
         ZNodeView* node = addNode(nodesInDrawer.at(index));
         node->setOffset(startPosition);
 
@@ -314,7 +313,6 @@ void ZNodeEditor::setNodeTypes(vector<NodeType*> nodeTypes) {
     });
 
     mDrawer->setOnItemClicked([this, allTypes, nodesInDrawer](int index){
-        auto type = static_cast<ZNodeView::Type>(index);
         addNode(nodesInDrawer.at(index));
     });
 }

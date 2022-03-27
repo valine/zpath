@@ -1,14 +1,14 @@
 {
-  "name" : "ztransform",
+  "name" : "laplace",
   "socketType" : {
-    "input" : ["VAR", "VAR_Z", "CON", "CON", "CON", "CON"],
+    "input" : ["VAR", "VAR_Z", "CON", "CON"],
     "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
-  "defaultInput" : [0.0, 0.0, 0.0, 1.0, -1.0, 1.0],
+  "defaultInput" : [0.0, 0.0, -1.0, 1.0],
   "defaultMagnitude" : [0, 0, 5, 6, 6, 1],
-  "socketNames" : ["X", "Z", "Window Start", "Window Size", "Z Min", "Z Max"],
+  "socketNames" : ["X", "Z", "Z Min", "Z Max"],
   "enumNames" : [],
   "nodeSize" : [300, 300],
   "chartBounds" : [0,10,-5,5],

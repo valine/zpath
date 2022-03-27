@@ -37,7 +37,6 @@ public:
     /// Node IO
 
     string nodeToString(ZNodeView* node) {
-
         NodeType* type = node->getType();
 
         string nodeString;
@@ -65,9 +64,9 @@ public:
             nodeString+="\n";
         }
 
-        if (node->getType()->mSocketCount.x > 0) {
+        if (node->getSocketCount().x > 0) {
             nodeString += "defaultin:";
-            for (int i = 0; i < node->getType()->mSocketCount.x; i++) {
+            for (int i = 0; i < node->getSocketCount().x; i++) {
                 nodeString += to_string(node->getConstantInput(i)) + ",";
             }
             if (!node->getConstantInputs().empty()) {
@@ -76,9 +75,9 @@ public:
             nodeString += "\n";
         }
 
-        if (node->getType()->mSocketCount.y > 0) {
+        if (node->getSocketCount().y > 0) {
             nodeString += "defaultout:";
-            for (int i = 0; i < node->getType()->mSocketCount.y; i++) {
+            for (int i = 0; i < node->getSocketCount().y; i++) {
                 nodeString += to_string(node->getConstantValue(i)) + ",";
             }
             if (!node->getConstantInputs().empty()) {
@@ -87,16 +86,16 @@ public:
             nodeString += "\n";
         }
 
-        if (node->getType()->mSocketCount.x > 0) {
+        if (node->getSocketCount().x > 0) {
             nodeString += "mag:";
-            for (int i = 0; i < node->getType()->mSocketCount.x; i++) {
+            for (int i = 0; i < node->getSocketCount().x; i++) {
                 nodeString += to_string(node->getInputMagnitude(i)) + ",";
             }
             nodeString += "\n";
         }
-        if (node->getType()->mSocketCount.y > 0) {
+        if (node->getSocketCount().y > 0) {
             nodeString += "magOut:";
-            for (int i = 0; i < node->getType()->mSocketCount.y; i++) {
+            for (int i = 0; i < node->getSocketCount().y; i++) {
                 nodeString += to_string(node->getOutputMagnitude(i)) + ",";
             }
             nodeString += "\n";
@@ -122,11 +121,11 @@ public:
 
         if (node->getType()->mIsDynamicSocket) {
             nodeString+="incount:";
-            nodeString+=to_string(node->getType()->mSocketCount.x);
+            nodeString+=to_string(node->getSocketCount().x);
             nodeString+="\n";
 
             nodeString+="outcount:";
-            nodeString+=to_string(node->getType()->mSocketCount.y);
+            nodeString+=to_string(node->getSocketCount().y);
             nodeString+="\n";
         }
         return nodeString;
@@ -264,23 +263,23 @@ public:
             int oindex = 0;
             for (float output : outputs) {
                 int magnitude = 1;
-                if (magnitudesOut.size() > index) {
-                    magnitude = magnitudesOut.at(index);
+                if (magnitudesOut.size() > oindex) {
+                    magnitude = magnitudesOut.at(oindex);
                 }
-                node->setConstantValue(index, output, magnitude);
+
+                cout << to_string(output) << endl;
+                node->setConstantValue(oindex, output, magnitude);
                 oindex++;
             }
 
             nodes.insert(node);
         }
 
-
         for (auto node : nodes) {
             string edges = edgeMap[node->getIndexTag()];
             string groupIds = groupMap[node->getIndexTag()];
 
             if (!groupIds.empty()) {
-
                 vector<string> gids = split(groupIds, ',');
                 for (const string& gid : gids) {
                     auto childNode = nodeMap[stoi(gid)];
@@ -652,7 +651,7 @@ public:
 
         if (includeRoot) {
             // Node is a constant
-            if (root->getType()->mIsOutputLabelVisible) {
+            if (root->getType()->mName == "c") {
                 return floatToString(root->getConstantValue(0));
             }
 
@@ -872,7 +871,7 @@ public:
 
     static int getVarCount(ZNodeView* node) {
 
-        if (node->getType()->mSocketCount.x == 0) {
+        if (node->getSocketCount().x == 0) {
              return 0;
         }
 

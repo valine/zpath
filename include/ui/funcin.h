@@ -22,12 +22,12 @@ public :
     float width;
     ZNodeView* nodeView;
 
-    FuncIn(vector<vector<float>>  ix, vector<vector<float>> iroot,
-           vector<complex<float>> icache, float istart,
+    FuncIn(const vector<vector<float>>& ix, const vector<vector<float>>& iroot,
+           const vector<complex<float>>& icache, float istart,
            float iwidth, ZNodeView *iview) {
-        x = std::move(ix);
-        rootInput = std::move(iroot);
-        cache = std::move(icache);
+        x = ix;
+        rootInput = iroot;
+        cache = icache;
         start = istart;
         width = iwidth;
         nodeView = iview;

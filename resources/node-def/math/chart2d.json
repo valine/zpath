@@ -1,0 +1,23 @@
+{
+  "name" : "chart2d",
+  "socketType" : {
+    "input" : ["VAR", "VAR", "CON"],
+    "output" : ["VAR","VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [0.0, 0.0, 100],
+  "defaultMagnitude" : [7],
+  "socketNames" : ["X", "Y", "Resolution"],
+  "enumNames" : [],
+  "nodeSize" : [200, 200],
+  "chartBounds" : [-5,5,-5,5],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : false,
+  "buttonNames" : [],
+  "colorDark" : [0.15, 0.155, 0.17, 1.0],
+  "colorLight" : [1.0, 1.0, 1.0, 1.0],
+  "adaptiveResolution" : false,
+  "chartType" : "LINE_2D",
+  "showInDrawer" : true
+}
