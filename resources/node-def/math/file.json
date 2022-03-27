@@ -1,0 +1,23 @@
+{
+  "name" : "file",
+  "socketType" : {
+    "input" : [],
+    "output" : ["VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [0.0, 1.0, 1.0],
+  "defaultMagnitude" : [7],
+  "socketNames" : ["X", "Frequency", "Height"],
+  "enumNames" : [],
+  "nodeSize" : [200, 200],
+  "chartBounds" : [0,10,0,10],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : true,
+  "buttonNames" : [],
+  "colorDark" : [0.15, 0.155, 0.17, 1.0],
+  "colorLight" : [1.0, 1.0, 1.0, 1.0],
+  "adaptiveResolution" : true,
+  "chartType" : "LINE_1D_2X",
+  "showInDrawer" : true
+}

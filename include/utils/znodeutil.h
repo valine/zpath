@@ -11,6 +11,7 @@ class ZLabel;
 #include <set>
 #include "ui/znodeview.h"
 #include <string>
+#include "ui/znodedefstore.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ class ZNodeUtil {
 
 private:
 
-    map<string, ZNodeView::Type> mTypes;
+    map<string, NodeType*> mTypes;
     set<string> mFunctions;
     /**
      * Pull from delete nodes instead of creating new one
@@ -36,11 +37,10 @@ public:
     /// Node IO
 
     string nodeToString(ZNodeView* node) {
-
-        ZNodeView::Type type = node->getType();
+        NodeType* type = node->getType();
 
         string nodeString;
-        nodeString+="type:" + ZNodeView::getName(type) + "\n";
+        nodeString+="type:" + type->mName + "\n";
         nodeString+="id:" + to_string(node->getIndexTag()) + "\n";
         nodeString+="pos:" + to_string(node->getOffsetX()) + "," +  to_string(node->getOffsetY()) + "\n";
         nodeString+="size:" + to_string(node->getMaxWidth()) + "," +  to_string(node->getMaxHeight()) + "\n";
@@ -102,7 +102,7 @@ public:
         }
 
         // Parse inner group node
-        if (ZNodeView::isGroup(type)) {
+        if (type->mIsGroupNode) {
             nodeString+="group:";
 
             auto groupNodes = node->getGroupNodes();
@@ -119,7 +119,7 @@ public:
             nodeString+="\n";
         }
 
-        if (node->isDynamicSockets(node->getType())) {
+        if (node->getType()->mIsDynamicSocket) {
             nodeString+="incount:";
             nodeString+=to_string(node->getSocketCount().x);
             nodeString+="\n";
@@ -165,7 +165,7 @@ public:
 
             // String to node
             vector<string> attrs = split(snode, '\n');
-            ZNodeView::Type type = ZNodeView::Type::LAST;
+            NodeType* type;
             vec2 pos;
             vec2 size;
             vector<float> inputs;
@@ -263,23 +263,23 @@ public:
             int oindex = 0;
             for (float output : outputs) {
                 int magnitude = 1;
-                if (magnitudesOut.size() > index) {
-                    magnitude = magnitudesOut.at(index);
+                if (magnitudesOut.size() > oindex) {
+                    magnitude = magnitudesOut.at(oindex);
                 }
-                node->setConstantValue(index, output, magnitude);
+
+                cout << to_string(output) << endl;
+                node->setConstantValue(oindex, output, magnitude);
                 oindex++;
             }
 
             nodes.insert(node);
         }
 
-
         for (auto node : nodes) {
             string edges = edgeMap[node->getIndexTag()];
             string groupIds = groupMap[node->getIndexTag()];
 
             if (!groupIds.empty()) {
-
                 vector<string> gids = split(groupIds, ',');
                 for (const string& gid : gids) {
                     auto childNode = nodeMap[stoi(gid)];
@@ -287,10 +287,10 @@ public:
                     childNode->mIsPartOfGroup = true;
                     childNode->mGroupParent = node;
                     node->mGroupNodes.insert(childNode);
-                    if (childNode->getType() == ZNodeView::Type::GROUP_IN) {
+                    if (childNode->getType()->mName == "in") {
                         node->mGroupInput = childNode;
                         node->mGroupInput->setInputProxy(node);
-                    } else if (childNode->getType() == ZNodeView::Type::GROUP_OUT) {
+                    } else if (childNode->getType()->mName == "out") {
                         node->mGroupOutput = childNode;
                     }
                 }
@@ -353,7 +353,7 @@ public:
     /// End Node IO
     /////////////////////
 
-    ZNodeView* newNode(ZNodeView::Type type) {
+    ZNodeView* newNode(NodeType* type) {
         ZNodeView* node = nullptr;
         if (!mDeleteNodes.empty()) {
             while (node == nullptr && !mDeleteNodes.empty()) {
@@ -389,10 +389,10 @@ public:
                     groupNode->mIsPartOfGroup = true;
                     groupNode->setVisibility(false);
 
-                    if (groupNode->getType() == ZNodeView::Type::GROUP_IN) {
+                    if (groupNode->getType()->mName == "in") {
                         dupNode->mGroupInput = groupNode;
                         dupNode->mGroupInput->setInputProxy(dupNode);
-                    } else if (groupNode->getType() == ZNodeView::Type::GROUP_OUT) {
+                    } else if (groupNode->getType()->mName == "out") {
                         dupNode->mGroupOutput = groupNode;
                     }
                 }
@@ -458,7 +458,7 @@ public:
             return;
         }
 
-        node->mType = ZNodeView::Type::SIN;
+//        node->mType = ZNodeView::Type::SIN;
 
         node->setVisibility(false);
         node->setLineWidth(0);
@@ -475,7 +475,6 @@ public:
         node->setProjectID(-1);
         node->setIndexTag(-1);
         node->mEditorInterface = nullptr;
-
         for (auto laplace : node->mHeadlessLaplaceNodes) {
             deleteNode(laplace);
         }
@@ -531,19 +530,20 @@ public:
     }
 
     ZNodeUtil() {
-        for (int i = 0; i != ZNodeView::Type::LAST; i++) {
-            auto type = static_cast<ZNodeView::Type>(i);
-            mTypes.insert({ZNodeView::getName(type), type});
-            mFunctions.insert(ZNodeView::getName(type));
+        vector<NodeType*> types = ZNodeDefStore::get().getNodeTypes();
+        for (NodeType* type : types) {
+            mTypes.insert({type->mName, type});
+            mFunctions.insert(type->mName);
         }
-
-        mTypes.insert({"^", ZNodeView::Type::POW});
+        if (mTypes.count("pow") > 0) {
+            mTypes.insert({"^", mTypes.at("pow")});
+        }
     }
 
     int getNodePriority(ZNodeView* node) {
         set<string> operators = {"+", "-", "*", "/", "^"};
 
-        string name = node->getName(node->getType());
+        string name = node->getType()->mName;
         // Is arithmetic operator
         if (operators.count(name) > 0) {
             return getPriority(name);
@@ -575,7 +575,7 @@ public:
         set<string> operators = {"+", "-", "*", "/", "^"};
 
         // Is arithmetic operator
-        if (operators.count(root->getName(root->getType())) > 0) {
+        if (operators.count(root->getType()->mName) > 0) {
             string first = floatToString(root->getConstantInput(0));
             string second = floatToString(root->getConstantInput(1));
 
@@ -612,7 +612,7 @@ public:
                 expression += ")";
             }
 
-            expression += " " + root->getName(root->getType()) + " ";
+            expression += " " + root->getType()->mName + " ";
 
             if (root->mInputIndices.at(1).size() == 0) {
                 expression += second;
@@ -651,16 +651,15 @@ public:
 
         if (includeRoot) {
             // Node is a constant
-            if (root->getType() == ZNodeView::Type::C) {
-
+            if (root->getType()->mName == "c") {
                 return floatToString(root->getConstantValue(0));
             }
 
-            expression = root->getName(root->getType());
-            vector<ZNodeView::SocketType> inputType = root->getSocketType().at(0);
+            expression = root->getType()->mName;
+            vector<SocketType> inputType = root->getType()->mSocketType.at(0);
 
             // Node is a variable
-            if (root->getSocketCount().x == 0) {
+            if (root->getType()->mSocketCount.x == 0) {
                 return expression;
             }
 
@@ -805,13 +804,13 @@ public:
             string symbol = outQueue.front();
             outQueue.pop();
             if (isNumber(symbol)) {
-                auto* constant = get().newNode(ZNodeView::Type::C);
+                auto* constant = get().newNode(mTypes.at("c"));
                 constant->setConstantValue(0, (float) stod(symbol), 6);
                 evalStack.push(constant);
                 allNodes.push_back(constant);
             } else {
                 if (mTypes.count(symbol) > 0) {
-                    ZNodeView::Type type = mTypes.at(symbol);
+                    NodeType* type = mTypes.at(symbol);
                     auto node = get().newNode(type);
 
                     int inputCount = getVarCount(node);
@@ -878,13 +877,13 @@ public:
 
         int count = 0;
         int constantCount = 0;
-        vector<ZNodeView::SocketType> types = node->getSocketType().at(0);
-        for (ZNodeView::SocketType type : types) {
-            if (type == ZNodeView::SocketType::VAR) {
+        vector<SocketType> types = node->getType()->mSocketType.at(0);
+        for (SocketType type : types) {
+            if (type == SocketType::VAR) {
                 count++;
             }
 
-            if (type == ZNodeView::SocketType::CON) {
+            if (type == SocketType::CON) {
                 constantCount++;
             }
         }

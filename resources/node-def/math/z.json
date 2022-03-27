@@ -1,0 +1,23 @@
+{
+  "name" : "z",
+  "socketType" : {
+    "input" : [],
+    "output" : ["VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [],
+  "defaultMagnitude" : [7],
+  "socketNames" : [],
+  "enumNames" : [],
+  "nodeSize" : [80, 70],
+  "chartBounds" : [-5,5,-5,5],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : false,
+  "buttonNames" : [],
+  "colorDark" : [0.848084, 0.215260, 0.077509, 1.000000],
+  "colorLight" : [0.848084, 0.215260, 0.077509, 1.000000],
+  "adaptiveResolution" : true,
+  "chartType" : "LINE_1D_2X",
+  "showInDrawer" : true
+}

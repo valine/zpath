@@ -1,0 +1,23 @@
+{
+  "name" : "sigmoid",
+  "socketType" : {
+    "input" : ["VAR"],
+    "output" : ["VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [0.0, 1.0, 1.0],
+  "defaultMagnitude" : [7],
+  "socketNames" : [""],
+  "enumNames" : [],
+  "nodeSize" : [80, 70],
+  "chartBounds" : [-5,5,-5,5],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : false,
+  "buttonNames" : [],
+  "colorDark" : [0.023195, 0.223442, 0.538225, 1.000000],
+  "colorLight" : [0.023195, 0.223442, 0.538225, 1.000000],
+  "adaptiveResolution" : true,
+  "chartType" : "LINE_1D_2X",
+  "showInDrawer" : true
+}

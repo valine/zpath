@@ -1,0 +1,23 @@
+{
+  "name" : "*",
+  "socketType" : {
+    "input" : ["CON", "CON"],
+    "output" : ["VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [0.0, 0.0],
+  "defaultMagnitude" : [7],
+  "socketNames" : ["", ""],
+  "enumNames" : [],
+  "nodeSize" : [80, 70],
+  "chartBounds" : [-5,5,-5,5],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : false,
+  "buttonNames" : [],
+  "colorDark" : [0.15, 0.155, 0.17, 1.0],
+  "colorLight" : [1.0, 1.0, 1.0, 1.0],
+  "adaptiveResolution" : true,
+  "chartType" : "LINE_1D_2X",
+  "showInDrawer" : true
+}

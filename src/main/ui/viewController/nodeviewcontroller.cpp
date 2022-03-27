@@ -8,6 +8,7 @@
 #include <ui/zradiobutton.h>
 #include <utils/zshadowrenderer.h>
 #include "zpath/nodeviewcontroller.h"
+#include "ui/zmathnodeeditor.h"
 
 /**
  * Called after views are initialized
@@ -24,7 +25,7 @@ void NodeViewController::onCreate() {
         // Do stuff here
     });
 
-    auto* nodeView = new ZNodeEditor(fillParent, fillParent, this);
+    auto* nodeView = new ZMathNodeEditor(fillParent, fillParent, this);
 
 //    ZDropDown* dropDown = new ZDropDown(100,500, {"hello1", "hello2", "hello3", "hello4", "hello5"}, this);
 //    dropDown->setOffset(500, 0);

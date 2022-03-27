@@ -35,59 +35,16 @@ using namespace std;
 #include "ztextfield.h"
 #include "utils/zutil.h"
 #include "zdropdown.h"
+#include "ui/nodetype.h"
+#include "ui/charttype.h"
+#include "ui/sockettype.h"
+
+class FuncIn;
 
 class ZNodeView : public ZView {
 public:
 
-    enum Type {
-        SIN,
-        COS,
-        TAN,
-        EXP,
-        SQRT,
-        POW,
-        ABS,
-        GAUSSIAN,
-        MORLET,
-        ADD,
-        SUBTRACT,
-        MULTIPLY,
-        DIVIDE,
-        POLY,
-        C, // Constant value
-        CI, // Constant value imaginary
-        X,
-        Y,
-        Z, // Complex variable
-        T, // Time
-        MIN,
-        MAX,
-        FILE,
-        FFT,
-        IFFT,
-        HARTLEY,
-        LAPLACE,
-        LAPLACE_S, // symbolic laplace
-        FIRST_DIFF,
-        DOT,
-        CROSS,
-        CHART_2D,
-        COMBINE,
-        SPLIT,
-        HEAT_MAP,
-        NEURAL_CORE,
-        SIGMOID,
-        TANH,
-        COMMENT,
-        GROUP,
-        NEURAL_GROUP,
-        GROUP_IN,
-        GROUP_OUT,
-        LAST // Fake enum to allow easy iteration
-    };
-
-    ZNodeView(ZNodeView::Type type);
-
+    ZNodeView(NodeType* type);
     ZNodeView(float maxWidth, float maxHeight, ZView *parent);
 
     void setShowMagPickerListener(
@@ -95,98 +52,6 @@ public:
                           bool isInput, float initialValue, string name)> onValueSelect);
 
     void setInvalidateListener(function<void(ZNodeView *node)> listener);
-
-    enum SocketType {
-        NONE,
-        CON,
-        VAR,
-        VAR_Z,
-        ENUM,
-        NN,
-        SYMBOLIC,
-        GROUP_SOCKET,
-        TEXT
-
-    };
-
-    enum ChartResMode {
-        ADAPTIVE,
-        STATIC
-    };
-
-    enum ChartType {
-        LINE_1D,
-        LINE_1D_2X,
-        LINE_2D,
-        IMAGE,
-        TEXT_FIELD
-    };
-
-    //////////////////////////////////////////////////
-    ///// Start node definitions /////////////////////
-    //////////////////////////////////////////////////
-
-    vector<vector<SocketType>> NONE_TYPE = {vector<SocketType>(MAX_INPUT_COUNT, NONE),
-            vector<SocketType>(MAX_INPUT_COUNT, NONE)};
-    vector<vector<SocketType>> mSocketType = NONE_TYPE;
-
-    vector<SocketType> mGroupInSockets = vector<SocketType>(MAX_INPUT_COUNT, CON);
-    vector<SocketType> mGroupOutSockets = vector<SocketType>(MAX_OUTPUT_COUNT, VAR);
-
-    vector<vector<SocketType>> getSocketType() {
-        mGroupInSockets.at(0) = VAR;
-
-        if (mSocketType.at(0).at(0) == NONE) {
-            switch (mType) {
-                case POLY: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-                case SIN:
-                case COS: return {{VAR, CON, CON}, {VAR, CON, CON}};
-                case TAN:
-                case ABS:
-                case EXP:
-                case SIGMOID:
-                case TANH:
-                case SQRT: return {{VAR}, {VAR, CON, CON}};
-                case POW: return {{VAR, VAR}, {VAR, CON, CON}};
-                case GAUSSIAN: return {{VAR, CON, CON}, {VAR, CON, CON}};
-                case MORLET: return {{VAR, CON, CON, CON, CON}, {VAR, CON, CON}};
-                case ADD:
-                case SUBTRACT:
-                case MULTIPLY:
-                case DIVIDE: return {{CON, CON}, {VAR, CON, CON}};
-                case C:
-                case CI: return {{}, {CON}};
-                case X:
-                case Y: return {{}, {VAR, CON, CON}};
-                case Z: return {{}, {VAR, CON, CON}};
-                case T: return {{CON, CON}, {VAR}};
-                case FILE: return {{}, {VAR, CON, CON}};
-                case IFFT: return {{VAR, VAR, CON, CON}, {VAR, VAR, CON, CON}};
-                case FFT: return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-                case HARTLEY: return {{VAR, VAR, CON, CON}, {VAR, CON, CON}};
-                case LAPLACE: return {{VAR, VAR_Z, CON, CON, CON, CON}, {VAR, CON, CON}};
-                case FIRST_DIFF: return {{VAR, VAR}, {VAR, CON, CON}};
-                case DOT: return {{CON, CON}, {VAR, CON, CON}};
-                case CROSS: return {{VAR, VAR, VAR, VAR}, {VAR, VAR, CON, CON}};
-                case CHART_2D: return {{VAR, VAR, CON}, {VAR, VAR, CON, CON}};
-                case HEAT_MAP: return {{VAR, CON, CON}, {VAR, CON, CON}};
-                case LAPLACE_S: return {{VAR, VAR_Z, CON, CON}, {VAR, CON, CON}};
-                case COMBINE: return {{VAR, VAR}, {VAR}};
-                case SPLIT: return {{VAR}, {VAR, VAR}};
-                case NEURAL_CORE: return {{VAR, VAR, CON, CON, CON, ENUM, ENUM}, {VAR, CON, CON}};
-                case GROUP:
-                case NEURAL_GROUP:
-                    return {mGroupInSockets, mGroupOutSockets};
-                case GROUP_IN: return {{},{mGroupInSockets}};
-                case GROUP_OUT: return {{mGroupOutSockets}, {}};
-                case MIN:
-                case MAX: return {{VAR, VAR}, {VAR, CON, CON}};
-                case COMMENT: return {{}, {}};
-                case LAST: return {{NONE}, {NONE}};
-            }
-        }
-        return mSocketType;
-    }
 
     ivec2 mSocketCount = ivec2(0);
 
@@ -199,395 +64,14 @@ public:
     ivec2 getSocketCount() {
 
         if (mSocketCount == ivec2(0)) {
-            mSocketCount = ivec2(getSocketType().at(0).size(),
-                                 getSocketType().at(1).size());
+            mSocketCount = ivec2(mType->mSocketCount.x,
+                                 mType->mSocketCount.y);
 
-            if (isDynamicSockets(mType)) {
+            if (mType->mIsDynamicSocket) {
                 mSocketCount = glm::min(mSocketCount, ivec2(1));
             }
         }
         return mSocketCount;
-    }
-
-    static bool isDynamicSockets(Type type) {
-        switch (type) {
-            case GROUP_IN:
-            case GROUP_OUT:
-            case GROUP:
-            case NEURAL_GROUP:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    static bool isGroup(Type type) {
-        switch(type) {
-            case GROUP:
-            case NEURAL_GROUP:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    constexpr static float const isVar = 0.0;
-    static vector<float> getDefaultInput(Type type) {
-        switch (type) {
-            case POLY:
-                return {0.0, 0.0, 0.0, 0.0};
-            case ADD:
-            case SUBTRACT:
-                return {0.0, 0.0};
-            case MULTIPLY:
-            case DIVIDE:
-                return {1.0, 1.0};
-            case SIN:
-            case COS:
-                return {0.0, 1.0, 1.0};
-            case GAUSSIAN:
-                // X, width, height
-                return {0.0, 1.0, 1.0};
-            case MORLET:
-                return {0.0, 1.0, 1.0, 0.0, 1.0};
-            case IFFT:
-                return {0.0, 0.0, 1.0, 1.0};
-            case FFT:
-            case HARTLEY:
-                return {0.0, 0.0, 0.0, 1.0};
-            case LAPLACE:
-                return {0.0, 0.0, 0.0, 1.0, -1.0, 1.0};
-            case CHART_2D:
-                return {0.0, 0.0, 100};
-            case DOT:
-                return {1.0, 1.0};
-            case HEAT_MAP:
-                return {0.0, -1.0, 1.0};
-            case LAPLACE_S:
-                return {0.0, 0.0, -1.0, 1.0};
-            case NEURAL_CORE:
-                return {0.0, 0.0, 0.05, -5, -1, 0, 0};
-            case GROUP:
-            case NEURAL_GROUP:
-                return {0.0};
-            default:
-                return vector<float>(MAX_INPUT_COUNT, 0.0);
-        }
-    }
-
-    static vector<int> getDefaultMagnitude(Type type) {
-        switch (type) {
-            case SIN:
-            case COS:
-                return {7};
-            case NEURAL_CORE:
-                return {0, 0, 5, 6, 6, 1, 0, 0};
-            default:
-                return {6};
-        }
-    }
-
-    vector<string> getSocketNames() {
-        switch (mType) {
-            case T:
-                return {"Speed", ""};
-            case POLY:
-                return {"X", "A", "BX", "CX^2", "DX^3"};
-            case ADD:
-            case SUBTRACT:
-            case MULTIPLY:
-            case DIVIDE:
-                return {"", ""};
-            case SIN:
-            case COS:
-                return {"X", "Frequency", "Height"};
-            case GAUSSIAN:
-                return {"X", "Width", "Height"};
-            case MORLET:
-                return {"X", "Width", "Height", "Offset", "Frequency"};
-            case IFFT:
-                return {"X", "A", "Window Start", "Window Size"};
-            case HARTLEY:
-            case FFT:
-                return {"X", "A", "Window Start", "Window Size"};
-            case LAPLACE:
-                return {"X", "A", "Window Start", "Window Size", "Z Min", "Z Max"};
-            case CHART_2D:
-                return {"X", "A", "Resolution"};
-            case HEAT_MAP:
-                return {"X", "Z Min", "Z Max"};
-            case LAPLACE_S:
-                return {"X", "Z", "Z Min", "Z Max"};
-            case NEURAL_CORE:
-                return {"Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"};
-            case MIN:
-            case MAX:
-                return {"A", "B"};
-            default:
-                return {" ", " ", " ", " ", " ", " "};
-        }
-    }
-
-    vector<string> getEnumNames(int socketIndex) {
-        switch (mType) {
-            case NEURAL_CORE: {
-                switch (socketIndex) {
-                    case 5:
-                        return {"RMSProp", "Adagrad", "Momentum", "Grad Decent",};
-                    case 6:
-                        return {"TANH", "SIGMOID", "RELU"};
-                    default:
-                        return vector<string>(1, " ");
-                }
-
-            }
-            default:
-                return vector<string>(1, " ");
-        }
-
-    }
-
-    static string getName(Type type) {
-        switch (type) {
-            case POLY:
-                return "polynomial";
-            case SIN:
-                return "sin";
-            case COS:
-                return "cos";
-            case TAN:
-                return "tan";
-            case ABS:
-                return "abs";
-            case EXP:
-                return "exp";
-            case SQRT:
-                return "sqrt";
-            case POW:
-                return "^";
-            case GAUSSIAN:
-                return "gaussian";
-            case MORLET:
-                return "wavelet";
-            case ADD:
-                return "+";
-            case SUBTRACT:
-                return "-";
-            case MULTIPLY:
-                return "*";
-            case DIVIDE:
-                return "/";
-            case C:
-                return "c";
-            case CI:
-                return "ci";
-            case X:
-                return "x";
-            case Y:
-                return "y";
-            case Z:
-                return "z";
-            case T:
-                return "t";
-            case FILE:
-                return "file";
-            case IFFT:
-                return "ifft";
-            case FFT:
-                return "fft";
-            case HARTLEY:
-                return "hartley";
-            case LAPLACE:
-                return "ztransform";
-            case LAPLACE_S:
-                return "laplace";
-            case FIRST_DIFF:
-                return "diff";
-            case DOT:
-                return "dot";
-            case CROSS:
-                return "cross";
-            case CHART_2D:
-                return "chart2d";
-            case HEAT_MAP:
-                return "heat";
-            case COMBINE:
-                return "combine";
-            case SPLIT:
-                return "split";
-            case NEURAL_CORE:
-                return "neural";
-            case SIGMOID:
-                return "sigmoid";
-            case TANH:
-                return "tanh";
-            case GROUP:
-                return "group";
-            case NEURAL_GROUP:
-                return "n-group";
-            case MIN:
-                return "min";
-            case MAX:
-                return "max";
-            case GROUP_IN:
-                return "in";
-            case GROUP_OUT:
-                return "out";
-            case COMMENT:
-                return "comment";
-            case LAST:
-                return "none";
-        }
-    }
-
-    static vec2 getNodeSize(Type type) {
-        switch (type) {
-            case C:
-            case CI:
-                return vec2(80, 20);
-            case CHART_2D:
-            case HEAT_MAP:
-            case FFT:
-            case HARTLEY:
-            case IFFT:
-            case FILE:
-                return vec2(200, 200);
-            case LAPLACE:
-            case LAPLACE_S:
-                return vec2(400, 400);
-            case NEURAL_CORE:
-                return vec2(300, 100);
-            case GROUP_IN:
-            case GROUP_OUT:
-                return vec2(120, 70);
-            default:
-                return vec2(80, 70);
-        }
-    }
-
-    static vec4 getChartBounds(Type type) {
-        switch (type) {
-            case FFT:
-            case IFFT:
-            case HARTLEY:
-                return vec4(0,10,-5,5);
-            case FILE:
-                return vec4(0,10,0,10);
-            default:
-                return (vec4(-5,5,-5,5));
-        }
-    }
-
-    static bool isOutputLabelVisible(Type type) {
-        switch (type) {
-            case C:
-            case CI:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    static bool isDropDownVisible(Type type) {
-        switch (type) {
-            case FILE:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    vector<string> getButtonNames() {
-        switch (mType) {
-            case NEURAL_CORE:
-                return {"Train", "Reset", "To String"};
-            case GROUP_IN:
-                return {"+", "-"};
-            case GROUP_OUT:
-                return {"+", "-"};
-            case T:
-                return {"Pause"};
-            default:
-                return {};
-        }
-    }
-
-    function<void(ZView *sender)> getButtonCallback(int index) {
-        switch (mType) {
-            case NEURAL_CORE: {
-                switch (index) {
-                    case 0: {
-                        return [this](ZView* sender) {
-                            // Train the network
-                            trainNN(sender);
-                        };
-                    }
-                    case 1: {
-                        return [this](ZView *sender) {
-                            mMlModel->resetNetwork();
-                        };
-                    }
-                    case 2: {
-                        return [this](ZView *sender) {
-                            cout<< mMlModel->toFunctionString() << endl;
-                        };
-                    }
-                    default:
-                        return nullptr;
-
-                }
-
-            }
-            case GROUP_IN: {
-                switch (index) {
-                    // Increment
-                    case 0: {
-                        return [this](ZView *sender) {
-                            ivec2 count = mSocketCount + ivec2(0,1);
-                            setSocketCount(count);
-                        };
-                    }
-                    // Decrement
-                    case 1: {
-                        return [this](ZView *sender) {
-                            ivec2 count = mSocketCount - ivec2(0,1);
-                            setSocketCount(count);
-                        };
-                    }
-                    default:
-                        return nullptr;
-
-                }
-            }
-            case GROUP_OUT: {
-                switch (index) {
-                    // Increment
-                    case 0: {
-                        return [this](ZView *sender) {
-                            ivec2 count = mSocketCount + ivec2(1,0);
-                            setSocketCount(count);
-                        };
-                    }
-                    // Decrement
-                    case 1: {
-                        return [this](ZView *sender) {
-                            ivec2 count = mSocketCount - ivec2(1,0);
-                            setSocketCount(count);
-                        };
-                    }
-                    default:
-                        return nullptr;
-
-                }
-            }
-            case T: {
-                return [this](ZView *sender) {
-
-                };
-            }
-            default:
-                return nullptr;
-        }
     }
 
     static ZColor getSocketColor(SocketType type) {
@@ -622,77 +106,7 @@ public:
         }
     }
 
-    static ZColor getNodeColor(Type type) {
-        switch (type) {
-            case C:
-            case CI:
-                return getSocketColor(CON);
-            case X:
-            case Y:
-                return getSocketColor(VAR);
-            case Z:
-                return getSocketColor(VAR_Z);
-            case NEURAL_CORE:
-            case NEURAL_GROUP:
-            case TANH:
-            case SIGMOID:
-                return getSocketColor(NN);
-            case LAPLACE_S:
-                return getSocketColor(SYMBOLIC);
-            case GROUP:
-            case GROUP_IN:
-            case GROUP_OUT:
-                return getSocketColor(GROUP_SOCKET);
-            case COMMENT:
-                return getSocketColor(TEXT);
-            default:
-                return ZColor(vec4(1), vec4(vec3(0.15, 0.155, 0.17), 1.0));
-        }
-    }
-
-    static ChartResMode getChartResolutionMode(Type type) {
-        switch (type) {
-            default:
-                return ADAPTIVE;
-            case IFFT:
-                return ADAPTIVE;
-            case CHART_2D:
-            case FFT:
-            case HARTLEY:
-                return STATIC;
-        }
-    }
-
-    static ChartType getChartType(Type type) {
-        switch (type) {
-            default:
-                return LINE_1D_2X;
-            case HARTLEY:
-            case FFT:
-            case IFFT:
-                return LINE_1D_2X;
-            case CHART_2D:
-                return LINE_2D;
-            case LAPLACE:
-            case LAPLACE_S:
-            case HEAT_MAP:
-                return IMAGE;
-            case COMMENT:
-                return TEXT_FIELD;
-        }
-    }
-
-    static bool showInDrawer(Type type) {
-        switch (type) {
-            case GROUP_IN:
-            case GROUP_OUT:
-                return false;
-            default:
-                return true;
-        }
-    }
-
-    vector<vector<float>> compute(vector<vector<float>> x, ZNodeView::Type type,
+    vector<vector<float>> compute(vector<vector<float>> x, NodeType* type,
                                   vector<vector<float>> rootInput);
 
     ///////////////////////////////////////////
@@ -784,9 +198,9 @@ public:
 
             }
             mMlModel->computeAsync(job, [this](vector<vector<float>> outputs) {
-                mMlCache.clear();
+                mCache.clear();
                 for (vector<float> output : outputs) {
-                    mMlCache.emplace_back(output.at(0), output.at(0));
+                    mCache.emplace_back(output.at(0), output.at(0));
                 }
 
                 invalidateNodeRecursive();
@@ -965,17 +379,17 @@ public:
                     var).at(singleInput.second);
         }
 
-        if (inputSocket.empty() && !getSocketType().empty()) {
-            if (getSocketType().at(0).at(socketIndex) == VAR) {
+        if (inputSocket.empty() && !mType->mSocketType.empty()) {
+            if (mType->mSocketType.at(0).at(socketIndex) == VAR) {
                 summedInputs = x;
-            } else if (getSocketType().at(0).at(socketIndex) == CON) {
+            } else if (mType->mSocketType.at(0).at(socketIndex) == CON) {
                 // By default constants have no imaginary component
                 if (var == REAL) {
                     summedInputs = mConstantValueInput.at(socketIndex);
                 } else {
                     summedInputs = 0.0;
                 }
-            } else if (getSocketType().at(0).at(socketIndex) == ENUM) {
+            } else if (mType->mSocketType.at(0).at(socketIndex) == ENUM) {
                 summedInputs = mConstantMagnitudeInput.at(socketIndex);
             }
         }
@@ -987,9 +401,9 @@ public:
 
     vector<vector<float>> evaluate(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
 
-    void setType(Type type);
+    void setType(NodeType* type);
 
-    Type getType() {
+    NodeType* getType() {
         return mType;
     }
 
@@ -1051,10 +465,6 @@ public:
         mEditorInterface = std::move(interface);
     }
 
-    void setEditorDeletionInterface(std::function<void(ZNodeView*, int)> interface) {
-        mEditorDeleteInterface = std::move(interface);
-    }
-
     function<void(ZNodeView*, int)> getEditorDeletionInterface() {
         return mEditorDeleteInterface;
     }
@@ -1066,14 +476,6 @@ public:
     void setIsDeleted(bool isDeleted) {
         mIsDeleted = isDeleted;
         mReadyForRecycle = false;
-    }
-
-    void readyForRecycle(bool ready) {
-        mReadyForRecycle = ready;
-    }
-
-    bool isReadyForRecycle() {
-        return mReadyForRecycle;
     }
 
     bool isDeleted() {
@@ -1147,15 +549,26 @@ public:
     ZNodeView* mInputProxy = nullptr;
     ZNodeView* mGroupParent = nullptr;
     set<ZNodeView*> mGroupNodes;
-
     vector<ZButton*> mButtons;
     ZNodeView* mGroupOutput = nullptr;
-    Type mType = ADD;
+    NodeType* mType = nullptr;
+
 /**
  * The view interface is used to allow the node to
  * add other views to the parent editor.
  */
 function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
+    vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
+
+    void initializeGroup();
+
+    vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
+
+    ZLineChart *mChart = nullptr;
+    ZDropDown* mDropDown = nullptr;
+
+    vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x, vector<vector<float>> rootInput);
+
 private:
     bool mInvalid = true;
     bool mRecursiveInvalidate = false;
@@ -1167,9 +580,6 @@ private:
 
     vector<ZLabel *> mSocketInLabels;
     vector<ZLabel *> mSockOutLabels;
-
-
-    ZDropDown* mDropDown = nullptr;
 
     ZLabel *mOutputLabel = nullptr;
     ZTextField *mNameLabel = nullptr;
@@ -1188,12 +598,9 @@ private:
     /**
      * Number of line segments on the chart
      */
-    // Todo: remove  these
-    ZLineChart *mChart = nullptr;
     vector<vector<float>> mPointCache;
     vector<float> mPointCache1D;
 
-    vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
     vector<float> mConstantValueInput = vector<float>(MAX_INPUT_COUNT, 0.0);
 
     // Center magnitude is at index 6
@@ -1210,8 +617,8 @@ private:
 
     function<void(ZNodeView *node)> mInvalidateListener = nullptr;
 
+    vector<complex<float>> mCache = vector<complex<float>>();
     vector<complex<float>> mFftCache;
-    vector<complex<float>> mMlCache;
     vector<vector<float>> mLaplaceCache;
 
     int mProjectID = -1;
@@ -1242,15 +649,9 @@ private:
 
     void draw();
 
-    vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x, vector<vector<float>> rootInput);
-
     void onCreate();
 
-    void refreshView(Type &type);
-
-    void initializeGroup();
-
-    vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
+    void refreshView(NodeType* type);
 
     void onSizeChange() override;
 };

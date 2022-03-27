@@ -1,11 +1,8 @@
-#include <utility>
-
-#include <utility>
 
 //
 // Created by lukas on 10/4/20.
 //
-
+#include <utility>
 #include <ui/zlabel.h>
 #include <ui/zbutton.h>
 #include <ui/zcheckbox.h>
@@ -15,9 +12,10 @@
 #include <iomanip>
 #include <mutex>
 #include "utils/znodeutil.h"
-#include "utils/dataimportutil.h"
+#include "utils/datastore.h"
 
-ZNodeView::ZNodeView(ZNodeView::Type type) : ZView(10, 10){
+ZNodeView::ZNodeView(NodeType* type) : ZView(10, 10){
+    mType = type;
     init();
     setType(type);
 }
@@ -25,7 +23,6 @@ ZNodeView::ZNodeView(ZNodeView::Type type) : ZView(10, 10){
 
 ZNodeView::ZNodeView(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
     init();
-
 }
 
 void ZNodeView::onCreate() {
@@ -70,7 +67,7 @@ void ZNodeView::init() {
     float margin = 10;
 
     // Add input sockets
-    auto socketType = getSocketType();
+    auto socketType = mType->mSocketType;
 
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         auto* socket = new ZView(SOCKET_WIDTH, SOCKET_HEIGHT, this);
@@ -96,14 +93,14 @@ void ZNodeView::init() {
     mChart->setChartListener([this](vector<int> x, int lineIndex){
         // Can safely ignore line index for now
 
-        if (getChartType(getType()) == LINE_1D || getChartType(getType()) == LINE_1D_2X) {
+        if (mType->mChartType == LINE_1D || mType->mChartType == LINE_1D_2X) {
             if (mPointCache.empty()) {
                 return vector<float>(1, 0);
             } else if (x.empty() || mPointCache.size() - 1 < x.at(0) || mPointCache.at(x.at(0)).empty()) {
                 return vector<float>(1, 0);
             }
             return vector<float>(1, mPointCache.at(x.at(0)).at(lineIndex));
-        } else if (getChartType(getType()) == LINE_2D) {
+        } else if (mType->mChartType == LINE_2D) {
             if (mPointCache.empty() || mPointCache.size() <= x.at(0)) {
                 return vector<float>(2, 0);
             }
@@ -112,7 +109,7 @@ void ZNodeView::init() {
             point.push_back(mPointCache.at(x.at(0)).at(1));
 
             return point;
-        } else if (getChartType(getType()) == IMAGE) {
+        } else if (mType->mChartType == IMAGE) {
             return mPointCache1D;
         }
     });
@@ -202,13 +199,13 @@ void ZNodeView::updateChart() {
     if (mInvalid) {
         clearInvalidateNode();
         mFftCache.clear();
-        if (getChartType(getType()) == LINE_1D) {
+        if (mType->mChartType == LINE_1D) {
             updateChart1D();
-        } else if (getChartType(getType()) == LINE_2D) {
+        } else if (mType->mChartType == LINE_2D) {
             updateChart2D();
-        } else if (getChartType(getType()) == LINE_1D_2X) {
+        } else if (mType->mChartType == LINE_1D_2X) {
             updateChart1D2X();
-        } else if (getChartType(getType()) == IMAGE) {
+        } else if (mType->mChartType == IMAGE) {
             mLaplaceCache.clear();
 
             for (ZNodeView* node : mHeadlessLaplaceNodes) {
@@ -369,31 +366,29 @@ void ZNodeView::updateChart1D2X() {
     mPointCache = points;
 }
 
-void ZNodeView::setType(ZNodeView::Type type) {
-    mSocketType = NONE_TYPE;
-    mSocketCount = ivec2(0);
+void ZNodeView::setType(NodeType* type) {
     mType = type;
+    mSocketCount = ivec2(0);
 
-    setMaxWidth(getNodeSize(mType).x);
-    setMaxHeight(getNodeSize(mType).y);
+    setMaxWidth(type->mNodeSize.x);
+    setMaxHeight(type->mNodeSize.y);
     initializeEdges();
 
-    mOutputLabel->setVisibility(isOutputLabelVisible(mType));
+    mOutputLabel->setVisibility(type->mIsOutputLabelVisible);
 
-    setBackgroundColor(getNodeColor(mType));
+    setBackgroundColor(type->mColor);
 
-    if (isOutputLabelVisible(mType)) {
+    if (type->mIsOutputLabelVisible) {
         setOutputLabel(mConstantValueOutput.at(0));
-        //    mOutputLabel->setBackgroundColor(getNodeColor(mType));
     }
 
     int i = 0;
-    for (float cValue : getDefaultInput(mType)) {
+    for (float cValue : type->mDefaultInput) {
         mConstantValueInput.at(i) = cValue;
         i++;
     }
 
-    vector<int> magnitude = getDefaultMagnitude(type);
+    vector<int> magnitude = type->mDefaultMagnitude;
     int magIndex = 0;
     for (int & k : mConstantMagnitudeInput) {
         if (magnitude.size() == 1) {
@@ -415,8 +410,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
     int margin = 2;
     int firstLineWidth = (int) mNameLabel->getTextWidth();
     int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
-    for (const string& buttonName : getButtonNames()) {
-
+    for (const string& buttonName : type->mButtonNames) {
         ZButton* button;
         if (mButtons.size() <= buttonIndex) {
             button = new ZButton(buttonName, this);
@@ -425,7 +419,10 @@ void ZNodeView::setType(ZNodeView::Type type) {
         } else {
             button = mButtons.at(buttonIndex);
         }
-        button->setOnClick(getButtonCallback(buttonIndex));
+
+        button->setOnClick([this, type, buttonIndex](ZView* sender){
+            type->getButtonCallback(buttonIndex)(this);
+        });
         button->setMaxWidth(button->getLabel()->getTextWidth() / mDP + 18);
         button->setMaxHeight(18);
         button->setYOffset(2);
@@ -442,7 +439,7 @@ void ZNodeView::setType(ZNodeView::Type type) {
         buttonIndex++;
     }
 
-    if (isDropDownVisible(type)) {
+    if (type->mIsDropDownVisible) {
         if (mDropDown == nullptr) {
             mDropDown = new ZDropDown(220, 18, {" "}, this);
             mDropDown->setTitle("Choose file...");
@@ -469,18 +466,18 @@ void ZNodeView::setType(ZNodeView::Type type) {
     refreshView(type);
     mNameLabel->setTextColor(getBackgroundColor().getTextColor());
     mOutputLabel->setTextColor(getBackgroundColor().getTextColor());
-    if (getChartType(mType) == LINE_1D_2X) {
+    if (type->mChartType == LINE_1D_2X) {
         mChart->setLineCount(2);
     }
 
-    mChart->setDefaultMat(getChartBounds(mType));
+    mChart->setDefaultMat(type->mChartBounds);
     mChart->resetZoom();
 }
 
-void ZNodeView::refreshView(ZNodeView::Type &type) {
+void ZNodeView::refreshView(NodeType* type) {
     ivec2 socketCount = getSocketCount();
 
-    auto socketType = getSocketType();
+    auto socketType = type->mSocketType;
     for (int i = 0; i < MAX_INPUT_COUNT; i++) {
         if (i >= socketCount.x) {
             mSocketsIn.at(i)->setVisibility(false);
@@ -539,12 +536,8 @@ void ZNodeView::refreshView(ZNodeView::Type &type) {
     int socketOffset = std::max(inSocketOffset, outSocketOffset);
     setMaxHeight(std::max(socketOffset + SOCKET_HEIGHT + CHART_TOP_MARGIN, (int) getMaxHeight()));
 
-    ChartType chartType = getChartType(type);
-    if (getChartType(type) == LINE_2D) {
-        mChart->setInputType(getChartType(getType()));
-    } else {
-        mChart->setInputType(getChartType(getType()));
-    }
+    ChartType chartType = type->mChartType;
+    mChart->setInputType(chartType);
 
     if (chartType == TEXT_FIELD) {
         mChart->setVisibility(false);
@@ -556,7 +549,7 @@ void ZNodeView::refreshView(ZNodeView::Type &type) {
         mNameLabel->setFocusMode(ZTextField::FocusMode::doubleClick);
         mNameLabel->setTextMode(ZTextField::TextMode::field);
         mNameLabel->setMaxHeight(mNameLabel->getLineHeight());
-        mNameLabel->setTitleText(getName(mType));
+        mNameLabel->setTitleText(type->mName);
     }
 
     mNameLabel->setXOffset(22);
@@ -580,7 +573,7 @@ void ZNodeView::refreshView(ZNodeView::Type &type) {
     int margin = 2;
     int firstLineWidth = (int) mNameLabel->getTextWidth();
     int buttonOffset = firstLineWidth + margin + mNameLabel->getOffsetX();
-    for (const string& buttonName : getButtonNames()) {
+    for (const string& buttonName : type->mButtonNames) {
 
         ZButton* button;
         if (mButtons.size() > buttonIndex) {
@@ -618,14 +611,14 @@ void ZNodeView::onMouseEvent(int button, int action, int mods, int sx, int sy) {
             int socketIndex = 0;
             for (ZView* inputSocket : mSocketsIn) {
                 if (isMouseInBounds(inputSocket) && mInputIndices.at(socketIndex).empty() &&
-                        inputSocket->getVisibility() && getSocketType().at(0).at(socketIndex) == CON) {
+                        inputSocket->getVisibility() && mType->mSocketType.at(0).at(socketIndex) == CON) {
                     mShowMagnitudeView(mOutputLabel, this, socketIndex, true,
-                            mConstantValueInput.at(socketIndex), getSocketNames().at(socketIndex));
+                            mConstantValueInput.at(socketIndex), mType->mSocketNames.at(socketIndex));
                 } else if (isMouseInBounds(inputSocket) && mInputIndices.at(socketIndex).empty() &&
-                       inputSocket->getVisibility() && getSocketType().at(0).at(socketIndex) == ENUM) {
+                       inputSocket->getVisibility() && mType->mSocketType.at(0).at(socketIndex) == ENUM) {
                     mShowEnumView(mOutputLabel, this, socketIndex, true,
                                        mConstantValueInput.at(socketIndex),
-                                       getSocketNames().at(socketIndex), getEnumNames(socketIndex));
+                                  mType->mSocketNames.at(socketIndex), mType->mEnumNames.at(socketIndex));
                 }
                 socketIndex++;
             }
@@ -738,7 +731,7 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
                 mOutputLabel->setTextColor(getBackgroundColor().getTextColor());
                 return vector<vector<float>>();
             } else {
-                auto socketType = getSocketType();
+                auto socketType = mType->mSocketType;
                 auto sinput = socketType.at(0);
                 if (!sinput.empty() && sinput.size() > i) {
                     for (int d = 0; d < summedInputs.size(); d++) {
@@ -790,7 +783,7 @@ void ZNodeView::onWindowChange(int windowWidth, int windowHeight) {
 
     int newRes = (int) (getWidth() / 1.0);
     if (abs(newRes - mChart->getResolution()) > CHART_RES_THRESHOLD) {
-        if (getChartResolutionMode(getType()) == ADAPTIVE) {
+        if (getType()->mAdaptiveRes) {
             mChart->setResolution(newRes);
         }
         invalidateSingleNode();
@@ -807,7 +800,7 @@ void ZNodeView::draw() {
         mChart->setGpuMode(false);
     }
 
-    if (getType() == ZNodeView::Type::T) {
+    if (getType()->mName == "t") {
         invalidateNodeRecursive();
     }
 }
@@ -925,8 +918,7 @@ void ZNodeView::onCursorPosChange(double x, double y) {
     if (mouse.x < size && mouse.x > -size && mouse.y > 0 && mouse.y < getMaxHeight()) {
         int index = 0;
         if (getSocketCount().x > 0) {
-            for (const string &name : getSocketNames()) {
-
+            for (const string &name : mType->mSocketNames) {
                 mSocketInLabels.at(index)->setText(name);
                 mSocketInLabels.at(index)->setXOffset((int) -mSocketInLabels.at(index)->getTextWidth());
                 mSocketInLabels.at(index)->setYOffset((int) mSocketsIn.at(index)->getOffsetY());
@@ -975,324 +967,26 @@ vector<vector<float>> ZNodeView::computeLaplaceHeadless(vector<vector<float>> x,
 }
 
 vector<vector<float>>
-ZNodeView::compute(vector<vector<float>> x, ZNodeView::Type type, vector<vector<float>> rootInput) {
+ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>> rootInput) {
     vec2 chartBound = mChart->getXBounds();
-    float chartWidth = chartBound.y - chartBound.x;
+    float width = chartBound.y - chartBound.x;
     vector<vector<float>> output;
     for (uint d = 0; d < x.size(); d++) {
         vector<float> in = x.at(d);
-
         vector<float> out;
-        switch (type) {
-            case POLY: {
-                float in0 = x.at(REAL).at(0);
-                float term0 = x.at(REAL).at(1);
-                float term1 = x.at(REAL).at(2);
-                float term2 = x.at(REAL).at(3);
-                float term3 = x.at(REAL).at(4);
 
-                float out0 = (term3 * pow(in0, 3)) + (term2 * pow(in0, 2)) + (term1 * in0) + term0;
-
-                x.at(REAL).at(0) = out0;
-                x.at(REAL).at(1) = chartBound.x;
-                x.at(REAL).at(2) = chartWidth;
-
-                x.at(IMAG).at(0) = 0.0;
-                x.at(IMAG).at(1) = chartBound.x;
-                x.at(IMAG).at(2) = chartWidth;
-                return x;
-            }
-            case SIN: {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-                complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
-                complex<float> out0 = sin(in0 * in1) * in2;
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case COS: {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-                complex<float> in2 = {x.at(REAL).at(2), x.at(IMAG).at(2)};
-                complex<float> out0 = cos(in0 * in1) * in2;
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case TAN: {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> out0 = tan(in0);
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case ABS: {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> out0 = abs(in0);
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case EXP: {
-                complex<float> comIn = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> comOut = exp(comIn);
-                return {{comOut.real(), chartBound.x, chartWidth},
-                        {comOut.imag(), chartBound.x, chartWidth}};
-            }
-            case SIGMOID: {
-                float in =x.at(REAL).at(0);
-                float out = 1.0 / (1.0 + exp(-in));
-                return {{out, chartBound.x, chartWidth},
-                        {0.0, chartBound.x, chartWidth}};
-            }
-            case TANH: {
-                float in =x.at(REAL).at(0);
-                float out = tanh(in);
-                return {{out, chartBound.x, chartWidth},
-                        {0.0, chartBound.x, chartWidth}};
-            }
-
-            case SQRT: {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> out0 = sqrt(in0);
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case POW: {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-                complex<float> out0 = pow(in0, in1);
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case GAUSSIAN: {
-                complex<float> in0 = {x.at(REAL).at(0), 0};
-                complex<float> in1 = {x.at(REAL).at(1), 0};
-                complex<float> in2 = {x.at(REAL).at(2), 0};
-                complex<float> two = {2.0, 0};
-                complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case MORLET: {
-                auto real = (float) (
-                        cos(in.at(0) * in.at(4)) * // sinusoid
-                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
-                        pow(2 * in.at(1), 2))));
-
-                auto imaginary = (float) (
-                        sin(in.at(0) * in.at(4)) * // sinusoid
-                        (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
-                        pow(2 * in.at(1), 2))));
-                return {{real,      chartBound.x, chartWidth},
-                        {imaginary, chartBound.x, chartWidth}};
-            }
-
-            case ADD: {
-                complex<float> in0 = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> in1 = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-                complex<float> out0 = in0 + in1;
-                return {{out0.real(), chartBound.x, chartWidth},
-                        {out0.imag(), chartBound.x, chartWidth}};
-            }
-            case SUBTRACT:
-                out = {in.at(0) - in.at(1), chartBound.x, chartWidth};
-                break;
-            case MULTIPLY: {
-                complex<float> a = {x.at(REAL).at(0), x.at(IMAG).at(0)};
-                complex<float> b = {x.at(REAL).at(1), x.at(IMAG).at(1)};
-
-                auto result = a * b;
-                return {{result.real(), chartBound.x, chartWidth},
-                        {result.imag(), chartBound.x, chartWidth}};
-            }
-            case DIVIDE: {
-                float a = x.at(REAL).at(1);
-                float b = x.at(IMAG).at(1);
-                float c = x.at(REAL).at(0);
-                float e = x.at(IMAG).at(0);
-
-                float denom = pow(a, 2) + pow(b, 2);
-
-                float r = (c * a + b * e) / denom;
-                float img = (a * d - c * e) / denom;
-                return {{r, chartBound.x, chartWidth},
-                        {{img, chartBound.x, chartWidth}}};
-            }
-            case C:
-                x.at(REAL) = mConstantValueOutput;
-                x.at(IMAG).at(0) = 0;
-                return x;
-
-            case CI:
-                x.at(REAL).at(0) = 0;
-                x.at(IMAG) = mConstantValueOutput;
-                return x;
-            case T: {
-                x.at(REAL).at(0) = glfwGetTime() * x.at(REAL).at(0);
-                return x;
-            }
-            case X:
-                x.at(REAL).at(0) = x.at(REAL).at(0);
-                x.at(REAL).at(1) = chartBound.x;
-                x.at(REAL).at(2) = chartWidth;
-
-                x.at(IMAG).at(0) = 0;
-                x.at(IMAG).at(1) = chartBound.x;
-                x.at(IMAG).at(2) = chartWidth;
-                return x;
-            case Y:
-                return {{x.at(IMAG).at(0),chartBound.x, chartWidth},
-                        {0, chartBound.x, chartWidth}};
-            case Z:
-                return {{x.at(REAL).at(0), chartBound.x, chartWidth},
-                        {x.at(IMAG).at(0), chartBound.x, chartWidth}};
-            case FILE: {
-                int fileIndex = mDropDown->getSelectedItem();
-
-                float point = DataStore::get().getDataAtIndex(fileIndex, x.at(REAL).at(0));
-                return {{point, chartBound.x, chartWidth},
-                        {0, chartBound.x, chartWidth}};
-                break;
-            }
-            case FFT: {
-                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                return {{fft.first,  chartWidth, in.at(3)},
-                        {fft.second, chartWidth, in.at(3)}};
-            }
-            case IFFT: {
-                auto fft = computeInverseFft(in.at(1), in.at(2), in.at(3));
-                return {{fft.first,  chartBound.x, chartWidth},
-                        {fft.second, chartBound.x, chartWidth}};
-            }
-            case HARTLEY: {
-                auto fft = computeFft(in.at(1), in.at(2), in.at(3));
-                return {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)),
-                         chartWidth, in.at(3)},
-                        {0.0, chartWidth, in.at(3)}};
-            }
-            case LAPLACE: {
-              //  mChart->setZBound(vec2(x.at(REAL).at(4), x.at(REAL).at(5)));
-                // Static resolution for now
-                auto laplace = computeLaplace(x.at(REAL).at(1),
-                                              x.at(IMAG).at(1), in.at(2), in.at(3),
-                                              mChart->getMaxResolution());
-
-                x.at(REAL).at(0) = laplace.first;
-                return x;
-            }
-            case LAPLACE_S: {
-
-                vector<vector<float>> sx = computeLaplaceHeadless(
-                        {vector<float>(MAX_INPUT_COUNT, x.at(REAL).at(1)),
-                         vector<float>(MAX_INPUT_COUNT, x.at(IMAG).at(1))}, rootInput);
-
-                mChart->setZBound(vec2(x.at(0).at(2), x.at(0).at(3)));
-                out = {sx.at(0).at(0), chartBound.x, chartWidth};
-                break;
-            }
-            case FIRST_DIFF: {
-                float diff = computeFirstDifference(in.at(0), in.at(1));
-                out = {diff, chartBound.x, chartWidth};
-                break;
-            }
-            case DOT:
-                return {{dot(vec2(x.at(0).at(0), x.at(1).at(0)),
-                             vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}};
-            case CROSS:
-                return {
-                        {dot(vec2(x.at(0).at(0), x.at(1).at(0)),
-                             vec2(x.at(0).at(1), x.at(1).at(1))), chartBound.x, chartWidth}
-                };
-                break;
-            case CHART_2D: {
-                mChart->setResolution(100);
-
-                x.at(REAL).at(0) = in.at(0);
-                x.at(REAL).at(1) = in.at(1);
-                x.at(REAL).at(2) = chartBound.x;
-                x.at(REAL).at(3) = chartWidth;
-
-                x.at(IMAG).at(0) = 0.0;
-                x.at(IMAG).at(1) = 0.0;
-                x.at(IMAG).at(2) = 0.0;
-                x.at(IMAG).at(3) = 0.0;
-                return x;
-            }
-
-            case HEAT_MAP: {
-                mChart->setZBound(vec2(x.at(0).at(1), x.at(0).at(2)));
-                out = {x.at(0).at(0), chartBound.x, chartWidth};
-                break;
-            }
-            case COMBINE: {
-                return {{x.at(REAL).at(0)},
-                        {x.at(REAL).at(1)}};
-            }
-            case SPLIT: {
-                return {{x.at(REAL).at(0), x.at(IMAG).at(0)},
-                        {NAN, NAN}};
-            }
-            case NEURAL_CORE: {
-                if (mMlModel == nullptr) {
-                    initializeNNModel();
-                }
-
-                float returnValue;
-                if (mMlModel->getTrainingInProgress()) {
-                    vec2 thisChartBounds = mChart->getXBounds();
-                    float span = thisChartBounds.y - thisChartBounds.x;
-                    float inX = ((x.at(REAL).at(1) - thisChartBounds.x) / span) * mMlCache.size();
-                    if (span > 0) {
-                        int xIndex = 0;
-                        if (inX >= 0 && (inX) < mMlCache.size() && !mMlCache.empty()) {
-                            xIndex = (int) inX;
-                            complex<float> y = mMlCache.at(xIndex);
-                            returnValue = y.real();
-                        }
-                    }
-
-                } else {
-                    mMlModel->setInput(x.at(REAL).at(1), 0);
-                    mMlModel->compute();
-                    returnValue = mMlModel->getOutputAt(0);
-                }
-
-                return {{returnValue, chartBound.x, chartWidth},
-                        {x.at(REAL).at(0),      chartBound.x, chartWidth}};
-            }
-            case NEURAL_GROUP:
-            case GROUP: {
-                initializeGroup();
-                return mGroupOutput->evaluate(rootInput, nullptr, rootInput);
-            }
-            case GROUP_IN: {
-                if (mInputProxy != nullptr) {
-                    return mInputProxy->sumAllInputs(x, nullptr, vector<vector<float>>());
-                } else {
-                    return x;
-                }
-            }
-            case GROUP_OUT: {
-                return x;
-            }
-            case MIN:
-                return {{std::min(x.at(REAL).at(0), x.at(REAL).at(1)), chartBound.x, chartWidth},
-                        {std::min(x.at(IMAG).at(0), x.at(IMAG).at(1)), chartBound.x, chartWidth}};
-            case MAX:
-                return {{std::max(x.at(REAL).at(0), x.at(REAL).at(1)), chartBound.x, chartWidth},
-                        {std::max(x.at(IMAG).at(0), x.at(IMAG).at(1)), chartBound.x, chartWidth}};
-            case LAST:
-                break;
-        }
-
-        output.push_back(out);
+        FuncIn compute = FuncIn(x, rootInput, mCache, chartBound.x, width, this);
+        vector<vector<float>> result = type->mCompute(compute);
+        return result;
     }
-
     return output;
 }
 
 void ZNodeView::initializeGroup() {
     if (!isDeleted()) {
         if (mGroupInput == nullptr) {
-            mGroupInput = ZNodeUtil::get().newNode(GROUP_IN);
+            mGroupInput = ZNodeUtil::get().newNode(
+                    ZNodeDefStore::get().getNodeType("in"));
             mGroupInput->setInputProxy(this);
             mGroupNodes.insert(mGroupInput);
             if (mEditorInterface != nullptr) {
@@ -1301,7 +995,8 @@ void ZNodeView::initializeGroup() {
         }
 
         if (mGroupOutput == nullptr) {
-            mGroupOutput = ZNodeUtil::get().newNode(GROUP_OUT);
+            mGroupOutput = ZNodeUtil::get().newNode(
+                    ZNodeDefStore::get().getNodeType("out"));
             mGroupNodes.insert(mGroupOutput);
             if (mEditorInterface != nullptr) {
                 mEditorInterface(mGroupOutput, true);

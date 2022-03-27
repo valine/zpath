@@ -247,7 +247,6 @@ void ZView::onCreate() {
         return;
     }
     init();
-
     mCreateComplete = true;
 }
 
