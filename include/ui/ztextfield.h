@@ -65,6 +65,9 @@ public:
     void setBackgroundColor(ZColor color) override;
 
     ZLabel* mTitle = nullptr;
+
+    void setVisibility(bool visible) override;
+
 private:
 
     ZView* mCursor = nullptr;
@@ -123,7 +126,6 @@ private:
 
     void updateTitle();
 
-    void setVisibility(bool visible) override;
 };
 
 

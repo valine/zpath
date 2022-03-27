@@ -9,8 +9,6 @@
 ZMathNodeEditor::ZMathNodeEditor(float maxWidth, float maxHeight, ZView *parent) :
     ZNodeEditor(maxWidth, maxHeight, parent) {
 
-    auto nodeTypes = ZNodeDefStore::get().getNodeTypes();
-
+    auto nodeTypes = ZNodeDefStore::get().getMathNodeTypes();
     setNodeTypes(nodeTypes);
-
 }

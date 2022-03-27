@@ -221,6 +221,9 @@ private:
     void saveProject();
 
     void requestSave();
+
+protected:
+    void setExpVisibility(bool visible);
 };
 
 

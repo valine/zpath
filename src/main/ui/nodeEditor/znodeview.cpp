@@ -544,6 +544,13 @@ void ZNodeView::refreshView(NodeType* type) {
         mNameLabel->setFocusMode(ZTextField::FocusMode::doubleClick);
         mNameLabel->setTextMode(ZTextField::TextMode::editor);
         mNameLabel->setMaxHeight(fillParent);
+    } else if (chartType == ChartType::NO_CHART) {
+        mChart->setVisibility(false);
+        mNameLabel->setFocusMode(ZTextField::FocusMode::doubleClick);
+        mNameLabel->setTextMode(ZTextField::TextMode::editor);
+        mNameLabel->setMaxHeight(fillParent);
+        mNameLabel->setText(type->mName);
+
     } else {
         mChart->setVisibility(true);
         mNameLabel->setFocusMode(ZTextField::FocusMode::doubleClick);
@@ -986,7 +993,7 @@ void ZNodeView::initializeGroup() {
     if (!isDeleted()) {
         if (mGroupInput == nullptr) {
             mGroupInput = ZNodeUtil::get().newNode(
-                    ZNodeDefStore::get().getNodeType("in"));
+                    ZNodeDefStore::get().getMathNodeType("in"));
             mGroupInput->setInputProxy(this);
             mGroupNodes.insert(mGroupInput);
             if (mEditorInterface != nullptr) {
@@ -996,7 +1003,7 @@ void ZNodeView::initializeGroup() {
 
         if (mGroupOutput == nullptr) {
             mGroupOutput = ZNodeUtil::get().newNode(
-                    ZNodeDefStore::get().getNodeType("out"));
+                    ZNodeDefStore::get().getMathNodeType("out"));
             mGroupNodes.insert(mGroupOutput);
             if (mEditorInterface != nullptr) {
                 mEditorInterface(mGroupOutput, true);

@@ -187,6 +187,8 @@ public:
             nodeType->mChartType = IMAGE;
         } else if (charttpye == "TEXT_FIELD") {
             nodeType->mChartType = TEXT_FIELD;
+        } else if (charttpye == "NO_CHART") {
+            nodeType->mChartType = NO_CHART;
         }
 
         nodeType->mShowInDrawer = j["showInDrawer"];

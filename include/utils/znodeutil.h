@@ -530,7 +530,7 @@ public:
     }
 
     ZNodeUtil() {
-        vector<NodeType*> types = ZNodeDefStore::get().getNodeTypes();
+        vector<NodeType*> types = ZNodeDefStore::get().getMathNodeTypes();
         for (NodeType* type : types) {
             mTypes.insert({type->mName, type});
             mFunctions.insert(type->mName);

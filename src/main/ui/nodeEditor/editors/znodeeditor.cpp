@@ -124,22 +124,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
     mHeader = new ZView(fillParent, fillParent, this);
 
-//    vector<ZNodeView::Type> complexTypes = {
-//            ZNodeView::Type::Z,
-//            ZNodeView::Type::SIN,
-//            ZNodeView::Type::COS,
-//            ZNodeView::Type::TAN,
-//            ZNodeView::Type::EXP,};
-//    auto* complexDropdown = new ZDropDown(100,25, getNodeTypeNames(complexTypes), mHeader);
-//    complexDropdown->setTitle("Trig");
-//    complexDropdown->setOffset(0, 0);
-//   // complexDropdown->wrapTitle();
-//    complexDropdown->setDynamicTitle(false);
-//    complexDropdown->setOnItemChange([this, complexTypes](int index){
-//        ZNodeView::Type type = complexTypes.at(index);
-//        addNode(type);
-//    });
-
     auto* viewDropDown = new ZDropDown(100,25, {"Snap to Nodes"}, mHeader);
     viewDropDown->setOffset(0, 0);
     viewDropDown->setTitle("View");
@@ -265,11 +249,6 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         }
 
     });
-
-   //da addTestNodes();
-    // Test computer algebra system library
-//    CasUtil::get().testCompute();
-//    testCorners();
 }
 
 void ZNodeEditor::setNodeTypes(vector<NodeType*> nodeTypes) {
@@ -1635,6 +1614,10 @@ void ZNodeEditor::onCursorPosChange(double x, double y) {
         mBoxSelect->setMaxHeight(mouseY - (int) mBoxSelect->getOffsetY());
         mBoxSelect->setBackgroundColor(faded);
     }
+}
+
+void ZNodeEditor::setExpVisibility(bool visible) {
+    mExpressionField->setVisibility(false);
 }
 
 template <typename T>
