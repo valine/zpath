@@ -1,5 +1,5 @@
 {
-  "name" : "object",
+  "name" : "boolean",
   "socketType" : {
     "input" : ["VAR"],
     "output" : ["VAR"]

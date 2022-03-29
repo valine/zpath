@@ -71,6 +71,11 @@ public:
     void onCreate() override;
     void onKeyPress(int key, int scancode, int action,int mods) override;
     void setNodeTypes(vector<NodeType*> nodeTypes);
+
+    void addNodeToView(ZNodeView *node, bool autoPosition);
+
+    void addNodeGraph(ZNodeView *root, vec2 position, int depth);
+
 private:
 
     vector<NodeType*> mNodeTypes;
@@ -189,10 +194,6 @@ private:
     void resetCursor();
 
     vector<string> getNodeTypeNames(vector<NodeType*> types);
-
-    void addNodeToView(ZNodeView *node, bool autoPosition);
-
-    void addNodeGraph(ZNodeView *root, vec2 position, int depth);
 
     void deleteNodeRecursive(ZNodeView *root);
 

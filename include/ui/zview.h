@@ -257,6 +257,7 @@ class ZView {
         vec2 getRelativeMouse();
 
         bool isMouseInBounds(ZView *view) const;
+        bool isViewInBounds();
 
         void setLineWidth(float width);
 
@@ -369,14 +370,19 @@ class ZView {
 
     void subviewToBack(ZView *view);
 
+    bool isMouseInBounds(ZView *view, float x, float y) const;
+
 private:
 
         bool mBuffersInit = false;
         bool mNeedsRender = true;
 		bool mVertsInvalid = false;
 
+		bool mInitialBounds = false;
 		bool mRadiusInvalid = false;
 		bool mCreateComplete = false;
+		bool mViewInBounds = true;
+		bool mViewInBoundsInvalid = false;
 
 		Gravity mGravity = topLeft;
 		ZView *mParentView{};

@@ -1020,6 +1020,7 @@ void ZNodeEditor::updateLines() {
     if (mNodeViews.empty()) {
         return;
     }
+
     for (ZLineView* lineView : mLineBucket) {
         lineView->setVisibility(false);
     }

@@ -100,7 +100,7 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
             for (int i = 0; i < mViews.size(); i++) {
                 if (mViews.size() > i) {
                     ZView *view = mViews.at(i);
-                    if (view != nullptr) {
+                    if (view != nullptr && view->getVisibility() && view->isViewInBounds()) {
 
                         if (isMouseInBounds(view)) {
                             view->onMouseEvent(button, action, mods, x, y);
@@ -207,7 +207,11 @@ void ZView::onCursorPosChange(double x, double y) {
     for (int i = 0; i < mViews.size(); i++) {
         if (mViews.size() > i) {
             ZView* view = mViews.at(i);
-            view->onCursorPosChange(x, y);
+
+
+            if (view->getVisibility() && view->isViewInBounds() && isMouseInBounds(mParentView, x, y)) {
+                view->onCursorPosChange(x, y);
+            }
             if (!isMouseInBounds(view) && view->mMouseOver) {
                 view->onMouseLeave();
                 view->mMouseOver = false;
@@ -222,20 +226,52 @@ void ZView::setMouseDown(bool isDown) {
 }
 
 bool ZView::isMouseInBounds(ZView *view) const {
+    isMouseInBounds(view, view->getMouse().x, view->getMouse().y);
+}
+
+bool ZView::isMouseInBounds(ZView *view, float x, float y) const {
     if (view == nullptr || !view->getVisibility()) {
         return false;
     }
     vec2 inner = view->getInnerTranslation();
-    bool isInViewX = view->getLeft() - inner.x < view->getMouse().x  && view->getRight() - inner.x > view->getMouse().x ;
-    bool isInViewY = view->getTop() - inner.y < view->getMouse().y && view->getBottom() - inner.x > view->getMouse().y;
+    bool isInViewX = view->getLeft() - inner.x < x  && view->getRight() - inner.x > x ;
+    bool isInViewY = view->getTop() - inner.y < y && view->getBottom() - inner.x > y;
     return isInViewX && isInViewY;
+}
+
+bool ZView::isViewInBounds() {
+    if (mViewInBoundsInvalid) {
+        if (mParentView == nullptr || !mInitialBounds) {
+            mViewInBounds = true;
+        }
+
+        vec2 inner = getInnerTranslation();
+        float left = getLeft() - inner.x;
+        float right = getRight() - inner.x;
+        float top = getTop() - inner.y;
+        float bottom = getBottom() - inner.x;
+
+        vec2 parentInner = mParentView->getInnerTranslation();
+        float parentLeft = mParentView->getLeft() - parentInner.x;
+        float parentRight = mParentView->getRight() - parentInner.x;
+        float parentTop = mParentView->getTop() - parentInner.y;
+        float parentBottom = mParentView->getBottom() - parentInner.x;
+
+        if (right < parentLeft || left > parentRight || top > parentBottom || bottom < parentTop) {
+            mViewInBounds = false;
+        }
+        mViewInBounds = true;
+        mViewInBoundsInvalid = false;
+    }
+
+    return mViewInBounds;
 }
 
 void ZView::onScrollChange(double x, double y) {
     if (getVisibility()) {
         for (auto view : mViews) {
             computeBounds();
-            if (isMouseInBounds(view)) {
+            if (view->getVisibility() && view->isViewInBounds() && isMouseInBounds(view)) {
                 view->onScrollChange(x, y);
             }
         }
@@ -259,8 +295,11 @@ void ZView::setTag(string tag) {
 }
 
 void ZView::draw() {
-    initBuffers();
+    if (!isViewInBounds()) {
+        return;
+    }
 
+    initBuffers();
     if (mVisible && mNeedsRender) {
         if (mVertsInvalid) {
             glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
@@ -366,7 +405,7 @@ void ZView::draw() {
         glBindTexture(GL_TEXTURE_2D, 0);
 
         for (ZView* view : mViews) {
-            if (view != mShadowView) {
+            if (view->isViewInBounds() && view != mShadowView) {
                 view->draw();
             }
         }
@@ -504,7 +543,6 @@ void ZView::initBuffers() {
 void ZView::setShader(ZShader *shader) {
     mShader = shader;
 
-
     for (auto & mView : mViews) {
         mView->setShader(shader);
     }
@@ -535,14 +573,19 @@ ZShader* ZView::getImageShader() {
 void ZView::setWindowWidth(int width) {
     mWindowWidth = width;
     for (auto & mView : mViews) {
-        mView->setWindowWidth(width);
+        if (mView->isViewInBounds()) {
+            mView->setWindowWidth(width);
+        }
+
     }
 }
 
 void ZView::setWindowHeight(int height) {
     mWindowHeight = height;
     for (auto & mView : mViews) {
-        mView->setWindowHeight(height);
+        if (mView->isViewInBounds()) {
+            mView->setWindowHeight(height);
+        }
     }
 }
 
@@ -553,6 +596,7 @@ void ZView::onWindowChange(int windowWidth, int windowHeight) {
     }
     
     computeBounds();
+
     for (int i = 0; i < mViews.size(); i++) {
         if (i < mViews.size() && mViews.at(i)->getVisibility()) {
             mViews.at(i)->onWindowChange(right, bottom);
@@ -583,6 +627,7 @@ void ZView::setMargin(int marginLeft, int marginTop, int marginRight, int margin
     mMarginRight = marginRight;
     mMarginBottom = marginBottom;
 
+    mViewInBoundsInvalid = true;
     computeBounds();
     invalidate();
 }
@@ -592,7 +637,7 @@ void ZView::setMargin(vec4 margin) {
     mMarginTop = margin.y;
     mMarginRight =  margin.z;
     mMarginBottom =  margin.w;
-
+    mViewInBoundsInvalid = true;
     computeBounds();
     invalidate();
 }
@@ -602,6 +647,7 @@ void ZView::setMargin(float margin) {
     mMarginTop = margin;
     mMarginRight =  margin;
     mMarginBottom =  margin;
+    mViewInBoundsInvalid = true;
 
     computeBounds();
     invalidate();
@@ -611,27 +657,32 @@ void ZView::setMargin(float margin) {
 void ZView::setOffset(double x, double y) {
     mOffsetX = x;
     mOffsetY = y;
+    mViewInBoundsInvalid = true;
     computeBounds();
     invalidate();
 }
 
 void ZView::setOffset(vec2 pos) {
     setOffset(pos.x, pos.y);
+    mViewInBoundsInvalid = true;
 }
 
 void ZView::setXOffset(int x) {
     mOffsetX = x;
+    mViewInBoundsInvalid = true;
     invalidate();
 }
 
 void ZView::setYOffset(int y) {
     mOffsetY = y;
+    mViewInBoundsInvalid = true;
     invalidate();
 }
 
 void ZView::offsetBy(int x, int y) {
     mOffsetX += x;
     mOffsetY += y;
+    mViewInBoundsInvalid = true;
     computeBounds();
     invalidate();
 }
@@ -695,8 +746,10 @@ void ZView::setMarginBottom(float m){
 
 void ZView::invalidate() {
     mNeedsRender = true;
-    for (ZView* view : mViews) {
-        view->invalidate();
+    if (getVisibility() && isViewInBounds()) {
+        for (ZView *view : mViews) {
+            view->invalidate();
+        }
     }
     //glfwPostEmptyEvent();
 }
@@ -722,6 +775,7 @@ int ZView::getWindowWidth() {
 }
 
 void ZView::computeBounds() {
+    mInitialBounds = true;
     float prevLeft = getLeft();
     float prevRight = getRight();
 
@@ -732,6 +786,10 @@ void ZView::computeBounds() {
     float prevHeight = prevBottom - prevTop;
 
     calculateBounds();
+
+    if (!isViewInBounds()) {
+        return;
+    }
 
     mVertices[0] = getLeft();
     mVertices[1] = getTop();
@@ -791,8 +849,6 @@ void ZView::computeBounds() {
         }
 
     }
-
-
     mVertsInvalid = true;
 
     if (abs(getWidth() - prevWidth) > 0.01 || abs(getHeight() - prevHeight) > 0.01) {
@@ -950,11 +1006,13 @@ void ZView::setGravity(Gravity gravity) {
 
 void ZView::setMaxWidth(int width) {
     mMaxWidth = width;
+    mViewInBoundsInvalid = true;
     computeBounds();
 }
 
 void ZView::setMaxHeight(int height) {
     mMaxHeight = height;
+    mViewInBoundsInvalid = true;
     computeBounds();
 }
 

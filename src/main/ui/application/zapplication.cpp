@@ -226,7 +226,6 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glfwSwapBuffers(window);
 
     viewController->onCreate();
-
     viewController->onWindowChange(windowWidth, windowHeight);
     viewController->onLayoutFinished();
 
@@ -290,7 +289,9 @@ void ZApplication::onMouseEvent(GLFWwindow *window, int button, int action, int 
 }
 
 void ZApplication::onCursorPosChange(double x, double y, ZViewController *viewController) {
-    viewController->onCursorPosChange(x, y);
+    if (viewController->isMouseInBounds(viewController, x, y)) {
+        viewController->onCursorPosChange(x, y);
+    }
 }
 
 void ZApplication::onScrollEvent(GLFWwindow *window, double xoffset, double yoffset, ZViewController *viewController) {

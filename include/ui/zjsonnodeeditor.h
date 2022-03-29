@@ -10,6 +10,12 @@ class ZJsonNodeEditor : public ZNodeEditor {
 
 public:
     ZJsonNodeEditor(float maxWidth, float maxHeight, ZView *parent);
+    void onFileDrop(int count, const char **paths) override;
+    string getFileExtension(string path) {
+        return path.substr(path.find_last_of(".") + 1) ;
+    }
+
+
 };
 
 

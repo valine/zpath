@@ -378,7 +378,9 @@ void ZLineChart::draw() {
 
         // Todo: Retrieve constant parameters from node and pass to shader as uniform
     } else {
-        drawCpu();
+        if (getVisibility()) {
+            drawCpu();
+        }
     }
 
     ZView::draw();

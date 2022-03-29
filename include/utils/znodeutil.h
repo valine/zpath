@@ -349,8 +349,55 @@ public:
         return result;
     }
 
-
     /// End Node IO
+    /////////////////////
+
+
+    //////////////////////
+    /// JSON Nodes
+
+    ZNodeView* nodesFromJson(json j, ZNodeView* parent) {
+        for (auto& el : j.items()) {
+            if (el.value().is_object()) {
+                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("object"));
+                connectNodes(0, 0, node, parent);
+
+                auto objectNodes = nodesFromJson(el.value(), node);
+                if (parent == nullptr) {
+                    parent = node;
+                }
+            } else if (el.value().is_string()) {
+                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("string"));
+                string value = el.value();
+                node->setText("string\n" + el.key() + ":" + value);
+                connectNodes(0, 0, node, parent);
+            } else if (el.value().is_number_integer()) {
+                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("integer"));
+                connectNodes(0, 0, node, parent);
+                int value = el.value();
+                node->setText("integer\n" + el.key() + ":" + to_string(value));
+            } else if (el.value().is_number_float()) {
+                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("float"));
+                connectNodes(0, 0, node, parent);
+                float value = el.value();
+                node->setText("float\n" + el.key() + ":" + to_string(value));
+            } else if (el.value().is_boolean()) {
+                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("boolean"));
+                connectNodes(0, 0, node, parent);
+                bool value = el.value();
+                node->setText("boolean\n" + el.key() + ":" + to_string(value));
+            } else if (el.value().is_array()) {
+                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("array"));
+                connectNodes(0, 0, node, parent);
+                auto objectNodes = nodesFromJson(el.value()[0], node);
+            }
+            std::cout << "key: " << el.key() << ", value:" << el.value() << '\n';
+        }
+
+        return parent;
+    }
+
+    /// End JSON Nodes
     /////////////////////
 
     ZNodeView* newNode(NodeType* type) {
@@ -897,6 +944,9 @@ public:
     }
 
     static void connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) {
+        if (firstNode == nullptr || secondNode == nullptr) {
+            return;
+        }
         firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
         secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
     }
