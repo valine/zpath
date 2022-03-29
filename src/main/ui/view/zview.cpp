@@ -226,7 +226,13 @@ void ZView::setMouseDown(bool isDown) {
 }
 
 bool ZView::isMouseInBounds(ZView *view) const {
-    isMouseInBounds(view, view->getMouse().x, view->getMouse().y);
+   if (view == nullptr || !view->getVisibility()) {
+        return false;
+    }
+    vec2 inner = view->getInnerTranslation();
+    bool isInViewX = view->getLeft() - inner.x < view->getMouse().x  && view->getRight() - inner.x > view->getMouse().x ;
+    bool isInViewY = view->getTop() - inner.y < view->getMouse().y && view->getBottom() - inner.x > view->getMouse().y;
+    return isInViewX && isInViewY;
 }
 
 bool ZView::isMouseInBounds(ZView *view, float x, float y) const {
