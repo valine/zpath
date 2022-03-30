@@ -389,6 +389,10 @@ public:
             } else if (el.value().is_array()) {
                 auto node = newNode(ZNodeDefStore::get().getJsonNodeType("array"));
                 connectNodes(0, 0, node, parent);
+
+                if (el.value().size() > 10) {
+                    node->setBackgroundColor(vec4(1,0,0,1));
+                }
                 auto objectNodes = nodesFromJson(el.value()[0], node);
             }
             std::cout << "key: " << el.key() << ", value:" << el.value() << '\n';
