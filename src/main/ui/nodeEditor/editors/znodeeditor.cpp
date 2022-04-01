@@ -472,23 +472,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         deselectNode(root);
     }
 
-    set<ZNodeView*> uniqueChildren;
-    vector<ZNodeView*> children;
-    vector<vector<pair<ZNodeView *, int>>> inputIndices = root->mInputIndices;
-
-    for (const vector<pair<ZNodeView *, int>>& socketInputs : inputIndices) {
-       // std::reverse(socketInputs.begin(), socketInputs.end());
-        for (pair<ZNodeView*, int> input : socketInputs) {
-            ZNodeView* child = input.first;
-
-            if (child != nullptr) {
-                if (uniqueChildren.count(child) == 0) {
-                    uniqueChildren.insert(child);
-                    children.push_back(child);
-                }
-            }
-        }
-    }
+    vector<ZNodeView*> children = root->getChildren();
 
     int margin = 20;
     if (mTmpNodeOffsetYR.size() <= depth && !children.empty()) {
@@ -530,29 +514,88 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
             yOffset = ((position.y - margin) + rootCenter) - top;
         }
 
-        root->setYOffset(root->getOffsetY() - (yOffset));
         root->setXOffset(root->getOffsetX() - mTmpNodeOffsetX);
-        root->setInitialPosition(root->getOffset());
         for (vector<ZNodeView*> layer : mTmpNodes) {
             if (!layer.empty()) {
-                int span = layer.at(layer.size() - 1)->getLocalBottom() - layer.at(0)->getLocalTop();
-                int center = layer.at(0)->getLocalTop() + (span / 2);
-                int rootCenter = ((root->getLocalBottom() - root->getLocalTop()) / 2);
-                int offset = (center - position.y) - rootCenter;
                 for (ZNodeView *node : layer) {
                     node->setXOffset(node->getOffsetX() - mTmpNodeOffsetX);
-                    node->setYOffset(node->getOffsetY() - (offset + yOffset));
                     node->setInitialPosition(node->getOffset());
                 }
             }
         }
+
+        cleanupGraph(root);
 
        // root->invalidateSingleNode();
         getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
         updateLines();
 
     }
+}
 
+void ZNodeEditor::cleanupGraph(ZNodeView *root) {
+    root->setYOffset(0);
+    centerGraph(root, 0);
+    fixGraphOverlap(root, 0);
+
+}
+
+
+vector<float> mUsedSpace;
+
+void ZNodeEditor::fixGraphOverlap(ZNodeView *root, int depth) {
+    if (depth == 0) {
+        mUsedSpace.clear();
+    }
+
+    while (depth + 1 >= mUsedSpace.size()) {
+        mUsedSpace.push_back(-1e7);
+    }
+
+    if (root->getChildren().size() > 0) {
+        mUsedSpace.at(depth + 1) = std::max(mUsedSpace.at(depth + 1), (float) root->getChildren().at(0)->getOffsetY() - 5);
+    }
+
+    for (ZNodeView *child : root->getChildren()) {
+        if (mUsedSpace.at(depth + 1) + 5 > child->getOffsetY() && depth != 0) {
+
+            bool moveRoot = root->getOffsetY() + 10 > mUsedSpace.at(depth);
+            offsetGraphBy(root, mUsedSpace.at(depth + 1) - child->getOffsetY(), depth, moveRoot);
+        }
+
+        mUsedSpace.at(depth + 1) = std::max(mUsedSpace.at(depth + 1), (float) child->getLocalBottom());
+        fixGraphOverlap(child, depth + 1);
+    }
+}
+
+void ZNodeEditor::offsetGraphBy(ZNodeView *root, float y, int depth, bool moveRoot) {
+    if (moveRoot) {
+        root->offsetBy(0, y);
+    }
+    for (ZNodeView* child : root->getChildren()) {
+        offsetGraphBy(child, y, depth + 1, true);
+    }
+}
+
+
+float ZNodeEditor::centerGraph(ZNodeView *root, int depth) {
+
+    float runningHeight = 0;
+    float layerHeight = 0;
+    for (ZNodeView* child : root->getChildren()) {
+        layerHeight += child->getMaxHeight();
+    }
+
+    float offsetBy = 0;
+    for (ZNodeView* child : root->getChildren()) {
+        float centerOffset = (layerHeight / 2) - child->getMaxHeight() / 2;
+        float desiredOffset = runningHeight + root->getOffsetY() - centerOffset;
+        child->setYOffset(runningHeight + root->getOffsetY() - centerOffset);
+        float height = child->getMaxHeight();
+        runningHeight += height;
+        offsetBy += centerGraph(child, depth + 1);
+    }
+    return 0;
 }
 
 void ZNodeEditor::selectNodeGraph(ZNodeView* root, int depth) {
@@ -616,6 +659,10 @@ vector<string> ZNodeEditor::getNodeTypeNames(vector<NodeType*> types) {
     }
 
     return names;
+}
+
+void ZNodeEditor::onResume() {
+    cout << "on resume" << endl;
 }
 
 void ZNodeEditor::onCreate() {

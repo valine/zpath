@@ -384,6 +384,8 @@ private:
 		bool mViewInBounds = true;
 		bool mViewInBoundsInvalid = false;
 
+		bool mLayoutFinished = false;
+
 		Gravity mGravity = topLeft;
 		ZView *mParentView{};
 		ZView *mRootView{};

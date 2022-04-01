@@ -15,7 +15,8 @@ public:
         return path.substr(path.find_last_of(".") + 1) ;
     }
 
-
+private:
+    void onLayoutFinished();
 };
 
 

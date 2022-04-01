@@ -106,6 +106,17 @@ public:
         }
     }
 
+    bool operator < (ZNodeView* node) {
+        return (getOffsetY() < node->getOffsetY());
+    }
+
+    void offsetByYRecursive(float offset) {
+        offsetBy(0, offset);
+        for (ZNodeView* child : getChildren()) {
+            child->offsetByYRecursive(offset);
+        }
+    }
+
     vector<vector<float>> compute(vector<vector<float>> x, NodeType* type,
                                   vector<vector<float>> rootInput);
 
@@ -410,6 +421,12 @@ public:
     vector<vector<pair<ZNodeView *, int>>> mInputIndices;
     vector<vector<pair<ZNodeView *, int>>> mOutputIndices;
 
+    bool mChildrenValid = false;
+    bool mParentsValid = false;
+    vector<ZNodeView*> mChildren;
+    vector<ZNodeView*> mParents;
+
+
     vector<ZView *> getSocketsIn();
 
     vector<ZView *> getSocketsOut();
@@ -440,6 +457,7 @@ public:
 
     void setMaxWidth(int width) override;
 
+    vector<ZNodeView*> getChildren();
 
     //////////////////
     /// Neural core integration
@@ -569,6 +587,8 @@ function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
 
     vector<vector<float>> computeLaplaceHeadless(vector<vector<float>> x, vector<vector<float>> rootInput);
 
+    vector<ZNodeView *> getParents();
+
 private:
     bool mInvalid = true;
     bool mRecursiveInvalidate = false;
@@ -654,6 +674,7 @@ private:
     void refreshView(NodeType* type);
 
     void onSizeChange() override;
+
 };
 
 

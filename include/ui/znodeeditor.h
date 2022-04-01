@@ -68,13 +68,15 @@ public:
     void onLayoutFinished() override;
 
     void onExit() override;
-    void onCreate() override;
+    void onCreate();
     void onKeyPress(int key, int scancode, int action,int mods) override;
     void setNodeTypes(vector<NodeType*> nodeTypes);
 
     void addNodeToView(ZNodeView *node, bool autoPosition);
 
     void addNodeGraph(ZNodeView *root, vec2 position, int depth);
+
+    void offsetBy(float y, int depth);
 
 private:
 
@@ -225,6 +227,16 @@ private:
 
 protected:
     void setExpVisibility(bool visible);
+
+    virtual void onResume();
+
+    float centerGraph(ZNodeView *root, int depth);
+
+    void cleanupGraph(ZNodeView *root);
+
+    void fixGraphOverlap(ZNodeView *root, int depth);
+
+    void offsetGraphBy(ZNodeView *root, float y, int depth, bool moveRoot);
 };
 
 

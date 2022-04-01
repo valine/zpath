@@ -942,6 +942,65 @@ void ZNodeView::onCursorPosChange(double x, double y) {
 
 }
 
+vector<ZNodeView*> ZNodeView::getChildren() {
+    if (mChildrenValid) {
+        return mChildren;
+    }
+
+    set<ZNodeView*> uniqueChildren;
+    vector<ZNodeView*> children;
+
+    for (const vector<pair<ZNodeView *, int>>& socketInputs : mInputIndices) {
+        // std::reverse(socketInputs.begin(), socketInputs.end());
+        for (pair<ZNodeView*, int> input : socketInputs) {
+            ZNodeView* child = input.first;
+
+            if (child != nullptr) {
+                if (uniqueChildren.count(child) == 0) {
+                    uniqueChildren.insert(child);
+                    children.push_back(child);
+                }
+            }
+        }
+    }
+
+
+    mChildren = children;
+    std::sort(mChildren.begin(), mChildren.end());
+    mChildrenValid = true;
+    return mChildren;
+}
+
+vector<ZNodeView*> ZNodeView::getParents() {
+    if (mParentsValid) {
+        return mParents;
+    }
+
+    set<ZNodeView*> uniqueChildren;
+    vector<ZNodeView*> children;
+
+    for (const vector<pair<ZNodeView *, int>>& socketInputs : mOutputIndices) {
+        // std::reverse(socketInputs.begin(), socketInputs.end());
+        for (pair<ZNodeView*, int> input : socketInputs) {
+            ZNodeView* parent = input.first;
+
+            if (parent != nullptr) {
+                if (uniqueChildren.count(parent) == 0) {
+                    uniqueChildren.insert(parent);
+                    children.push_back(parent);
+                }
+            }
+        }
+    }
+
+
+    mParents = children;
+    std::sort(mParents.begin(), mParents.end());
+    mParentsValid = true;
+    return mParents;
+}
+
+
 void ZNodeView::hideSocketLabels() {
     if (!mouseIsDown()) {
         for (ZLabel *label : mSocketInLabels) {

@@ -395,7 +395,7 @@ public:
                 }
                 auto objectNodes = nodesFromJson(el.value()[0], node);
             }
-            std::cout << "key: " << el.key() << ", value:" << el.value() << '\n';
+            //std::cout << "key: " << el.key() << ", value:" << el.value() << '\n';
         }
 
         return parent;
@@ -953,6 +953,11 @@ public:
         }
         firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
         secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
+        firstNode->mChildrenValid = false;
+        secondNode->mChildrenValid = false;
+
+        firstNode->mParentsValid = false;
+        secondNode->mParentsValid = false;
     }
 
     static vector<string> getTokens(string input) {

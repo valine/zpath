@@ -54,11 +54,12 @@ ZViewController::ZViewController(char **argv) : ZView(ZView::fillParent, ZView::
 
 void ZViewController::onCreate() {
     if (mDrawingEnabled) {
+        ZView::onCreate();
+
         mUIShader = new ZShader(ui_vs, ui_fs);
         mTextShader = new ZShader(text_vs, text_fs);
         mImageViewShader = new ZShader(ui_vs, image_fs);
 
-        ZView::onCreate();
         setShader(mUIShader);
         setTextShader(mTextShader);
         setImageShader(mImageViewShader);

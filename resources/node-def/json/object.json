@@ -10,7 +10,7 @@
   "defaultMagnitude" : [7],
   "socketNames" : ["X"],
   "enumNames" : [],
-  "nodeSize" : [80, 40],
+  "nodeSize" : [140, 40],
   "chartBounds" : [-5,5,-5,5],
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : false,

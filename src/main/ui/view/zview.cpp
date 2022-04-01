@@ -285,11 +285,10 @@ void ZView::onScrollChange(double x, double y) {
 }
 
 void ZView::onCreate() {
-    if (mCreateComplete) {
-        return;
+    if (!mCreateComplete) {
+        init();
+        mCreateComplete = true;
     }
-    init();
-    mCreateComplete = true;
 }
 
 string ZView::getTag() {
@@ -621,8 +620,11 @@ void ZView::onDpChange(float dp) {
 
 // Called once before first draw
 void ZView::onLayoutFinished(){
-    for (ZView* view : mViews) {
-        view->onLayoutFinished();
+    if (!mLayoutFinished) {
+        for (ZView *view : mViews) {
+            view->onLayoutFinished();
+        }
+        mLayoutFinished = true;
     }
 }
 
