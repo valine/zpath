@@ -958,6 +958,9 @@ public:
 
         firstNode->mParentsValid = false;
         secondNode->mParentsValid = false;
+
+        firstNode->mNextSiblingValid = false;
+        secondNode->mNextSiblingValid = false;
     }
 
     static vector<string> getTokens(string input) {

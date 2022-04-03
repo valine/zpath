@@ -1000,6 +1000,27 @@ vector<ZNodeView*> ZNodeView::getParents() {
     return mParents;
 }
 
+ZNodeView* ZNodeView::getSibling() {
+    if (mNextSiblingValid) {
+        return mNextSibling;
+    }
+
+    bool pastParent = false;
+    ZNodeView* nextSibling = nullptr;
+    for (auto sibling : getParents().at(0)->getChildren()) {
+        if (pastParent) {
+            nextSibling = sibling;
+            break;
+        }
+        if (sibling == this) {
+            pastParent = true;
+        }
+    }
+
+    mNextSibling = nextSibling;
+    mNextSiblingValid = true;
+    return mNextSibling;
+}
 
 void ZNodeView::hideSocketLabels() {
     if (!mouseIsDown()) {

@@ -77,6 +77,10 @@ public:
     void addNodeGraph(ZNodeView *root, vec2 position, int depth);
 
     void offsetBy(float y, int depth);
+    void setButtonPanelVisibility(bool visible);
+    static bool compareNodes(ZNodeView* a, ZNodeView* b) {
+        return (a->getOffsetY() > b->getOffsetY());
+    }
 
 private:
 
@@ -234,9 +238,13 @@ protected:
 
     void cleanupGraph(ZNodeView *root);
 
-    void fixGraphOverlap(ZNodeView *root, int depth);
+    void adjustGraphLayout(ZNodeView *root, int depth);
 
     void offsetGraphBy(ZNodeView *root, float y, int depth, bool moveRoot);
+
+    void fixGraphOverlap();
+
+    bool checkOverlap(vec2 p1a, vec2 p2a, vec2 p1b, vec2 p2b);
 };
 
 

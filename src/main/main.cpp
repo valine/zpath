@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 
     }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator", "Developer", "Settings", "Data Import", "JSON Editor"}, true, nullptr);
 
-    ZApplication(tiles, "zpath", false, 1800, 1000, "resources/icons/zpath.png", [tiles](){
+    ZApplication(tiles, "zpath", false, 2100, 1000, "resources/icons/zpath.png", [tiles](){
 
         // Calculator
         auto calculator = tiles->triggerSideSplit(0.25, 3);

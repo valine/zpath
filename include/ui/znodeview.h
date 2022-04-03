@@ -423,9 +423,12 @@ public:
 
     bool mChildrenValid = false;
     bool mParentsValid = false;
+    bool mNextSiblingValid = false;
     vector<ZNodeView*> mChildren;
     vector<ZNodeView*> mParents;
+    ZNodeView* mNextSibling;
 
+    ZNodeView *getSibling();
 
     vector<ZView *> getSocketsIn();
 

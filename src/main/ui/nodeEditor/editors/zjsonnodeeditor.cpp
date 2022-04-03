@@ -13,6 +13,7 @@ ZJsonNodeEditor::ZJsonNodeEditor(float maxWidth, float maxHeight, ZView *parent)
     auto nodeTypes = ZNodeDefStore::get().getJsonNodeTypes();
     setNodeTypes(nodeTypes);
     setExpVisibility(false);
+    setButtonPanelVisibility(false);
 }
 
 void ZJsonNodeEditor::onLayoutFinished() {
@@ -27,10 +28,7 @@ void ZJsonNodeEditor::onLayoutFinished() {
         addNodeGraph(root, vec2(10), 0);
 
     });
-
-
 }
-
 
 void ZJsonNodeEditor::onFileDrop(int count, const char** paths) {
     string path(paths[0]);

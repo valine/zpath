@@ -247,8 +247,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
         if (!evalNodes.empty()) {
             addNodeGraph(evalNodes.at(0), pos, 0);
         }
-
     });
+}
+
+void ZNodeEditor::setButtonPanelVisibility(bool visible) {
+    mButtonPanel->setVisibility(visible);
 }
 
 void ZNodeEditor::setNodeTypes(vector<NodeType*> nodeTypes) {
@@ -536,14 +539,84 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
 void ZNodeEditor::cleanupGraph(ZNodeView *root) {
     root->setYOffset(0);
     centerGraph(root, 0);
-    fixGraphOverlap(root, 0);
+    adjustGraphLayout(root, 0);
+    fixGraphOverlap();
 
+    float graphTop = root->getOffsetY();
+    float graphBottom = root->getLocalBottom();
+
+    for (auto layer : mTmpNodes) {
+        for (auto node : layer) {
+            graphTop = std::min((float) node->getOffsetY(), graphTop);
+            graphBottom = std::max((float) node->getLocalBottom(), graphBottom);
+        }
+    }
+
+    float margin = 40;
+    root->offsetBy(0,  -graphTop + margin);
+    for (auto layer : mTmpNodes) {
+        for (auto node : layer) {
+            node->offsetBy(0,  -graphTop + margin);
+            mNodeContainer->setInnerViewHeight(
+                    std::max(graphBottom - graphTop + (margin * 2),
+                             (float) mNodeContainer->getInnerView()->getMaxHeight()));
+        }
+
+    }
 }
 
+void ZNodeEditor::fixGraphOverlap() {
+    set<int> spaceTaken;
+    for (auto layer : mTmpNodes) {
+        std::sort(layer.begin(), layer.end(), compareNodes);
+        for (int i = 0; i < layer.size() - 1; i++) {
+            auto node = layer.at(i);
+
+            bool didOverlap = false;
+            int span = 2;
+            for (int j = i - span; j < i; j++) {
+                if (j > 0 && j < layer.size()) {
+                    auto adjNode = layer.at(j);
+                    if (i == j) {
+                        continue;
+                    }
+                    didOverlap |= checkOverlap(vec2(node->getLocalLeft(), node->getLocalTop()), vec2(node->getLocalRight(), node->getLocalBottom()),
+                                               vec2(adjNode->getLocalLeft(), adjNode->getLocalTop()), vec2(adjNode->getLocalRight(), adjNode->getLocalBottom()));
+                }
+            }
+            if (didOverlap) {
+                // find space
+                for (int j = i; j < layer.size() - 1; j++) {
+
+                    auto nodeJ = layer.at(j);
+                    auto nextJ = layer.at(j + 1);
+
+                    if (nodeJ == node || nextJ == node) {
+                        continue;
+                    }
+
+                    int spaceSize = nodeJ->getLocalTop() - nextJ->getLocalBottom();
+                    bool spaceFound = node->getMaxHeight() < spaceSize;
+
+                    bool spaceFree = spaceTaken.count(nextJ->getLocalBottom()) == 0;
+                    if (spaceFound && spaceFree) {
+                        if (spaceTaken.count(nextJ->getLocalBottom()) == 0) {
+                            spaceTaken.insert(nextJ->getLocalBottom());
+                        }
+                        node->setYOffset(nextJ->getLocalBottom() + 5);
+                        break;
+                    }
+                }
+            }
+        }
+
+        cout << "-----" << endl;
+    }
+}
 
 vector<float> mUsedSpace;
 
-void ZNodeEditor::fixGraphOverlap(ZNodeView *root, int depth) {
+void ZNodeEditor::adjustGraphLayout(ZNodeView *root, int depth) {
     if (depth == 0) {
         mUsedSpace.clear();
     }
@@ -560,20 +633,28 @@ void ZNodeEditor::fixGraphOverlap(ZNodeView *root, int depth) {
         if (mUsedSpace.at(depth + 1) + 5 > child->getOffsetY() && depth != 0) {
 
             bool moveRoot = root->getOffsetY() + 10 > mUsedSpace.at(depth);
-            offsetGraphBy(root, mUsedSpace.at(depth + 1) - child->getOffsetY(), depth, moveRoot);
+            offsetGraphBy(root, mUsedSpace.at(depth + 1) - child->getOffsetY() + 5, depth, true);
         }
-
         mUsedSpace.at(depth + 1) = std::max(mUsedSpace.at(depth + 1), (float) child->getLocalBottom());
-        fixGraphOverlap(child, depth + 1);
+        adjustGraphLayout(child, depth + 1);
     }
 }
 
 void ZNodeEditor::offsetGraphBy(ZNodeView *root, float y, int depth, bool moveRoot) {
+    while (depth + 1 >= mUsedSpace.size()) {
+        mUsedSpace.push_back(-1e7);
+    }
     if (moveRoot) {
         root->offsetBy(0, y);
     }
+    int i = 0;
     for (ZNodeView* child : root->getChildren()) {
+        ZNodeView* nextSibling = nullptr;
+        if (root->getChildren().size() < i + 1) {
+            nextSibling = root->getChildren().at(i + 1);
+        }
         offsetGraphBy(child, y, depth + 1, true);
+        i++;
     }
 }
 
@@ -588,11 +669,12 @@ float ZNodeEditor::centerGraph(ZNodeView *root, int depth) {
 
     float offsetBy = 0;
     for (ZNodeView* child : root->getChildren()) {
+        float margin = 5;
         float centerOffset = (layerHeight / 2) - child->getMaxHeight() / 2;
         float desiredOffset = runningHeight + root->getOffsetY() - centerOffset;
         child->setYOffset(runningHeight + root->getOffsetY() - centerOffset);
         float height = child->getMaxHeight();
-        runningHeight += height;
+        runningHeight += height + margin;
         offsetBy += centerGraph(child, depth + 1);
     }
     return 0;
@@ -1630,6 +1712,19 @@ void ZNodeEditor::updateBoxSelect() {
             selectNode(node);
         }
     }
+}
+
+bool ZNodeEditor::checkOverlap(vec2 p1a, vec2 p2a, vec2 p1b, vec2 p2b) {
+    vec2 min1 = vec2(std::min(p1a.x, p2a.x), std::min(p1a.y, p2a.y));
+    vec2 max1 = vec2(std::max(p1a.x, p2a.x), std::max(p1a.y, p2a.y));
+
+    vec2 min2  = vec2(std::min(p1b.x, p2b.x), std::min(p1b.y, p2b.y));
+    vec2 max2  = vec2(std::max(p1b.x, p2b.x), std::max(p1b.y, p2b.y));
+
+    bool xOverlap = max1.x >= min2.x && max2.x >= min1.x;
+    bool yOverlap = max1.y >= min2.y && max2.y >= min1.y;
+
+    return xOverlap && yOverlap;
 }
 
 void ZNodeEditor::onCursorPosChange(double x, double y) {
