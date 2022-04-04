@@ -118,7 +118,7 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
 
         if (button == GLFW_MOUSE_BUTTON_1 && action == GLFW_RELEASE) {
             mMouseDown = false;
-            if (mOnClick != nullptr) {
+            if (mOnClick != nullptr && isMouseInBounds(this, sx, sy)) {
                 mOnClick(this);
             }
         }
@@ -240,7 +240,7 @@ bool ZView::isMouseInBounds(ZView *view, float x, float y) const {
         return false;
     }
     vec2 inner = view->getInnerTranslation();
-    bool isInViewX = view->getLeft() - inner.x < x  && view->getRight() - inner.x > x ;
+    bool isInViewX = view->getLeft() - inner.x < x  && view->getRight() - inner.x > x;
     bool isInViewY = view->getTop() - inner.y < y && view->getBottom() - inner.x > y;
     return isInViewX && isInViewY;
 }
@@ -962,7 +962,7 @@ int ZView::getMouseDownY() {
 }
 
 vec2 ZView::getMouse() {
-    return vec2(mMouseX, mMouseY);
+    return vec2(getRootView()->mMouseX, getRootView()->mMouseY);
 }
 
 vec2 ZView::getRelativeMouse() {
@@ -1356,6 +1356,9 @@ vec2 ZView::getOffset() {
 }
 
 ZView* ZView::getRootView() {
+    if (mRootView == nullptr) {
+        return this;
+    }
     return mRootView;
 }
 
@@ -1502,9 +1505,9 @@ void ZView::setComsumeClicks() {
 
 }
 
-void ZView::onDoubleClick() {
+void ZView::onDoubleClick(int x, int y) {
     for (ZView* child : getSubViews()) {
-        child->onDoubleClick();
+        child->onDoubleClick(x, y);
     }
 }
 

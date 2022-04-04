@@ -30,7 +30,7 @@ public:
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
     void onKeyPress(int key, int scancode, int action, int mods) override;
     void onGlobalMouseUp(int key) override;
-    void onDoubleClick() override;
+    void onDoubleClick(int x, int y) override;
     void setText(string text) override;
     void setTextColor(ZColor color) override;
 

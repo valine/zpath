@@ -65,7 +65,6 @@ public:
 
     static void startEvaluation(ZNodeEditor* editor);
     void onCursorPosChange(double x, double y) override;
-    void onLayoutFinished() override;
 
     void onExit() override;
     void onCreate();
@@ -211,7 +210,7 @@ private:
 
     void selectNodeGraph(ZNodeView *root, int depth);
 
-    void onDoubleClick();
+    void onDoubleClick(int x, int y);
 
     void selectNodeGraphUnderMouse();
 

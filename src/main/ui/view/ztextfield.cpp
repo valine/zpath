@@ -287,10 +287,10 @@ void ZTextField::onGlobalMouseUp(int key) {
     }
 }
 
-void ZTextField::onDoubleClick() {
-    ZView::onDoubleClick();
+void ZTextField::onDoubleClick(int x, int y) {
+    ZView::onDoubleClick(x, y);
     if (mFocusMode == doubleClick) {
-        if (isMouseInBounds(this)) {
+        if (isMouseInBounds(this, x, y)) {
             startEdit();
         }
     }

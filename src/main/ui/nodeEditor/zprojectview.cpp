@@ -58,6 +58,8 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &mode
     addUnsavedProject();
     mScrollView->getInnerView()->refreshMargins();
     mScrollView->setMarginBottom(newProjectBtn->getMaxHeight());
+    selectProject(mProjectViews.at(mProjectViews.size() - 1));
+
 }
 
 ZView* ZProjectView::getLastProject() {
@@ -207,6 +209,10 @@ string ZProjectView::getFileName(const string& s) {
     }
 
     return("");
+}
+
+int ZProjectView::getSelectedProject() {
+    return mSelectedTag;
 }
 
 void ZProjectView::setOnProjectSelected(function<void(int, string)> listener) {

@@ -118,6 +118,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
 
         return success;
     });
+    mSelectedProject = mProjectBrowser->getSelectedProject();
 
     auto* headerBackground = new ZView(fillParent, 25, this);
     headerBackground->setBackgroundColor(grey1);
@@ -296,13 +297,13 @@ void ZNodeEditor::setNodeTypes(vector<NodeType*> nodeTypes) {
 }
 
 void ZNodeEditor::selectProject(int index, string &path) {
+    bool currentProjectSave = !mProjectPath.empty();
     mSelectedProject = index;
     mProjectPath = path;
     mGroupMode = NO_GROUP;
 
     // A saved project was selected
     if (!path.empty()) {
-
         set<ZNodeView*> toDelete;
         for (auto node : mNodeViews) {
             if (node->getProjectID() == index) {
@@ -561,7 +562,6 @@ void ZNodeEditor::cleanupGraph(ZNodeView *root) {
                     std::max(graphBottom - graphTop + (margin * 2),
                              (float) mNodeContainer->getInnerView()->getMaxHeight()));
         }
-
     }
 }
 
@@ -757,10 +757,6 @@ void ZNodeEditor::onExit() {
     ZView::onExit();
     saveProject();
     mEvaluateRunning = false;
-}
-
-void ZNodeEditor::onLayoutFinished() {
-    ZView::onLayoutFinished();
 }
 
 /**
@@ -1601,17 +1597,22 @@ void ZNodeEditor::selectNodeGraphUnderMouse() {
     }
 }
 
-void ZNodeEditor::onDoubleClick() {
-    ZView::onDoubleClick();
+void ZNodeEditor::onDoubleClick(int x, int y) {
+    ZView::onDoubleClick(x, y);
     selectNodeGraphUnderMouse();
     mWasDoubleClick = true;
 }
 
 void ZNodeEditor::onScrollChange(double x, double y) {
-    ZView::onScrollChange(x, y);
 
     if (ZSettings::get().getWheelMode() == scroll) {
-        mNodeContainer->setEnableScroll(true);
+        if (isMouseInBounds(mProjectBrowser)) {
+            mNodeContainer->setEnableScroll(false);
+        } else {
+            mNodeContainer->setEnableScroll(true);
+        }
+
+        ZView::onScrollChange(x, y);
         updateLines();
 
         vec2 scroll = mNodeContainer->getInnerView()->getTranslation();
@@ -1620,6 +1621,7 @@ void ZNodeEditor::onScrollChange(double x, double y) {
         mCheckerView->computeBounds();
 
     } else {
+        ZView::onScrollChange(x, y);
         mNodeContainer->setEnableScroll(false);
 
         // Scrolling with shift key is used for zooming charts

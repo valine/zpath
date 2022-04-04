@@ -466,6 +466,9 @@ void ZNodeView::setType(NodeType* type) {
     refreshView(type);
     mNameLabel->setTextColor(getBackgroundColor().getTextColor());
     mOutputLabel->setTextColor(getBackgroundColor().getTextColor());
+
+    setText(type->mName);
+
     if (type->mChartType == LINE_1D_2X) {
         mChart->setLineCount(2);
     }

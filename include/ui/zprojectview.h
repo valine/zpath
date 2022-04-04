@@ -32,6 +32,7 @@ public :
     void setOnProjectDelete(function<bool(string name, int index)> rename) {
         mOnProjectDelete = std::move(rename);
     }
+    int getSelectedProject();
 
     void onLayoutFinished() override;
 private:
@@ -59,6 +60,7 @@ private:
     ZTextField *newProjectView();
 
     ZView *getLastProject();
+
 };
 
 

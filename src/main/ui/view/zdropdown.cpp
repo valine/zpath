@@ -103,7 +103,9 @@ void ZDropDown::wrapTitle() {
 }
 
 void ZDropDown::selectItem(int index) {
-    mDrawer->setVisibility(false);
+    if (mDrawer->getVisibility()) {
+        mDrawer->setVisibility(false);
+    }
     getParentView()->invalidate();
     mSelected = index;
     if (mDynamicTitle) {

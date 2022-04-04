@@ -91,7 +91,7 @@ class ZView {
          * Called when mouse up anywhere on the screen
          */
         virtual void onGlobalMouseUp(int key);
-        virtual void onDoubleClick();
+        virtual void onDoubleClick(int x, int y);
 
         virtual void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button);
         virtual void onSizeChange();
@@ -458,8 +458,8 @@ private:
 		int mParentWidth = 100;
 		int mParentHeight = 100;
 
-		int mMouseX = 0;
-		int mMouseY = 0;
+		int mMouseX = -1e8;
+		int mMouseY = -1e8;
 
 		double mLastX{};
 		double mLastY{};
