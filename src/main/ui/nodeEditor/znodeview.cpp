@@ -285,7 +285,7 @@ void ZNodeView::updateChart2D() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float input = (float) i * increment;
 
-        vector<vector<float>> inVec = vector<vector<float>>(2, vector<float>(MAX_INPUT_COUNT, input));
+        vector<vector<float>> inVec = vector<vector<float>>(MAX_INPUT_COUNT, vector<float>(MAX_INPUT_COUNT, input));
         vector<vector<float>> fx = evaluate(inVec, inVec);
         if (fx.empty()) {
             mChart->setVisibility(false);
@@ -343,7 +343,7 @@ void ZNodeView::updateChart1D2X() {
     for (int i = 0; i < mChart->getResolution(); i++) {
         float factor = (float) i / (float) chartRes;
         float x = mix(xBounds.x, xBounds.y, factor);
-        vector<vector<float>> inVec = {vector<float>(MAX_INPUT_COUNT, x), vector<float>(MAX_INPUT_COUNT, x)};
+        vector<vector<float>> inVec = vector<vector<float>>(MAX_INPUT_COUNT, vector<float>(MAX_INPUT_COUNT, x));
 
         vector<vector<float>> fx = evaluate(inVec, inVec);
         if (fx.empty()) {
@@ -723,7 +723,7 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
                     } else {
                         recurOutput = input.first->evaluate(x, root, rootInput);
                     }
-                    for (int d = 0; d < summedInputs.size(); d++) {
+                    for (int d = 0; d < recurOutput.size(); d++) {
                         // It's possible a previous node on the stack has too few inputs.
                         // When that happens display an error message.
                         if (recurOutput.empty()) {
@@ -731,6 +731,13 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
                             mOutputLabel->setTextColor(red);
                             return vector<vector<float>>();
                         } else {
+                            while(summedInputs.size() <= d) {
+                                summedInputs.push_back({0});
+                            }
+
+                            while(summedInputs.at(d).size() <= i) {
+                                summedInputs.at(d).push_back(0);
+                            }
                             if (d < recurOutput.size() && input.second < recurOutput.at(d).size()) {
                                 summedInputs.at(d).at(i) += recurOutput.at(d).at(input.second);
                             }
@@ -783,6 +790,7 @@ vector<vector<float>> ZNodeView::evaluate(vector<vector<float>> x, ZNodeView *ro
     if (root == this) {
         return vector<vector<float>>(MAX_INPUT_COUNT, vector<float>(MAX_INPUT_COUNT, 0));
     }
+
     ivec2 size = getSocketCount();
     if (size.x == 0) {
         x = compute(x, mType, rootInput);

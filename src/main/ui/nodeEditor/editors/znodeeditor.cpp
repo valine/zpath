@@ -1275,9 +1275,13 @@ void ZNodeEditor::onMouseDown() {
             }
 
 
-            for (int j = 0; j < node->getType()->mSocketCount.x; j++) {
+            for (int j = 0; j < node->getSocketCount().x; j++) {
                 ZView *socket = node->getSocketsIn().at(j);
-                bool magPicker = (shiftKeyPressed() || node->getType()->mSocketType.at(0).at(j) == SocketType::CON);
+                SocketType socketType = SocketType::CON;
+                if (node->getType()->mSocketType.at(0).size() > j) {
+                   socketType = node->getType()->mSocketType.at(0).at(j);
+                }
+                bool magPicker = (shiftKeyPressed() || socketType == SocketType::CON);
 
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
 

@@ -2,7 +2,7 @@
   "name" : "split",
   "socketType" : {
     "input" : ["VAR"],
-    "output" : ["VAR", "VAR"]
+    "output" : ["VAR", "VAR", "VAR", "VAR", "VAR", "VAR", "VAR"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,

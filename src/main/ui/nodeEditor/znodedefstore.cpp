@@ -235,26 +235,29 @@ ZNodeDefStore::ZNodeDefStore() {
         return fn.x;
     }));
 
-
     mMathNodeTypes.push_back(NodeType::fromFile("math/heatmap.json", [](FuncIn fn) {
         fn.nodeView->mChart->setResolution(100);
         vector<float> in = fn.x.at(0);
-
         fn.nodeView->mChart->setZBound(vec2(fn.x.at(0).at(1), fn.x.at(0).at(2)));
         vector<vector<float>> returnValue = {{fn.x.at(0).at(0), fn.start, fn.width}};
         return returnValue;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/combine.json", [](FuncIn fn) {
-        vector<vector<float>> returnValue = {{fn.x.at(REAL).at(0)},
-                                             {fn.x.at(REAL).at(1)}};
+        vector<vector<float>> returnValue;
+        for (int i = 0; i < MAX_OUTPUT_COUNT; i++) {
+            returnValue.push_back({fn.x.at(REAL).at(i)});
+        }
         return returnValue;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/split.json", [](FuncIn fn) {
-        vector<vector<float>> returnValue = {{fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)},
-                                             {NAN, NAN}};
-
+        vector<vector<float>> returnValue;
+        returnValue.push_back(vector<float>( MAX_OUTPUT_COUNT, 0));
+        returnValue.push_back(vector<float>( MAX_OUTPUT_COUNT, 0));
+        for (int i = 0; i < fn.x.size(); i++) {
+            returnValue.at(REAL).at(i) = (fn.x.at(i).at(0));
+        }
         return returnValue;
     }));
 
@@ -399,8 +402,10 @@ ZNodeDefStore::ZNodeDefStore() {
             fn.nodeView->initializeNNModel();
 
             auto nnNodes = ZNodeUtil::get().nodesFromMlModel(fn.nodeView->mMlModel);
-            fn.nodeView->addGroupNode(nnNodes);
-            fn.nodeView->getAddNodeInterface()(nnNodes, true);
+            for (auto node : nnNodes) {
+                fn.nodeView->addGroupNode(node);
+                fn.nodeView->getAddNodeInterface()(node, true);
+            }
         }
 
         float returnValue;
@@ -439,7 +444,6 @@ ZNodeDefStore::ZNodeDefStore() {
         [](ZNodeView* sender) -> void {
             cout<< sender->mMlModel->toFunctionString() << endl;
         },[](ZNodeView* sender) -> void {
-            ZNodeUtil::get().nodesFromMlModel(sender->mMlModel);
             cout<< sender->mMlModel->toFunctionString() << endl;
         }
     }));

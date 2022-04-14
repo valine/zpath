@@ -1078,8 +1078,8 @@ public:
         return true;
     }
 
-    ZNodeView *nodesFromMlModel(MlModel *model) {
-
+    vector<ZNodeView*> nodesFromMlModel(MlModel *model) {
+        vector<ZNodeView*> nodes;
         string data;
         bool singleOutput = model->mOutputNodes.size() == 1;
 
@@ -1103,7 +1103,11 @@ public:
 
         data+= functionReturnType + " run(" + inputParams + ") {\n";
 
+        ZNodeView* node = ZNodeUtil::get().newNode("sigmoid");
+        nodes.push_back(node);
+
         ZNodeView* group = ZNodeUtil::get().newNode("sigmoid");
+        nodes.push_back(group);
         // group->setSocketCount(ivec2(model->getInputCount(), model->getOutputCount()));
 
         // Normalize inputs base on median and variance
@@ -1193,7 +1197,7 @@ public:
         }
 
         data+="\n}";
-        return group;
+        return nodes;
     }
 
 
