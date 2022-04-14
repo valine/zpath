@@ -397,6 +397,10 @@ ZNodeDefStore::ZNodeDefStore() {
         fn.nodeView->initializeGroup();
         if (fn.nodeView->mMlModel == nullptr) {
             fn.nodeView->initializeNNModel();
+
+            auto nnNodes = ZNodeUtil::get().nodesFromMlModel(fn.nodeView->mMlModel);
+            fn.nodeView->addGroupNode(nnNodes);
+            fn.nodeView->getAddNodeInterface()(nnNodes, true);
         }
 
         float returnValue;

@@ -10,6 +10,8 @@ static const double TOP_MARGIN = 2.0;
 
 static const int VIEW_WIDTH = 125;
 
+static const int MIN_WIDTH = 25;
+
 #include "zview.h"
 #include "zscrollview.h"
 #include "ui/ztextfield.h"
@@ -37,10 +39,15 @@ public :
     int getSelectedProject();
 
     void onLayoutFinished() override;
+
+    void toggleMinimise();
 private:
     ZScrollView* mScrollView;
     vector<ZTextField*> mProjectViews;
     queue<ZTextField*> mRecycleBin;
+    ZButton* mMinimise;
+    ZButton* mDeleteProjectBtn;
+    ZButton* mNewProjectBtn;
     function<vector<string>()> mModelInterface;
     function<void(int index, string path)> mOnProjectSelected = nullptr;
     function<string(string name, int index)> mOnProjectRenamed = nullptr;
@@ -63,6 +70,9 @@ private:
 
     ZView *getLastProject();
 
+    void minimiseView();
+
+    void maximiseView();
 };
 
 

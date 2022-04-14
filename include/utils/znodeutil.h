@@ -1103,7 +1103,7 @@ public:
 
         data+= functionReturnType + " run(" + inputParams + ") {\n";
 
-        ZNodeView* group = ZNodeUtil::get().newNode("n-group");
+        ZNodeView* group = ZNodeUtil::get().newNode("sigmoid");
         // group->setSocketCount(ivec2(model->getInputCount(), model->getOutputCount()));
 
         // Normalize inputs base on median and variance
@@ -1114,7 +1114,6 @@ public:
             normalizedInput+="  float input" + to_string(i) + " = " + withVar + ";\n";
             data+=normalizedInput;
         }
-
 
         int layer = 1;
         for (int layerHeight : model->mHiddenHeight) {

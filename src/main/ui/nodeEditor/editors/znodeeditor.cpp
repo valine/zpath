@@ -351,6 +351,11 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
         addNode(mLastType);
     }
 
+    else if (key == GLFW_KEY_N && action == GLFW_RELEASE) {
+        mProjectBrowser->toggleMinimise();
+        invalidate();
+    }
+
     else if (key == GLFW_KEY_B) {
         enterBoxSelectMode();
     }
