@@ -521,6 +521,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         root->setXOffset(root->getOffsetX() - mTmpNodeOffsetX);
         for (vector<ZNodeView*> layer : mTmpNodes) {
             if (!layer.empty()) {
+
                 for (ZNodeView *node : layer) {
                     node->setXOffset(node->getOffsetX() - mTmpNodeOffsetX);
                     node->setInitialPosition(node->getOffset());
@@ -1777,7 +1778,7 @@ void ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy)
 
     // Quick connect nodes
     int nodeIndex = getMouseOverNode();
-    if (!wasMouseDrag() && (button == GLFW_MOUSE_BUTTON_2 || button == GLFW_MOUSE_BUTTON_3) && action == GLFW_RELEASE && nodeIndex != -1) {
+    if (!wasMouseDrag() && (button == GLFW_MOUSE_BUTTON_2 || button == GLFW_MOUSE_BUTTON_3) && action == GLFW_RELEASE && nodeIndex != -1 && shiftKeyPressed()) {
         if (mSecondLastSelected != nullptr) {
             quickConnectNodes(mSecondLastSelected, mNodeViews.at(nodeIndex));
 

@@ -603,6 +603,10 @@ int MlModel::getInputCount() {
     return mInputs;
 }
 
+int MlModel::getOutputCount() {
+    return mOutputs;
+}
+
 double MlModel::getStepSize() {
     return mStep;
 }

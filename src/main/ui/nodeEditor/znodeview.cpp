@@ -487,7 +487,11 @@ void ZNodeView::refreshView(NodeType* type) {
         } else {
             mSocketsIn.at(i)->setVisibility(true);
             if (i < socketCount.x) {
-                ZColor color = getSocketColor(socketType.at(0).at(i));
+
+                ZColor color = getSocketColor(socketType.at(0).at(0));
+                if (socketType.at(0).size() > i) {
+                     color = getSocketColor(socketType.at(0).at(i));
+                }
                 mSocketsIn.at(i)->setBackgroundColor(color);
             }
 
@@ -510,7 +514,11 @@ void ZNodeView::refreshView(NodeType* type) {
 
             mSocketsOut.at(i)->setVisibility(true);
             if (i < socketCount.y) {
-                ZColor color = getSocketColor(socketType.at(1).at(i)) - darkenVec;
+                ZColor color = getSocketColor(socketType.at(1).at(0)) - darkenVec;
+                if (socketType.at(1).size() > i) {
+                    color = getSocketColor(socketType.at(1).at(i)) - darkenVec;
+                }
+
                 mSocketsOut.at(i)->setBackgroundColor(color);
             }
         }
@@ -1073,6 +1081,39 @@ ZNodeView::compute(vector<vector<float>> x, NodeType* type, vector<vector<float>
 }
 
 void ZNodeView::initializeGroup() {
+    if (!isDeleted()) {
+        if (mGroupInput == nullptr) {
+            mGroupInput = ZNodeUtil::get().newNode(
+                    ZNodeDefStore::get().getMathNodeType("in"));
+            mGroupInput->setInputProxy(this);
+            mGroupNodes.insert(mGroupInput);
+            mGroupInput->setSocketCount(ivec2(0, mType->mSocketCount.x));
+
+            if (mEditorInterface != nullptr) {
+                mEditorInterface(mGroupInput, true);
+            }
+        }
+
+        if (mGroupOutput == nullptr) {
+            mGroupOutput = ZNodeUtil::get().newNode(
+                    ZNodeDefStore::get().getMathNodeType("out"));
+            mGroupNodes.insert(mGroupOutput);
+            mGroupOutput->setSocketCount(ivec2(mType->mSocketCount.y, 0));
+            if (mEditorInterface != nullptr) {
+                mEditorInterface(mGroupOutput, true);
+            }
+        }
+
+        if (getVisibility()) {
+            mGroupOutput->setVisibility(false);
+            mGroupInput->setVisibility(false);
+        }
+    }
+}
+
+
+
+void ZNodeView::initializeNeuralGroup() {
     if (!isDeleted()) {
         if (mGroupInput == nullptr) {
             mGroupInput = ZNodeUtil::get().newNode(

@@ -6,11 +6,12 @@
 
 #include "ui/zprojectview.h"
 #include "ui/ztextfield.h"
-ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZView(125, fillParent, parent) {
+ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZView(VIEW_WIDTH, fillParent, parent) {
 
     mScrollView = new ZScrollView(fillParent, fillParent, this);
     mScrollView->setInnerViewHeight(200);
     mScrollView->setBackgroundColor(transparent);
+    mScrollView->setMarginTop(25);
 
     mModelInterface = model;
     setBackgroundColor(grey1);
@@ -48,6 +49,34 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &mode
             } else {
                 selectProject(lastProject);
             }
+        }
+    });
+
+    auto minimize = new ZButton(">", this);
+    minimize->setGravity(topRight);
+    minimize->setBackgroundColor(grey2);
+    minimize->setCornerRadius(vec4(5,0,0,0));
+    minimize->setOnClick([this, minimize,deleteProjectBtn,newProjectBtn](ZView* sender){
+        int minWidth = 30;
+        if (this->getMaxWidth() > minWidth) {
+            minimize->setText("<");
+            this->setMaxWidth(minWidth);
+            this->mScrollView->setVisibility(false);
+            newProjectBtn->setVisibility(false);
+            deleteProjectBtn->setVisibility(false);
+            minimize->setGravity(bottomLeft);
+            this->setCornerRadius(vec4(0));
+            this->setBackgroundColor(transparent);
+        } else {
+            minimize->setText(">");
+            this->setMaxWidth(VIEW_WIDTH);
+            this->mScrollView->setVisibility(true);
+            deleteProjectBtn->setVisibility(true);
+            newProjectBtn->setVisibility(true);
+            minimize->setGravity(topRight);
+            this->setCornerRadius(vec4(5,1,1,1));
+            this->setBackgroundColor(grey1);
+
         }
     });
 

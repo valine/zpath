@@ -8,6 +8,8 @@
 
 static const double TOP_MARGIN = 2.0;
 
+static const int VIEW_WIDTH = 125;
+
 #include "zview.h"
 #include "zscrollview.h"
 #include "ui/ztextfield.h"

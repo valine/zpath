@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
                 controller = new ZPathViewController(argv);
                 return controller;
             }
-            case 7: {
+            case 1: {
                 controller = new NodeViewController(argv);
                 return controller;
             }
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
             } case 6: {
                 controller = new ZDataViewController(argv);
                 return controller;
-            } case 1: {
+            } case 7: {
                 controller = new ZJsonEditorViewController(argv);
                 return controller;
             }

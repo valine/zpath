@@ -1,7 +1,7 @@
 {
   "name" : "out",
   "socketType" : {
-    "input" : ["VAR","VAR","VAR","VAR","VAR","VAR","VAR"],
+    "input" : ["VAR"],
     "output" : []
   },
   "isDynamicSocket" : true,
