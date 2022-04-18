@@ -688,26 +688,15 @@ float ZNodeEditor::centerGraph(ZNodeView *root, int depth) {
 
 void ZNodeEditor::selectNodeGraph(ZNodeView* root, int depth) {
     selectNode(root);
-
-    set<ZNodeView*> uniqueChildren;vector<vector<pair<ZNodeView *, int>>> inputIndices = root->mInputIndices;
-
-    for (const vector<pair<ZNodeView *, int>>& socketInputs : inputIndices) {
-        for (pair<ZNodeView*, int> input : socketInputs) {
-            ZNodeView* child = input.first;
-
-            if (child != nullptr) {
-                if (uniqueChildren.count(child) == 0) {
-                    uniqueChildren.insert(child);
-                }
-            }
-        }
+    for (auto parent : root->getChildren()) {
+        selectNodeGraph(parent, depth + 1);
     }
+}
 
-    for (ZNodeView* node : uniqueChildren) {
-        if (node == root) {
-            return;
-        }
-        selectNodeGraph(node, depth + 1);
+void ZNodeEditor::selectNodeGraphInverse(ZNodeView* root, int depth) {
+    selectNode(root);
+    for (auto parent : root->getParents()) {
+        selectNodeGraphInverse(parent, depth + 1);
     }
 }
 
@@ -1607,9 +1596,24 @@ void ZNodeEditor::selectNodeGraphUnderMouse() {
     }
 }
 
+void ZNodeEditor::selectNodeGraphInverseUnderMouse() {
+    int nodeIndex = getMouseOverNode();
+    if (nodeIndex != -1) {
+        ZNodeView* mouseOverNode = mNodeViews.at(getMouseOverNode());
+        if (!shiftKeyPressed()) {
+            deselectAllNodes();
+        }
+        selectNodeGraphInverse(mouseOverNode, 0);
+    }
+}
+
 void ZNodeEditor::onDoubleClick(int x, int y) {
     ZView::onDoubleClick(x, y);
-    selectNodeGraphUnderMouse();
+    if (controlKeyPressed()) {
+        selectNodeGraphInverseUnderMouse();
+    } else {
+        selectNodeGraphUnderMouse();
+    }
     mWasDoubleClick = true;
 }
 

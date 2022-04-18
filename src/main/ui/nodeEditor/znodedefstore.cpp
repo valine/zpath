@@ -12,10 +12,9 @@ ZNodeDefStore::ZNodeDefStore() {
         complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
         complex<float> in2 = {fn.x.at(REAL).at(2), fn.x.at(IMAG).at(2)};
         complex<float> out0 = sin(in0 * in1) * in2;
-        vector<vector<float>> returnValue =
-                {{out0.real(), fn.start, fn.width},
-                 {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     /// Cos node
@@ -24,104 +23,103 @@ ZNodeDefStore::ZNodeDefStore() {
         complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
         complex<float> in2 = {fn.x.at(REAL).at(2), fn.x.at(IMAG).at(2)};
         complex<float> out0 = cos(in0 * in1) * in2;
-
-        vector<vector<float>> returnValue =
-                {{out0.real(), fn.start, fn.width},
-                 {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/tan.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
 
         complex<float> out0 = tan(in0);
-        vector<vector<float>> returnValue = {
-                {out0.real(), fn.start, fn.width},
-                {out0.imag(), fn.start, fn.width}
-        };
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/add.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
         complex<float> out0 = in0 + in1;
-        vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
-                                               {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/subtract.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
         complex<float> out0 = in0 - in1;
-        vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
-                                               {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/multiply.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
         complex<float> out0 = in0 * in1;
-        vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
-                                               {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/divide.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
         complex<float> out0 = in0 / in1;
-        vector<vector<float>> returnValue =   {{out0.real(), fn.start, fn.width},
-                                               {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/pow.json", [](FuncIn fn) {
-
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
         complex<float> out0 = pow(in0, in1);
-        vector<vector<float>> returnValue =  {{out0.real(), fn.start, fn.width},
-                                              {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/sqrt.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> out0 = sqrt(in0);
-        vector<vector<float>> returnValue = {{out0.real(), fn.start, fn.width},
-                                             {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/abs.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> out0 = abs(in0);
-        vector<vector<float>> returnValue = {{out0.real(), fn.start, fn.width},
-                                             {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/exp.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
         complex<float> out0 = exp(in0);
-        vector<vector<float>> returnValue = {{out0.real(), fn.start, fn.width},
-                                             {out0.imag(), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/min.json", [](FuncIn fn) {
-        vector<vector<float>> returnValue = {{std::min(fn.x.at(REAL).at(0), fn.x.at(REAL).at(1)), fn.start, fn.width},
-                                             {std::min(fn.x.at(IMAG).at(0), fn.x.at(IMAG).at(1)), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {std::min(fn.x.at(REAL).at(0), fn.x.at(REAL).at(1)), fn.start, fn.width};
+        fn.x.at(IMAG) = {std::min(fn.x.at(IMAG).at(0), fn.x.at(IMAG).at(1)), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/max.json", [](FuncIn fn) {
-        vector<vector<float>> returnValue = {{std::max(fn.x.at(REAL).at(0), fn.x.at(REAL).at(1)), fn.start, fn.width},
-                                             {std::max(fn.x.at(IMAG).at(0), fn.x.at(IMAG).at(1)), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {std::max(fn.x.at(REAL).at(0), fn.x.at(REAL).at(1)), fn.start, fn.width};
+        fn.x.at(IMAG) = {std::max(fn.x.at(IMAG).at(0), fn.x.at(IMAG).at(1)), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/gaussian.json", [](FuncIn fn) {
@@ -130,10 +128,9 @@ ZNodeDefStore::ZNodeDefStore() {
         complex<float> in2 = {fn.x.at(REAL).at(2), 0};
         complex<float> two = {2.0, 0};
         complex<float> out0 = (in2 * exp(-pow(in0, two) / pow(two * in1, two)));
-        vector<vector<float>> returnValue =  {{out0.real(), fn.start, fn.width},
-                                              {out0.imag(), fn.start, fn.width}};
-
-        return returnValue;
+        fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
+        fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/morlet.json", [](FuncIn fn) {
@@ -147,58 +144,53 @@ ZNodeDefStore::ZNodeDefStore() {
                 sin(in.at(0) * in.at(4)) * // sinusoid
                 (in.at(2) * exp(-pow(in.at(0) - in.at(3), 2) /
                                 pow(2 * in.at(1), 2))));
-        vector<vector<float>> returnValue = {{real,      fn.start, fn.width},
-                                             {imaginary, fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {real, fn.start, fn.width};
+        fn.x.at(IMAG) = {imaginary, fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/sigmoid.json", [](FuncIn fn) {
         float in = fn.x.at(REAL).at(0);
-        float out = 1.0 / (1.0 + exp(-in));
-        vector<vector<float>> returnValue = {{out, fn.start, fn.width},
-                                             {0.0, fn.start, fn.width}};
-        return returnValue;
+        float out = 1.0f / (1.0 + exp(-in));
+        fn.x.at(REAL) = {out, fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/tanh.json", [](FuncIn fn) {
         float in = fn.x.at(REAL).at(0);
         float out = tanh(in);
-        vector<vector<float>> returnValue = {{out, fn.start, fn.width},
-                                             {0.0, fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {out, fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/relu.json", [](FuncIn fn) {
         float in = fn.x.at(REAL).at(0);
-        float out = tanh(in);
-
         float val = in * 0.3;
         if (in > 0.0) {
             val = in;
         }
 
-        vector<vector<float>> returnValue = {{val, fn.start, fn.width},
-                                             {0.0, fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {val, fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/firstdiff.json", [](FuncIn fn) {
         vector<float> in = fn.x.at(0);
         float diff = fn.nodeView->computeFirstDifference(in.at(0), in.at(1));
-        vector<vector<float>> returnValue = {{diff, fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {diff, fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/dot.json", [](FuncIn fn) {
-        vector<vector<float>> returnValue = {{dot(vec2(fn.x.at(0).at(0), fn.x.at(1).at(0)),
-                                                  vec2(fn.x.at(0).at(1), fn.x.at(1).at(1))), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {dot(vec2(fn.x.at(0).at(0), fn.x.at(1).at(0)),
+                             vec2(fn.x.at(0).at(1), fn.x.at(1).at(1))), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/cross.json", [](FuncIn fn) {
-        vector<vector<float>> returnValue = {{dot(vec2(fn.x.at(0).at(0), fn.x.at(1).at(0)),
-                                                  vec2(fn.x.at(0).at(1), fn.x.at(1).at(1))), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {dot(vec2(fn.x.at(0).at(0), fn.x.at(1).at(0)),
+                             vec2(fn.x.at(0).at(1), fn.x.at(1).at(1))), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/poly.json", [](FuncIn fn) {
@@ -240,7 +232,9 @@ ZNodeDefStore::ZNodeDefStore() {
         vector<float> in = fn.x.at(0);
         fn.nodeView->mChart->setZBound(vec2(fn.x.at(0).at(1), fn.x.at(0).at(2)));
         vector<vector<float>> returnValue = {{fn.x.at(0).at(0), fn.start, fn.width}};
-        return returnValue;
+
+        fn.x.at(REAL) = {fn.x.at(0).at(0), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/combine.json", [](FuncIn fn) {
@@ -264,11 +258,10 @@ ZNodeDefStore::ZNodeDefStore() {
     mMathNodeTypes.push_back(NodeType::fromFile("math/file.json", [](FuncIn fn) {
 
         int fileIndex = fn.nodeView->mDropDown->getSelectedItem();
-
         float point = DataStore::get().getDataAtIndex(fileIndex, fn.x.at(REAL).at(0));
-        vector<vector<float>> returnValue = {{point, fn.start, fn.width},
-                                             {0, fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {point, fn.start, fn.width};
+        fn.x.at(IMAG) = {0, fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/c.json", [](FuncIn fn) {
@@ -316,27 +309,20 @@ ZNodeDefStore::ZNodeDefStore() {
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/fft.json", [](FuncIn fn) {
-
         vector<float> in = fn.x.at(0);
-
         auto fft = fn.nodeView->computeFft(in.at(1), in.at(2), in.at(3));
-        vector<vector<float>> returnValue =  {{fft.first,  fn.width, in.at(3)},
-                                              {fft.second, fn.width, in.at(3)}};
-        return returnValue;
-
+        fn.x.at(REAL) = {fft.first,  fn.width, in.at(3)};
+        fn.x.at(IMAG) = {fft.second, fn.width, in.at(3)};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/hartley.json", [](FuncIn fn) {
-
         vector<float> in = fn.x.at(0);
-
         auto fft = fn.nodeView->computeFft(in.at(1), in.at(2), in.at(3));
-        vector<vector<float>> returnValue =
-                {{sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)),
-                         fn.width, in.at(3)},
-                 {0.0, fn.width, in.at(3)}};
-
-        return returnValue;
+        fn.x.at(REAL) = {sqrt(pow(fft.first, 2.0f) + pow(fft.second, 2.0f)),
+                         fn.width, in.at(3)};
+        fn.x.at(IMAG) = {0.0, fn.width, in.at(3)};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/ifft.json", [](FuncIn fn) {
@@ -344,10 +330,9 @@ ZNodeDefStore::ZNodeDefStore() {
         vector<float> in = fn.x.at(0);
         auto fft = fn.nodeView->computeInverseFft(
                 in.at(1), in.at(2), in.at(3));
-        vector<vector<float>> returnValue = {{fft.first,  fn.start, fn.width},
-                                             {fft.second, fn.start, fn.width}};
-        return returnValue;
-
+        fn.x.at(REAL) = {fft.first,  fn.width, in.at(3)};
+        fn.x.at(IMAG) = {fft.second, fn.width, in.at(3)};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/group.json", [](FuncIn fn) {
@@ -361,24 +346,23 @@ ZNodeDefStore::ZNodeDefStore() {
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/in.json", [](FuncIn fn) {
-
-        if (fn.nodeView->mInputProxy != nullptr) {
-            return fn.nodeView->mInputProxy->sumAllInputs(
-                    fn.x, nullptr, vector<vector<float>>());
-        } else {
-            return fn.x;
-        }
-    }, {
-            [](ZNodeView* sender) -> void {
-                // Plus button
-                ivec2 count = sender->mSocketCount + ivec2(0,1);
-                sender->setSocketCount(count);
-            },
-            [](ZNodeView* sender) -> void {
-                // Minus button
-                ivec2 count = sender->mSocketCount - ivec2(0,1);
-                sender->setSocketCount(count);
+            if (fn.nodeView->mInputProxy != nullptr) {
+                return fn.nodeView->mInputProxy->sumAllInputs(
+                        fn.x, nullptr, vector<vector<float>>());
+            } else {
+                return fn.x;
             }
+        }, {
+        [](ZNodeView* sender) -> void {
+            // Plus button
+            ivec2 count = sender->mSocketCount + ivec2(0,1);
+            sender->setSocketCount(count);
+        },
+        [](ZNodeView* sender) -> void {
+            // Minus button
+            ivec2 count = sender->mSocketCount - ivec2(0,1);
+            sender->setSocketCount(count);
+        }
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/out.json", [](FuncIn fn) {
@@ -401,7 +385,8 @@ ZNodeDefStore::ZNodeDefStore() {
         if (fn.nodeView->mMlModel == nullptr) {
             fn.nodeView->initializeNNModel();
 
-            auto nnNodes = ZNodeUtil::get().nodesFromMlModel(fn.nodeView->mMlModel);
+            auto nnNodes = ZNodeUtil::get().nodesFromMlModel(fn.nodeView->mMlModel,
+                                                             fn.nodeView->mGroupInput, fn.nodeView->mGroupOutput);
             for (auto node : nnNodes) {
                 fn.nodeView->addGroupNode(node);
                 fn.nodeView->getAddNodeInterface()(node, true);
@@ -428,10 +413,9 @@ ZNodeDefStore::ZNodeDefStore() {
             returnValue = fn.nodeView->mMlModel->getOutputAt(0);
         }
 
-        vector<vector<float>> returnValueVector = {
-                {returnValue, fn.start, fn.width},
-                {fn.x.at(REAL).at(0),fn.start, fn.width}};
-        return returnValueVector;
+        fn.x.at(IMAG) = {fn.x.at(REAL).at(0),fn.start, fn.width};
+        fn.x.at(REAL) = {returnValue, fn.start, fn.width};
+        return fn.x;
 
     }, {
         [](ZNodeView* sender) -> void {
@@ -460,15 +444,14 @@ ZNodeDefStore::ZNodeDefStore() {
         return fn.x;
     }));
 
-
     mMathNodeTypes.push_back(NodeType::fromFile("math/laplace-s.json", [](FuncIn fn) {
         vector<vector<float>> sx = fn.nodeView->computeLaplaceHeadless(
                 {vector<float>(MAX_INPUT_COUNT, fn.x.at(REAL).at(1)),
                  vector<float>(MAX_INPUT_COUNT, fn.x.at(IMAG).at(1))}, fn.rootInput);
 
         fn.nodeView->mChart->setZBound(vec2(fn.x.at(0).at(2), fn.x.at(0).at(3)));
-        vector<vector<float>> returnValue = {{sx.at(0).at(0), fn.start, fn.width}};
-        return returnValue;
+        fn.x.at(REAL) = {sx.at(0).at(0), fn.start, fn.width};
+        return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/comment.json"));

@@ -1078,7 +1078,7 @@ public:
         return true;
     }
 
-    vector<ZNodeView*> nodesFromMlModel(MlModel *model) {
+    vector<ZNodeView *> nodesFromMlModel(MlModel *model, ZNodeView *in, ZNodeView *out) {
         vector<ZNodeView*> nodes;
         string data;
         bool singleOutput = model->mOutputNodes.size() == 1;
@@ -1103,16 +1103,23 @@ public:
 
         data+= functionReturnType + " run(" + inputParams + ") {\n";
 
-        ZNodeView* node = ZNodeUtil::get().newNode("sigmoid");
-        nodes.push_back(node);
+        ZNodeView* node = ZNodeUtil::get().newNode("tanh");
 
-        ZNodeView* group = ZNodeUtil::get().newNode("sigmoid");
-        nodes.push_back(group);
+
         // group->setSocketCount(ivec2(model->getInputCount(), model->getOutputCount()));
 
         // Normalize inputs base on median and variance
         for (unsigned int i = 0; i < model->mInputNodes.size(); i++) {
             string normalizedInput;
+
+            ZNodeView* c = newNode("c");
+            ZNodeView* subtract = newNode("-");
+            connectNodes(0,0, in, subtract);
+            connectNodes(0,1, c, subtract);
+
+            nodes.push_back(c);
+            nodes.push_back(subtract);
+
             string withMed = "in" + to_string(i) + " - " + to_string(model->mInputNodes.at(i)->getMedian());
             string withVar =  model->par(model->par(withMed) + " / " + to_string(model->mInputNodes.at(i)->getVariance()));
             normalizedInput+="  float input" + to_string(i) + " = " + withVar + ";\n";
