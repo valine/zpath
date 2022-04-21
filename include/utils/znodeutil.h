@@ -364,6 +364,16 @@ public:
             auto objectNodes = nodesFromJson(j, node);
             return node;
         }
+
+        // Nested array
+        if (j.is_array()) {
+            auto node = newNode(ZNodeDefStore::get().getJsonNodeType("array"));
+            connectNodes(0, 0, node, parent);
+            node->setText("size: " +  to_string(j.size()));
+            float sizef = j.size();
+            node->setBackgroundColor(vec4(tanh(sizef / 5.0f) + 0.1,0.1,0.1,1));
+            auto objectNodes = nodesFromJson(j[0], node);
+        }
         for (auto& el : j.items()) {
             if (el.value().is_object()) {
                 auto node = newNode(ZNodeDefStore::get().getJsonNodeType("object"));
@@ -397,9 +407,13 @@ public:
                 float sizef = el.value().size();
                 node->setBackgroundColor(vec4(tanh(sizef / 5.0f) + 0.1,0.1,0.1,1));
                 auto objectNodes = nodesFromJson(el.value()[0], node);
+            } else if (el.value().is_null()) {
+                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("null"));
+                connectNodes(0, 0, node, parent);
+                node->setBackgroundColor(vec4(0,1,0.1,1.0));
             } else {
                 auto node = newNode(ZNodeDefStore::get().getJsonNodeType("boolean"));
-                connectNodes(0, 0, node, parent);parent = node;
+                connectNodes(0, 0, node, parent);
                 bool value = el.value();
                 node->setBackgroundColor(vec4(0,1,0.1,1.0));
                 node->setText(el.key() + "\n" + to_string(value));
