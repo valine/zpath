@@ -1,8 +1,8 @@
 {
-  "name" : "split",
+  "name" : "relu",
   "socketType" : {
     "input" : ["VAR"],
-    "output" : ["VAR", "VAR", "VAR", "VAR", "VAR", "VAR", "VAR"]
+    "output" : ["VAR", "CON", "CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,
@@ -15,8 +15,8 @@
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : false,
   "buttonNames" : [],
-  "colorDark" : [0.15, 0.155, 0.17, 1.0],
-  "colorLight" : [1.0, 1.0, 1.0, 1.0],
+  "colorDark" : [0.023195, 0.223442, 0.538225, 1.000000],
+  "colorLight" : [0.023195, 0.223442, 0.538225, 1.000000],
   "adaptiveResolution" : true,
   "chartType" : "LINE_1D_2X",
   "showInDrawer" : true

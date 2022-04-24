@@ -6,12 +6,17 @@
 #define ZPATH_ZNODEUTIL_H
 
 class ZLabel;
+class ZNodeDefStore;
 
 #include <queue>
 #include <set>
 #include "ui/znodeview.h"
 #include <string>
-#include "ui/znodedefstore.h"
+
+
+#ifndef ZPATH_ZNODEDEFSTORE_H
+#include <ui/znodedefstore.h>
+#endif
 
 using namespace std;
 
@@ -357,72 +362,7 @@ public:
     /// JSON Nodes
 
 
-    ZNodeView* nodesFromJson(json j, ZNodeView* parent) {
-        if (parent == nullptr) {
-            auto node = newNode(ZNodeDefStore::get().getJsonNodeType("object"));
-            node->setText("root");
-            auto objectNodes = nodesFromJson(j, node);
-            return node;
-        }
-
-        // Nested array
-        if (j.is_array()) {
-            auto node = newNode(ZNodeDefStore::get().getJsonNodeType("array"));
-            connectNodes(0, 0, node, parent);
-            node->setText("size: " +  to_string(j.size()));
-            float sizef = j.size();
-            node->setBackgroundColor(vec4(tanh(sizef / 5.0f) + 0.1,0.1,0.1,1));
-            auto objectNodes = nodesFromJson(j[0], node);
-        }
-        for (auto& el : j.items()) {
-            if (el.value().is_object()) {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("object"));
-                connectNodes(0, 0, node, parent);
-                node->setText(el.key());
-                auto objectNodes = nodesFromJson(el.value(), node);
-            } else if (el.value().is_string()) {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("string"));
-                string value = el.value();
-                node->setText(el.key() + "\n" + value);
-                connectNodes(0, 0, node, parent);
-            } else if (el.value().is_number_integer()) {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("integer"));
-                connectNodes(0, 0, node, parent);
-                int value = el.value();
-                node->setText(el.key() + "\n" + to_string(value));
-            } else if (el.value().is_number_float()) {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("float"));
-                connectNodes(0, 0, node, parent);
-                float value = el.value();
-                node->setText(el.key() + "\n" + to_string(value));
-            } else if (el.value().is_boolean()) {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("boolean"));
-                connectNodes(0, 0, node, parent);
-                bool value = el.value();
-                node->setText(el.key() + "\n" + to_string(value));
-            } else if (el.value().is_array()) {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("array"));
-                connectNodes(0, 0, node, parent);
-                node->setText(el.key() + "\n" + "size: " +  to_string(el.value().size()));
-                float sizef = el.value().size();
-                node->setBackgroundColor(vec4(tanh(sizef / 5.0f) + 0.1,0.1,0.1,1));
-                auto objectNodes = nodesFromJson(el.value()[0], node);
-            } else if (el.value().is_null()) {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("null"));
-                connectNodes(0, 0, node, parent);
-                node->setBackgroundColor(vec4(0,1,0.1,1.0));
-            } else {
-                auto node = newNode(ZNodeDefStore::get().getJsonNodeType("boolean"));
-                connectNodes(0, 0, node, parent);
-                bool value = el.value();
-                node->setBackgroundColor(vec4(0,1,0.1,1.0));
-                node->setText(el.key() + "\n" + to_string(value));
-            }
-            //std::cout << "key: " << el.key() << ", value:" << el.value() << '\n';
-        }
-
-        return parent;
-    }
+    ZNodeView* nodesFromJson(json j, ZNodeView* parent);
 
     /// End JSON Nodes
     /////////////////////
@@ -446,6 +386,8 @@ public:
         }
         return node;
     }
+
+    ZNodeView* newNode(string typeString);
 
     set<ZNodeView*> duplicateNodes(set<ZNodeView*> selected) {
         map<ZNodeView*, ZNodeView*> tmpMap;
@@ -603,16 +545,7 @@ public:
         }
     }
 
-    ZNodeUtil() {
-        vector<NodeType*> types = ZNodeDefStore::get().getMathNodeTypes();
-        for (NodeType* type : types) {
-            mTypes.insert({type->mName, type});
-            mFunctions.insert(type->mName);
-        }
-        if (mTypes.count("pow") > 0) {
-            mTypes.insert({"^", mTypes.at("pow")});
-        }
-    }
+    ZNodeUtil();
 
     int getNodePriority(ZNodeView* node) {
         set<string> operators = {"+", "-", "*", "/", "^"};
@@ -1144,7 +1077,137 @@ public:
         it is numeric*/
         return true;
     }
-};
 
+    vector<ZNodeView *> nodesFromMlModel(MlModel *model, ZNodeView *in, ZNodeView *out) {
+        vector<ZNodeView*> nodes;
+        string data;
+        bool singleOutput = model->mOutputNodes.size() == 1;
+
+        // Generate input parameters
+        string inputParams;
+
+        for (unsigned int i = 0; i < model->mInputNodes.size(); i++) {
+            inputParams+="float in" + to_string(i);
+            if (i < model->mInputNodes.size() - 1) {
+                inputParams += ", ";
+            }
+        }
+
+        // Set return type based on number of outputs
+        string functionReturnType;
+        if (singleOutput) {
+            functionReturnType = "float";
+        } else {
+            functionReturnType = "vector<float>";
+        }
+
+        data+= functionReturnType + " run(" + inputParams + ") {\n";
+
+        ZNodeView* node = ZNodeUtil::get().newNode("tanh");
+
+
+        // group->setSocketCount(ivec2(model->getInputCount(), model->getOutputCount()));
+
+        // Normalize inputs base on median and variance
+        for (unsigned int i = 0; i < model->mInputNodes.size(); i++) {
+            string normalizedInput;
+
+            ZNodeView* c = newNode("c");
+            ZNodeView* subtract = newNode("-");
+            connectNodes(0,0, in, subtract);
+            connectNodes(0,1, c, subtract);
+
+            nodes.push_back(c);
+            nodes.push_back(subtract);
+
+            string withMed = "in" + to_string(i) + " - " + to_string(model->mInputNodes.at(i)->getMedian());
+            string withVar =  model->par(model->par(withMed) + " / " + to_string(model->mInputNodes.at(i)->getVariance()));
+            normalizedInput+="  float input" + to_string(i) + " = " + withVar + ";\n";
+            data+=normalizedInput;
+        }
+
+        int layer = 1;
+        for (int layerHeight : model->mHiddenHeight) {
+            for (int i = 0; i < layerHeight; i++) {
+                Neuron* node = model->getNodeAt(layer, i);
+                string normalizedInput;
+
+                string layerInput;
+                for(unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
+                    // If first hidden layer
+                    if (layer == 1) {
+                        string withWeight = "input" + to_string(wi)  + " * " + to_string(node->getWeights().at(wi));
+                        layerInput += model->par(withWeight);
+                    } else {
+                        string withWeight = "layer" + to_string(layer - 1) + "x" + to_string(wi)  + " * " + to_string(node->getWeights().at(wi));
+                        layerInput += model->par(withWeight);
+
+                    }
+
+                    if (wi < node->getWeights().size() - 1) {
+                        layerInput += " + ";
+                    }
+                }
+
+                string layerValue = model->par(layerInput) + " + " + to_string(node->getBias());
+                string activation = model->getActivationName(node->getType()) + model->par(layerValue);
+
+                normalizedInput += "  float layer" + to_string(layer) + "x" + to_string(i) + " = " + activation + ";\n";
+                data+=normalizedInput;
+            }
+
+            layer++;
+        }
+
+        if (singleOutput) {
+            Neuron* node = model->mOutputNodes.at(0);
+            string layerInput;
+            for(unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
+                // If first hidden layer
+
+                string withWeight = "layer" + to_string(layer - 1) + "x" + to_string(wi)  + " * " + to_string(node->getWeights().at(wi));
+                layerInput += model->par(withWeight);
+
+                if (wi < node->getWeights().size() - 1) {
+                    layerInput += " + ";
+                }
+            }
+
+            data+="  return pw >= " + model->par(
+                    model->par(
+                            model->par(
+                                    model->par(layerInput) + " + " + to_string(node->getBias()))) + " * " + to_string(node->getVariance())) + " + " +  to_string(node->getMedian()) + ";";
+
+        } else {
+            data+="  vector<float> outputs;\n";
+            for (auto node : model->mOutputNodes) {
+                string layerInput;
+                for(unsigned int wi = 0; wi < node->getWeights().size(); wi++) {
+                    // If first hidden layer
+
+                    string withWeight = "layer" + to_string(layer - 1) + "x" + to_string(wi)  + " * " + to_string(node->getWeights().at(wi));
+                    layerInput += model->par(withWeight);
+
+                    if (wi < node->getWeights().size() - 1) {
+                        layerInput += " + ";
+                    }
+                }
+
+                data+="  outputs.push_back" + model->par(
+                        model->par(
+                                model->par(
+                                        model->par(
+                                                model->par(layerInput) + " + " + to_string(node->getBias()))) + " * " + to_string(node->getVariance())) + " + " +  to_string(node->getMedian())) + ";\n";
+            }
+
+            data+="  return outputs;";
+        }
+
+        data+="\n}";
+        return nodes;
+    }
+
+
+};
 
 #endif //ZPATH_ZNODEUTIL_H

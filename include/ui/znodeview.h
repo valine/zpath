@@ -68,11 +68,17 @@ public:
                                  mType->mSocketCount.y);
 
             if (mType->mIsDynamicSocket) {
-                mSocketCount = glm::min(mSocketCount, ivec2(1));
+                mSocketCount = glm::min(mSocketCount, ivec2(mType->mSocketCount.x,
+                                                                  mType->mSocketCount.y));
             }
         }
         return mSocketCount;
     }
+
+    //////////////////
+    /// Neural core integration
+
+    MlModel *mMlModel = nullptr;
 
     static ZColor getSocketColor(SocketType type) {
         const vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
@@ -462,10 +468,6 @@ public:
 
     vector<ZNodeView*> getChildren();
 
-    //////////////////
-    /// Neural core integration
-
-    MlModel *mMlModel = nullptr;
 
     //////////
 
@@ -582,7 +584,7 @@ function<void(ZNodeView*, bool)> mEditorInterface = nullptr;
     vector<float> mConstantValueOutput = vector<float>(MAX_OUTPUT_COUNT, 0.0);
 
     void initializeGroup();
-
+    void initializeNeuralGroup();
     vector<vector<float>> sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<float>> rootInput);
 
     ZLineChart *mChart = nullptr;

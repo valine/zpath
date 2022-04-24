@@ -6,34 +6,35 @@
 
 #include "ui/zprojectview.h"
 #include "ui/ztextfield.h"
-ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZView(125, fillParent, parent) {
+ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &model) : ZView(VIEW_WIDTH, fillParent, parent) {
 
     mScrollView = new ZScrollView(fillParent, fillParent, this);
     mScrollView->setInnerViewHeight(200);
     mScrollView->setBackgroundColor(transparent);
+    mScrollView->setMarginTop(25);
 
     mModelInterface = model;
     setBackgroundColor(grey1);
     setElevation(1.0);
     setCornerRadius(vec4(5,1,1,1));
 
-    auto newProjectBtn = new ZButton("New", this);
-    newProjectBtn->setMaxWidth(getMaxWidth() * 0.55);
-    newProjectBtn->setCornerRadius(vec4(5));
-    newProjectBtn->setMargin(vec4(2, 2, 2, 2));
-    newProjectBtn->setBackgroundColor(grey0);
-    newProjectBtn->setGravity(bottomLeft);
-    newProjectBtn->setOnClick([this](ZView* sender){
+    mNewProjectBtn = new ZButton("New", this);
+    mNewProjectBtn->setMaxWidth(getMaxWidth() * 0.55);
+    mNewProjectBtn->setCornerRadius(vec4(5));
+    mNewProjectBtn->setMargin(vec4(2, 2, 2, 2));
+    mNewProjectBtn->setBackgroundColor(grey0);
+    mNewProjectBtn->setGravity(bottomLeft);
+    mNewProjectBtn->setOnClick([this](ZView* sender){
         addUnsavedProject();
     });
 
-    auto deleteProjectBtn = new ZButton("Delete", this);
-    deleteProjectBtn->setMaxWidth(getMaxWidth() * 0.40);
-    deleteProjectBtn->setCornerRadius(vec4(5));
-    deleteProjectBtn->setMargin(vec4(2, 2, 2, 2));
-    deleteProjectBtn->setGravity(bottomRight);
-    deleteProjectBtn->setBackgroundColor(grey0);
-    deleteProjectBtn->setOnClick([this](ZView* sender){
+    mDeleteProjectBtn = new ZButton("Delete", this);
+    mDeleteProjectBtn->setMaxWidth(getMaxWidth() * 0.40);
+    mDeleteProjectBtn->setCornerRadius(vec4(5));
+    mDeleteProjectBtn->setMargin(vec4(2, 2, 2, 2));
+    mDeleteProjectBtn->setGravity(bottomRight);
+    mDeleteProjectBtn->setBackgroundColor(grey0);
+    mDeleteProjectBtn->setOnClick([this](ZView* sender){
         if (mOnProjectDelete(mNameMap.at(mSelectedTag), mSelectedTag)) {
             auto toDelete = mProjectViews.at(mSelectedTag);
             mScrollView->getInnerView()->removeSubView(toDelete);
@@ -51,14 +52,45 @@ ZProjectView::ZProjectView(ZView *parent, const function<vector<string>()> &mode
         }
     });
 
+    mMinimise = new ZButton(">", this);
+    mMinimise->setGravity(topRight);
+    mMinimise->setBackgroundColor(grey2);
+    mMinimise->setCornerRadius(vec4(5, 0, 0, 0));
+    mMinimise->setOnClick([this](ZView* sender){
+        toggleMinimise();
+    });
+
     vector<string> names = model();
     for (const auto& name : names) {
         addProject(name);
     }
     addUnsavedProject();
     mScrollView->getInnerView()->refreshMargins();
-    mScrollView->setMarginBottom(newProjectBtn->getMaxHeight());
+    mScrollView->setMarginBottom(mNewProjectBtn->getMaxHeight());
     selectProject(mProjectViews.at(mProjectViews.size() - 1));
+
+}
+
+void ZProjectView::minimiseView() {
+    mMinimise->setText("<");
+    this->setMaxWidth(MIN_WIDTH);
+    this->mScrollView->setVisibility(false);
+    mNewProjectBtn->setVisibility(false);
+    mDeleteProjectBtn->setVisibility(false);
+    mMinimise->setGravity(bottomLeft);
+    this->setCornerRadius(vec4(0));
+    this->setBackgroundColor(transparent);
+}
+
+void ZProjectView::maximiseView() {
+    mMinimise->setText(">");
+    this->setMaxWidth(VIEW_WIDTH);
+    this->mScrollView->setVisibility(true);
+    mDeleteProjectBtn->setVisibility(true);
+    mNewProjectBtn->setVisibility(true);
+    mMinimise->setGravity(topRight);
+    this->setCornerRadius(vec4(5,1,1,1));
+    this->setBackgroundColor(grey1);
 
 }
 
@@ -217,4 +249,14 @@ int ZProjectView::getSelectedProject() {
 
 void ZProjectView::setOnProjectSelected(function<void(int, string)> listener) {
     mOnProjectSelected = std::move(listener);
+}
+
+void ZProjectView::toggleMinimise() {
+    if (this->getMaxWidth() > MIN_WIDTH) {
+        minimiseView();
+    } else {
+        maximiseView();
+    }
+
+    onWindowChange(getWindowWidth(), getWindowHeight());
 }

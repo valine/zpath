@@ -75,13 +75,28 @@ public:
         return mTrainingInProgress;
     }
 
+    string par(string input);
     void setActivationFunction(Neuron::Activation activation);
     void computeAsync(vector<vector<float>> input, function<void(vector<vector<float>>)> function);
+
+    vector<Neuron*> mInputNodes;
+    vector<Neuron*> mOutputNodes;
+    vector<Neuron*> mCostNodes;
+    Neuron* mTotalCostNode;
+    vector<vector<Neuron*>> mLayers;
+    vector<vector<Neuron*>> mTrainable;
+    string mTrainingPath;
+
+    string getActivationName(Neuron::Activation activation);
+
+    vector<int> mHiddenHeight;
+
+    int getOutputCount();
+
 private:
     int mInputs = 1;
     int mOutputs = 1;
     int mHiddenWidth = 4;
-    vector<int> mHiddenHeight;
     int mMiniBatchSize = 10;
     double mTotalCost = 0;
 
@@ -98,14 +113,6 @@ private:
 
     Optimizer mOptimizer = RMSPROP;
 
-    vector<Neuron*> mInputNodes;
-    vector<Neuron*> mOutputNodes;
-    vector<Neuron*> mCostNodes;
-    Neuron* mTotalCostNode;
-    vector<vector<Neuron*>> mLayers;
-    vector<vector<Neuron*>> mTrainable;
-    string mTrainingPath;
-
     double mStep = 0.001;
     int mSeed = time(0);
 
@@ -117,10 +124,6 @@ private:
     double getInitialWeight(double height);
 
     void computeNormalization(const vector<pair<vector<double>, vector<double>>>& data);
-
-    string par(string input);
-
-    string getActivationName(Neuron::Activation activation);
 
 };
 

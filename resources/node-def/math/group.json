@@ -1,8 +1,8 @@
 {
   "name" : "group",
   "socketType" : {
-    "input" : ["CON","CON","CON","CON","CON","CON","CON"],
-    "output" : ["VAR","VAR","VAR","VAR","VAR","VAR","VAR"]
+    "input" : ["CON"],
+    "output" : ["VAR"]
   },
   "isDynamicSocket" : true,
   "isGroupNode" : true,

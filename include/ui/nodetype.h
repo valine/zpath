@@ -127,8 +127,17 @@ public:
         nodeType->mIsDynamicSocket = j["isDynamicSocket"];
         nodeType->mIsGroupNode = j["isGroupNode"];
         for (int i = 0; i < (int) nodeType->mSocketCount.x; i++) {
-            nodeType->mDefaultInput.push_back(j["defaultInput"][i]);
-            nodeType->mSocketNames.push_back(j["socketNames"][i]);
+            if (j["defaultInput"].size() > i) {
+                nodeType->mDefaultInput.push_back(j["defaultInput"][i]);
+            } else {
+                nodeType->mDefaultInput.push_back(0);
+            }
+
+            if (j["socketNames"].size() > i) {
+                nodeType->mSocketNames.push_back(j["socketNames"][i]);
+            } else {
+                nodeType->mSocketNames.push_back("");
+            }
         }
 
         for (const json& inner : j["defaultMagnitude"]) {

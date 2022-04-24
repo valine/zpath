@@ -244,6 +244,10 @@ protected:
     void fixGraphOverlap();
 
     bool checkOverlap(vec2 p1a, vec2 p2a, vec2 p1b, vec2 p2b);
+
+    void selectNodeGraphInverse(ZNodeView *root, int depth);
+
+    void selectNodeGraphInverseUnderMouse();
 };
 
 

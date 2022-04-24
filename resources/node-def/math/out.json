@@ -1,7 +1,7 @@
 {
   "name" : "out",
   "socketType" : {
-    "input" : ["VAR","VAR","VAR","VAR","VAR","VAR","VAR"],
+    "input" : ["VAR"],
     "output" : []
   },
   "isDynamicSocket" : true,
@@ -19,5 +19,5 @@
   "colorLight" : [0.04, 0.04, 0.04, 1.000000],
   "adaptiveResolution" : true,
   "chartType" : "LINE_1D_2X",
-  "showInDrawer" : false
+  "showInDrawer" : true
 }

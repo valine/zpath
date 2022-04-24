@@ -351,6 +351,11 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
         addNode(mLastType);
     }
 
+    else if (key == GLFW_KEY_N && action == GLFW_RELEASE) {
+        mProjectBrowser->toggleMinimise();
+        invalidate();
+    }
+
     else if (key == GLFW_KEY_B) {
         enterBoxSelectMode();
     }
@@ -521,6 +526,7 @@ void ZNodeEditor::addNodeGraph(ZNodeView *root, vec2 position, int depth) {
         root->setXOffset(root->getOffsetX() - mTmpNodeOffsetX);
         for (vector<ZNodeView*> layer : mTmpNodes) {
             if (!layer.empty()) {
+
                 for (ZNodeView *node : layer) {
                     node->setXOffset(node->getOffsetX() - mTmpNodeOffsetX);
                     node->setInitialPosition(node->getOffset());
@@ -683,26 +689,15 @@ float ZNodeEditor::centerGraph(ZNodeView *root, int depth) {
 
 void ZNodeEditor::selectNodeGraph(ZNodeView* root, int depth) {
     selectNode(root);
-
-    set<ZNodeView*> uniqueChildren;vector<vector<pair<ZNodeView *, int>>> inputIndices = root->mInputIndices;
-
-    for (const vector<pair<ZNodeView *, int>>& socketInputs : inputIndices) {
-        for (pair<ZNodeView*, int> input : socketInputs) {
-            ZNodeView* child = input.first;
-
-            if (child != nullptr) {
-                if (uniqueChildren.count(child) == 0) {
-                    uniqueChildren.insert(child);
-                }
-            }
-        }
+    for (auto parent : root->getChildren()) {
+        selectNodeGraph(parent, depth + 1);
     }
+}
 
-    for (ZNodeView* node : uniqueChildren) {
-        if (node == root) {
-            return;
-        }
-        selectNodeGraph(node, depth + 1);
+void ZNodeEditor::selectNodeGraphInverse(ZNodeView* root, int depth) {
+    selectNode(root);
+    for (auto parent : root->getParents()) {
+        selectNodeGraphInverse(parent, depth + 1);
     }
 }
 
@@ -1270,9 +1265,13 @@ void ZNodeEditor::onMouseDown() {
             }
 
 
-            for (int j = 0; j < node->getType()->mSocketCount.x; j++) {
+            for (int j = 0; j < node->getSocketCount().x; j++) {
                 ZView *socket = node->getSocketsIn().at(j);
-                bool magPicker = (shiftKeyPressed() || node->getType()->mSocketType.at(0).at(j) == SocketType::CON);
+                SocketType socketType = SocketType::CON;
+                if (node->getType()->mSocketType.at(0).size() > j) {
+                   socketType = node->getType()->mSocketType.at(0).at(j);
+                }
+                bool magPicker = (shiftKeyPressed() || socketType == SocketType::CON);
 
                 if (isMouseInBounds(socket) && socket->getVisibility()) {
 
@@ -1598,9 +1597,24 @@ void ZNodeEditor::selectNodeGraphUnderMouse() {
     }
 }
 
+void ZNodeEditor::selectNodeGraphInverseUnderMouse() {
+    int nodeIndex = getMouseOverNode();
+    if (nodeIndex != -1) {
+        ZNodeView* mouseOverNode = mNodeViews.at(getMouseOverNode());
+        if (!shiftKeyPressed()) {
+            deselectAllNodes();
+        }
+        selectNodeGraphInverse(mouseOverNode, 0);
+    }
+}
+
 void ZNodeEditor::onDoubleClick(int x, int y) {
     ZView::onDoubleClick(x, y);
-    selectNodeGraphUnderMouse();
+    if (controlKeyPressed()) {
+        selectNodeGraphInverseUnderMouse();
+    } else {
+        selectNodeGraphUnderMouse();
+    }
     mWasDoubleClick = true;
 }
 
@@ -1778,7 +1792,7 @@ void ZNodeEditor::onMouseEvent(int button, int action, int mods, int sx, int sy)
 
     // Quick connect nodes
     int nodeIndex = getMouseOverNode();
-    if (!wasMouseDrag() && (button == GLFW_MOUSE_BUTTON_2 || button == GLFW_MOUSE_BUTTON_3) && action == GLFW_RELEASE && nodeIndex != -1) {
+    if (!wasMouseDrag() && (button == GLFW_MOUSE_BUTTON_2 || button == GLFW_MOUSE_BUTTON_3) && action == GLFW_RELEASE && nodeIndex != -1 && shiftKeyPressed()) {
         if (mSecondLastSelected != nullptr) {
             quickConnectNodes(mSecondLastSelected, mNodeViews.at(nodeIndex));
 
