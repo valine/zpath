@@ -564,6 +564,7 @@ void ZNodeEditor::cleanupGraph(ZNodeView *root) {
     for (auto layer : mTmpNodes) {
         for (auto node : layer) {
             node->offsetBy(0,  -graphTop + margin);
+            node->setInitialPosition(node->getOffset());
             mNodeContainer->setInnerViewHeight(
                     std::max(graphBottom - graphTop + (margin * 2),
                              (float) mNodeContainer->getInnerView()->getMaxHeight()));
