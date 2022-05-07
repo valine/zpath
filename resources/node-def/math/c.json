@@ -2,7 +2,7 @@
   "name" : "c",
   "socketType" : {
     "input" : [],
-    "output" : ["CON", "CON", "CON"]
+    "output" : ["CON"]
   },
   "isDynamicSocket" : false,
   "isGroupNode" : false,

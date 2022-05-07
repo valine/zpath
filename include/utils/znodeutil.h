@@ -1105,6 +1105,9 @@ public:
 
         ZNodeView* node = ZNodeUtil::get().newNode("tanh");
 
+        ZNodeView* split = newNode("split");
+        nodes.push_back(split);
+        connectNodes(0,0, in, split);
 
         // group->setSocketCount(ivec2(model->getInputCount(), model->getOutputCount()));
 
@@ -1113,8 +1116,9 @@ public:
             string normalizedInput;
 
             ZNodeView* c = newNode("c");
+            c->setConstantValue(0, model->mInputNodes.at(i)->getMedian(), 6);
             ZNodeView* subtract = newNode("-");
-            connectNodes(0,0, in, subtract);
+            connectNodes(i,0, split, subtract);
             connectNodes(0,1, c, subtract);
 
             nodes.push_back(c);

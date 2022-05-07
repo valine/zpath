@@ -58,6 +58,7 @@ public:
 
     std::function<vector<vector<float>>(FuncIn x)> mCompute = nullptr;
     vector<function<void(ZNodeView* sender)>> mOnButtonClick;
+    function<void(ZNodeView* sender)> mOnEnterGroup = nullptr;
 
     void setCompute(std::function<vector<vector<float>>(
             FuncIn c)> compute) {
@@ -68,12 +69,25 @@ public:
         return mOnButtonClick.at(index);
     }
 
+    function<void(ZNodeView* sender)> getOnEnterGroupCallback() {
+        return mOnEnterGroup;
+    }
+
     static NodeType* fromFile(string path, function<vector<vector<float>>(FuncIn x)> compute,
                               vector<function<void(ZNodeView* sender)>> onClick) {
 
+        NodeType* type = fromFile(std::move(path), std::move(compute));
+        type->mOnButtonClick = std::move(onClick);
+        return type;
+    }
+
+    static NodeType* fromFile(string path, function<vector<vector<float>>(FuncIn x)> compute,
+                              vector<function<void(ZNodeView* sender)>> onClick,
+                              function<void(ZNodeView* sender)> onEnterGroup) {
 
         NodeType* type = fromFile(std::move(path), std::move(compute));
         type->mOnButtonClick = std::move(onClick);
+        type->mOnEnterGroup = std::move(onEnterGroup);
         return type;
     }
 

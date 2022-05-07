@@ -969,7 +969,6 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
     node->setEditorInterface([this](ZNodeView* node, bool autoPosition){
         addNodeToView(node, autoPosition);
     });
-
     requestSave();
 }
 
@@ -1521,6 +1520,11 @@ void ZNodeEditor::toggleGroupSelection() {
         if (mSelectedNodes.size() == 1) {
             ZNodeView *node = (*mSelectedNodes.begin());
             if (node->getType()->mIsGroupNode) {
+
+                if (node->getType()->mOnEnterGroup != nullptr) {
+                    node->getType()->mOnEnterGroup(node);
+                }
+
                 mGroupMode = node->getIndexTag();
                 setBackgroundColor(grey2);
 
@@ -1532,14 +1536,15 @@ void ZNodeEditor::toggleGroupSelection() {
                     groupNode->setVisibility(true);
                 }
 
+                onWindowChange(getWindowWidth(), getWindowHeight());
+
                 node->setVisibility(false);
                 node->getGroupInput()->setVisibility(true);
                 node->getGroupOutput()->setVisibility(true);
 
                 node->getGroupInput()->invalidateNodeRecursive();
                 node->getGroupOutput()->invalidateNodeRecursive();
-                onWindowChange(getWindowWidth(), getWindowHeight());
-
+                getRootView()->onWindowChange(getWindowWidth(), getWindowHeight());
             }
         }
     } else {

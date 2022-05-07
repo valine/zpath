@@ -45,7 +45,6 @@ void ZLabel::setup(const string &font) {
 
 void ZLabel::setColorMode(ColorMode colorMode) {
     ZView::setColorMode(colorMode);
-    drawText();
     mTextInvalid = true;
 }
 

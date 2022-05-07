@@ -376,7 +376,7 @@ private:
 
         bool mBuffersInit = false;
         bool mNeedsRender = true;
-		bool mVertsInvalid = false;
+		bool mVertsInvalid = true;
 
 		bool mInitialBounds = false;
 		bool mRadiusInvalid = false;

@@ -384,13 +384,6 @@ ZNodeDefStore::ZNodeDefStore() {
         fn.nodeView->initializeGroup();
         if (fn.nodeView->mMlModel == nullptr) {
             fn.nodeView->initializeNNModel();
-
-            auto nnNodes = ZNodeUtil::get().nodesFromMlModel(fn.nodeView->mMlModel,
-                                                             fn.nodeView->mGroupInput, fn.nodeView->mGroupOutput);
-            for (auto node : nnNodes) {
-                fn.nodeView->addGroupNode(node);
-                fn.nodeView->getAddNodeInterface()(node, true);
-            }
         }
 
         float returnValue;
@@ -430,6 +423,26 @@ ZNodeDefStore::ZNodeDefStore() {
         },[](ZNodeView* sender) -> void {
             cout<< sender->mMlModel->toFunctionString() << endl;
         }
+    }, [](ZNodeView* nodeView){
+
+        for (auto groupNode : nodeView->getGroupNodes()) {
+            if (groupNode->getType()->mName != "in" && groupNode->getType()->mName != "out") {
+                groupNode->setVisibility(false);
+                ZNodeUtil::get().deleteNode(groupNode);
+            }
+        }
+        
+        // On Enter group
+        auto nnNodes = ZNodeUtil::get().nodesFromMlModel(nodeView->mMlModel,
+                                                         nodeView->mGroupInput, nodeView->mGroupOutput);
+
+
+        for (auto node : nnNodes) {
+            nodeView->getAddNodeInterface()(node, true);
+            nodeView->addGroupNode(node);
+            nodeView->setVisibility(true);
+        }
+
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/laplace.json", [](FuncIn fn) {

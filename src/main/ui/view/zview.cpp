@@ -37,8 +37,11 @@ void ZView::setup(float maxWidth, float maxHeight, ZView *parent) {
     mMaxHeight = maxHeight;
     mWindowHeight = parent->getWindowHeight();
     mWindowWidth = parent->getWindowWidth();
-
     mParentView = parent;
+
+    mRight = maxWidth;
+    mBottom = maxHeight;
+
     if (parent != this) {
         parent->addSubView(this);
     }
