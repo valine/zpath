@@ -415,14 +415,13 @@ void ZNodeView::setType(NodeType* type) {
         if (mButtons.size() <= buttonIndex) {
             button = new ZButton(buttonName, this);
             mButtons.push_back(button);
-
+            button->setOnClick([this, type, buttonIndex](ZView* sender){
+                type->getButtonCallback(buttonIndex)(this);
+            });
         } else {
             button = mButtons.at(buttonIndex);
         }
 
-        button->setOnClick([this, type, buttonIndex](ZView* sender){
-            type->getButtonCallback(buttonIndex)(this);
-        });
         button->setMaxWidth(button->getLabel()->getTextWidth() / mDP + 18);
         button->setMaxHeight(18);
         button->setYOffset(2);

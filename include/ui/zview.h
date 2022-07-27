@@ -387,7 +387,7 @@ private:
 		bool mLayoutFinished = false;
 
 		Gravity mGravity = topLeft;
-		ZView *mParentView{};
+		ZView *mParentView = nullptr;
 		ZView *mRootView{};
 
 		/**

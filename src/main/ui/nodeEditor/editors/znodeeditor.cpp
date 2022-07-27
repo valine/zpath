@@ -28,10 +28,9 @@
 #include "utils/zutil.h"
 #include "ui/nodetype.h"
 
-ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView(maxWidth, maxHeight, parent) {
-
+ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent, string project) : ZView(maxWidth, maxHeight, parent) {
+    mProjectFolder = project;
     setBackgroundColor(ZSettings::get().getBackgroundColor());
-
 
     // Checkered background
     mCheckerView = new ZView(fillParent, fillParent, this);
@@ -68,8 +67,8 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
     auto* line = new ZLineView(vec2(0), vec2(0), mLineContainer);
     mLineBucket.push_back(line);
 
-    mProjectBrowser = new ZProjectView(this, []() {
-        return ZNodeStore::get().getProjectNames();
+    mProjectBrowser = new ZProjectView(this, [this]() {
+        return ZNodeStore::get().getProjectNames(mProjectFolder);
     });
 
     mProjectBrowser->setGravity(bottomRight);
@@ -88,11 +87,11 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent) : ZView
                 projectNodes.insert(node);
             }
         }
-        return ZNodeStore::get().saveGraph(projectNodes, name, false);
+        return ZNodeStore::get().saveGraph(projectNodes, name, false, mProjectFolder);
     });
 
     mProjectBrowser->setOnProjectRenamed([this](string name, int index){
-        mProjectPath =  ZNodeStore::get().renameProject(mProjectPath, name);
+        mProjectPath = ZNodeStore::get().renameProject(mProjectPath, name, std::string());
         return mProjectPath;
     });
 
@@ -420,7 +419,7 @@ void ZNodeEditor::saveProject() {
             projectNodes.insert(node);
         }
     }
-    ZNodeStore::get().saveGraph(projectNodes, mProjectPath, true);
+    ZNodeStore::get().saveGraph(projectNodes, mProjectPath, true, mProjectFolder);
     mSavePending = false;
 }
 
@@ -815,7 +814,7 @@ ZNodeView * ZNodeEditor::addNode(NodeType* type) {
 }
 
 void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
-    if (node->getParentView() != mNodeContainer) {
+    if (node->getParentView() == node) {
         mNodeContainer->addSubView(node);
         node->setInvalidateListener([this](ZNodeView* node){
             {

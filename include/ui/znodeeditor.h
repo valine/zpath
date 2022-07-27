@@ -52,7 +52,7 @@ static const int DRAWER_WIDTH = 100;
 
 class ZNodeEditor : public ZView {
 public:
-    ZNodeEditor(float maxWidth, float maxHeight, ZView *parent);
+    ZNodeEditor(float maxWidth, float maxHeight, ZView *parent, string project);
     ZNodeView * addNode(NodeType* type);
     void onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) override;
     void onMouseEvent(int button, int action, int mods, int sx, int sy) override;
@@ -81,10 +81,14 @@ public:
         return (a->getOffsetY() > b->getOffsetY());
     }
 
+    void setProjectFolder(string name) {
+        mProjectFolder = name;
+    }
 private:
 
     vector<NodeType*> mNodeTypes;
 
+    string mProjectFolder = "";
     bool mEvaluateRunning = true;
     vector<string> mRadioButtonNames = {"e-6", "e-5", "e-4", "e-3", "0.01", "0.1", "1", "10", "100", "e3", "e4", "e5", "e6"};
 

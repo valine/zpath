@@ -40,9 +40,14 @@ public:
         return mMathNameMap.at(name);
     }
 
-
     vector<NodeType*> getJsonNodeTypes() {
         return mJsonNodeTypes;
+    }
+
+    vector<NodeType*> getAllNodeTypes() {
+        std::vector<NodeType*> v = mJsonNodeTypes;
+        v.insert(v.end(), mMathNodeTypes.begin(), mMathNodeTypes.end());
+        return v;
     }
 
     NodeType* getJsonNodeType(const string& name) {

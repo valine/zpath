@@ -7,7 +7,8 @@
 #include "ui/znodedefstore.h"
 
 ZMathNodeEditor::ZMathNodeEditor(float maxWidth, float maxHeight, ZView *parent) :
-    ZNodeEditor(maxWidth, maxHeight, parent) {
+        ZNodeEditor(maxWidth, maxHeight, parent, "/math") {
+
 
     auto nodeTypes = ZNodeDefStore::get().getMathNodeTypes();
     setNodeTypes(nodeTypes);

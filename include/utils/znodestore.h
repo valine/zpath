@@ -31,14 +31,14 @@ public:
         for (auto node : graph) {
             graphSet.insert(node);
         }
-        return saveGraph(graphSet, name, fullPath);
+        return saveGraph(graphSet, name, fullPath, std::string());
     }
 
 
-    string saveGraph(set<ZNodeView *> graph, string name, bool fullPath) {
+    string saveGraph(set<ZNodeView *> graph, string name, bool fullPath, string project) {
         string sgraph = ZNodeUtil::get().serialize(graph);
 
-        string projectFolder = "resources/graphs/";
+        string projectFolder = "resources/graphs" + project + "/";
         string path = ZSettings::get().getResourcePath() + projectFolder;
         string ext = ".zpath";
         string fullPathString = path + name + ext;
@@ -57,9 +57,9 @@ public:
      * @param toName
      * @return
      */
-    string renameProject(const string& fromPath, const string& toName) {
+    string renameProject(const string &fromPath, const string &toName, string project) {
 
-        string projectFolder = "resources/graphs/";
+        string projectFolder = "resources/graphs" + project + "/";
         string path = ZSettings::get().getResourcePath() + projectFolder;
         string ext = ".zpath";
         string toPath = path + toName + ext;
@@ -77,8 +77,8 @@ public:
         return status == 0;
     }
 
-    vector<string> getProjectNames() {
-        string projectFolder = "resources/graphs/";
+    vector<string> getProjectNames(string project) {
+        string projectFolder = "resources/graphs" + project + "/";
         string path = ZSettings::get().getResourcePath() + projectFolder;
 
         vector<string> names;

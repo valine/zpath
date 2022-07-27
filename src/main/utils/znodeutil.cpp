@@ -80,7 +80,7 @@ ZNodeView *ZNodeUtil::newNode(string typeString) {
 }
 
 ZNodeUtil::ZNodeUtil() {
-    vector<NodeType*> types = ZNodeDefStore::get().getMathNodeTypes();
+    vector<NodeType*> types = ZNodeDefStore::get().getAllNodeTypes();
     for (NodeType* type : types) {
         mTypes.insert({type->mName, type});
         mFunctions.insert(type->mName);

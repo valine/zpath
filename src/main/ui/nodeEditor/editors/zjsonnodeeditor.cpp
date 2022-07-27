@@ -9,7 +9,8 @@
 
 
 ZJsonNodeEditor::ZJsonNodeEditor(float maxWidth, float maxHeight, ZView *parent) :
-    ZNodeEditor(maxWidth, maxHeight, parent) {
+        ZNodeEditor(maxWidth, maxHeight, parent, "/json") {
+
     auto nodeTypes = ZNodeDefStore::get().getJsonNodeTypes();
     setNodeTypes(nodeTypes);
     setExpVisibility(false);
