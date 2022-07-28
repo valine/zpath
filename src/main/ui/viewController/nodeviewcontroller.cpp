@@ -15,13 +15,13 @@
  */
 void NodeViewController::onCreate() {
     ZViewController::onCreate();
-
     setBackgroundColor(vec4(0.1,0.1,0.1,1));
 
     // Button example
     auto* button = new ZButton("Button name", this);
     button->setOffset(2000,0);
     button->setOnClick([this](ZView*){
+
         // Do stuff here
     });
 

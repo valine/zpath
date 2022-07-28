@@ -1,0 +1,11 @@
+=
+type:boolean
+id:1
+pos:10.000000,10.000000
+size:140,40
+edges:|||||||
+defaultin:0.000000
+defaultout:0.000000
+mag:7,
+magOut:6,
+name:boolean
