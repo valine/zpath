@@ -74,7 +74,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent, string 
     mProjectBrowser->setGravity(bottomRight);
     mProjectBrowser->setYOffset(0);
     mProjectBrowser->setMaxHeight(400);
-    mProjectBrowser->setMarginTop(200);
+    mProjectBrowser->setMarginTop(125);
     mProjectBrowser->onWindowChange(getWindowWidth(), getWindowWidth());
     mProjectBrowser->setOnProjectSelected([this](int index, string path) {
         selectProject(index, path);
