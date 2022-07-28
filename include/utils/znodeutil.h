@@ -363,6 +363,148 @@ public:
 
 
     ZNodeView* nodesFromJson(json j, ZNodeView* parent);
+    
+    string nodeToJsonPath(ZNodeView *root, bool includeRoot) {
+
+        string expression;
+        set<string> operators = {"+", "-", "*", "/", "^"};
+
+        // Is arithmetic operator
+        if (operators.count(root->getType()->mName) > 0) {
+            string first = floatToString(root->getConstantInput(0));
+            string second = floatToString(root->getConstantInput(1));
+
+            if (root->mInputIndices.at(0).size() == 0) {
+                expression += first;
+            }
+            bool firstSocketMultiInput = root->mInputIndices.at(0).size() > 1;
+            if (firstSocketMultiInput) {
+                expression += "(";
+            }
+            int index = 0;
+            for (pair<ZNodeView *, int> input : root->mInputIndices.at(0)) {
+                ZNodeView *child = input.first;
+
+                if (child != nullptr) {
+                    bool needParen = getNodePriority(root) > getNodePriority(child);
+                    // Recursive
+                    if (needParen) {
+                        expression += "(";
+                    }
+                    expression += graphToExpString(child, true);
+
+                    if (needParen) {
+                        expression += ")";
+                    }
+
+                    if (index < root->mInputIndices.at(0).size() - 1) {
+                        expression += " + ";
+                    }
+                }
+                index++;
+            }
+            if (firstSocketMultiInput) {
+                expression += ")";
+            }
+
+            expression += " " + root->getType()->mName + " ";
+
+            if (root->mInputIndices.at(1).size() == 0) {
+                expression += second;
+            }
+            bool secondSocketMultiInput = root->mInputIndices.at(1).size() > 1;
+            if (secondSocketMultiInput) {
+                expression += "(";
+            }
+            index = 0;
+            for (pair<ZNodeView *, int> input : root->mInputIndices.at(1)) {
+                ZNodeView *child = input.first;
+
+                if (child != nullptr) {
+                    // Recursive
+                    bool needParen = getNodePriority(root) > getNodePriority(child);
+                    // Recursive
+                    if (needParen) {
+                        expression += "(";
+                    }
+                    expression += graphToExpString(child, true);
+
+                    if (index < root->mInputIndices.at(1).size() - 1) {
+                        expression += " + ";
+                    }
+                    if (needParen) {
+                        expression += ")";
+                    }
+                }
+                index++;
+            }
+            if (secondSocketMultiInput) {
+                expression += ")";
+            }
+            return expression;
+        }
+
+        if (includeRoot) {
+            // Node is a constant
+            if (root->getType()->mName == "c") {
+                return floatToString(root->getConstantValue(0));
+            }
+
+            expression = root->getType()->mName;
+            vector<SocketType> inputType = root->getType()->mSocketType.at(0);
+
+            // Node is a variable
+            if (root->getType()->mSocketCount.x == 0) {
+                return expression;
+            }
+
+            // Node is function
+            expression += "(";
+        }
+
+        int varCount = getVarCount(root);
+
+        if (!includeRoot) {
+            varCount = 1;
+        }
+
+        for (int socketIndex = 0; socketIndex < varCount; socketIndex++) {
+
+            // No inputs for socket
+            if (root->mInputIndices.at(socketIndex).empty()) {
+                expression += "x";
+            } else {
+                int index = 0;
+                for (pair<ZNodeView *, int> input : root->mInputIndices.at(socketIndex)) {
+                    ZNodeView *child = input.first;
+                    if (child != nullptr) {
+                        if (child == root) {
+                            return "Invalid tree";
+                        }
+                        expression += graphToExpString(child, true);
+                        if (index < root->mInputIndices.at(socketIndex).size() - 1) {
+                            expression += " + ";
+                        }
+                    }
+                    index++;
+                }
+            }
+
+            if (socketIndex < varCount - 1) {
+                expression += ", ";
+            }
+
+        }
+
+        if (includeRoot) {
+            expression += ")";
+        }
+
+        if (expression.empty()) {
+            expression = "x";
+        }
+        return expression;
+    }
 
     /// End JSON Nodes
     /////////////////////
