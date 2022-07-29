@@ -32,7 +32,7 @@ void ZTileViewController::onLayoutFinished() {
     setOutlineColor(grey1p5);
     setBackgroundColor(grey1);
 
-    int defaultController = 1;
+    int defaultController = mDefaultController;
 
     if (mParentTile != nullptr && getIndexTag() == -1) {
         defaultController = mParentTile->getIndexTag();

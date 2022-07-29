@@ -120,6 +120,9 @@ void ZLabel::drawText() {
         // Iterate through all characters
         std::string::const_iterator c;
         for (c = mText.begin(); c != mText.end(); c++) {
+            if (c > mText.end()) {
+                continue;
+            }
             Character ch = ZFontStore::getInstance().getCharacter(mFont, *c);
             int w = ch.Size.x;
             int h = ch.Size.y;

@@ -18,6 +18,6 @@
   "colorDark" : [0.023195, 0.223442, 0.538225, 1.000000],
   "colorLight" : [0.023195, 0.223442, 0.538225, 1.000000],
   "adaptiveResolution" : true,
-  "chartType" : "NO_CHART",
+  "chartType" : "LINE_1D",
   "showInDrawer" : true
 }

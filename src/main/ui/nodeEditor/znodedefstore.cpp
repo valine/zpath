@@ -469,7 +469,6 @@ ZNodeDefStore::ZNodeDefStore() {
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/comment.json"));
 
-
     string editorFolder = "json/";
     string projectFolder = "resources/node-def/" + editorFolder;
     string path = ZSettings::get().getResourcePath() + projectFolder;
@@ -479,7 +478,18 @@ ZNodeDefStore::ZNodeDefStore() {
     }
 
     for (string name : names) {
-        mJsonNodeTypes.push_back(NodeType::fromFile(name));
+        if (name == "json/output.json") {
+            mJsonNodeTypes.push_back(NodeType::fromFile(name, [](FuncIn fn) {
+                string path = ZNodeUtil::get().nodeToJsonPath(fn.nodeView);
+                if (path != fn.nodeView->getText()) {
+                    fn.nodeView->setText(path);
+                }
+                return fn.x;
+            }));
+        } else {
+            mJsonNodeTypes.push_back(NodeType::fromFile(name));
+        }
+
     }
 
 

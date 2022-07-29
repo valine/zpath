@@ -23,6 +23,7 @@ public:
     ZTileViewController(string path, std::function<ZViewController *(int)> factory,
                         vector<string> names, bool isRoot, ZViewController *content);
 
+    int mDefaultController = 1;
     int sideBySide = 0;
     int overUnder = 1;
 
@@ -44,6 +45,10 @@ public:
 
     void triggerSideJoinLeftToRight(int index);
     ZTileViewController* getChild(int index);
+
+    void setDefaultController(int index) {
+        mDefaultController = index;
+    }
 
 private:
 

@@ -39,6 +39,12 @@ int main(int argc, char* argv[]) {
 //    auto* textEditor = new ZTextViewController(argv);
 //    textEditor->setName("Text Editor");
 
+
+    int defaultCtrl = 1;
+    if (argc > 1) {
+        defaultCtrl = stoi(string(argv[1]));
+    }
+
     auto* tiles = new ZTileViewController(argv, [argv](int index) {
         ZViewController *controller = nullptr;
 
@@ -77,6 +83,8 @@ int main(int argc, char* argv[]) {
         }
 
     }, {"3D Viewport", "Node Editor", "Text Editor", "Calculator", "Developer", "Settings", "Data Import", "JSON Editor"}, true, nullptr);
+
+    tiles->setDefaultController(defaultCtrl);
 
     ZApplication(tiles, "zpath", false, 2100, 1000, "resources/icons/zpath.png", [tiles](){
 
