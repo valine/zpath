@@ -31,6 +31,7 @@ private:
      */
     queue<ZNodeView*> mDeleteNodes;
     set<ZNodeView*> mDeleteNodesSet;
+    int mTmpIndex = 0;
 public:
     static ZNodeUtil& get(){
         static ZNodeUtil instance; // Guaranteed to be destroyed.
@@ -357,30 +358,37 @@ public:
     /// End Node IO
     /////////////////////
 
-
     //////////////////////
     /// JSON Nodes
 
     ZNodeView* nodesFromJson(json j, ZNodeView* parent);
 
+
     string nodeToJsonPath(ZNodeView *root) {
+        mTmpIndex = 0;
         return nodeToJsonPath(root, true);
     }
 
     string nodeToJsonPath(ZNodeView *root, bool includeRoot) {
+        vector<string> varNames = {"i", "j", "k", "l", "m"};
+
         string path;
         if (!includeRoot) {
             if (root->getType() == mTypes.at("array")) {
-                path += "[0],";
+                path += "[" + varNames.at(mTmpIndex % varNames.size()) + "],";
+                mTmpIndex++;
             }
             path += split(root->getText(), '\n').at(0);
         }
         for (auto parent : root->getParents()) {
-            if (!path.empty()) {
-                path += ",";
-            }
+            string key = nodeToJsonPath(parent, false);
+            if (key != "root") {
+                if (!path.empty()) {
+                    path += ",";
+                }
 
-           path += nodeToJsonPath(parent, false);
+                path += nodeToJsonPath(parent, false);
+            }
 
         }
         return path;

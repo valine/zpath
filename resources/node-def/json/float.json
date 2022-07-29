@@ -15,8 +15,8 @@
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : false,
   "buttonNames" : [],
-  "colorDark" : [0.15, 0.155, 0.17, 1.0],
-  "colorLight" : [1.0, 1.0, 1.0, 1.0],
+  "colorDark" : [0.054364, 0.050212, 0.152325, 1.000000],
+  "colorLight" : [0.298202, 0.273084, 0.911397, 1.000000],
   "adaptiveResolution" : true,
   "chartType" : "NO_CHART",
   "showInDrawer" : true

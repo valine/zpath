@@ -26,6 +26,11 @@ public:
         return getInstance();
     }
 
+    struct Crumb {
+        string mKey;
+        int mIndex = -1;
+    };
+
     json parseJsonFromFile(string path) {
         std::ifstream t(path);
         std::string dataString;
@@ -47,9 +52,55 @@ public:
      */
     void storeJson(json data, string path) {
         mDataList.push_back(path);
-        vector<float> list = data["BrainSenseTimeDomain"][0]["TimeDomainData"];
-        mDataMap.insert({path, list});
+        mDataIndexMap.insert({mDataList.size() - 1, path});
+       // vector<float> list = data["BrainSenseTimeDomain"][0]["TimeDomainData"];
+      //  mDataMap.insert({path, list});
+
+        mJsonMap.insert({path, data});
     }
+
+    void setCrumbsForIndex(int index, const vector<Crumb>& crumbs) {
+        mCrumbsMap.insert({index, crumbs});
+
+        int loopCount = 0;
+        for (const Crumb& c : crumbs) {
+            if (c.mIndex != -1) {
+                loopCount++;
+            }
+        }
+
+        json data = mJsonMap.at(mDataIndexMap.at(index));
+        vector<float> dataPoints = followCrumbs(data, crumbs, 0);
+        mDataMap.insert({mDataIndexMap.at(index), dataPoints});
+    }
+
+    vector<float> followCrumbs(json data, vector<Crumb> crumbs, int depth) {
+        vector<float> dataList;
+
+        if (depth >= crumbs.size()) {
+            return vector<float>();
+        }
+
+        if (crumbs.at(depth).mIndex != -1) {
+            // todo: check for array
+            for (auto & datum : data) {
+                if (datum.is_number()) {
+                    dataList.push_back(datum);
+                } else if (datum.is_object()) {
+                    vector<float> someData = followCrumbs(datum, crumbs, depth + 1);
+                    dataList.insert(dataList.end(), someData.begin(), someData.end());
+                }
+            }
+        } else {
+            vector<float> someData = followCrumbs(data[crumbs.at(depth).mKey], crumbs, depth + 1);
+            dataList.insert(dataList.end(), someData.begin(), someData.end());
+        }
+
+        return dataList;
+
+    }
+
+
 
     float getDataAtIndex(unsigned int fileIndex, float x) {
         if (fileIndex != -1 && mDataList.size() > fileIndex) {
@@ -116,9 +167,14 @@ public:
        /// cout << j.dump() << endl;
     }
 
+
+
 private:
 
+    map<int, string> mDataIndexMap;
     map<string, vector<float>> mDataMap;
+    map<string, json> mJsonMap;
+    map<int, vector<Crumb>> mCrumbsMap;
     vector<string> mDataList;
     DataStore() {}
 };
