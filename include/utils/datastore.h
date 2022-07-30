@@ -43,7 +43,6 @@ public:
         json j = json::parse(dataString);
 
         return j;
-
     }
 
     /**
@@ -99,8 +98,6 @@ public:
         return dataList;
 
     }
-
-
 
     float getDataAtIndex(unsigned int fileIndex, float x) {
         if (fileIndex != -1 && mDataList.size() > fileIndex) {

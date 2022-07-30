@@ -26,6 +26,11 @@ void ZListView::addItem(string item) {
         }
         label->mDropDown->setItems(fileNames);
     });
+    label->mDropDown->setOnItemChange([this](int item){
+        if (mCrumbChangeListener != nullptr) {
+            mCrumbChangeListener(item, mListViews.size() - 1);
+        }
+    });
 
     onWindowChange(getWindowWidth(), getWindowHeight());
 }

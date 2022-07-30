@@ -17,6 +17,11 @@ void ZDataViewController::onCreate() {
         vector<string> names = ZNodeStore::get().getProjectNames("/json");
         return names;
     });
+
+    mListView->setOnCrumbChange([](int crumbIndex, int projectIndex){
+        vector<string> names = ZNodeStore::get().getProjectNames("/json");
+        DataStore::get().setCrumbsForIndex(projectIndex, ZNodeStore::get().loadCrumbs(names.at(projectIndex)));
+    });
 }
 
 void ZDataViewController::onFileDrop(int count, const char** paths) {

@@ -20,12 +20,17 @@ public:
         mGetCrumbs = std::move(in);
     }
 
+    void setOnCrumbChange(function<void(int crumbIndex, int projectIndex)> l) {
+        mCrumbChangeListener = l;
+    }
+
 private:
 
     ZListItemView * newView();
     queue<ZListItemView*> mRecycledViews;
     vector<ZListItemView*> mListViews;
-    function<vector<string>()> mGetCrumbs;
+    function<vector<string>()> mGetCrumbs = nullptr;
+    function<void(int crumbIndex, int projectIndex)> mCrumbChangeListener = nullptr;
 
     void removeItem(ZListItemView *view);
     void setItems(const vector<string>& items);
