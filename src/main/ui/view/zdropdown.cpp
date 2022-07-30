@@ -76,6 +76,7 @@ void ZDropDown::setItems(vector<string> items) {
         ZButton* button;
         if (mButtons.size() <= index) {
             button = new ZButton(item, mDrawer);
+            mButtons.push_back(button);
         } else {
             button = mButtons.at(index);
             button->setText(item);
@@ -94,12 +95,13 @@ void ZDropDown::setItems(vector<string> items) {
             if (mOnItemChange != nullptr) {
                 mOnItemChange(sender->getIndexTag());
             }
-            releaseFocus(this);
+            releaseFocus(mDrawer);
         });
 
-        mButtons.push_back(button);
         index++;
     }
+
+    mDrawer->getInnerView()->refreshMargins();
 }
 
 void ZDropDown::wrapTitle() {
@@ -160,15 +162,18 @@ void ZDropDown::handleClick() {
             mOnOpen();
         }
 
-        if (getGravity() == bottomLeft || getGravity() == bottomRight) {
+        if (getGravity() == bottomLeft ) {
             mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
-           // mDrawer->setYOffset(mBackground->getMaxHeight());
-
             mDrawer->setOffset(mBackground->getLeft(), getRootView()->getHeight() - (mBackground->getTop()));
-        } else {
-            mDrawer->setMaxHeight(std::min(getParentView()->getBottom() - mTitle->getTop() - (mBackground->getMaxHeight() * 2),
-                          mDrawer->getInnerView()->getMaxHeight()));
-            mDrawer->setYOffset(mBackground->getMaxHeight());
+        } else if(getGravity() == bottomRight) {
+            mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
+            mDrawer->setOffset(getRootView()->getWidth() - mBackground->getRight(), getRootView()->getHeight() - (mBackground->getTop()));
+        } else if (getGravity() == topLeft) {
+            mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
+            mDrawer->setOffset(mBackground->getLeft(), (mBackground->getBottom()));
+        } else if (getGravity() == topRight) {
+            mDrawer->setMaxHeight(mDrawer->getInnerView()->getMaxHeight());
+            mDrawer->setOffset(mBackground->getRight(), (mBackground->getTop()));
         }
 
         mDrawer->onWindowChange(getWindowWidth(), getWindowHeight());
@@ -206,6 +211,8 @@ void ZDropDown::onGlobalMouseUp(int key) {
         releaseFocus(mDrawer);
         getParentView()->invalidate();
     }
+
+    releaseFocus(mDrawer);
 }
 
 void ZDropDown::setOnItemChange(std::function<void(int item)> onItemChange) {

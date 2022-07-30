@@ -14,20 +14,41 @@ ZListView::ZListView(ZView *parent)  :
 void ZListView::addItem(string item) {
     ZListItemView* label = newView();
 
-//    label->setTitle(std::move(item));
+    label->mTitle->setText(getFileName(item));
+    label->mDropDown->setTitle("Format");
     label->mDropDown->setOnOpen([label, this](){
         vector<string> list = mGetCrumbs();
-        label->mDropDown->setItems(list);
+        vector<string> fileNames;
+        int i = 0;
+        for (string item : list) {
+            fileNames.push_back(getFileName(list.at(i)));
+            i++;
+        }
+        label->mDropDown->setItems(fileNames);
     });
 
     onWindowChange(getWindowWidth(), getWindowHeight());
-//
-//    label->setOnClick([this](ZView* sender){
-////        for (ZView* view: mListViews){
-////            view->setBackgroundColor(transparent);
-////        }
-////        sender->setBackgroundColor(yellow);
-//    });
+}
+
+string ZListView::getFileName(const string& s) {
+    char sep = '/';
+
+#ifdef _WIN32
+    sep = '\\';
+#endif
+
+    size_t i = s.rfind(sep, s.length());
+    if (i != string::npos) {
+        string name = (s.substr(i+1, s.length() - i));
+
+        if (name.substr(name.length() - 5, name.length()) == "zpath") {
+            return name.substr(0, name.length() - 6);
+        } else {
+            return name;
+        }
+    }
+
+    return("");
 }
 
 void ZListView::setItems(const vector<string>& items) {
@@ -48,7 +69,7 @@ void ZListView::removeItem(ZListItemView* view) {
 
 ZListItemView * ZListView::newView() {
     if (mRecycledViews.empty()) {
-        auto* view = new ZListItemView(400, 50, this);
+        auto* view = new ZListItemView(fillParent, 30, this);
         mListViews.push_back(view);
         return view;
     } else {

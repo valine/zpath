@@ -29,6 +29,8 @@ private:
 
     void removeItem(ZListItemView *view);
     void setItems(const vector<string>& items);
+
+    string getFileName(const string &s);
 };
 
 

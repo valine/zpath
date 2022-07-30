@@ -445,6 +445,7 @@ void ZNodeView::setType(NodeType* type) {
             mDropDown->setMarginLeft(25);
             mDropDown->setMarginRight(25);
             mDropDown->setMarginTop(2);
+            mDropDown->setRootView(getRootView());
             mDropDown->setOnOpen([this](){
                 vector<string> list = DataStore::get().getFileNameList();
                 mDropDown->setItems(list);
