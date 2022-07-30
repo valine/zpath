@@ -95,13 +95,11 @@ void ZDropDown::setItems(vector<string> items) {
             if (mOnItemChange != nullptr) {
                 mOnItemChange(sender->getIndexTag());
             }
-            releaseFocus(mDrawer);
+            releaseFocus(this);
         });
 
         index++;
     }
-
-    mDrawer->getInnerView()->refreshMargins();
 }
 
 void ZDropDown::wrapTitle() {
@@ -211,8 +209,6 @@ void ZDropDown::onGlobalMouseUp(int key) {
         releaseFocus(mDrawer);
         getParentView()->invalidate();
     }
-
-    releaseFocus(mDrawer);
 }
 
 void ZDropDown::setOnItemChange(std::function<void(int item)> onItemChange) {

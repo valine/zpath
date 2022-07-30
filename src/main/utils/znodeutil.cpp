@@ -72,6 +72,7 @@ ZNodeView *ZNodeUtil::newNode(string typeString) {
             node = new ZNodeView(type);
         } else {
             node->setType(type);
+
         }
     } else {
         node = new ZNodeView(type);

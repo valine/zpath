@@ -534,6 +534,7 @@ public:
         node->setProjectID(-1);
         node->setIndexTag(-1);
         node->mEditorInterface = nullptr;
+        node->setRootView(nullptr);
         for (auto laplace : node->mHeadlessLaplaceNodes) {
             deleteNode(laplace);
         }

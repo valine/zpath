@@ -827,8 +827,9 @@ void ZNodeEditor::addNodeToView(ZNodeView *node, bool autoPosition) {
         node->setCornerRadius(5);
     }
 
-    node->setRootView(getRootView());
-    node->mDropDown->setRootView(getRootView());
+    if (node->mDropDown != nullptr) {
+        node->mDropDown->setRootView(getRootView());
+    }
     deselectNode(node);
 
     if (!node->mIsPartOfGroup || mGroupMode == GROUP_SELECTED) {
