@@ -3,6 +3,8 @@
 //
 
 #include "ui/zlistview.h"
+#include "ui/zlistitemview.h"
+#include <utility>
 
 ZListView::ZListView(ZView *parent)  :
         ZScrollView(fillParent, fillParent, parent){
@@ -10,20 +12,26 @@ ZListView::ZListView(ZView *parent)  :
 }
 
 void ZListView::addItem(string item) {
-    ZLabel* label = newView();
-    label->setText(item);
-    onWindowChange(getWindowWidth(), getWindowHeight());
+    ZListItemView* label = newView();
 
-    label->setOnClick([this](ZView* sender){
-        for (ZView* view: mListViews){
-            view->setBackgroundColor(transparent);
-        }
-        sender->setBackgroundColor(yellow);
+//    label->setTitle(std::move(item));
+    label->mDropDown->setOnOpen([label, this](){
+        vector<string> list = mGetCrumbs();
+        label->mDropDown->setItems(list);
     });
+
+    onWindowChange(getWindowWidth(), getWindowHeight());
+//
+//    label->setOnClick([this](ZView* sender){
+////        for (ZView* view: mListViews){
+////            view->setBackgroundColor(transparent);
+////        }
+////        sender->setBackgroundColor(yellow);
+//    });
 }
 
 void ZListView::setItems(const vector<string>& items) {
-    for (ZLabel* view : mListViews) {
+    for (ZListItemView* view : mListViews) {
         removeItem(view);
     }
     for (const string& item : items) {
@@ -31,20 +39,20 @@ void ZListView::setItems(const vector<string>& items) {
     }
 }
 
-void ZListView::removeItem(ZLabel* view) {
+void ZListView::removeItem(ZListItemView* view) {
     if (view->getVisibility()) {
         view->setVisibility(false);
         mRecycledViews.push(view);
     }
 }
 
-ZLabel * ZListView::newView() {
+ZListItemView * ZListView::newView() {
     if (mRecycledViews.empty()) {
-        auto* view = new ZLabel("", this);
+        auto* view = new ZListItemView(400, 50, this);
         mListViews.push_back(view);
         return view;
     } else {
-        ZLabel* view = mRecycledViews.front();
+        ZListItemView* view = mRecycledViews.front();
         mRecycledViews.pop();
         view->setVisibility(true);
         subviewToBack(view);

@@ -5,7 +5,11 @@
 #ifndef ZPATH_ZNODESTORE_H
 #define ZPATH_ZNODESTORE_H
 
+using namespace std;
+#include <vector>
 #include <filesystem>
+#include "ui/znodeview.h"
+#include "znodeutil.h"
 #if __APPLE__
 using std::__fs::filesystem::directory_iterator;
 using std::__fs::filesystem::directory_entry;
@@ -24,6 +28,32 @@ public:
         static ZNodeStore instance; // Guaranteed to be destroyed.
         // Instantiated on first use.
         return instance;
+    }
+
+    vector<string> split(const string &s, char delim) {
+        char escape = '\\';
+        vector<string> result;
+        stringstream ss (s);
+        string item;
+
+        string last = "";
+        while (getline(ss, item, delim)) {
+
+            // Delimiter was escaped
+            if (!last.empty() && !result.empty() &&
+                last.at(last.size() - 1) == escape) {
+
+                last = item;
+                int rsize = result.size() - 1;
+                result.at(rsize).erase( result.at(rsize).size() - 1);
+                result.at(result.size() - 1) += delim + item;
+            } else {
+                result.push_back(item);
+                last = item;
+            }
+
+        }
+        return result;
     }
 
     string saveGraph(vector<ZNodeView *> graph, string name, bool fullPath) {
@@ -87,6 +117,33 @@ public:
         }
 
         return names;
+    }
+
+    vector<DataStore::Crumb> loadCrumbs(string name) {
+        ifstream t(name);
+        string firstLine;
+        getline(t, firstLine);
+
+        vector<DataStore::Crumb> vCrumbs;
+        if (firstLine.at(0) == '#') {
+            firstLine.erase(0, 1);
+            vector<string> crumbSets = split(firstLine, '#');
+            vector<string> crumbs = split(crumbSets.at(0), ',');
+            for (string crumb : crumbs) {
+                DataStore::Crumb c;
+                if (crumb.at(0) == '[') {
+                    c.mKey = "";
+                    c.mIndex = 1;
+                } else {
+                    c.mIndex = -1;
+                    c.mKey = crumb;
+                }
+
+                vCrumbs.push_back(c);
+            }
+        }
+
+        return vCrumbs;
     }
 
     set<ZNodeView*> loadGraph(string name) {

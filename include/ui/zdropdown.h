@@ -63,6 +63,7 @@ private:
     void handleClick();
     int mSelected = -1;
 
+    void onCreate();
 };
 
 #endif

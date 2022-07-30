@@ -7,21 +7,27 @@
 
 #include <ui/zscrollview.h>
 #include <queue>
+#include <utility>
+#include "ui/zdropdown.h"
+#include "ui/zlistitemview.h"
 
 class ZListView : public ZScrollView {
 public:
     ZListView(ZView* parent);
 
     void addItem(string item);
+    void setCrumbInterface(function<vector<string>()> in) {
+        mGetCrumbs = std::move(in);
+    }
 
 private:
 
-    ZLabel * newView();
-    queue<ZLabel*> mRecycledViews;
-    vector<ZLabel*> mListViews;
+    ZListItemView * newView();
+    queue<ZListItemView*> mRecycledViews;
+    vector<ZListItemView*> mListViews;
+    function<vector<string>()> mGetCrumbs;
 
-    void removeItem(ZLabel *view);
-
+    void removeItem(ZListItemView *view);
     void setItems(const vector<string>& items);
 };
 

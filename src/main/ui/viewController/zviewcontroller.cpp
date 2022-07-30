@@ -111,7 +111,13 @@ void ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
     }
 
     if (getVisibility()) {
-        ZView::onMouseEvent(button, action, mods, x, y);
+        if (isViewInFocus()) {
+            mFocusedView->onMouseEvent(button, action, mods, x, y);
+        } else {
+            ZView::onMouseEvent(button, action, mods, x, y);
+        }
+
+
     }
 
     if (action == GLFW_RELEASE) {

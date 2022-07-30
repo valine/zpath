@@ -150,14 +150,27 @@ public:
         string sep = "=\n";
 
         string graph;
+        string crumb;
         for (auto node : nodes) {
             graph += sep;
             graph += nodeToString(node);
+
+            if (node->getType() == mTypes.at("output")) {
+                crumb += "#" + node->getText();
+            }
+        }
+
+
+        if (!crumb.empty()) {
+            graph = crumb + "\n" + graph;
         }
         return graph;
     }
 
     set<ZNodeView*> deserialize(string nodeString) {
+        if (nodeString.at(0) == '#') {
+            nodeString.erase(0, nodeString.find("\n") + 1);
+        }
         vector<string> snodes = split(nodeString, '=');
 
         map<int, ZNodeView*> nodeMap;
