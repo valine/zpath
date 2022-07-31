@@ -83,7 +83,7 @@ public:
         if (crumbs.at(depth).mIndex != -1) {
             // todo: check for array
             for (auto & datum : data) {
-                if (datum.is_number()) {
+                if (datum.is_number_float()) {
                     dataList.push_back(datum);
                 } else if (datum.is_object()) {
                     vector<float> someData = followCrumbs(datum, crumbs, depth + 1);

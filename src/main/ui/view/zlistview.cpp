@@ -28,7 +28,7 @@ void ZListView::addItem(string item) {
     });
     label->mDropDown->setOnItemChange([this](int item){
         if (mCrumbChangeListener != nullptr) {
-            mCrumbChangeListener(item, mListViews.size() - 1);
+            mCrumbChangeListener(mListViews.size() - 1, item);
         }
     });
 

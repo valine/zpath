@@ -20,7 +20,9 @@ void ZDataViewController::onCreate() {
 
     mListView->setOnCrumbChange([](int crumbIndex, int projectIndex){
         vector<string> names = ZNodeStore::get().getProjectNames("/json");
-        DataStore::get().setCrumbsForIndex(projectIndex, ZNodeStore::get().loadCrumbs(names.at(projectIndex)));
+        vector<DataStore::Crumb> crumbs = ZNodeStore::get().loadCrumbs(names.at(projectIndex));
+        std::reverse(crumbs.begin(), crumbs.end());
+        DataStore::get().setCrumbsForIndex(crumbIndex, crumbs);
     });
 }
 
