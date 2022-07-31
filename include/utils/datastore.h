@@ -61,16 +61,14 @@ public:
     void setCrumbsForIndex(int index, const vector<Crumb>& crumbs) {
         mCrumbsMap.insert({index, crumbs});
 
-        int loopCount = 0;
-        for (const Crumb& c : crumbs) {
-            if (c.mIndex != -1) {
-                loopCount++;
-            }
-        }
-
         json data = mJsonMap.at(mDataIndexMap.at(index));
         vector<float> dataPoints = followCrumbs(data, crumbs, 0);
-        mDataMap.insert({mDataIndexMap.at(index), dataPoints});
+        if (mDataMap.count(mDataIndexMap.at(index)) > 0) {
+            mDataMap.at(mDataIndexMap.at(index)) =  dataPoints;
+        } else {
+            mDataMap.insert({mDataIndexMap.at(index), dataPoints});
+        }
+
     }
 
     vector<float> followCrumbs(json data, vector<Crumb> crumbs, int depth) {
@@ -96,8 +94,34 @@ public:
         }
 
         return dataList;
-
     }
+
+
+    bool crumbsValid(json data, vector<Crumb> crumbs, int depth) {
+        if (depth >= crumbs.size()) {
+            return false;
+        }
+
+        bool isValid = true;
+
+        if (crumbs.at(depth).mIndex != -1) {
+            // todo: check for array
+
+                if (data.at(0).is_number_float()) {
+                    if (depth == crumbs.size() - 1) {
+                        return true;
+                    }
+                } else if (data.at(0).is_object()) {
+                    isValid &= crumbsValid(data.at(0), crumbs, depth + 1);
+                }
+
+        } else {
+            isValid &= crumbsValid(data[crumbs.at(depth).mKey], crumbs, depth + 1);
+        }
+
+        return isValid;
+    }
+
 
     float getDataAtIndex(unsigned int fileIndex, float x) {
         if (fileIndex != -1 && mDataList.size() > fileIndex) {
@@ -109,7 +133,7 @@ public:
                 float rightX = std::min(size, std::max(0.0f, ceil(x)));
                 float factor = x - floor(x);
 
-                if (points.size() < leftX || points.size() < rightX) {
+                if (points.size() <= leftX || points.size() <= rightX) {
                     return 0;
                 }
                 float leftY = mDataMap.at(path).at((int) leftX);
