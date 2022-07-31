@@ -451,7 +451,7 @@ void ZNodeView::setType(NodeType* type) {
                 mDropDown->setItems(list);
             });
             mDropDown->setOnItemChange([this](int item){
-
+                invalidateNodeRecursive();
             });
 
         } else {

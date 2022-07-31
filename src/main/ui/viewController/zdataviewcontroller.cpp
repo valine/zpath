@@ -9,7 +9,6 @@
 
 void ZDataViewController::onCreate() {
     ZViewController::onCreate();
-
     mListView = new ZListView(this);
     mListView->setMargin(10);
 

@@ -109,6 +109,9 @@ public:
                 float rightX = std::min(size, std::max(0.0f, ceil(x)));
                 float factor = x - floor(x);
 
+                if (points.size() < leftX || points.size() < rightX) {
+                    return 0;
+                }
                 float leftY = mDataMap.at(path).at((int) leftX);
                 float rightY = mDataMap.at(path).at((int) rightX);
 

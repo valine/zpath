@@ -11,7 +11,7 @@
   "socketNames" : ["X", "Frequency", "Height"],
   "enumNames" : [],
   "nodeSize" : [200, 200],
-  "chartBounds" : [0,10,0,10],
+  "chartBounds" : [0,120,-120,120],
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : true,
   "buttonNames" : [],
