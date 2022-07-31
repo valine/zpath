@@ -50,14 +50,14 @@ public:
         return mSelected;
     }
 
+    vector<ZButton*> mButtons;
 private:
 	ZLabel* mTitle;
 	ZScrollView* mDrawer;
 	vector<string> mNames;
 	float mButtonHeight;
 
-	vector<ZButton*> mButtons;
-	bool mDynamicTitle = true;
+    bool mDynamicTitle = true;
     std::function<void(int item)> mOnItemChange = nullptr;
     std::function<void()> mOnOpen = nullptr;
     void handleClick();

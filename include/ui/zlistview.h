@@ -20,8 +20,12 @@ public:
         mGetCrumbs = std::move(in);
     }
 
+    void setColorInterface(function<ZColor(int index, int projectIndex)> in) {
+        getItemColor = std::move(in);
+    }
+
     void setOnCrumbChange(function<void(int crumbIndex, int projectIndex)> l) {
-        mCrumbChangeListener = l;
+        mCrumbChangeListener = std::move(l);
     }
 
 private:
@@ -30,6 +34,7 @@ private:
     queue<ZListItemView*> mRecycledViews;
     vector<ZListItemView*> mListViews;
     function<vector<string>()> mGetCrumbs = nullptr;
+    function<ZColor(int index, int projectIndex)> getItemColor = nullptr;
     function<void(int crumbIndex, int projectIndex)> mCrumbChangeListener = nullptr;
 
     void removeItem(ZListItemView *view);

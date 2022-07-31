@@ -23,6 +23,19 @@ void ZDataViewController::onCreate() {
         std::reverse(crumbs.begin(), crumbs.end());
         DataStore::get().setCrumbsForIndex(crumbIndex, crumbs);
     });
+
+    mListView->setColorInterface([this](int index, int projectIndex){
+        vector<string> names = ZNodeStore::get().getProjectNames("/json");
+        vector<DataStore::Crumb> crumbs = ZNodeStore::get().loadCrumbs(names.at(index));
+        std::reverse(crumbs.begin(), crumbs.end());
+        bool valid = DataStore::get().crumbsValidForIndex(projectIndex, crumbs);
+
+        if (valid) {
+            return green;
+        } else {
+            return grey0;
+        }
+    });
 }
 
 void ZDataViewController::onFileDrop(int count, const char** paths) {

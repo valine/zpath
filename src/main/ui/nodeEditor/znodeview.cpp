@@ -442,7 +442,7 @@ void ZNodeView::setType(NodeType* type) {
         if (mDropDown == nullptr) {
             mDropDown = new ZDropDown(220, 18, {" "}, this);
             mDropDown->setTitle("Choose file...");
-            mDropDown->setMarginLeft(25);
+            mDropDown->setMarginLeft(35);
             mDropDown->setMarginRight(25);
             mDropDown->setMarginTop(2);
             mDropDown->setRootView(getRootView());

@@ -16,6 +16,7 @@ void ZListView::addItem(string item) {
 
     label->mTitle->setText(getFileName(item));
     label->mDropDown->setTitle("Format");
+    label->mDropDown->setIndexTag(mListViews.size() - 1);
     label->mDropDown->setOnOpen([label, this](){
         vector<string> list = mGetCrumbs();
         vector<string> fileNames;
@@ -24,11 +25,21 @@ void ZListView::addItem(string item) {
             fileNames.push_back(getFileName(list.at(i)));
             i++;
         }
+
         label->mDropDown->setItems(fileNames);
+
+        if (getItemColor != nullptr) {
+            int buttonIndex = 0;
+            for (auto button : label->mDropDown->mButtons) {
+                button->setBackgroundColor(
+                        getItemColor(buttonIndex, label->mDropDown->getIndexTag()));
+                buttonIndex++;
+            }
+        }
     });
-    label->mDropDown->setOnItemChange([this](int item){
+    label->mDropDown->setOnItemChange([this, label](int item){
         if (mCrumbChangeListener != nullptr) {
-            mCrumbChangeListener(mListViews.size() - 1, item);
+            mCrumbChangeListener(label->mDropDown->getIndexTag(), item);
         }
     });
 

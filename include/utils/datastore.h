@@ -68,7 +68,12 @@ public:
         } else {
             mDataMap.insert({mDataIndexMap.at(index), dataPoints});
         }
+    }
 
+    bool crumbsValidForIndex(int index, const vector<Crumb>& crumbs) {
+        json data = mJsonMap.at(mDataIndexMap.at(index));
+        bool valid = crumbsValid(data, crumbs, 0);
+        return valid;
     }
 
     vector<float> followCrumbs(json data, vector<Crumb> crumbs, int depth) {
@@ -107,13 +112,16 @@ public:
         if (crumbs.at(depth).mIndex != -1) {
             // todo: check for array
 
-                if (data.at(0).is_number_float()) {
-                    if (depth == crumbs.size() - 1) {
-                        return true;
-                    }
-                } else if (data.at(0).is_object()) {
-                    isValid &= crumbsValid(data.at(0), crumbs, depth + 1);
+            if (data.empty() || !data.is_array()) {
+                return false;
+            }
+            if (data.at(0).is_number_float()) {
+                if (depth == crumbs.size() - 1) {
+                    return true;
                 }
+            } else if (data.at(0).is_object()) {
+                isValid &= crumbsValid(data.at(0), crumbs, depth + 1);
+            }
 
         } else {
             isValid &= crumbsValid(data[crumbs.at(depth).mKey], crumbs, depth + 1);
