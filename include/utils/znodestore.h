@@ -119,6 +119,7 @@ public:
         std::reverse(names.begin(), names.end());
         return names;
     }
+
     vector<DataStore::Crumb> loadCrumbs(string name) {
         ifstream t(name);
         string firstLine;

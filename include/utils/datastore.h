@@ -49,12 +49,9 @@ public:
      * Parse json to float list and store
      * @param data Raw json data
      */
-    void storeJson(json data, string path) {
+    void storeData(json data, string path) {
         mDataList.push_back(path);
         mDataIndexMap.insert({mDataList.size() - 1, path});
-       // vector<float> list = data["BrainSenseTimeDomain"][0]["TimeDomainData"];
-      //  mDataMap.insert({path, list});
-
         mJsonMap.insert({path, data});
     }
 
@@ -101,7 +98,6 @@ public:
         return dataList;
     }
 
-
     bool crumbsValid(json data, vector<Crumb> crumbs, int depth) {
         if (depth >= crumbs.size()) {
             return false;
@@ -129,7 +125,6 @@ public:
 
         return isValid;
     }
-
 
     float getDataAtIndex(unsigned int fileIndex, float x) {
         if (fileIndex != -1 && mDataList.size() > fileIndex) {

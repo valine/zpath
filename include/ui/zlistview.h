@@ -31,6 +31,10 @@ public:
     vector<string> getItems() {
         return mItems;
     }
+
+    int getListSize() {
+        return mListViews.size();
+    }
     void setItemDropDown(vector<string> items, int index);
 
     void selectItemDropDown(int, int);

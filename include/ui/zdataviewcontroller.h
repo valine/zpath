@@ -20,6 +20,8 @@ private:
     string getFileExtension(string path);
 
     void loadDataFile(string path);
+
+    void loadDataFiles();
 };
 
 

@@ -13,11 +13,10 @@ void ZDataViewController::onCreate() {
     mListView->setMargin(10);
 
     vector<string> files = ZSettings::get().loadFileList();
-    for (const string& file : files) {
-        thread t(&ZDataViewController::loadDataFile, this, file);
-        t.detach();
-    }
 
+    thread t(&ZDataViewController::loadDataFiles, this);
+    t.detach();
+    
     mListView->setCrumbInterface([](){
         vector<string> names = ZNodeStore::get().getProjectNames("/json");
         return names;
@@ -52,6 +51,13 @@ void ZDataViewController::onFileDrop(int count, const char** paths) {
     ZSettings::get().saveFileList(mListView->getItems());
 }
 
+
+void ZDataViewController::loadDataFiles() {
+    vector<string> files = ZSettings::get().loadFileList();
+    for (const string& file : files) {
+        ZDataViewController::loadDataFile(file);
+    }
+}
 void ZDataViewController::loadDataFile(string path) {
     string ext = getFileExtension(path);
 
@@ -59,12 +65,14 @@ void ZDataViewController::loadDataFile(string path) {
     if (ext == "json") {
         cout << "Data importing..." << endl;
         json j = DataStore::get().parseJsonFromFile(path);
-        DataStore::get().storeJson(j, path);
+
+        int index = mListView->getListSize();
+        DataStore::get().storeData(j, path + to_string(index));
         mListView->addItem(path);
 
         vector<int> formats = ZSettings::get().loadFormatList();
 
-        int index = mListView->getItems().size() - 1;
+
         mListView->updateNamesAtIndex(index);
 
         if (formats.size() > index && formats.at(index) >= 0) {
