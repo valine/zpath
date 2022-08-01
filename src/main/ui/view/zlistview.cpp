@@ -5,6 +5,7 @@
 #include "ui/zlistview.h"
 #include "ui/zlistitemview.h"
 #include <utility>
+#include <thread>
 
 ZListView::ZListView(ZView *parent)  :
         ZScrollView(fillParent, fillParent, parent){
@@ -31,8 +32,9 @@ void ZListView::addItem(string item) {
         if (getItemColor != nullptr) {
             int buttonIndex = 0;
             for (auto button : label->mDropDown->mButtons) {
-                button->setBackgroundColor(
-                        getItemColor(buttonIndex, label->mDropDown->getIndexTag()));
+                thread t1(&ZListView::setItemColor, this, label, button, buttonIndex);
+                t1.detach();
+
                 buttonIndex++;
             }
         }
@@ -44,6 +46,13 @@ void ZListView::addItem(string item) {
     });
 
     onWindowChange(getWindowWidth(), getWindowHeight());
+}
+
+void ZListView::setItemColor(ZListItemView *label, ZButton *button, int index) {
+    button->setBackgroundColor(
+            getItemColor(index, label->mDropDown->getIndexTag()));
+    button->invalidate();
+    glfwPostEmptyEvent();
 }
 
 string ZListView::getFileName(const string& s) {

@@ -37,6 +37,7 @@ private:
     function<ZColor(int index, int projectIndex)> getItemColor = nullptr;
     function<void(int crumbIndex, int projectIndex)> mCrumbChangeListener = nullptr;
 
+    void setItemColor(ZListItemView *label, ZButton *button, int index);
     void removeItem(ZListItemView *view);
     void setItems(const vector<string>& items);
 

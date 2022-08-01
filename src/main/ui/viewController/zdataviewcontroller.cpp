@@ -33,7 +33,7 @@ void ZDataViewController::onCreate() {
         if (valid) {
             return green;
         } else {
-            return grey0;
+            return grey1;
         }
     });
 }
