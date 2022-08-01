@@ -31,7 +31,7 @@ void ZDataViewController::onCreate() {
         bool valid = DataStore::get().crumbsValidForIndex(projectIndex, crumbs);
 
         if (valid) {
-            return green;
+            return gold;
         } else {
             return grey1;
         }
