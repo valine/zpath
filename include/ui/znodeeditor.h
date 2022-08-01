@@ -62,6 +62,7 @@ public:
     mutex mEvalMutex;
     mutex mNodeMutex;
     condition_variable mEvalConVar;
+    bool mLoadInProgress = false;
 
     static void startEvaluation(ZNodeEditor* editor);
     void onCursorPosChange(double x, double y) override;
@@ -226,7 +227,7 @@ private:
 
     void reindexNodes();
 
-    void selectProject(int index, string &path);
+    void selectProject(int index, string path);
 
     void saveProject();
 

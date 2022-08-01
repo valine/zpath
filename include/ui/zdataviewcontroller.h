@@ -18,6 +18,8 @@ private:
     void onFileDrop(int count, const char **paths) override;
     ZListView* mListView;
     string getFileExtension(string path);
+
+    void loadDataFile(string path);
 };
 
 

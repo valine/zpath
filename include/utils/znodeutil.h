@@ -51,6 +51,10 @@ public:
         nodeString+="pos:" + to_string(node->getOffsetX()) + "," +  to_string(node->getOffsetY()) + "\n";
         nodeString+="size:" + to_string(node->getMaxWidth()) + "," +  to_string(node->getMaxHeight()) + "\n";
 
+        if (type->mIsDropDownVisible) {
+            nodeString += "dropdown:" + to_string(node->mDropDown->getSelectedItem()) + "," + "\n";
+        }
+
         string edges;
         for (const auto& socket : node->mInputIndices) {
             for (auto socketInput : socket) {
@@ -193,6 +197,7 @@ public:
             vector<float> magnitudesOut;
             string name = "";
             string groupIds = "";
+            int dropDownIndex = 0;
             ivec2 socketCount = ivec2(-1);
             int id;
             string edges;
@@ -205,6 +210,7 @@ public:
                 string key = keyvalue.at(0);
                 string value = keyvalue.at(1);
 
+
                 if (key == "type") {
                     type = mTypes.at(value);
                 } else if (key == "pos") {
@@ -213,6 +219,8 @@ public:
                 } else if (key == "size") {
                     vector<string> ssize = split(value, ',');
                     size = vec2(stoi(ssize.at(0)), stoi(ssize.at(1)));
+                } else if (key == "dropdown") {
+                    dropDownIndex = stoi(value);
                 } else if (key == "id") {
                     id = stoi(value);
                 } else if (key == "edges") {
@@ -257,6 +265,14 @@ public:
             node->setMaxHeight(size.y);
             node->setIndexTag(id);
             node->setText(name);
+
+            if (node->mType->mIsDropDownVisible) {
+                vector<string> nameList = DataStore::get().getFileNameList();
+                node->mDropDown->setItems(nameList);
+                if (dropDownIndex < nameList.size()) {
+                    node->mDropDown->selectItem(dropDownIndex);
+                }
+            }
             nodeMap.insert({id, node});
             edgeMap.insert({id, edges});
             groupMap.insert({id, groupIds});

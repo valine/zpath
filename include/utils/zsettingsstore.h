@@ -69,6 +69,11 @@ public:
         mOnThemeChange = fn;
     }
 
+    void saveFileList(vector<string> list);
+    vector<string> loadFileList();
+
+    void saveFormatList(vector<int> list);
+    vector<int> loadFormatList();
 private:
     function<void()> mOnThemeChange = nullptr;
     ZColor mBaseColor = ZColor(vec4(0.9, 0.9, 0.92, 1.0),
@@ -87,6 +92,8 @@ private:
     void operator=(ZSettings const&); // Don't implement
 
     CompDevice mCompDevice = unset;
+
+
 };
 
 

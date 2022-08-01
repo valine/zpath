@@ -2,11 +2,13 @@
 // Created by lukas on 7/14/19.
 //
 
+#include "utils/zutil.h"
 #include <iostream>
 #include <fstream>
 #include "utils/zsettingsstore.h"
 #include "utils/enums/colormode.h"
 using namespace std;
+
 
 ZSettings::ZSettings() {
 
@@ -65,6 +67,95 @@ string ZSettings::getResourcePath() {
 
 void ZSettings::setResourcePath(string path) {
     mResourcePath = path;
+}
+
+void ZSettings::saveFormatList(vector<int> list) {
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "file-format-store";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    ofstream out(fullPathString);
+
+    string content;
+    int i = 0;
+    for (int item : list) {
+        content += to_string(item);
+        if (i < list.size() - 1) {
+            content += ",";
+        }
+        i++;
+    }
+
+    out << content;
+    out.close();
+}
+
+vector<int> ZSettings::loadFormatList() {
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "file-format-store";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    ifstream t(fullPathString);
+    string dataString;
+    t.seekg(0, std::ios::end);
+    dataString.reserve(t.tellg());
+    t.seekg(0, std::ios::beg);
+    dataString.assign((std::istreambuf_iterator<char>(t)),
+                      std::istreambuf_iterator<char>());
+
+    vector<string> items = ZUtil::split(dataString, ',');
+    vector<int> formats;
+    for (const string& item: items) {
+        formats.push_back(stoi(item));
+    }
+    return formats;
+}
+
+
+void ZSettings::saveFileList(vector<string> list) {
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "file-store";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    ofstream out(fullPathString);
+
+    string content;
+    int i = 0;
+    for (const string& item : list) {
+        content += item;
+        if (i < list.size() - 1) {
+            content += ",";
+        }
+        i++;
+    }
+
+    out << content;
+    out.close();
+}
+
+vector<string> ZSettings::loadFileList() {
+    string projectFolder = "resources/settings/";
+    string path = ZSettings::get().getResourcePath() + projectFolder;
+    string name = "file-store";
+    string ext = ".csv";
+    string fullPathString = path + name + ext;
+
+    ifstream t(fullPathString);
+    string dataString;
+    t.seekg(0, std::ios::end);
+    dataString.reserve(t.tellg());
+    t.seekg(0, std::ios::beg);
+    dataString.assign((std::istreambuf_iterator<char>(t)),
+                      std::istreambuf_iterator<char>());
+
+    vector<string> items = ZUtil::split(dataString, ',');
+    return items;
 }
 
 void ZSettings::setColorMode(ColorMode mode) {

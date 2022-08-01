@@ -15,19 +15,13 @@ ZListView::ZListView(ZView *parent)  :
 void ZListView::addItem(string item) {
     ZListItemView* label = newView();
 
+    mItems.push_back(item);
+
     label->mTitle->setText(getFileName(item));
     label->mDropDown->setTitle("Format");
     label->mDropDown->setIndexTag(mListViews.size() - 1);
     label->mDropDown->setOnOpen([label, this](){
-        vector<string> list = mGetCrumbs();
-        vector<string> fileNames;
-        int i = 0;
-        for (string item : list) {
-            fileNames.push_back(getFileName(list.at(i)));
-            i++;
-        }
-
-        label->mDropDown->setItems(fileNames);
+        updateNames(label);
 
         if (getItemColor != nullptr) {
             int buttonIndex = 0;
@@ -46,6 +40,39 @@ void ZListView::addItem(string item) {
     });
 
     onWindowChange(getWindowWidth(), getWindowHeight());
+}
+
+void ZListView::updateNamesAtIndex(int index) {
+    updateNames(mListViews.at(index));
+}
+
+void ZListView::updateNames(ZListItemView *label) {
+    vector<string> list = mGetCrumbs();
+    vector<string> fileNames;
+    int i = 0;
+    for (string item : list) {
+        fileNames.push_back(getFileName(list.at(i)));
+        i++;
+    }
+
+    label->mDropDown->setItems(fileNames);
+}
+
+void ZListView::setItemDropDown(vector<string> items, int index) {
+    mListViews.at(index)->mDropDown->setItems(std::move(items));
+}
+
+void ZListView::selectItemDropDown(int itemIndex, int index) {
+    mListViews.at(itemIndex)->mDropDown->selectItem(index);
+}
+
+vector<int> ZListView::getFormats() {
+    vector<int> formats;
+    for (auto view : mListViews) {
+        formats.push_back(view->mDropDown->getSelectedItem());
+    }
+
+    return formats;
 }
 
 void ZListView::setItemColor(ZListItemView *label, ZButton *button, int index) {

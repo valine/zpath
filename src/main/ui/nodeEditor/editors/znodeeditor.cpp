@@ -77,6 +77,7 @@ ZNodeEditor::ZNodeEditor(float maxWidth, float maxHeight, ZView *parent, string 
     mProjectBrowser->setMarginTop(125);
     mProjectBrowser->onWindowChange(getWindowWidth(), getWindowWidth());
     mProjectBrowser->setOnProjectSelected([this](int index, string path) {
+        mLoadInProgress = true;
         selectProject(index, path);
     });
 
@@ -295,7 +296,8 @@ void ZNodeEditor::setNodeTypes(vector<NodeType*> nodeTypes) {
     });
 }
 
-void ZNodeEditor::selectProject(int index, string &path) {
+void ZNodeEditor::selectProject(int index, string path) {
+
     bool currentProjectSave = !mProjectPath.empty();
     mSelectedProject = index;
     mProjectPath = path;
@@ -333,6 +335,8 @@ void ZNodeEditor::selectProject(int index, string &path) {
     }
 
     updateLines();
+
+    mLoadInProgress = false;
     onWindowChange(getWindowWidth(), getWindowHeight());
 }
 
@@ -407,8 +411,11 @@ void ZNodeEditor::onKeyPress(int key, int scancode, int action, int mods) {
 }
 
 void ZNodeEditor::requestSave() {
+    if (mLoadInProgress) {
+        return;
+    }
     mSavePending = true;
-    lock_guard<mutex> guard(mEvalMutex);;
+    lock_guard<mutex> guard(mEvalMutex);
     mEvalConVar.notify_one();
 }
 

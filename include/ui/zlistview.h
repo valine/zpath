@@ -28,8 +28,19 @@ public:
         mCrumbChangeListener = std::move(l);
     }
 
+    vector<string> getItems() {
+        return mItems;
+    }
+    void setItemDropDown(vector<string> items, int index);
+
+    void selectItemDropDown(int, int);
+
+    vector<int> getFormats();
+    void updateNamesAtIndex(int index);
+
 private:
 
+    vector<string> mItems;
     ZListItemView * newView();
     queue<ZListItemView*> mRecycledViews;
     vector<ZListItemView*> mListViews;
@@ -42,6 +53,10 @@ private:
     void setItems(const vector<string>& items);
 
     string getFileName(const string &s);
+
+
+    void updateNames(ZListItemView *label);
+
 };
 
 

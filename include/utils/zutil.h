@@ -28,6 +28,32 @@ public:
     static string getHomeFolder();
 
     static string replace(string subject, const string &search, const string &replace);
+
+    static vector<string> split(const string &s, char delim) {
+        char escape = '\\';
+        vector<string> result;
+        stringstream ss (s);
+        string item;
+
+        string last = "";
+        while (getline(ss, item, delim)) {
+
+            // Delimiter was escaped
+            if (!last.empty() && !result.empty() &&
+                last.at(last.size() - 1) == escape) {
+
+                last = item;
+                int rsize = result.size() - 1;
+                result.at(rsize).erase( result.at(rsize).size() - 1);
+                result.at(result.size() - 1) += delim + item;
+            } else {
+                result.push_back(item);
+                last = item;
+            }
+
+        }
+        return result;
+    }
 };
 
 

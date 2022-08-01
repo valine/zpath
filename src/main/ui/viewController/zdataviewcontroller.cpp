@@ -12,16 +12,24 @@ void ZDataViewController::onCreate() {
     mListView = new ZListView(this);
     mListView->setMargin(10);
 
+    vector<string> files = ZSettings::get().loadFileList();
+    for (const string& file : files) {
+        thread t(&ZDataViewController::loadDataFile, this, file);
+        t.detach();
+    }
+
     mListView->setCrumbInterface([](){
         vector<string> names = ZNodeStore::get().getProjectNames("/json");
         return names;
     });
 
-    mListView->setOnCrumbChange([](int crumbIndex, int projectIndex){
+    mListView->setOnCrumbChange([this](int crumbIndex, int projectIndex){
         vector<string> names = ZNodeStore::get().getProjectNames("/json");
         vector<DataStore::Crumb> crumbs = ZNodeStore::get().loadCrumbs(names.at(projectIndex));
         std::reverse(crumbs.begin(), crumbs.end());
         DataStore::get().setCrumbsForIndex(crumbIndex, crumbs);
+
+        ZSettings::get().saveFormatList(mListView->getFormats());
     });
 
     mListView->setColorInterface([this](int index, int projectIndex){
@@ -40,6 +48,11 @@ void ZDataViewController::onCreate() {
 
 void ZDataViewController::onFileDrop(int count, const char** paths) {
     string path(paths[0]);
+    loadDataFile(path);
+    ZSettings::get().saveFileList(mListView->getItems());
+}
+
+void ZDataViewController::loadDataFile(string path) {
     string ext = getFileExtension(path);
 
 
@@ -48,6 +61,20 @@ void ZDataViewController::onFileDrop(int count, const char** paths) {
         json j = DataStore::get().parseJsonFromFile(path);
         DataStore::get().storeJson(j, path);
         mListView->addItem(path);
+
+        vector<int> formats = ZSettings::get().loadFormatList();
+
+        int index = mListView->getItems().size() - 1;
+        mListView->updateNamesAtIndex(index);
+
+        if (formats.size() > index && formats.at(index) >= 0) {
+            mListView->selectItemDropDown(index, formats.at(index));
+
+            vector<string> names = ZNodeStore::get().getProjectNames("/json");
+            vector<DataStore::Crumb> crumbs = ZNodeStore::get().loadCrumbs(names.at(formats.at(index)));
+            std::reverse(crumbs.begin(), crumbs.end());
+            DataStore::get().setCrumbsForIndex(index, crumbs);
+        }
     } else {
         cout << "File type: " << ext << " not supported" << endl;
     }
