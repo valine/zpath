@@ -16,7 +16,7 @@ void ZDataViewController::onCreate() {
 
     thread t(&ZDataViewController::loadDataFiles, this);
     t.detach();
-    
+
     mListView->setCrumbInterface([](){
         vector<string> names = ZNodeStore::get().getProjectNames("/json");
         return names;
@@ -33,6 +33,10 @@ void ZDataViewController::onCreate() {
 
     mListView->setColorInterface([this](int index, int projectIndex){
         vector<string> names = ZNodeStore::get().getProjectNames("/json");
+
+        if (names.size() <= index) {
+            return grey1;
+        }
         vector<DataStore::Crumb> crumbs = ZNodeStore::get().loadCrumbs(names.at(index));
         std::reverse(crumbs.begin(), crumbs.end());
         bool valid = DataStore::get().crumbsValidForIndex(projectIndex, crumbs);
