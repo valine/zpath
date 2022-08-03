@@ -75,13 +75,13 @@ public:
         if (glm::length(color3L) < 0.8) {
             textColor.light = vec4(1);
         } else {
-            textColor.light = vec4(0);
+            textColor.light = vec4(0,0,0,1);
         }
 
         if (glm::length(color3D) < 0.8) {
             textColor.dark = vec4(1);
         } else {
-            textColor.dark = vec4(0);
+            textColor.dark = vec4(0,0,0,1);
         }
         return textColor;
     }

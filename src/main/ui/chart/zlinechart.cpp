@@ -368,7 +368,7 @@ void ZLineChart::draw() {
         glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
         glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
         glViewport(0, 0, getWidth(), getHeight());
-        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClearColor(1.0, 1.0, 1.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glBindVertexArray(0);
@@ -396,7 +396,7 @@ void ZLineChart::drawCpu() {
     glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
     glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
     glViewport(0, 0, getWidth(), getHeight());
-    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClearColor(1.0, 1.0, 1.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw heat map. Heat map update is triggered by a second thread,
@@ -430,7 +430,10 @@ void ZLineChart::drawCpu() {
 
     if (mInputType != HEAT_MAP) {
         // draw background grid
-        mShader->setVec4("uColor", grey.get(mColorMode));
+        ZColor gridColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
+        gridColor.light.a = 0.25;
+        gridColor.dark.a = 0.25;
+        mShader->setVec4("uColor", gridColor.get(mColorMode));
 
         glLineWidth(2.0);
 
@@ -453,8 +456,15 @@ void ZLineChart::drawCpu() {
         // Draw graph lines
         glLineWidth(2.0);
         for (int i = mPoints.size() - 1; i >= 0; i--) {
+
             mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
                                        vec4(vec3((float) i / mPoints.size()), 1.0));
+
+            vec4 r = vec4(1.0, 0.1, 0.1, 1.0);
+            vec4 lineColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
+            float factor = (float) std::min((float) i, 1.0f);
+            vec4 mixed = mix(lineColor, r, factor);
+            mShader->setVec4("uColor", mixed);
             glBindVertexArray(mLineVAO.at(i));
             glDrawArrays(GL_LINE_STRIP, 0, (mPointCount.at(i) / 4));
         }

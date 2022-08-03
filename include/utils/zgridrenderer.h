@@ -85,7 +85,7 @@ public:
     ZTexture *create() {
         unsigned int buffer;
         glGenTextures(1, &buffer);
-        draw(buffer, vec4(0.1,0.1,0.1,0.4));
+        draw(buffer, vec4(0.0,0.0,0.0,0.4));
 
         unsigned int bufferDark;
         glGenTextures(1, &bufferDark);
