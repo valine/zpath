@@ -43,6 +43,14 @@ void ZJsonNodeEditor::onFileDrop(int count, const char** paths) {
         ZNodeView* root = ZNodeUtil::get().nodesFromJson(j, nullptr);
         addNodeGraph(root, vec2(10), 0);
 
+    }  else if (ext == "csv") {
+        cout << "Data importing..." << endl;
+        cout << path << endl;
+        json j = DataStore::get().parseCsvFile(path);
+
+        ZNodeView* root = ZNodeUtil::get().nodesFromJson(j, nullptr);
+        addNodeGraph(root, vec2(10), 0);
+
     } else {
         cout << "File type: " << ext << " not supported" << endl;
     }

@@ -87,6 +87,27 @@ void ZDataViewController::loadDataFile(string path) {
             std::reverse(crumbs.begin(), crumbs.end());
             DataStore::get().setCrumbsForIndex(index, crumbs);
         }
+    } else if (ext == "csv") {
+        cout << "Data importing..." << endl;
+        json j = DataStore::get().parseCsvFile(path);
+
+        int index = mListView->getListSize();
+        DataStore::get().storeData(j, path + to_string(index));
+        mListView->addItem(path);
+
+        vector<int> formats = ZSettings::get().loadFormatList();
+        mListView->updateNamesAtIndex(index);
+
+        if (formats.size() > index && formats.at(index) >= 0) {
+            mListView->selectItemDropDown(index, formats.at(index));
+
+            vector<string> names = ZNodeStore::get().getProjectNames("/json");
+            vector<DataStore::Crumb> crumbs = ZNodeStore::get().loadCrumbs(names.at(formats.at(index)));
+            std::reverse(crumbs.begin(), crumbs.end());
+            DataStore::get().setCrumbsForIndex(index, crumbs);
+        }
+
+
     } else {
         cout << "File type: " << ext << " not supported" << endl;
     }

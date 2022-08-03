@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "utils/zutil.h"
 
 using namespace std;
 using namespace nlohmann;
@@ -43,6 +44,97 @@ public:
         json j = json::parse(dataString);
 
         return j;
+    }
+
+    json parseCsvFile(string path) {
+        std::ifstream t(path);
+        std::string dataString;
+        t.seekg(0, std::ios::end);
+        dataString.reserve(t.tellg());
+        t.seekg(0, std::ios::beg);
+        dataString.assign((std::istreambuf_iterator<char>(t)),
+                          std::istreambuf_iterator<char>());
+
+        json j = csvToJson(dataString);
+        return j;
+    }
+
+    json csvToJson(string csv) {
+        json allJson = json();
+
+        vector<vector<string>> grid;
+        vector<string> rows = ZUtil::split(csv, '\n');
+        for (auto row : rows) {
+            vector<string> tokens = ZUtil::split(row, ',');
+            for (int i = 0; i < tokens.size(); i++) {
+                tokens.at(i) = cleanString(tokens.at(i));
+            }
+            grid.push_back(tokens);
+        }
+
+        vector<int> cursor = vector<int>(grid.at(0).size(), 0);
+
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid.at(i).size(); j++) {
+                if (i >= cursor.at(j)) {
+
+                    string token = grid.at(i).at(j);
+                    string downOne = "";
+
+                    if (grid.size() > i + 1) { downOne = grid.at(i + 1).at(j); }
+
+                    if (ZUtil::isNumber(downOne) && !ZUtil::isNumber(token)) {
+                        string key = token;
+                        vector<float> values;
+
+                        float number = stof(downOne);
+                        int index = i;
+                        while (index != -1) {
+                            cursor.at(j) = index + 1;
+                            values.push_back(number);
+
+                            if (grid.size() > index + 1 && ZUtil::isNumber(grid.at(index + 1).at(j))) {
+                                number = stof(grid.at(index + 1).at(j));
+                                index++;
+                            } else {
+                                index = -1;
+                            }
+                        }
+
+                        allJson[key] = values;
+                    } else if (ZUtil::isNumber(downOne) && ZUtil::isNumber(token)) {
+                        string key = to_string(i) + "," + to_string(j);
+                        vector<float> values;
+                        float number = stof(downOne);
+                        int index = i + 1;
+                        while (index != -1) {
+                            cursor.at(j) = index;
+                            values.push_back(number);
+
+                            if (grid.size() > index + 1 && ZUtil::isNumber(grid.at(index + 1).at(j))) {
+                                number = stof(grid.at(index + 1).at(j));
+                                index++;
+                            } else {
+                                index = -1;
+                            }
+
+                        }
+                        allJson[key] = values;
+                    }
+                }
+
+            }
+        }
+
+        return allJson;
+    }
+
+    string cleanString(string potentialNumber) {
+        if (potentialNumber.at(0) == '$') {
+            return potentialNumber.substr(1, potentialNumber.size() - 1);
+        }
+
+        return potentialNumber;
     }
 
     /**
