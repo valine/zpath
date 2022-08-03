@@ -1177,8 +1177,9 @@ void ZNodeEditor::updateLines() {
                             continue;
                         }
                         ZLineView *line = getLine(lineIndex++);
+                        ZView* input = inputIndex.first->getSocketsIn().at(inputIndex.second);
                         vec2 point = outSockets.at(outputIndex)->getCenter();
-                        vec2 point2 =  inputIndex.first->getSocketsIn().at(inputIndex.second)->getCenter();
+                        vec2 point2 =  input->getCenter();
 
                         if (point.y <= mNodeContainer->getTop()) {
                             point.y = mNodeContainer->getTop() - 2;
@@ -1186,6 +1187,8 @@ void ZNodeEditor::updateLines() {
                         if (point2.y <= mNodeContainer->getTop()) {
                             point2.y = mNodeContainer->getTop() - 2;
                         }
+
+                        line->setBackgroundColor(input->getBackgroundColor());
 
                         if (point.y >= mNodeContainer->getBottom() && point2.y >= mNodeContainer->getBottom()) {
                             line->setVisibility(false);
@@ -1202,7 +1205,6 @@ void ZNodeEditor::updateLines() {
     }
 
     getParentView()->invalidate();
-
     if (mMagnitudePicker != nullptr) {
         mMagnitudePicker->invalidate();
     }
@@ -1220,8 +1222,6 @@ ZLineView* ZNodeEditor::getLine(int index) {
 
 void ZNodeEditor::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int button) {
     ZView::onMouseDrag(absolute, start, delta, state, 0);
-
-
     if (middleMouseIsDown()) {
         mMagnitudePicker->setVisibility(false);
     }
@@ -1281,7 +1281,6 @@ void ZNodeEditor::onMouseDown() {
                 }
             }
 
-
             for (int j = 0; j < node->getSocketCount().x; j++) {
                 ZView *socket = node->getSocketsIn().at(j);
                 SocketType socketType = SocketType::CON;
@@ -1326,7 +1325,6 @@ void ZNodeEditor::onMouseDown() {
                        node->invalidate();
                     }
                 }
-
             }
 
             int j = 0;
@@ -1471,7 +1469,6 @@ void ZNodeEditor::onMouseUp(int button) {
     }
     exitBoxSelectMode();
     mWasDoubleClick = false;
-
     requestSave();
 }
 
@@ -1680,7 +1677,6 @@ void ZNodeEditor::onScrollChange(double x, double y) {
 
             innerView->setScale(newScale);
             mLineContainer->setScale(newScale);
-
 
             vec2 delta = (offset) / newScale;
 

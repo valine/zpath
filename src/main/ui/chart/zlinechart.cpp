@@ -431,8 +431,8 @@ void ZLineChart::drawCpu() {
     if (mInputType != HEAT_MAP) {
         // draw background grid
         ZColor gridColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
-        gridColor.light.a = 0.25;
-        gridColor.dark.a = 0.25;
+        gridColor.light.a = 0.2;
+        gridColor.dark.a = 0.2;
         mShader->setVec4("uColor", gridColor.get(mColorMode));
 
         glLineWidth(2.0);

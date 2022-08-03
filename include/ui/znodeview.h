@@ -82,9 +82,9 @@ public:
 
     static ZColor getSocketColor(SocketType type) {
         const vec4 mVariableColor = vec4(1, 0.611956, 0.052950, 1);
-        const vec4 mConstantColor = vec4(1, 0.437324, 0.419652, 1);
+        const vec4 mConstantColor = vec4(0.057489, 0.164534, 0.496929, 1.000000);
         const vec4 mEnumColor = vec4(0.038825, 0.538225, 0.048049, 1.000000);
-        const vec4 mNNColor = vec4(0.023195, 0.223442, 0.538225, 1.000000);
+        const vec4 mNNColor = vec4(0.112719, 0.303202, 0.067817, 1.000000);
         const vec4 mSymbolicColor = vec4(0.122923, 0.061397, 0.314665, 1.000000);
         const vec4 mVariableZColor = vec4(0.848084, 0.215260, 0.077509, 1.000000);
         const vec4 mGroupColor = vec4(0.04, 0.04, 0.04, 1.000000);
