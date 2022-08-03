@@ -289,6 +289,9 @@ class ZView {
 
         ZColor bw = ZColor(vec4(0.0,0.0,0.0, 1.0),
                               vec4(1.0,1.0,1.0, 1.0));
+
+    ZColor wb = ZColor(vec4(1.0,1.0,1.0, 1.0),
+                       vec4(0.0,0.0,0.0, 1.0));
          ZColor transparent = ZColor(vec4(0));
          ZColor faded = vec4(0.5, 0.5, 0.5, 0.2);
 

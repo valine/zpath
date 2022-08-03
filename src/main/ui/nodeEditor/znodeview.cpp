@@ -127,7 +127,7 @@ void ZNodeView::init() {
     mXMinLabel->setMaxWidth(boundLabelWidth);
     mXMinLabel->setGravity(bottomLeft);
     mXMinLabel->setTextColor(boundColor);
-    mXMinLabel->setBackgroundColor(whiteFaded);
+    mXMinLabel->setBackgroundColor(grey1);
     mXMinLabel->setCornerRadius(mXMinLabel->getMaxHeight()/2);
     mXMinLabel->setElevation(1.0);
     mXMinLabel->setMargin(vec4(2));
@@ -140,7 +140,7 @@ void ZNodeView::init() {
     mXMaxLabel->setMargin(vec4(0));
     mXMaxLabel->setXOffset(-0);
     mXMaxLabel->setTextColor(boundColor);
-    mXMaxLabel->setBackgroundColor(whiteFaded);
+    mXMaxLabel->setBackgroundColor(grey1);
     mXMaxLabel->setCornerRadius(mXMaxLabel->getMaxHeight()/2);
     mXMaxLabel->setElevation(1.0);
     mXMaxLabel->setMargin(vec4(2));
@@ -152,7 +152,7 @@ void ZNodeView::init() {
     mYMinLabel->setGravity(bottomLeft);
     mYMinLabel->setYOffset(20);
     mYMinLabel->setTextColor(boundColor);
-    mYMinLabel->setBackgroundColor(whiteFaded);
+    mYMinLabel->setBackgroundColor(grey1);
     mYMinLabel->setCornerRadius(mYMinLabel->getMaxHeight()/2);
     mYMinLabel->setElevation(1.0);
     mYMinLabel->setMargin(vec4(2));
@@ -163,7 +163,7 @@ void ZNodeView::init() {
     mYMaxLabel->setMaxWidth(boundLabelWidth);
     mYMaxLabel->setGravity(topLeft);
     mYMaxLabel->setTextColor(boundColor);
-    mYMaxLabel->setBackgroundColor(whiteFaded);
+    mYMaxLabel->setBackgroundColor(grey1);
     mYMaxLabel->setCornerRadius(mYMaxLabel->getMaxHeight()/2);
     mYMaxLabel->setElevation(1.0);
     mYMaxLabel->setMargin(vec4(2));
