@@ -5,13 +5,10 @@ in vec2 vPos;
 
 out vec4 fragColor;
 
-uniform float uAlpha;
+uniform vec4 uColor;
 
 void main() {
-   	fragColor.r = 0;
-   	fragColor.g = 0;
-   	fragColor.b = 0;
-   	fragColor.a = uAlpha;
+   	fragColor = uColor;
 }
 )"
 

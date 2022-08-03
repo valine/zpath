@@ -19,10 +19,10 @@ public:
         return instance;
     }
 
-    int draw(int texId, float alpha) {
+    int draw(int texId, vec4 color) {
 
         int innerTiles = 16;
-        int res = innerTiles;
+        int res = 32;
         glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
         glBindTexture(GL_TEXTURE_2D, texId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_FLOAT, nullptr);
@@ -32,7 +32,7 @@ public:
 
         glBindVertexArray(mVAO);
         mShader->use();
-        mShader->setFloat("uAlpha", alpha);
+        mShader->setVec4("uColor", color);
 
         mat4 matrix = glm::ortho(0.0, 1.0, 1.0, 0.0, 1.0, -1.0);
         mShader->setMat4("uMatrix", matrix);
@@ -46,25 +46,24 @@ public:
         float tileSize = (float) res / 2.0f;
         float tileSizeHalf = (float) res / (float) innerTiles;
 
-        mShader->setFloat("uAlpha", alpha * 0.8);
+        mShader->setVec4("uColor", color * vec4(1,1,1,0.5));
 
         glViewport(0,0, tileSize, tileSize);
-        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
-
+        glDrawElements(GL_POINTS, triangles * 3, GL_UNSIGNED_INT, nullptr);
         glViewport(tileSize,tileSize,tileSize,tileSize);
-        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+      //  glDrawElements(GL_POINTS, triangles * 3, GL_UNSIGNED_INT, nullptr);
 
-        mShader->setFloat("uAlpha", alpha);
+        mShader->setVec4("uColor", color * vec4(1,1,1,0.5));
 
         for (int y = 0; y < innerTiles; y+=1) {
             for (int x = 0; x < innerTiles; x+=2) {
 
                 if (y % 2 == 1) {
                     glViewport((x + 1) * tileSizeHalf,y * tileSizeHalf, tileSizeHalf, tileSizeHalf);
-                    glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+                    glDrawElements(GL_POINTS, triangles * 3, GL_UNSIGNED_INT, nullptr);
                 } else {
                     glViewport(x * tileSizeHalf,y * tileSizeHalf, tileSizeHalf, tileSizeHalf);
-                    glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+                   // glDrawElements(GL_POINTS, triangles * 3, GL_UNSIGNED_INT, nullptr);
                 }
 
             }
@@ -79,18 +78,18 @@ public:
     }
 
     void update(ZTexture texture) {
-        draw(texture.getID(), 0.1);
-        draw(texture.getIDDark(), 0.5);
+        draw(texture.getID(), vec4(0.1,0.1,0.1,0.5));
+        draw(texture.getIDDark(), vec4(vec3(1.0),0.5));
     }
 
     ZTexture *create() {
         unsigned int buffer;
         glGenTextures(1, &buffer);
-        draw(buffer, 0.2);
+        draw(buffer, vec4(0.1,0.1,0.1,0.4));
 
         unsigned int bufferDark;
         glGenTextures(1, &bufferDark);
-        draw(bufferDark, 0.5);
+        draw(bufferDark, vec4(vec3(1.0),0.6));
 
         auto* tex = new ZTexture(buffer, bufferDark);
         tex->setFillMode(ZTexture::clip);
@@ -108,10 +107,8 @@ private:
 
     void init() {
         // Mesh buffers
-        vector<float> verts = {0, 0, 0, 0,
-                               1, 0, 1, 0,
-                               0, 1, 0, 1,
-                               1, 1, 1, 1};
+        vector<float> verts = {
+                               1, 0, 1, 0};
         vector<int> edges = {0,2,1, 1,2,3};
 
         glGenBuffers(1, &mVertBuffer);
