@@ -460,7 +460,7 @@ void ZLineChart::drawCpu() {
             mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
                                        vec4(vec3((float) i / mPoints.size()), 1.0));
 
-            vec4 r = vec4(1.0, 0.1, 0.1, 1.0);
+            vec4 r = vec4(0.1, 0.7, 1.0, 1.0);
             vec4 lineColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
             float factor = (float) std::min((float) i, 1.0f);
             vec4 mixed = mix(lineColor, r, factor);
