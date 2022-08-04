@@ -70,35 +70,39 @@ ZLinearLayout* ZScrollView::getInnerView() {
 
 void ZScrollView::onScrollChange(double x, double y) {
 
-    if (mEnableScroll) {
-        mScrollBar->setVisibility(mInnerView->getHeight() >= getHeight());
-        int scrollSpeed = 50;
-        double scrollBottom = mInnerView->getTranslation().y + mInnerView->getMaxHeight();
+    if (shiftKeyPressed()) {
+        ZView::onScrollChange(x,y);
+    } else {
+        if (mEnableScroll) {
+            mScrollBar->setVisibility(mInnerView->getHeight() >= getHeight());
+            int scrollSpeed = 50;
+            double scrollBottom = mInnerView->getTranslation().y + mInnerView->getMaxHeight();
 
-        double distance = getHeight() - scrollBottom;
-        if (y < 0) { // Scrolling down
-            if (scrollBottom > getHeight()) {
-                mInnerView->translateBy(vec2(0, std::max(distance, y * scrollSpeed)));
+            double distance = getHeight() - scrollBottom;
+            if (y < 0) { // Scrolling down
+                if (scrollBottom > getHeight()) {
+                    mInnerView->translateBy(vec2(0, std::max(distance, y * scrollSpeed)));
+                }
+            } else { // scrolling up
+                if (mInnerView->getTranslation().y < 0) {
+                    double current = mInnerView->getTranslation().y;
+                    mInnerView->translateBy(vec2(0, std::min(-current, y * scrollSpeed)));
+                }
             }
-        } else { // scrolling up
-            if (mInnerView->getTranslation().y < 0) {
-                double current = mInnerView->getTranslation().y;
-                mInnerView->translateBy(vec2(0, std::min(-current, y * scrollSpeed)));
-            }
+
+            mInnerView->onWindowChange(getWidth(), getHeight());
+
+            auto innerHeight = (float) mInnerView->getMaxHeight();
+            auto viewHeight = (float) getHeight();
+            float scrollBarHeight = viewHeight * (viewHeight / innerHeight);
+
+            mScrollBar->setMaxHeight(scrollBarHeight);
+            float max = viewHeight - scrollBarHeight;
+            float factor = -(mInnerView->getTranslation().y) / (innerHeight - getHeight());
+            mScrollBar->setOffset(0, (max * factor));
+
+            invalidate();
         }
-
-        mInnerView->onWindowChange(getWidth(), getHeight());
-
-        auto innerHeight = (float) mInnerView->getMaxHeight();
-        auto viewHeight = (float) getHeight();
-        float scrollBarHeight = viewHeight * (viewHeight / innerHeight);
-
-        mScrollBar->setMaxHeight(scrollBarHeight);
-        float max = viewHeight - scrollBarHeight;
-        float factor = -(mInnerView->getTranslation().y) / (innerHeight - getHeight());
-        mScrollBar->setOffset(0, (max * factor));
-
-        invalidate();
     }
 }
 
