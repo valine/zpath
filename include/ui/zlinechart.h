@@ -182,8 +182,7 @@ private:
 
     // This will be set by view width
     int mResolution = 2;
-
-    int mMaxResolution = 60;
+    int mMaxResolution = 200;
 
     // Input dimensions, default should be 1
     int mInputType = 1;

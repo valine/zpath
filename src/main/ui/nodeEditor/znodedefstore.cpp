@@ -280,7 +280,7 @@ ZNodeDefStore::ZNodeDefStore() {
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/rgb-out.json", [](FuncIn fn) {
-        fn.nodeView->mChart->setResolution(1000);
+        fn.nodeView->mChart->setResolution(200);
         vec4 rgb = vec4(0);
         rgb.r =  fn.x.at(0).at(0);
         rgb.g =  fn.x.at(1).at(0);
@@ -295,7 +295,7 @@ ZNodeDefStore::ZNodeDefStore() {
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/rgbmul.json", [](FuncIn fn) {
-        fn.nodeView->mChart->setResolution(200);
+        fn.nodeView->mChart->setResolution(100);
         vec4 rgb = vec4(0);
         rgb.r =  fn.x.at(0).at(0);
         rgb.g =  fn.x.at(1).at(0);
@@ -317,7 +317,7 @@ ZNodeDefStore::ZNodeDefStore() {
 
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/rgbadd.json", [](FuncIn fn) {
-        fn.nodeView->mChart->setResolution(200);
+        fn.nodeView->mChart->setResolution(100);
         vec4 rgb = vec4(0);
         rgb.r =  fn.x.at(0).at(0);
         rgb.g =  fn.x.at(1).at(0);
