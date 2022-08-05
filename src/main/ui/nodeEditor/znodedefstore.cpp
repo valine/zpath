@@ -272,9 +272,9 @@ ZNodeDefStore::ZNodeDefStore() {
         vec4 point = DataStore::get().getPixelAtIndex(fileIndex, fn.rootInput.at(REAL).at(0), fn.rootInput.at(IMAG).at(0));
         fn.nodeView->mChart->setZBound(vec2(fn.x.at(0).at(1), fn.x.at(0).at(2)));
         
-        fn.x.at(REAL) = {point.r, point.g, point.b};
+        fn.x.at(REAL) = {point.r, fn.start, fn.width};
         fn.x.at(IMAG) = {point.g, fn.start, fn.width};
-     //   fn.x.push_back({point.b, fn.start, fn.width});
+        fn.x.push_back({point.b, fn.start, fn.width});
         return fn.x;
     }));
 
@@ -285,10 +285,11 @@ ZNodeDefStore::ZNodeDefStore() {
         rgb.r =  fn.x.at(0).at(0);
         rgb.g =  fn.x.at(1).at(0);
         if (fn.x.size() > 2) {
-            //rgb.b =  fn.x.at(2).at(0);
+            rgb.b =  fn.x.at(2).at(0);
         }
-        fn.x.at(REAL) = {rgb.r, rgb.g, rgb.b};
-//        fn.x.at(IMAG) = {0, fn.start, fn.width};
+        fn.x.at(REAL) = {rgb.r, fn.start, fn.width};
+        fn.x.at(IMAG) = {rgb.g, fn.start, fn.width};
+        fn.x.push_back({rgb.b, fn.start, fn.width});
         return fn.x;
     }));
 
