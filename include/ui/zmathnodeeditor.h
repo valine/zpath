@@ -10,6 +10,8 @@
 class ZMathNodeEditor : public ZNodeEditor {
 public:
     ZMathNodeEditor(float maxWidth, float maxHeight, ZView *parent);
+
+    void onFileDrop(int count, const char **paths);
 };
 
 

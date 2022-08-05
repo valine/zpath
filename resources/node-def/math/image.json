@@ -11,7 +11,7 @@
   "socketNames" : ["X", "Z Min", "Z Max"],
   "enumNames" : [],
   "nodeSize" : [200, 200],
-  "chartBounds" : [0,20,0,20],
+  "chartBounds" : [0,200,0,200],
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : true,
   "buttonNames" : [],

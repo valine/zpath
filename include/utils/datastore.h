@@ -140,16 +140,24 @@ public:
      * Parse json to float list and store
      * @param data Raw json data
      */
-    void storeData(json data, string path) {
+    void storeData(json data, const string& path) {
         mDataList.push_back(path);
         mDataIndexMap.insert({mDataList.size() - 1, path});
         mJsonMap.insert({path, data});
+
+        for (const auto& l : mDataChangeListeners) {
+            l(path);
+        }
     }
 
     void storeData(ZUtil::Image texture, string path) {
         mDataList.push_back(path);
         mDataIndexMap.insert({mDataList.size() - 1, path});
         mTextureMap.insert({path, texture});
+
+        for (const auto& l : mDataChangeListeners) {
+            l(path);
+        }
     }
 
     void setCrumbsForIndex(int index, const vector<Crumb>& crumbs) {
@@ -316,6 +324,9 @@ public:
        /// cout << j.dump() << endl;
     }
 
+    void addDataChangeListener(const function<void(string)>& l) {
+        mDataChangeListeners.push_back(l);
+    }
 
 
 private:
@@ -326,6 +337,7 @@ private:
     map<string, ZUtil::Image> mTextureMap;
     map<int, vector<Crumb>> mCrumbsMap;
     vector<string> mDataList;
+    vector<function<void(string)>> mDataChangeListeners;
     DataStore() {}
 };
 

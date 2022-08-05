@@ -38,6 +38,11 @@ public:
 
     static string replace(string subject, const string &search, const string &replace);
 
+
+    static string getFileExtension(string path) {
+        return path.substr(path.find_last_of(".") + 1) ;
+    }
+
     static bool isNumber(const std::string& str) {
         int i = 0, j = str.length() - 1;
 

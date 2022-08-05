@@ -100,9 +100,6 @@ void ZLineChart::initHeatLUT()  {
     glUniform1i(glGetUniformLocation(mHeatShader->mID, "textureMap"), 0);
     glUniform1i(glGetUniformLocation(mHeatShader->mID, "texLut"), 1);
 
-    mHeatShader->use();
-    glUniform1i(glGetUniformLocation(mRgbShader->mID, "textureMap"), 0);
-    glUniform1i(glGetUniformLocation(mRgbShader->mID, "texLut"), 1);
     int res = 15;
     vector<float> pixels = {
             0.0f,0.0f,0.0f,

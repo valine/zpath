@@ -259,9 +259,15 @@ void ZNodeView::updateChartHeatMap() {
 
             float x = mix(xBounds.x, xBounds.y, xFactor);
             float y = mix(yBounds.x, yBounds.y, yFactor);
+//            vector<vector<float>> inVec = {
+//                    vector<float>(MAX_INPUT_COUNT, x),
+//                            vector<float>(MAX_INPUT_COUNT, y)};
+
             vector<vector<float>> inVec = {
                     vector<float>(MAX_INPUT_COUNT, x),
-                            vector<float>(MAX_INPUT_COUNT, y)};
+                    vector<float>(MAX_INPUT_COUNT, y),
+                    vector<float>(MAX_INPUT_COUNT, 0)};
+
 
             vector<vector<float>> z = evaluate(inVec, inVec);
             if (!z.empty()) {
@@ -294,7 +300,8 @@ void ZNodeView::updateChartRGB() {
             float y = mix(yBounds.x, yBounds.y, yFactor);
             vector<vector<float>> inVec = {
                     vector<float>(MAX_INPUT_COUNT, x),
-                    vector<float>(MAX_INPUT_COUNT, y)};
+                    vector<float>(MAX_INPUT_COUNT, y),
+                    vector<float>(MAX_INPUT_COUNT, 0)};
 
             vector<vector<float>> z = evaluate(inVec, inVec);
             if (!z.empty()) {
@@ -489,6 +496,9 @@ void ZNodeView::setType(NodeType* type) {
             mDropDown->setMarginRight(25);
             mDropDown->setMarginTop(2);
             mDropDown->setRootView(getRootView());
+            vector<string> list = DataStore::get().getFileNameList();
+            mDropDown->setItems(list);
+
             mDropDown->setOnOpen([this](){
                 vector<string> list = DataStore::get().getFileNameList();
                 mDropDown->setItems(list);

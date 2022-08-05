@@ -39,6 +39,10 @@ public:
         return instance;
     }
 
+    NodeType* getNodeType(string name) {
+        return mTypes.at(name);
+    }
+
     //////////////////////
     /// Node IO
 
