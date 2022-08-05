@@ -1,8 +1,6 @@
 #include <utils/zutil.h>
 #include "ui/ztexture.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "ui/stb_image.h"
 #include "utils/zfontstore.h"
 
 ZTexture::ZTexture(string path) {
@@ -46,20 +44,19 @@ unsigned int ZTexture::loadTexture(char const * path){
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
-    int width, height, nrComponents;
-    float *data = stbi_loadf(path, &width, &height, &nrComponents, 0);
-    if (data) {
+    ZUtil::Image img = ZUtil::loadTexture(path);
+    if (img.pixels) {
         GLenum format;
-        if (nrComponents == 1)
+        if (img.compCount == 1)
             format = GL_RED;
-        else if (nrComponents == 3)
+        else if (img.compCount == 3)
             format = GL_RGB;
-        else if (nrComponents == 4)
+        else if (img.compCount == 4)
             format = GL_RGBA;
 
         //cout << "width: " << width << " height: " << height << endl;
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, format, GL_FLOAT, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, img.width, img.height, 0, format, GL_FLOAT, img.pixels);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -67,14 +64,11 @@ unsigned int ZTexture::loadTexture(char const * path){
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        stbi_image_free(data);
-    } else {
-        //std::cout << "Texture failed to load at path: " << path << std::endl;
-        stbi_image_free(data);
+        ZUtil::freeStbi(img.pixels);
     }
 
-    mWidth = width;
-    mHeight = height;
+    mWidth = img.width;
+    mHeight = img.height;
 
     return textureID;
 }

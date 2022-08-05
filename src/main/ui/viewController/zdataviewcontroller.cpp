@@ -108,6 +108,11 @@ void ZDataViewController::loadDataFile(string path) {
         }
 
 
+    } else if (ext == "jpg" || ext == "png") {
+        const char *c = path.c_str();
+        ZUtil::Image img = ZUtil::loadTexture(c);
+        DataStore::get().storeData(img, path);
+        mListView->addItem(path);
     } else {
         cout << "File type: " << ext << " not supported" << endl;
     }

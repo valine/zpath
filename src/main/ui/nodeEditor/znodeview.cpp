@@ -438,9 +438,15 @@ void ZNodeView::setType(NodeType* type) {
         buttonIndex++;
     }
 
+    setText(type->mName);
+
     if (type->mIsDropDownVisible) {
         if (mDropDown == nullptr) {
             mDropDown = new ZDropDown(220, 18, {" "}, this);
+
+            mNameLabel->drawText();
+            mNameLabel->computeLineWidth();
+            mDropDown->setXOffset( mNameLabel->getTextWidth() + mNameLabel->getOffsetX());
             mDropDown->setTitle("Choose file...");
             mDropDown->setMarginLeft(35);
             mDropDown->setMarginRight(25);
@@ -466,8 +472,6 @@ void ZNodeView::setType(NodeType* type) {
     refreshView(type);
     mNameLabel->setTextColor(getBackgroundColor().getTextColor());
     mOutputLabel->setTextColor(getBackgroundColor().getTextColor());
-
-    setText(type->mName);
 
     if (type->mChartType == LINE_1D_2X) {
         mChart->setLineCount(2);
