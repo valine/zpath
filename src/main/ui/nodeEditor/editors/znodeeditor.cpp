@@ -1384,9 +1384,7 @@ void ZNodeEditor::onMouseMove(const vec2 &absolute, const vec2 &delta) {
                         std::max(MIN_NODE_SIZE, mInitialSize.y + delta.y));
                 mNodeViews.at(mDragNode)->onWindowChange(getWidth(), getHeight());
                 mNodeViews.at(mDragNode)->invalidate();
-
             }
-
             resetCursor();
         }
     }

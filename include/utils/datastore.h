@@ -54,7 +54,6 @@ public:
         t.seekg(0, std::ios::beg);
         dataString.assign((std::istreambuf_iterator<char>(t)),
                           std::istreambuf_iterator<char>());
-
         json j = csvToJson(dataString);
         return j;
     }
