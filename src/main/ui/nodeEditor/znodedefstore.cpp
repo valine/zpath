@@ -275,21 +275,69 @@ ZNodeDefStore::ZNodeDefStore() {
         fn.x.at(REAL) = {point.r, fn.start, fn.width};
         fn.x.at(IMAG) = {point.g, fn.start, fn.width};
         fn.x.at(2) = {point.b, fn.start, fn.width};
+        fn.x.at(3) = {point.a, fn.start, fn.width};
         return fn.x;
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/rgb-out.json", [](FuncIn fn) {
-        fn.nodeView->mChart->setResolution(200);
-        vec3 rgb = vec3(0);
+        fn.nodeView->mChart->setResolution(1000);
+        vec4 rgb = vec4(0);
         rgb.r =  fn.x.at(0).at(0);
         rgb.g =  fn.x.at(1).at(0);
         rgb.b =  fn.x.at(2).at(0);
+        rgb.a =  fn.x.at(3).at(0);
 
         fn.x.at(REAL) = {rgb.r, fn.start, fn.width};
         fn.x.at(IMAG) = {rgb.g, fn.start, fn.width};
         fn.x.at(2) = {rgb.b, fn.start, fn.width};
+        fn.x.at(3) = {rgb.a, fn.start, fn.width};
         return fn.x;
     }));
+
+    mMathNodeTypes.push_back(NodeType::fromFile("math/rgbmul.json", [](FuncIn fn) {
+        fn.nodeView->mChart->setResolution(200);
+        vec4 rgb = vec4(0);
+        rgb.r =  fn.x.at(0).at(0);
+        rgb.g =  fn.x.at(1).at(0);
+        rgb.b =  fn.x.at(2).at(0);
+        rgb.a =  fn.x.at(3).at(0);
+
+        vec4 rgb2 = vec4(0);
+        rgb2.r =  fn.x.at(0).at(1);
+        rgb2.g =  fn.x.at(1).at(1);
+        rgb2.b =  fn.x.at(2).at(1);
+        rgb2.a =  fn.x.at(3).at(1);
+
+        fn.x.at(REAL) = {rgb.r * rgb2.r, fn.start, fn.width};
+        fn.x.at(IMAG) = {rgb.g * rgb2.g, fn.start, fn.width};
+        fn.x.at(2) = {rgb.b * rgb2.b, fn.start, fn.width};
+        fn.x.at(3) = {rgb.a * rgb2.a, fn.start, fn.width};
+        return fn.x;
+    }));
+
+
+    mMathNodeTypes.push_back(NodeType::fromFile("math/rgbadd.json", [](FuncIn fn) {
+        fn.nodeView->mChart->setResolution(200);
+        vec4 rgb = vec4(0);
+        rgb.r =  fn.x.at(0).at(0);
+        rgb.g =  fn.x.at(1).at(0);
+        rgb.b =  fn.x.at(2).at(0);
+        rgb.a =  fn.x.at(3).at(0);
+
+        vec4 rgb2 = vec4(0);
+        rgb2.r =  fn.x.at(0).at(1);
+        rgb2.g =  fn.x.at(1).at(1);
+        rgb2.b =  fn.x.at(2).at(1);
+        rgb2.a =  fn.x.at(3).at(1);
+
+        rgb2.a =  fn.x.at(3).at(0);
+        fn.x.at(REAL) = {rgb.r + rgb2.r, fn.start, fn.width};
+        fn.x.at(IMAG) = {rgb.g + rgb2.g, fn.start, fn.width};
+        fn.x.at(3) = {rgb.b + rgb2.b, fn.start, fn.width};
+        fn.x.at(4) = {rgb.a + rgb2.a, fn.start, fn.width};
+        return fn.x;
+    }));
+
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/c.json", [](FuncIn fn) {
         fn.x.at(REAL) = fn.nodeView->mConstantValueOutput;

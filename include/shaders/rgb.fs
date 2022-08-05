@@ -17,7 +17,7 @@ void main() {
    	fragColor.r = pow(texColor.r, 1.0/gamma);
    	fragColor.g = pow(texColor.g, 1.0/gamma);
    	fragColor.b = pow(texColor.b, 1.0/gamma);
-   	fragColor.a = 1.0;
+   	fragColor.a = texColor.a;
 }
 )"
 

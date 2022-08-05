@@ -181,8 +181,8 @@ void ZLineChart::updateRgb() {
     vector<float> pixels = mPointListener({(int) 0, (int) 0}, 0);
 
     glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, std::min(mResolution, mMaxResolution),
-                 std::min(mResolution, mMaxResolution), 0, GL_RGB, GL_FLOAT, &pixels[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, std::min(mResolution, mMaxResolution),
+                 std::min(mResolution, mMaxResolution), 0, GL_RGBA, GL_FLOAT, &pixels[0]);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

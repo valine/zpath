@@ -1,0 +1,23 @@
+{
+  "name" : "rgb*",
+  "socketType" : {
+    "input" : ["CON", "CON"],
+    "output" : ["VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [1.0, 1.0, 1.0],
+  "defaultMagnitude" : [7],
+  "socketNames" : ["A", "B"],
+  "enumNames" : [],
+  "nodeSize" : [200, 200],
+  "chartBounds" : [0,200,0,200],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : false,
+  "buttonNames" : [],
+  "colorDark" : [0.800000, 0.584411, 0.134349, 1.000000],
+  "colorLight" : [0.800000, 0.584411, 0.134349, 1.000000],
+  "adaptiveResolution" : false,
+  "chartType" : "RGB",
+  "showInDrawer" : true
+}

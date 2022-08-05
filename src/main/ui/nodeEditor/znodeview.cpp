@@ -266,7 +266,8 @@ void ZNodeView::updateChartHeatMap() {
             vector<vector<float>> inVec = {
                     vector<float>(MAX_INPUT_COUNT, x),
                     vector<float>(MAX_INPUT_COUNT, y),
-                    vector<float>(MAX_INPUT_COUNT, 0)};
+                    vector<float>(MAX_INPUT_COUNT, 0),
+                    vector<float>(MAX_INPUT_COUNT, 1)};
 
 
             vector<vector<float>> z = evaluate(inVec, inVec);
@@ -301,13 +302,15 @@ void ZNodeView::updateChartRGB() {
             vector<vector<float>> inVec = {
                     vector<float>(MAX_INPUT_COUNT, x),
                     vector<float>(MAX_INPUT_COUNT, y),
-                    vector<float>(MAX_INPUT_COUNT, 0)};
+                    vector<float>(MAX_INPUT_COUNT, 0),
+                    vector<float>(MAX_INPUT_COUNT, 1)};
 
             vector<vector<float>> z = evaluate(inVec, inVec);
             if (!z.empty()) {
                 points.push_back(z.at(0).at(0));
                 points.push_back(z.at(1).at(0));
                 points.push_back(z.at(2).at(0));
+                points.push_back(z.at(3).at(0));
             }
         }
     }
@@ -820,7 +823,7 @@ ZNodeView::sumAllInputs(vector<vector<float>> x, ZNodeView *root, vector<vector<
                                 summedInputs.at(IMAG).at(i) = x.at(IMAG).at(i);
                             } else if (sinput.at(i) == CON) {
                                 // By default constants have no imaginary component
-                                if (d == REAL) {
+                                if (d == REAL || summedInputs.size() > 2) {
                                     summedInputs.at(d).at(i) = mConstantValueInput.at(i);
                                 } else {
                                     summedInputs.at(d).at(i) = 0.0;
