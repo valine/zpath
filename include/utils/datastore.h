@@ -146,6 +146,12 @@ public:
         mJsonMap.insert({path, data});
     }
 
+    void storeData(ZUtil::Image texture, string path) {
+        mDataList.push_back(path);
+        mDataIndexMap.insert({mDataList.size() - 1, path});
+        mTextureMap.insert({path, texture});
+    }
+
     void setCrumbsForIndex(int index, const vector<Crumb>& crumbs) {
         mCrumbsMap.insert({index, crumbs});
 
@@ -239,6 +245,34 @@ public:
         return 0;
     }
 
+    vec4 getPixelAtIndex(unsigned int fileIndex, float x, float y) {
+        if (fileIndex != -1 && mDataList.size() > fileIndex) {
+            string path = mDataList.at(fileIndex);
+            if (mTextureMap.count(path) > 0) {
+                ZUtil::Image texture = mTextureMap.at(path);
+
+                cout << "x" << x << "y" << y << endl;
+
+                if (x >= 0 && x < texture.width && y >= 0 && y < texture.height) {
+                    int index = (floor(x) + (floor(texture.height - y) * texture.width));
+                    if (index < texture.width * texture.height) {
+
+
+                        float r = texture.pixels[index * texture.compCount];
+                        float g = texture.pixels[index * texture.compCount + 1];
+                        float b = texture.pixels[index * texture.compCount + 2];
+                        float a = 0;
+                        if (texture.compCount >= 4) {
+                            a = texture.pixels[index * texture.compCount + 3];
+                        }
+                        return vec4(r, g, b, a);
+                    }
+                }
+            }
+        }
+        return vec4(0);
+    }
+
     vector<string> getFileList() {
         return mDataList;
     }
@@ -292,6 +326,7 @@ private:
     map<int, string> mDataIndexMap;
     map<string, vector<float>> mDataMap;
     map<string, json> mJsonMap;
+    map<string, ZUtil::Image> mTextureMap;
     map<int, vector<Crumb>> mCrumbsMap;
     vector<string> mDataList;
     DataStore() {}

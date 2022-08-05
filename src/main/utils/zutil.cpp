@@ -14,6 +14,8 @@
 #include <pwd.h>
 #include "png.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "ui/stb_image.h"
 
 string ZUtil::replace(std::string subject, const std::string& search,
                             const std::string& replace) {
@@ -235,6 +237,21 @@ string ZUtil::getHomeFolder() {
     }
 
     return homedir;
+}
+
+ZUtil::Image ZUtil::loadTexture(const char * path) {
+    int width, height, nrComponents;
+    float *data = stbi_loadf(path, &width, &height, &nrComponents, 0);
+    Image img;
+    img.compCount = nrComponents;
+    img.pixels = data;
+    img.width = width;
+    img.height = height;
+    return img;
+}
+
+void ZUtil::freeStbi(float* data) {
+    stbi_image_free(data);
 }
 
 

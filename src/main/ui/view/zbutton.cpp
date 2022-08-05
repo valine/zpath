@@ -41,12 +41,13 @@ void ZButton::setText(string text) {
 	mLabel->setText(text);
 }
 
+
 void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 	ZView::onMouseEvent(button, action, mods, x, y);
 
 	vec4 highlight = vec4(0.1, 0.1, 0.1, 0);
-
 	if (action == GLFW_PRESS) {
+        mOriginalBackground = getBackgroundColor();
 		setBackgroundColor(getBackgroundColor() - highlight);
 		showHighlight(false);
 		mWasPressed = true;
@@ -55,9 +56,9 @@ void ZButton::onMouseEvent(int button, int action, int mods, int x, int y) {
 
 	if (action == GLFW_RELEASE) {
 		if (mWasPressed || mClickMode == upAndDown) {
-
 		    if (mWasPressed) {
-                setBackgroundColor(getBackgroundColor() + highlight);
+                setBackgroundColor(mOriginalBackground);
+                invalidate();
             }
 
             if (mOnClickSimple != nullptr) {

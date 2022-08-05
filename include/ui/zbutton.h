@@ -62,6 +62,7 @@ int debug;
     std::function<void()> mOnClickSimple;
 
 	ClickMode mClickMode = upAndDown;
+	ZColor mOriginalBackground = white;
 
     void onMouseOver() override;
     void onMouseLeave() override;

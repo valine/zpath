@@ -1,0 +1,23 @@
+{
+  "name" : "image",
+  "socketType" : {
+    "input" : ["VAR", "CON", "CON"],
+    "output" : ["VAR", "CON", "CON"]
+  },
+  "isDynamicSocket" : false,
+  "isGroupNode" : false,
+  "defaultInput" : [0.0, 0.0, 1.0],
+  "defaultMagnitude" : [7],
+  "socketNames" : ["X", "Z Min", "Z Max"],
+  "enumNames" : [],
+  "nodeSize" : [200, 200],
+  "chartBounds" : [0,20,0,20],
+  "isOutputLabelVisible" : false,
+  "isDropDownVisible" : true,
+  "buttonNames" : [],
+  "colorDark" : [0.800000, 0.584411, 0.134349, 1.000000],
+  "colorLight" : [0.800000, 0.584411, 0.134349, 1.000000],
+  "adaptiveResolution" : false,
+  "chartType" : "IMAGE",
+  "showInDrawer" : true
+}

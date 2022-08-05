@@ -113,5 +113,5 @@ void ZScrollView::scrollTo(int x, int y) {
 void ZScrollView::onWindowChange(int windowWidth, int windowHeight) {
     ZView::onWindowChange(windowWidth, windowHeight);
 
-    onScrollChange(0,0);
+   // onScrollChange(0,0);
 }

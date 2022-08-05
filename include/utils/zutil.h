@@ -10,6 +10,15 @@ using namespace std;
 class ZUtil {
 
 public:
+    struct Image {
+        float* pixels;
+        int width;
+        int height;
+        int compCount;
+    };
+
+    static Image loadTexture(const char * path);
+
     static void saveImage(const char *file, float* pixels, int w, int h);
     static void saveImage(const char *file, double* pixels, int w, int h);
     static void saveImageR(const char *file, float* pixels, int w, int h);
@@ -137,6 +146,8 @@ public:
         }
         return result;
     }
+
+    static void freeStbi(float *data);
 };
 
 

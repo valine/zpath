@@ -121,6 +121,7 @@ void ZViewController::onMouseEvent(int button, int action, int mods, int x, int 
     }
 
     if (action == GLFW_RELEASE) {
+        mLastClickTime = clickTime;
         for (int i = 0; i < getSubViews().size(); i++) {
             if (getSubViews().size() > i) {
                 getSubViews().at(i)->onGlobalMouseUp(button);
