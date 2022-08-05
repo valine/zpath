@@ -680,6 +680,7 @@ private:
 
     void onSizeChange() override;
 
+    void updateChartRGB();
 };
 
 

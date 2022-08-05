@@ -109,7 +109,7 @@ void ZNodeView::init() {
             point.push_back(mPointCache.at(x.at(0)).at(1));
 
             return point;
-        } else if (mType->mChartType == IMAGE) {
+        } else if (mType->mChartType == IMAGE || mType->mChartType == RGB_IMAGE) {
             return mPointCache1D;
         }
     });
@@ -214,6 +214,8 @@ void ZNodeView::updateChart() {
             }
             mHeadlessLaplaceNodes.clear();
             updateChartHeatMap();
+        } else if (mType->mChartType == RGB_IMAGE) {
+            updateChartRGB();
         }
     }
 
@@ -264,6 +266,41 @@ void ZNodeView::updateChartHeatMap() {
             vector<vector<float>> z = evaluate(inVec, inVec);
             if (!z.empty()) {
                 points.push_back(z.at(0).at(0));
+            }
+        }
+    }
+
+    mPointCache1D = points;
+}
+
+void ZNodeView::updateChartRGB() {
+    // Run from background thread
+
+    // todo: update this when x and y resolution defined independently
+    int xRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
+    int yRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
+
+    vec2 xBounds = mChart->getXBounds();
+    vec2 yBounds = mChart->getYBounds();
+
+    vector<float> points;
+
+    for (int iy = 0; iy < yRes; iy++) {
+        for (int ix = 0; ix < xRes; ix++) {
+            float xFactor = (float) ix / (float) xRes;
+            float yFactor = (float) iy / (float) yRes;
+
+            float x = mix(xBounds.x, xBounds.y, xFactor);
+            float y = mix(yBounds.x, yBounds.y, yFactor);
+            vector<vector<float>> inVec = {
+                    vector<float>(MAX_INPUT_COUNT, x),
+                    vector<float>(MAX_INPUT_COUNT, y)};
+
+            vector<vector<float>> z = evaluate(inVec, inVec);
+            if (!z.empty()) {
+                points.push_back(z.at(0).at(0));
+                points.push_back(z.at(0).at(1));
+                points.push_back(z.at(0).at(2));
             }
         }
     }

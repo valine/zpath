@@ -269,9 +269,9 @@ ZNodeDefStore::ZNodeDefStore() {
     mMathNodeTypes.push_back(NodeType::fromFile("math/image.json", [](FuncIn fn) {
         fn.nodeView->mChart->setResolution(200);
         int fileIndex = fn.nodeView->mDropDown->getSelectedItem();
-        float point = DataStore::get().getPixelAtIndex(fileIndex, fn.rootInput.at(REAL).at(0), fn.rootInput.at(IMAG).at(0)).r;
+        vec4 point = DataStore::get().getPixelAtIndex(fileIndex, fn.rootInput.at(REAL).at(0), fn.rootInput.at(IMAG).at(0));
         fn.nodeView->mChart->setZBound(vec2(fn.x.at(0).at(1), fn.x.at(0).at(2)));
-        fn.x.at(REAL) = {point, fn.start, fn.width};
+        fn.x.at(REAL) = {point.r, point.g, point.b};
         fn.x.at(IMAG) = {0, fn.start, fn.width};
         return fn.x;
     }));

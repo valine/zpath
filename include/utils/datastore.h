@@ -250,9 +250,6 @@ public:
             string path = mDataList.at(fileIndex);
             if (mTextureMap.count(path) > 0) {
                 ZUtil::Image texture = mTextureMap.at(path);
-
-                cout << "x" << x << "y" << y << endl;
-
                 if (x >= 0 && x < texture.width && y >= 0 && y < texture.height) {
                     int index = (floor(x) + (floor(texture.height - y) * texture.width));
                     if (index < texture.width * texture.height) {

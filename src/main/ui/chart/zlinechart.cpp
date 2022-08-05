@@ -22,6 +22,7 @@ void ZLineChart::initView() {
 
         mShader = new ZShader(ui_vs, ui_fs);
         mHeatShader = new ZShader(heat_vs, heat_fs);
+        mRgbShader = new ZShader(heat_vs, rgb_fs);
 
         glGenTextures(1, &mFinalTexBuffer);
         glGenFramebuffers(1, &mFinalFBO);
@@ -98,6 +99,10 @@ void ZLineChart::initHeatLUT()  {
     mHeatShader->use();
     glUniform1i(glGetUniformLocation(mHeatShader->mID, "textureMap"), 0);
     glUniform1i(glGetUniformLocation(mHeatShader->mID, "texLut"), 1);
+
+    mHeatShader->use();
+    glUniform1i(glGetUniformLocation(mRgbShader->mID, "textureMap"), 0);
+    glUniform1i(glGetUniformLocation(mRgbShader->mID, "texLut"), 1);
     int res = 15;
     vector<float> pixels = {
             0.0f,0.0f,0.0f,
@@ -158,6 +163,38 @@ void ZLineChart::updateHeatMap() {
     mHeatInitialized = true;
 }
 
+void ZLineChart::updateRgb() {
+
+    if (mPointListener == nullptr) {
+        return;
+    }
+    // pos,  texture
+    vector<float> verts = {mXBound.x, mYBound.x, 0, 0,
+                           mXBound.y, mYBound.x, 1, 0,
+                           mXBound.x, mYBound.y, 0, 1,
+                           mXBound.y, mYBound.y, 1, 1};
+    vector<int> edges = {0,2,1, 1,2,3};
+
+    glBindBuffer(GL_ARRAY_BUFFER, mHeatVertBuffer);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), &verts[0], GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mHeatEdgeBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, edges.size() * sizeof(int), &edges[0], GL_DYNAMIC_DRAW);
+
+    vector<float> pixels = mPointListener({(int) 0, (int) 0}, 0);
+
+    glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, std::min(mResolution, mMaxResolution),
+                 std::min(mResolution, mMaxResolution), 0, GL_RGB, GL_FLOAT, &pixels[0]);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    mHeatInitialized = true;
+}
+
 void ZLineChart::updateData() {
     // Run from UI thread
     if (mPointListener == nullptr) {
@@ -169,6 +206,8 @@ void ZLineChart::updateData() {
         updateChart2D();
     } else if (mInputType == HEAT_MAP){
         updateHeatMap();
+    } else if (mInputType == RGB) {
+        updateRgb();
     }
 
     resetTmpTransform();
@@ -404,7 +443,6 @@ void ZLineChart::drawCpu() {
     if (mInputType == HEAT_MAP && mHeatInitialized) {
         mHeatShader->use();
         mHeatShader->setMat4("uVPMatrix", mTransform);
-
         mHeatShader->setFloat("zmin", mZBound.x);
         mHeatShader->setFloat("zmax", mZBound.y);
 
@@ -423,12 +461,34 @@ void ZLineChart::drawCpu() {
         glBindVertexArray(0);
     }
 
+    if (mInputType == RGB && mHeatInitialized) {
+        mRgbShader->use();
+        mRgbShader->setMat4("uVPMatrix", mTransform);
+
+        mRgbShader->setFloat("zmin", mZBound.x);
+        mRgbShader->setFloat("zmax", mZBound.y);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, mHeatTexBuffer);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, mHeatLUTBuffer);
+
+        mRgbShader->setVec4("uColor", green.get(mColorMode));
+
+        int triangles = 2;
+
+        glBindVertexArray(mHeatVAO);
+        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, nullptr);
+        glBindVertexArray(0);
+    }
+
     mShader->use();
     // mat4 projection = mTmpTransform;
     mShader->setMat4("uVPMatrix", mTransform);
 
 
-    if (mInputType != HEAT_MAP) {
+    if (mInputType != HEAT_MAP && mInputType != RGB) {
         // draw background grid
         ZColor gridColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
         gridColor.light.a = 0.2;
@@ -452,11 +512,10 @@ void ZLineChart::drawCpu() {
     // mat4 projection = mTmpTransform;
     mShader->setMat4("uVPMatrix", mTmpTransform);
 
-    if (mInputType != HEAT_MAP) {
+    if (mInputType != HEAT_MAP && mInputType != RGB) {
         // Draw graph lines
         glLineWidth(2.0);
         for (int i = mPoints.size() - 1; i >= 0; i--) {
-
             mShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
                                        vec4(vec3((float) i / mPoints.size()), 1.0));
 

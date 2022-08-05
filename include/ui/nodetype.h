@@ -212,10 +212,11 @@ public:
             nodeType->mChartType = TEXT_FIELD;
         } else if (charttpye == "NO_CHART") {
             nodeType->mChartType = NO_CHART;
+        } else if (charttpye == "RGB") {
+            nodeType->mChartType = RGB_IMAGE;
         }
 
         nodeType->mShowInDrawer = j["showInDrawer"];
-
 
         vector<vector<SocketType>> socketTypes = {inputs, outputs};
         nodeType->mSocketType = socketTypes;

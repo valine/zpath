@@ -14,6 +14,7 @@ static const int LINE = 0;
 static const int LINE_2X = 1;
 static const int LINE_2DD = 2;
 static const int HEAT_MAP = 3;
+static const int RGB = 5;
 
 #include "zview.h"
 #include <regex>
@@ -170,6 +171,7 @@ private:
     vector<unsigned int> mPointCount;
     ZShader* mShader;
     ZShader* mHeatShader;
+    ZShader* mRgbShader;
 
     ZTexture* mBackground;
     int mLineCount = 1;
@@ -204,6 +206,10 @@ private:
         #include "shaders/heatmap.fs"
     ;
 
+    const string rgb_fs =
+        #include "shaders/rgb.fs"
+    ;
+
     void updateFBOSize();
     void updateData();
     void initGrid();
@@ -214,6 +220,7 @@ private:
     void updateChart1D();
 
     void updateHeatMap();
+    void updateRgb();
 
     void initHeatLUT();
 

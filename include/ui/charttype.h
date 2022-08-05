@@ -11,6 +11,7 @@ enum ChartType {
     LINE_2D,
     IMAGE,
     TEXT_FIELD,
+    RGB_IMAGE,
     NO_CHART
 
 };
