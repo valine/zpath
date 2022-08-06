@@ -271,7 +271,7 @@ ZNodeDefStore::ZNodeDefStore() {
         int fileIndex = fn.nodeView->mDropDown->getSelectedItem();
         vec4 point = DataStore::get().getPixelAtIndex(fileIndex, fn.rootInput.at(REAL).at(0), fn.rootInput.at(IMAG).at(0));
         fn.nodeView->mChart->setZBound(vec2(fn.x.at(0).at(1), fn.x.at(0).at(2)));
-        
+
         fn.x.at(REAL) = {point.r, fn.start, fn.width};
         fn.x.at(IMAG) = {point.g, fn.start, fn.width};
         fn.x.at(2) = {point.b, fn.start, fn.width};
@@ -333,8 +333,8 @@ ZNodeDefStore::ZNodeDefStore() {
         rgb2.a =  fn.x.at(3).at(0);
         fn.x.at(REAL) = {rgb.r + rgb2.r, fn.start, fn.width};
         fn.x.at(IMAG) = {rgb.g + rgb2.g, fn.start, fn.width};
-        fn.x.at(3) = {rgb.b + rgb2.b, fn.start, fn.width};
-        fn.x.at(4) = {rgb.a + rgb2.a, fn.start, fn.width};
+        fn.x.at(2) = {rgb.b + rgb2.b, fn.start, fn.width};
+        fn.x.at(3) = {rgb.a + rgb2.a, fn.start, fn.width};
         return fn.x;
     }));
 
