@@ -122,6 +122,15 @@ ZNodeDefStore::ZNodeDefStore() {
         return fn.x;
     }));
 
+
+    mMathNodeTypes.push_back(NodeType::fromFile("math/random.json", [](FuncIn fn) {
+        srand(fn.x.at(REAL).at(0));
+        float frand = ((float) rand() / (RAND_MAX));
+        fn.x.at(REAL) = {(float) frand, fn.start, fn.width};
+        fn.x.at(IMAG) = {0, fn.start, fn.width};
+        return fn.x;
+    }));
+
     mMathNodeTypes.push_back(NodeType::fromFile("math/gaussian.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), 0};
         complex<float> in1 = {fn.x.at(REAL).at(1), 0};
