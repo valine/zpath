@@ -38,6 +38,7 @@ void ZListView::addItem(string item) {
             mCrumbChangeListener(label->mDropDown->getIndexTag(), item);
         }
     });
+    updateNames(label);
 
     onWindowChange(getWindowWidth(), getWindowHeight());
 }

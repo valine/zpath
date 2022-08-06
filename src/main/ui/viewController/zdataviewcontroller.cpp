@@ -67,19 +67,16 @@ void ZDataViewController::onCreate() {
     DataStore::get().addDataChangeListener([this](string path){
         string ext = getFileExtension(path);
         mListView->addItem(path);
-        int index = mListView->getListSize();
+        int index = mListView->getListSize() - 1;
         vector<int> formats = ZSettings::get().loadFormatList();
-        mListView->updateNamesAtIndex(index - 1);
 
-        if (formats.size() > index && formats.at(index) >= 0) {
+        if (formats.size() > index && index != -1 && formats.at(index) >= 0 && formats.at(index) != -1) {
             mListView->selectItemDropDown(index, formats.at(index));
             vector<string> names = ZNodeStore::get().getProjectNames("/json");
             vector<DataStore::Crumb> crumbs = ZNodeStore::get().loadCrumbs(names.at(formats.at(index)));
             std::reverse(crumbs.begin(), crumbs.end());
             DataStore::get().setCrumbsForIndex(index, crumbs);
         }
-
-        ZSettings::get().saveFileList(mListView->getItems());
     });
 }
 
@@ -95,11 +92,11 @@ void ZDataViewController::loadDataFile(string apath) {
     if (ext == "json") {
         json j = DataStore::get().parseJsonFromFile(apath);
         int index = mListView->getListSize();
-        DataStore::get().storeData(j, apath + to_string(index));
+        DataStore::get().storeData(j, apath);
     } else if (ext == "csv") {
         json j = DataStore::get().parseCsvFile(apath);
         int index = mListView->getListSize();
-        DataStore::get().storeData(j, apath + to_string(index));
+        DataStore::get().storeData(j, apath);
     } else if (ext == "jpg" || ext == "png") {
         const char *c = apath.c_str();
         ZUtil::Image img = ZUtil::loadTexture(c);
@@ -112,6 +109,7 @@ void ZDataViewController::loadDataFile(string apath) {
 void ZDataViewController::onFileDrop(int count, const char** paths) {
     string path(paths[0]);
     loadDataFile(path);
+    ZSettings::get().saveFileList(mListView->getItems());
 }
 
 void ZDataViewController::loadDataFiles() {
