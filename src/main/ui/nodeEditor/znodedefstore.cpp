@@ -9,8 +9,8 @@ ZNodeDefStore::ZNodeDefStore() {
     /// Sin node
     mMathNodeTypes.push_back(NodeType::fromFile("math/sin.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
-        complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
-        complex<float> in2 = {fn.x.at(REAL).at(2), fn.x.at(IMAG).at(2)};
+        complex<float> in1 = {fn.x.at(REAL).at(1), 0.0};
+        complex<float> in2 = {fn.x.at(REAL).at(2), 0.0};
         complex<float> out0 = sin(in0 * in1) * in2;
         fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
         fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
@@ -20,8 +20,8 @@ ZNodeDefStore::ZNodeDefStore() {
     /// Cos node
     mMathNodeTypes.push_back(NodeType::fromFile("math/cos.json", [](FuncIn fn) {
         complex<float> in0 = {fn.x.at(REAL).at(0), fn.x.at(IMAG).at(0)};
-        complex<float> in1 = {fn.x.at(REAL).at(1), fn.x.at(IMAG).at(1)};
-        complex<float> in2 = {fn.x.at(REAL).at(2), fn.x.at(IMAG).at(2)};
+        complex<float> in1 = {fn.x.at(REAL).at(1), 0.0};
+        complex<float> in2 = {fn.x.at(REAL).at(2), 0.0};
         complex<float> out0 = cos(in0 * in1) * in2;
         fn.x.at(REAL) = {out0.real(), fn.start, fn.width};
         fn.x.at(IMAG) = {out0.imag(), fn.start, fn.width};
