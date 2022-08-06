@@ -19,7 +19,7 @@ private:
     ZListView* mListView;
     string getFileExtension(string path);
 
-    void loadDataFile(string path);
+    void loadDataFile(string apath);
 
     void loadDataFiles();
 };

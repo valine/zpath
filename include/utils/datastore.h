@@ -12,6 +12,21 @@
 #include <sstream>
 #include "utils/zutil.h"
 
+#include <filesystem>
+#if __APPLE__
+using std::__fs::filesystem::directory_iterator;
+using std::__fs::filesystem::directory_entry;
+using std::__fs::filesystem::path;
+using std::__fs::filesystem::relative;
+#else
+using std::filesystem::directory_iterator;
+using std::filesystem::directory_entry;
+using std::filesystem::path;
+using std::filesystem::relative;
+
+#endif
+
+
 using namespace std;
 using namespace nlohmann;
 
@@ -124,7 +139,6 @@ public:
 
             }
         }
-
         return allJson;
     }
 
@@ -132,7 +146,6 @@ public:
         if (potentialNumber.at(0) == '$') {
             return potentialNumber.substr(1, potentialNumber.size() - 1);
         }
-
         return potentialNumber;
     }
 
@@ -140,23 +153,42 @@ public:
      * Parse json to float list and store
      * @param data Raw json data
      */
-    void storeData(json data, const string& path) {
-        mDataList.push_back(path);
-        mDataIndexMap.insert({mDataList.size() - 1, path});
-        mJsonMap.insert({path, data});
+    void storeData(json data, const string& apath) {
+        string binPath = ZSettings::get().getResourcePath();
+        path binP = path(binPath);
+        path p = path(apath);
+        path rPath;
+        if (!p.is_relative()) {
+            rPath = relative(p, binPath);
+        } else {
+            rPath = p;
+        }
 
+        mDataList.push_back(rPath);
+        mDataIndexMap.insert({mDataList.size() - 1, rPath});
+        mJsonMap.insert({rPath, data});
         for (const auto& l : mDataChangeListeners) {
-            l(path);
+            l(rPath);
         }
     }
 
-    void storeData(ZUtil::Image texture, string path) {
-        mDataList.push_back(path);
-        mDataIndexMap.insert({mDataList.size() - 1, path});
-        mTextureMap.insert({path, texture});
+    void storeData(ZUtil::Image texture, string apath) {
+        string binPath = ZSettings::get().getResourcePath();
+        path binP = path(binPath);
+        path p = path(apath);
+        string rPath;
+        if (!p.is_relative()) {
+            rPath = relative(p, binPath);
+        } else {
+            rPath = p;
+        }
+
+        mDataList.push_back(rPath);
+        mDataIndexMap.insert({mDataList.size() - 1, rPath});
+        mTextureMap.insert({rPath, texture});
 
         for (const auto& l : mDataChangeListeners) {
-            l(path);
+            l(rPath);
         }
     }
 
@@ -262,11 +294,10 @@ public:
                     int index = (floor(x) + (floor(texture.height - y) * texture.width));
                     if (index < texture.width * texture.height) {
 
-
                         float r = texture.pixels[index * texture.compCount];
                         float g = texture.pixels[index * texture.compCount + 1];
                         float b = texture.pixels[index * texture.compCount + 2];
-                        float a = 0;
+                        float a = 1;
                         if (texture.compCount >= 4) {
                             a = texture.pixels[index * texture.compCount + 3];
                         }
@@ -313,7 +344,6 @@ public:
                 result.push_back(item);
                 last = item;
             }
-
         }
         return result;
     }
@@ -327,7 +357,6 @@ public:
     void addDataChangeListener(const function<void(string)>& l) {
         mDataChangeListeners.push_back(l);
     }
-
 
 private:
 

@@ -9,6 +9,20 @@
 #include "utils/datastore.h"
 #include "ui/zlistview.h"
 
+#include <filesystem>
+#if __APPLE__
+using std::__fs::filesystem::directory_iterator;
+using std::__fs::filesystem::directory_entry;
+using std::__fs::filesystem::path;
+using std::__fs::filesystem::relative;
+#else
+using std::filesystem::directory_iterator;
+using std::filesystem::directory_entry;
+using std::filesystem::path;
+using std::filesystem::relative;
+
+#endif
+
 void ZDataViewController::onCreate() {
     ZViewController::onCreate();
     mListView = new ZListView(this);
@@ -67,35 +81,38 @@ void ZDataViewController::onCreate() {
 
         ZSettings::get().saveFileList(mListView->getItems());
     });
-
 }
 
-void ZDataViewController::loadDataFile(string path) {
-    string ext = getFileExtension(path);
+void ZDataViewController::loadDataFile(string apath) {
+    string ext = getFileExtension(apath);
+
+    path p = path(apath);
+    if (p.is_relative()) {
+        apath = ZSettings::get().getResourcePath() + apath;
+    }
+
     cout << "Data importing..." << endl;
     if (ext == "json") {
-        json j = DataStore::get().parseJsonFromFile(path);
+        json j = DataStore::get().parseJsonFromFile(apath);
         int index = mListView->getListSize();
-        DataStore::get().storeData(j, path + to_string(index));
+        DataStore::get().storeData(j, apath + to_string(index));
     } else if (ext == "csv") {
-        json j = DataStore::get().parseCsvFile(path);
+        json j = DataStore::get().parseCsvFile(apath);
         int index = mListView->getListSize();
-        DataStore::get().storeData(j, path + to_string(index));
+        DataStore::get().storeData(j, apath + to_string(index));
     } else if (ext == "jpg" || ext == "png") {
-        const char *c = path.c_str();
+        const char *c = apath.c_str();
         ZUtil::Image img = ZUtil::loadTexture(c);
-        DataStore::get().storeData(img, path);
+        DataStore::get().storeData(img, apath);
     } else {
         cout << "File type: " << ext << " not supported" << endl;
     }
 }
 
-
 void ZDataViewController::onFileDrop(int count, const char** paths) {
     string path(paths[0]);
     loadDataFile(path);
 }
-
 
 void ZDataViewController::loadDataFiles() {
     vector<string> files = ZSettings::get().loadFileList();
