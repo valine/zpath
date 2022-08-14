@@ -170,14 +170,15 @@ private:
     vector<unsigned int> mPoints;
     vector<unsigned int> mPointCount;
     ZShader* mShader;
+    ZShader* mEvalShader;
     ZShader* mHeatShader;
     ZShader* mRgbShader;
 
     ZTexture* mBackground;
     int mLineCount = 1;
     bool mDataInvalid = false;
+    bool mInitializedGlslEval = false;
     bool mHeatInitialized = false;
-
     float mLineWidth = 2;
 
     // This will be set by view width
@@ -190,6 +191,11 @@ private:
     // Shader code
     const string ui_vs =
         #include "shaders/chart.vs"
+    ;
+
+    // Shader code
+    const string eval_vs =
+        #include "shaders/evaluate_static.vs"
     ;
 
     const string ui_fs =
@@ -228,6 +234,10 @@ private:
     void onCreate();
 
     void drawCpu();
+
+    void updateChart1DGlsl();
+
+    void updateDataGlsl();
 };
 
 

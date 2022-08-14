@@ -276,13 +276,11 @@ void ZNodeView::updateChartHeatMap() {
             }
         }
     }
-
     mPointCache1D = points;
 }
 
 void ZNodeView::updateChartRGB() {
     // Run from background thread
-
     // todo: update this when x and y resolution defined independently
     int xRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
     int yRes = std::min(mChart->getResolution(), mChart->getMaxResolution());
@@ -291,7 +289,6 @@ void ZNodeView::updateChartRGB() {
     vec2 yBounds = mChart->getYBounds();
 
     vector<float> points;
-
     for (int iy = 0; iy < yRes; iy++) {
         for (int ix = 0; ix < xRes; ix++) {
             float xFactor = (float) ix / (float) xRes;
