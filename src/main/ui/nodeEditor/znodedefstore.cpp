@@ -123,7 +123,6 @@ ZNodeDefStore::ZNodeDefStore() {
         return fn.x;
     }));
 
-
     mMathNodeTypes.push_back(NodeType::fromFile("math/random.json", [](FuncIn fn) {
         mt19937_64 rng((int) fn.x.at(REAL).at(0));
         uniform_real_distribution<double> unif;
@@ -292,6 +291,22 @@ ZNodeDefStore::ZNodeDefStore() {
     }));
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/rgb-out.json", [](FuncIn fn) {
+
+        fn.nodeView->mChart->setResolution(200);
+        vec4 rgb = vec4(0);
+        rgb.r =  fn.x.at(0).at(0);
+        rgb.g =  fn.x.at(1).at(0);
+        rgb.b =  fn.x.at(2).at(0);
+        rgb.a =  fn.x.at(3).at(0);
+
+        fn.x.at(REAL) = {rgb.r, fn.start, fn.width};
+        fn.x.at(IMAG) = {rgb.g, fn.start, fn.width};
+        fn.x.at(2) = {rgb.b, fn.start, fn.width};
+        fn.x.at(3) = {rgb.a, fn.start, fn.width};
+        return fn.x;
+    }));
+
+    mMathNodeTypes.push_back(NodeType::fromFile("math/rgb-convolve.json", [](FuncIn fn) {
         fn.nodeView->mChart->setResolution(200);
         vec4 rgb = vec4(0);
         rgb.r =  fn.x.at(0).at(0);
