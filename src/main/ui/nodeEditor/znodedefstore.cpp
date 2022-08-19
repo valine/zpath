@@ -3,6 +3,7 @@
 //
 
 #include "ui/znodedefstore.h"
+#include <random>
 
 ZNodeDefStore::ZNodeDefStore() {
 
@@ -124,8 +125,10 @@ ZNodeDefStore::ZNodeDefStore() {
 
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/random.json", [](FuncIn fn) {
-        srand(fn.x.at(REAL).at(0));
-        float frand = ((float) rand() / (RAND_MAX));
+        mt19937_64 rng((int) fn.x.at(REAL).at(0));
+        uniform_real_distribution<double> unif;
+
+        float frand = ((float) unif(rng));
         fn.x.at(REAL) = {(float) frand, fn.start, fn.width};
         fn.x.at(IMAG) = {0, fn.start, fn.width};
         return fn.x;
