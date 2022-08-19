@@ -239,6 +239,8 @@ private:
     void updateChart1DGlsl();
 
     void updateDataGlsl();
+
+    void drawGpu();
 };
 
 
