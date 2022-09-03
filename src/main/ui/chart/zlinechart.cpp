@@ -459,68 +459,7 @@ void ZLineChart::draw() {
     initView();
 
     if (mGpuMode) {
-        if (!mInitializedGlslEval) {
-            mInitializedGlslEval = true;
-            updateDataGlsl();
-        }
-
-        resetTmpTransform();
-        glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
-        glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
-        glViewport(0, 0, getWidth(), getHeight());
-        glClearColor(1.0, 1.0, 1.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        mShader->use();
-        // mat4 projection = mTmpTransform;
-        mShader->setMat4("uVPMatrix", mTransform);
-
-        // draw background grid
-        ZColor gridColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
-        gridColor.light.a = 0.2;
-        gridColor.dark.a = 0.2;
-        mShader->setVec4("uColor", gridColor.get(mColorMode));
-
-        glLineWidth(2.0);
-        glBindVertexArray(mVAO);
-        glDrawElements(GL_LINES, mBGridVCount, GL_UNSIGNED_INT, nullptr);
-        glBindVertexArray(0);
-
-        // draw grid
-        mShader->setVec4("uColor", red.get(mColorMode));
-
-        glBindVertexArray(mGridVAO);
-        glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);
-        glBindVertexArray(0);
-
-        mEvalShader->use();
-        mat4 defaultMat = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
-        mEvalShader->setMat4("uVPMatrix", defaultMat);
-        mEvalShader->setVec4("uBounds", vec4(mXBound.x, mYBound.y, mXBound.y, mYBound.x));
-        if (mInputType != HEAT_MAP && mInputType != RGB) {
-            // Draw graph lines
-            glLineWidth(2.0);
-            for (int i = mPoints.size() - 1; i >= 0; i--) {
-                mEvalShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
-                                           vec4(vec3((float) i / mPoints.size()), 1.0));
-
-                vec4 r = vec4(0.1, 0.7, 1.0, 1.0);
-                vec4 lineColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
-                float factor = (float) std::min((float) i, 1.0f);
-                vec4 mixed = mix(lineColor, r, factor);
-                mEvalShader->setVec4("uColor", mixed);
-                glBindVertexArray(mLineVAO.at(i));
-                glDrawArrays(GL_LINE_STRIP, 0, (mPointCount.at(i) / 4));
-            }
-        }
-
-        glBindVertexArray(0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-
-        // Todo: Retrieve constant parameters from node and pass to shader as uniform
+        drawGpu();
     } else {
         if (getVisibility()) {
             drawCpu();
@@ -528,6 +467,78 @@ void ZLineChart::draw() {
     }
 
     ZView::draw();
+}
+
+void ZLineChart::drawGpu() {
+    if (!mInitializedGlslEval) {
+        mInitializedGlslEval = true;
+        updateDataGlsl();
+    }
+
+    resetTmpTransform();
+    glBindFramebuffer(GL_FRAMEBUFFER, mFinalFBO);
+    glBindTexture(GL_TEXTURE_2D, mFinalTexBuffer);
+    glViewport(0, 0, getWidth(), getHeight());
+    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    mShader->use();
+    // mat4 projection = mTmpTransform;
+    mShader->setMat4("uVPMatrix", mTransform);
+
+    // draw background grid
+    ZColor gridColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
+    gridColor.light.a = 0.2;
+    gridColor.dark.a = 0.2;
+    mShader->setVec4("uColor", gridColor.get(mColorMode));
+
+    glLineWidth(2.0);
+    glBindVertexArray(mVAO);
+    glDrawElements(GL_LINES, mBGridVCount, GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
+
+    // draw grid
+    mShader->setVec4("uColor", red.get(mColorMode));
+
+    glBindVertexArray(mGridVAO);
+    glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);
+    glBindVertexArray(0);
+
+    mEvalShader->use();
+    mat4 defaultMat = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
+    mEvalShader->setMat4("uVPMatrix", defaultMat);
+    mEvalShader->setVec4("uBounds", vec4(mXBound.x, mYBound.y, mXBound.y, mYBound.x));
+    if (mInputType != HEAT_MAP && mInputType != RGB) {
+        // Draw graph lines
+        glLineWidth(2.0);
+        for (int i = mPoints.size() - 1; i >= 0; i--) {
+            mEvalShader->setVec4("uColor", vec4(1.0, 0.0, 0.0, 1.0) *
+                                           vec4(vec3((float) i / mPoints.size()), 1.0));
+
+            vec4 r = vec4(0.1, 0.7, 1.0, 1.0);
+            vec4 lineColor = getParentView()->getBackgroundColor().getTextColor().get(mColorMode);
+            float factor = (float) std::min((float) i, 1.0f);
+            vec4 mixed = mix(lineColor, r, factor);
+            mEvalShader->setVec4("uColor", mixed);
+            glBindVertexArray(mLineVAO.at(i));
+            glDrawArrays(GL_LINE_STRIP, 0, (mPointCount.at(i) / 4));
+        }
+    }
+
+    if (mInputType == HEAT_MAP && mHeatInitialized) {
+
+
+
+
+    }
+
+    glBindVertexArray(0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+    // Todo: Retrieve constant parameters from node and pass to shader as uniform
 }
 
 void ZLineChart::drawCpu() {
