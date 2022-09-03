@@ -5,8 +5,8 @@ in vec4 vPosUi;
 
 uniform vec4 uBounds;
 
-vec4 eval(vec4 input) {
-    return vec4(sin(input.x), 0.0, 0.0, 0.0);
+vec4 eval(vec4 xIn) {
+    return vec4(sin(xIn.x), 0.0, 0.0, 0.0);
 }
 void main() {
 
