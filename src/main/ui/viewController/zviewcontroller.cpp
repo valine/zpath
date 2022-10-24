@@ -205,6 +205,18 @@ void ZViewController::releaseFocus(ZView *forView) {
     }
 }
 
+
+void ZViewController::releaseAllFocus() {
+    if (getParentView() == nullptr || getParentView() == this) {
+            mFocusedView = nullptr;
+    } else {
+        getParentView()->releaseAllFocus();
+    }
+}
+
+
+
+
 void ZViewController::onKeyPress(int key, int scancode, int action, int mods) {
     if (isViewInFocus() && mods != GLFW_MOD_CONTROL && mods != GLFW_MOD_SUPER) {
         mFocusedView->onKeyPress(key, scancode, action, mods);

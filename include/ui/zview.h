@@ -123,6 +123,7 @@ class ZView {
         virtual ZView* getFocusedView();
         virtual void requestFocus(ZView* view);
         virtual void releaseFocus(ZView *forView);
+        virtual void releaseAllFocus();
 
     // Margin
         void setMargin(int marginLeft, int marginTop, int marginRight, int marginBottom);

@@ -64,7 +64,7 @@ public:
 	void requestFocus(ZView* view) override;
     void releaseFocus(ZView *forView) override;
     ZView* getFocusedView() override;
-
+    void releaseAllFocus() override;
 	void setDrawingEnabled(bool);
 private:
 	int mParentWidth = 0;
@@ -105,6 +105,8 @@ private:
 	const string image_fs =
 	        #include "shaders/imageviewfs.glsl"
     ;
+
+
 };
 
 #endif

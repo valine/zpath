@@ -508,7 +508,9 @@ void ZTileViewController::resetController() {
         mDropDown->bringToFront();
 
     }
+    releaseAllFocus();
 }
+
 
 //////////
 /// Split tiles
@@ -703,7 +705,6 @@ void ZTileViewController::triggerSideJoinLeftToRight(int index) {
         updateIndices();
         onWindowChange(getWindowWidth(), getWindowHeight());
         mDragType = noDrag;
-
     }
 }
 
