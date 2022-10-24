@@ -592,8 +592,7 @@ ZNodeDefStore::ZNodeDefStore() {
         }
 
     }
-
-
+    
     // Index nodes for name lookup
     indexNodes();
 }
