@@ -432,7 +432,7 @@ void MlModel::setTrainingData(vector<pair<vector<double>, vector<double>>> data)
 double MlModel::getInitialWeight(double height) {
     double var = 5.0 / height;
     srand(mSeed++);
-    double number = var * (((double) (rand() % 1000)) / 1000) - (var / 2.0);
+    double number = var * (((double) (rand() % 10000)) / 10000) - (var / 2.0);
     cout << mSeed << endl;
     return number;
 }
@@ -537,6 +537,11 @@ void MlModel::setActivationFunction(Neuron::Activation activation) {
         if (index != 0) {
             for (Neuron *node : layer) {
                 node->setType(activation);
+            }
+            if (index == 1) {
+                for (Neuron *node : layer) {
+                    node->setType(Neuron::Activation::RELU);
+                }
             }
         }
 

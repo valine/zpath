@@ -260,7 +260,6 @@ ZNodeDefStore::ZNodeDefStore() {
 
 
     mMathNodeTypes.push_back(NodeType::fromFile("math/file.json", [](FuncIn fn) {
-
         int fileIndex = fn.nodeView->mDropDown->getSelectedItem();
         float point = DataStore::get().getDataAtIndex(fileIndex, fn.x.at(REAL).at(0));
         fn.x.at(REAL) = {point, fn.start, fn.width};

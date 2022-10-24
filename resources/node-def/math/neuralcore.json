@@ -11,7 +11,7 @@
   "socketNames" : ["Training Data", "X", "Step Size", "Window Start", "Window Width", "Optimizer", "Activation"],
   "enumNames" : [[""],[""],[""],[""],[""],["RMSProp", "Adagrad", "Momentum", "Grad Decent"], ["TANH", "SIGMOID", "RELU"]],
   "nodeSize" : [300, 100],
-  "chartBounds" : [-5,5,-5,5],
+  "chartBounds" : [0,99,-3,5],
   "isOutputLabelVisible" : false,
   "isDropDownVisible" : false,
   "buttonNames" : ["Train", "Reset", "To String", "n-group"],

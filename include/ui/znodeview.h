@@ -130,12 +130,12 @@ public:
     ///////// End node definition /////////////
     ///////////////////////////////////////////
     void initializeNNModel() {
-        vector<int> heights = {3, 3, 3};
+        vector<int> heights = {3, 5, 3};
         int width = heights.size();
 
         int inputs = 1;
         int outputs = 1;
-        int batchSize = 50;
+        int batchSize = 100;
         float stepSize = 0.0001;
         MlModel::Optimizer optimizer = MlModel::RMSPROP;
         Neuron::Activation type = Neuron::TANH;
