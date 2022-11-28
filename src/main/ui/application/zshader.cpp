@@ -1,7 +1,12 @@
 #include "ui/zshader.h"
 
-ZShader::ZShader(string vertexCodeStr, string fragmentCodeStr) {
+#include <utility>
 
+ZShader::ZShader(const string& vertexCodeStr, const string& fragmentCodeStr) {
+    setSource(vertexCodeStr, fragmentCodeStr);
+}
+
+void ZShader::setSource(const string& vertexCodeStr, const string& fragmentCodeStr) {
     mVsName = vertexCodeStr;
     mFsName = fragmentCodeStr;
     const char* vertexCode = vertexCodeStr.c_str();
@@ -13,13 +18,15 @@ ZShader::ZShader(string vertexCodeStr, string fragmentCodeStr) {
     glShaderSource(vertex, 1, &vertexCode, NULL);
     glCompileShader(vertex);
     checkCompileErrors(vertex, "VERTEX");
-  
+
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment, 1, &fragmentCode, NULL);
     glCompileShader(fragment);
     checkCompileErrors(fragment, "FRAGMENT");
 
-    mID = glCreateProgram();
+    if (mID == -1) {
+        mID = glCreateProgram();
+    }
     glAttachShader(mID, vertex);
     glAttachShader(mID, fragment);
     glLinkProgram(mID);

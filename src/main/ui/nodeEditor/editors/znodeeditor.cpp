@@ -1140,18 +1140,7 @@ void ZNodeEditor::quickConnectNodes(ZNodeView* firstNode, ZNodeView* secondNode)
 }
 
 void ZNodeEditor::connectNodes(int outIndex, int inIndex, ZNodeView *firstNode, ZNodeView *secondNode) const {
-    firstNode->mOutputIndices.at(outIndex).push_back(pair<ZNodeView *, int>(secondNode, inIndex));
-    secondNode->mInputIndices.at(inIndex).push_back(pair<ZNodeView *, int>(firstNode, outIndex));
-    secondNode->invalidateNodeRecursive();
-
-    firstNode->mChildrenValid = false;
-    secondNode->mChildrenValid = false;
-
-    firstNode->mParentsValid = false;
-    secondNode->mParentsValid = false;
-
-    firstNode->mNextSiblingValid = false;
-    secondNode->mNextSiblingValid = false;
+   ZNodeUtil::get().connectNodes(outIndex, inIndex, firstNode, secondNode);
 }
 
 void ZNodeEditor::updateLines() {

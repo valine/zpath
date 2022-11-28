@@ -55,6 +55,10 @@ public:
         nodeString+="pos:" + to_string(node->getOffsetX()) + "," +  to_string(node->getOffsetY()) + "\n";
         nodeString+="size:" + to_string(node->getMaxWidth()) + "," +  to_string(node->getMaxHeight()) + "\n";
 
+        vec4 bounds = node->getChartBounds();
+        nodeString+="bounds:" + to_string(bounds.x) + "," +  to_string(bounds.y) + "," +
+                to_string(bounds.z) + "," +  to_string(bounds.w) + "\n";
+
         if (type->mIsDropDownVisible) {
             nodeString += "dropdown:" + to_string(node->mDropDown->getSelectedItem()) + "," + "\n";
         }
@@ -195,6 +199,7 @@ public:
             NodeType* type;
             vec2 pos;
             vec2 size;
+            vec4 bounds;
             vector<float> inputs;
             vector<float> outputs;
             vector<float> magnitudesIn;
@@ -223,6 +228,12 @@ public:
                 } else if (key == "size") {
                     vector<string> ssize = split(value, ',');
                     size = vec2(stoi(ssize.at(0)), stoi(ssize.at(1)));
+                } else if (key == "bounds") {
+                    vector<string> sbounds = split(value, ',');
+                    bounds = vec4(stof(sbounds.at(0)),
+                                   stof(sbounds.at(1)),
+                                   stof(sbounds.at(2)),
+                                   stof(sbounds.at(3)));
                 } else if (key == "dropdown") {
                     dropDownIndex = stoi(value);
                 } else if (key == "id") {
@@ -269,6 +280,12 @@ public:
             node->setMaxHeight(size.y);
             node->setIndexTag(id);
             node->setText(name);
+
+            if (abs(bounds.length()) > 1e-6) {
+                node->setChartBounds(bounds);
+            } else {
+                node->resetChartZoom();
+            }
 
             if (node->mType->mIsDropDownVisible) {
                 vector<string> nameList = DataStore::get().getFileNameList();
@@ -594,11 +611,13 @@ public:
                         }
                     }
                     nextNode->invalidateNodeRecursive();
+                    nextNode->onGraphChange();
                 }
             }
         }
         node->invalidateSingleNode();
     }
+
 
     void submitForRecycle(ZNodeView* node) {
         if (node != nullptr) {
@@ -981,6 +1000,8 @@ public:
 
         firstNode->mNextSiblingValid = false;
         secondNode->mNextSiblingValid = false;
+
+        secondNode->onGraphChange();
     }
 
     static vector<string> getTokens(string input) {

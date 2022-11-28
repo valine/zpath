@@ -35,6 +35,10 @@ public:
         mShaderListener = move(listener);
     }
 
+    void updateShader(string eval) {
+        cout << "shader update" << endl;
+    }
+
     void computeChartBounds() {
         mat4 inverseMat = inverse(mTransform);
         vec4 min = (inverseMat * vec4(-1,0,0,1));
@@ -108,6 +112,7 @@ public:
     void resetZoom();
     void resetTmpTransform();
     bool isTransformCurrent();
+    void setBounds(vec4 defaultBounds);
 
     void setDefaultMat(vec4 defaultBounds);
 
@@ -241,6 +246,9 @@ private:
     void updateDataGlsl();
 
     void drawGpu();
+
+    void setChartBounds(vec4 bounds);
+
 };
 
 

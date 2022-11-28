@@ -903,6 +903,27 @@ void ZNodeView::invalidateSingleNode() {
     }
 }
 
+/**
+ * Called when a node is connected or disconnected in the tree.
+ */
+void ZNodeView::onGraphChange() {
+
+    if (ZSettings::get().getCompDevice() == CompDevice::glsl) {
+        mChart->updateShader("");
+        setBackgroundColor(blue);
+    }
+
+    for (const vector<pair<ZNodeView *, int>> &outputSocket : mOutputIndices) {
+        for (pair<ZNodeView *, int> child : outputSocket) {
+            if (child.first == nullptr) {
+                continue;
+            }
+
+            child.first->onGraphChange();
+        }
+    }
+}
+
 void ZNodeView::invalidateForDelete() {
     if (mInvalidateListener != nullptr) {
         mInvalidateListener(this);
@@ -914,7 +935,6 @@ void ZNodeView::invalidateForDelete() {
  */
 void ZNodeView::invalidateNodeRecursive() {
     invalidateSingleNode();
-
     if (!mRecursiveInvalidate) {
 
         mRecursiveInvalidate = true;

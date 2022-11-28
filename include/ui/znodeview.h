@@ -146,6 +146,10 @@ public:
         mMlModel->resetNetwork();
     }
 
+    void resetChartZoom() {
+        mChart->resetZoom();
+    }
+
     void trainNN(ZView *sender) {
         if (mMlModel == nullptr) {
             initializeNNModel();
@@ -505,6 +509,8 @@ public:
         return mIsDeleted;
     }
 
+    void onGraphChange();
+
     ZNodeView* getGroupInput() {
         return mGroupInput;
     }
@@ -563,6 +569,23 @@ public:
     void setText(string text) {
         mNameLabel->setText(std::move(text));
     }
+
+    vec4 getChartBounds() {
+        // Left, top, right, bottom. Starts with left and goes clockwise.
+        vec4 bounds;
+        vec2 xBounds = mChart->getXBounds();
+        vec2 yBounds = mChart->getYBounds();
+        bounds.x = xBounds.x;
+        bounds.y = yBounds.x;
+        bounds.z = xBounds.y;
+        bounds.w = yBounds.y;
+        return bounds;
+    }
+
+    vec4 setChartBounds(vec4 bounds) {
+        mChart->setBounds(bounds);
+    }
+
 
     /**
     * Internal group node graph
@@ -681,6 +704,7 @@ private:
     void onSizeChange() override;
 
     void updateChartRGB();
+
 };
 
 

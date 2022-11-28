@@ -18,8 +18,8 @@ using namespace std;
 class ZShader {
 
 public:
-	GLuint mID;
-	ZShader(string, string);
+	GLuint mID = -1;
+	ZShader(const string&, const string&);
 	void use();
 	void deleteProgram();
 	
@@ -41,6 +41,8 @@ private:
 	void checkCompileErrors(GLuint shader, string type);
 	string mVsName;
 	string mFsName;
+
+    void setSource(const string& vertexCodeStr, const string& fragmentCodeStr);
 };
 
 #endif

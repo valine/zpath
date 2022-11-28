@@ -95,6 +95,13 @@ void ZLineChart::setDefaultMat(vec4 defaultBounds) {
                         defaultBounds.w, defaultBounds.z, -1.0f, 10.0f);
 }
 
+
+void ZLineChart::setBounds(vec4 defaultBounds) {
+    mTransform = ortho(defaultBounds.x, defaultBounds.z,
+                        defaultBounds.w, defaultBounds.y, -1.0f, 10.0f);
+}
+
+
 void ZLineChart::initHeatLUT()  {
     glGenTextures(1, &mHeatLUTBuffer);
     mHeatShader->use();
@@ -503,6 +510,7 @@ void ZLineChart::drawGpu() {
     glBindVertexArray(mGridVAO);
     glDrawElements(GL_LINES, 4, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
+
 
     mEvalShader->use();
     mat4 defaultMat = ortho(0.0f, 1.0f, 1.0f, 0.0f, -1.0f, 10.0f);
