@@ -23,21 +23,28 @@ include_directories(include)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_LIBMPFI=0")
 
 if(UNIX AND NOT APPLE)
     set(LINUX TRUE)
+    message(STATUS "Linux detected")
 endif()
 
-if (BUILD_LIB)
+if (COMPILE_DEPS)
+    message("Compiling deps")
+else(COMPILE_DEPS)
+    message("Download deps")
+endif()
+    if (BUILD_LIB)
     add_library(zpath STATIC ${sources} ${headers})
     target_compile_options(zpath PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-std=c++17>)
     target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
-    add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/ui/viewController/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/editors/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/znodeview.cpp include/ui/znodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h include/utils/znodeutil.h src/main/utils/zshadowrenderer.cpp include/utils/zshadowrenderer.h src/main/ui/view/ztextfield.cpp include/ui/ztextfield.h src/main/ui/textEditor/ztextviewcontroller.cpp include/zpath/ztextviewcontroller.h src/main/ui/nodeEditor/zdrawer.cpp include/ui/zdrawer.h src/main/ui/viewController/ztileviewcontroller.cpp include/ui/ztileviewcontroller.h src/main/ui/viewController/zcalculatorviewcontroller.cpp include/ui/zcalculatorviewcontroller.h src/main/utils/zcornerrenderer.cpp include/utils/zcornerrenderer.h include/utils/zgridrenderer.h src/main/ui/nodeEditor/zprojectview.cpp include/ui/zprojectview.h include/utils/znodestore.h src/main/ui/viewController/zdevviewcontroller.cpp include/ui/zdevviewcontroller.h src/main/ui/settings/settingsviewcontroller.cpp include/ui/settingsviewcontroller.h src/main/ui/view/zcolor.cpp include/ui/zcolor.h include/utils/enums/colormode.h src/main/utils/datastore.cpp include/utils/datastore.h src/main/ui/viewController/zdataviewcontroller.cpp include/ui/zdataviewcontroller.h src/main/ui/view/zlistview.cpp include/ui/zlistview.h src/main/ui/viewController/zjsoneditorviewcontroller.cpp include/ui/zjsoneditorviewcontroller.h src/main/ui/nodeEditor/nodetype.cpp include/ui/nodetype.h src/main/ui/nodeEditor/editors/zmathnodeeditor.cpp include/ui/zmathnodeeditor.h src/main/ui/nodeEditor/editors/zjsonnodeeditor.cpp include/ui/zjsonnodeeditor.h include/ui/znodedefstore.h include/utils/zneuralcoreutil.h include/ui/charttype.h include/ui/sockettype.h include/ui/funcin.h src/main/ui/nodeEditor/znodedefstore.cpp src/main/utils/zneuralcoreutil.cpp src/main/utils/znodeutil.cpp)
+    add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/ui/viewController/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/editors/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/znodeview.cpp include/ui/znodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h include/utils/znodeutil.h src/main/utils/zshadowrenderer.cpp include/utils/zshadowrenderer.h src/main/ui/view/ztextfield.cpp include/ui/ztextfield.h src/main/ui/textEditor/ztextviewcontroller.cpp include/zpath/ztextviewcontroller.h src/main/ui/nodeEditor/zdrawer.cpp include/ui/zdrawer.h src/main/ui/viewController/ztileviewcontroller.cpp include/ui/ztileviewcontroller.h src/main/ui/viewController/zcalculatorviewcontroller.cpp include/ui/zcalculatorviewcontroller.h src/main/utils/zcornerrenderer.cpp include/utils/zcornerrenderer.h include/utils/zgridrenderer.h src/main/ui/nodeEditor/zprojectview.cpp include/ui/zprojectview.h include/utils/znodestore.h src/main/ui/viewController/zdevviewcontroller.cpp include/ui/zdevviewcontroller.h src/main/ui/settings/settingsviewcontroller.cpp include/ui/settingsviewcontroller.h src/main/ui/view/zcolor.cpp include/ui/zcolor.h include/utils/enums/colormode.h src/main/utils/datastore.cpp include/utils/datastore.h src/main/ui/viewController/zdataviewcontroller.cpp include/ui/zdataviewcontroller.h src/main/ui/view/zlistview.cpp include/ui/zlistview.h src/main/ui/viewController/zjsoneditorviewcontroller.cpp include/ui/zjsoneditorviewcontroller.h src/main/ui/nodeEditor/nodetype.cpp include/ui/nodetype.h src/main/ui/nodeEditor/editors/zmathnodeeditor.cpp include/ui/zmathnodeeditor.h src/main/ui/nodeEditor/editors/zjsonnodeeditor.cpp include/ui/zjsonnodeeditor.h include/ui/znodedefstore.h include/utils/zneuralcoreutil.h include/ui/charttype.h include/ui/sockettype.h include/ui/funcin.h src/main/ui/nodeEditor/znodedefstore.cpp src/main/utils/zneuralcoreutil.cpp src/main/utils/znodeutil.cpp include/giacd/disable_libmpfi.h)
     if (APPLE)
         target_compile_options(zpath PUBLIC -std=c++14 -Wall)
     else()
-        target_compile_options(zpath PUBLIC -std=c++17 -Wall)
+        target_compile_options(zpath PUBLIC -std=c++17 -Wall -lgiac -lgmp -lmpfr)
     endif()
 
     add_custom_command(TARGET zpath POST_BUILD
@@ -45,6 +52,9 @@ else(BUILD_LIB)
             ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:zpath>/resources)
     target_include_directories(zpath PUBLIC src/main)
 endif()
+
+
+add_definitions(-UHAVE_LIBMPFI)
 
 
 ###############################################################################
@@ -251,7 +261,6 @@ message("opengl directory " ${OPENGL_INCLUDE_DIR})
 if (APPLE)
 
     if (COMPILE_DEPS)
-
         find_package(BZip2 REQUIRED)
 
         #    find_package(glfw3 3.2 REQUIRED)
@@ -391,6 +400,7 @@ if (LINUX)
     message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
     include_directories(${X11_INCLUDE_DIR})
 
+
     set(zdep_path    "${CMAKE_CURRENT_SOURCE_DIR}/deps/zdep/src/zdep/linux")
     if (COMPILE_DEPS)
 
@@ -416,7 +426,34 @@ if (LINUX)
 
     else(COMPILE_DEPS)
 
+        set(Boost_DOWNLOAD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/deps/boost")
+
+        ExternalProject_Add(boost
+                URL "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz"
+                PREFIX ${Boost_DOWNLOAD_DIR}
+                CONFIGURE_COMMAND ""
+                BUILD_COMMAND ""
+                BUILD_IN_SOURCE 1
+                INSTALL_COMMAND "")
+
+        set(Boost_INCLUDE_DIR ${Boost_DOWNLOAD_DIR}/src/boost)
+        add_dependencies(zpath boost)
+        target_include_directories(zpath PUBLIC ${Boost_INCLUDE_DIR})
+
+        add_custom_target( unzipGiacLinux ALL)
+        add_custom_command(TARGET unzipGiacLinux PRE_BUILD
+                COMMAND unzip -o giac.zip
+                WORKING_DIRECTORY ${zdep_path}/giac
+                COMMENT "Unpacking giac.zip"
+                VERBATIM)
+
+        add_dependencies(unzipGiacLinux zdep)
+        add_dependencies(zpath unzipGiacLinux)
+
         message(STATUS "${zdep_path}")
+
+        set(DISABLE_LIBMPFI_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/main/include/giacd)
+        include_directories(${DISABLE_LIBMPFI_INCLUDE_DIR})
 
         include_directories(${zdep_path}/glm)
         include_directories(${zdep_path}/glfw/include)
@@ -424,18 +461,33 @@ if (LINUX)
         include_directories(${zdep_path}/zlib/include)
         include_directories(${zdep_path}/assimp/include)
         include_directories(${zdep_path}/png/include)
+
+        include_directories(${zdep_path}/gmp/include)
+        include_directories(${zdep_path}/gsl/include)
+        include_directories(${zdep_path}/mpfr/include)
+        include_directories(${zdep_path}/ntl/include)
+        include_directories(${zdep_path}/pari/include)
         include_directories(${zdep_path}/giac/include)
+        include_directories("/usr/include/")
+
         target_link_libraries (zpath
                 ${OPENGL_LIBRARIES}
                 "${zdep_path}/glfw/libglfw3.a"
                 ${X11_LIBRARIES}
                 ${CMAKE_THREAD_LIBS_INIT}
                 ${CMAKE_DL_LIBS}
+                "${zdep_path}/giac/libgiac.a"
                 "${zdep_path}/assimp/libassimp.so"
+                "/usr/lib/x86_64-linux-gnu/libmpfi.a"
                 "${zdep_path}/png/libpng16.a"
                 "${zdep_path}/zlib/libz.a"
                 "${zdep_path}/freetype/libfreetype.a"
-                "${zdep_path}/giac/libgiac.so")
+                "${zdep_path}/gmp/libgmp.a"
+                "${zdep_path}/gsl/libgsl.a"
+                "${zdep_path}/mpfr/libmpfr.a"
+                "${zdep_path}/ntl/libntl.a"
+                "${zdep_path}/pari/libpari.a"
+                )
     endif(COMPILE_DEPS)
 
 endif (LINUX)

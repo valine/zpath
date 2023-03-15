@@ -24,6 +24,7 @@ static const int GLSL = 1;
 
 #include "ui/zcolor.h"
 #include <functional>
+#include <vector>
 using namespace glm;
 using namespace std;
 

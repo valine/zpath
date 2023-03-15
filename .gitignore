@@ -2,6 +2,7 @@ build/*
 buildapp/*
 appbuild/*
 deps/*
+bin/linux/*
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
@@ -12,6 +13,10 @@ install_manifest.txt
 compile_commands.json
 TestTestfile.cmake
 .DS_Store
+bin/download/*
+bin/install/*
+bin/working/*
+
 
 .idea/*
 cmake-build-debug/*
