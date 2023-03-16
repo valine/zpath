@@ -9,7 +9,7 @@ ZNodeView *ZNodeUtil::nodesFromJson(json j, ZNodeView *parent) {
     if (parent == nullptr) {
         auto node = newNode(ZNodeDefStore::get().getJsonNodeType("object"));
         node->setText("root");
-        auto objectNodes = nodesFromJson(j, node);
+        nodesFromJson(j, node);
         return node;
     }
     for (auto& el : j.items()) {

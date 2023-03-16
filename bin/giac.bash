@@ -95,9 +95,27 @@ fi
 echo "Extracting gsl"
 tar -xf gsl.tar.gz -C ../working
 
+# Download mpfi if mpfi.tar.gz doesn't exist
+if [ ! -f mpfi.tar.gz ]; then
+  echo "Downloading mpfi"
+    curl -s http://perso.ens-lyon.fr/nathalie.revol/softwares/mpfi-1.5.4.tar.bz2 -o mpfi.tar.bz2
+fi
+# Extract mpfi
+echo "Extracting mpfi"
+tar -xf mpfi.tar.bz2 -C ../working
+
 #############################
 
 cd ../working
+
+######## MPFI ########
+cd mpfi-1.5.4
+echo "Configuring mpfi"
+./configure --enable-static --prefix=${DIR}/install/mpfi/bin --libdir=${DIR}/install/mpfi/lib > /dev/null 2>&1
+echo "Compiling mpfi..."
+make -j32 -s > /dev/null 2>&1
+make install -s > /dev/null 2>&1
+cd ..
 
 ######## GMP ########
 cd gmp-6.2.1
@@ -184,6 +202,9 @@ mkdir -p ./linux/gsl
 cp ./install/gsl/lib/libgsl.a ./linux/gsl/
 cp -r ./install/gsl/bin/include ./linux/gsl/
 
+mkdir -p ./linux/mpfi
+cp ./install/mpfi/lib/libmpfi.a ./linux/mpfi/
+cp -r ./install/mpfi/bin/include ./linux/mpfi/
 
 # if install folder exists, delete it
 if [ -d "/home/lukas/Desktop/zpath-deps/linux/giac/" ]; then
@@ -213,6 +234,11 @@ fi
 # if install folder exists, delete it
 if [ -d "/home/lukas/Desktop/zpath-deps/linux/pari/" ]; then
     rm -rf /home/lukas/Desktop/zpath-deps/linux/pari/
+fi
+
+# if install folder exists, delete it
+if [ -d "/home/lukas/Desktop/zpath-deps/linux/mpfi/" ]; then
+    rm -rf /home/lukas/Desktop/zpath-deps/linux/mpfi/
 fi
 
 cp -r ./linux/* /home/lukas/Desktop/zpath-deps/linux/

@@ -40,7 +40,7 @@ endif()
     target_compile_options(zpath PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-std=c++17>)
     target_include_directories(zpath PUBLIC src/main)
 else(BUILD_LIB)
-    add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/ui/viewController/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/editors/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/znodeview.cpp include/ui/znodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h include/utils/znodeutil.h src/main/utils/zshadowrenderer.cpp include/utils/zshadowrenderer.h src/main/ui/view/ztextfield.cpp include/ui/ztextfield.h src/main/ui/textEditor/ztextviewcontroller.cpp include/zpath/ztextviewcontroller.h src/main/ui/nodeEditor/zdrawer.cpp include/ui/zdrawer.h src/main/ui/viewController/ztileviewcontroller.cpp include/ui/ztileviewcontroller.h src/main/ui/viewController/zcalculatorviewcontroller.cpp include/ui/zcalculatorviewcontroller.h src/main/utils/zcornerrenderer.cpp include/utils/zcornerrenderer.h include/utils/zgridrenderer.h src/main/ui/nodeEditor/zprojectview.cpp include/ui/zprojectview.h include/utils/znodestore.h src/main/ui/viewController/zdevviewcontroller.cpp include/ui/zdevviewcontroller.h src/main/ui/settings/settingsviewcontroller.cpp include/ui/settingsviewcontroller.h src/main/ui/view/zcolor.cpp include/ui/zcolor.h include/utils/enums/colormode.h src/main/utils/datastore.cpp include/utils/datastore.h src/main/ui/viewController/zdataviewcontroller.cpp include/ui/zdataviewcontroller.h src/main/ui/view/zlistview.cpp include/ui/zlistview.h src/main/ui/viewController/zjsoneditorviewcontroller.cpp include/ui/zjsoneditorviewcontroller.h src/main/ui/nodeEditor/nodetype.cpp include/ui/nodetype.h src/main/ui/nodeEditor/editors/zmathnodeeditor.cpp include/ui/zmathnodeeditor.h src/main/ui/nodeEditor/editors/zjsonnodeeditor.cpp include/ui/zjsonnodeeditor.h include/ui/znodedefstore.h include/utils/zneuralcoreutil.h include/ui/charttype.h include/ui/sockettype.h include/ui/funcin.h src/main/ui/nodeEditor/znodedefstore.cpp src/main/utils/zneuralcoreutil.cpp src/main/utils/znodeutil.cpp include/giacd/disable_libmpfi.h)
+    add_executable(zpath ${sources} ${data} src/main/utils/zfontstore.cpp include/utils/zfontstore.h src/main/ui/viewGroup/ztabview.cpp include/ui/ztabview.h src/main/ui/viewController/ztabbedviewcontroller.cpp include/ztabbedviewcontroller.h src/main/ui/viewController/nodeviewcontroller.cpp include/zpath/nodeviewcontroller.h src/main/ui/nodeEditor/zlineview.cpp include/ui/zlineview.h src/main/ui/nodeEditor/editors/znodeeditor.cpp include/ui/znodeeditor.h src/main/ui/nodeEditor/znodeview.cpp include/ui/znodeview.h src/main/ui/nodeEditor/zmagnitudepicker.cpp include/ui/zmagnitudepicker.h src/main/ui/chart/zlinechart.cpp include/ui/zlinechart.h src/main/ui/nodeEditor/zcursorview.cpp include/ui/zcursorview.h src/main/utils/casutil.cpp include/utils/casutil.h include/utils/znodeutil.h src/main/utils/zshadowrenderer.cpp include/utils/zshadowrenderer.h src/main/ui/view/ztextfield.cpp include/ui/ztextfield.h src/main/ui/textEditor/ztextviewcontroller.cpp include/zpath/ztextviewcontroller.h src/main/ui/nodeEditor/zdrawer.cpp include/ui/zdrawer.h src/main/ui/viewController/ztileviewcontroller.cpp include/ui/ztileviewcontroller.h src/main/ui/viewController/zcalculatorviewcontroller.cpp include/ui/zcalculatorviewcontroller.h src/main/utils/zcornerrenderer.cpp include/utils/zcornerrenderer.h include/utils/zgridrenderer.h src/main/ui/nodeEditor/zprojectview.cpp include/ui/zprojectview.h include/utils/znodestore.h src/main/ui/viewController/zdevviewcontroller.cpp include/ui/zdevviewcontroller.h src/main/ui/settings/settingsviewcontroller.cpp include/ui/settingsviewcontroller.h src/main/ui/view/zcolor.cpp include/ui/zcolor.h include/utils/enums/colormode.h src/main/utils/datastore.cpp include/utils/datastore.h src/main/ui/viewController/zdataviewcontroller.cpp include/ui/zdataviewcontroller.h src/main/ui/view/zlistview.cpp include/ui/zlistview.h src/main/ui/viewController/zjsoneditorviewcontroller.cpp include/ui/zjsoneditorviewcontroller.h src/main/ui/nodeEditor/nodetype.cpp include/ui/nodetype.h src/main/ui/nodeEditor/editors/zmathnodeeditor.cpp include/ui/zmathnodeeditor.h src/main/ui/nodeEditor/editors/zjsonnodeeditor.cpp include/ui/zjsonnodeeditor.h include/ui/znodedefstore.h include/utils/zneuralcoreutil.h include/ui/charttype.h include/ui/sockettype.h include/ui/funcin.h src/main/ui/nodeEditor/znodedefstore.cpp src/main/utils/zneuralcoreutil.cpp src/main/utils/znodeutil.cpp)
     if (APPLE)
         target_compile_options(zpath PUBLIC -std=c++14 -Wall)
     else()
@@ -442,7 +442,7 @@ if (LINUX)
 
         add_custom_target( unzipGiacLinux ALL)
         add_custom_command(TARGET unzipGiacLinux PRE_BUILD
-                COMMAND unzip -o giac.zip
+                COMMAND unzip -n giac.zip
                 WORKING_DIRECTORY ${zdep_path}/giac
                 COMMENT "Unpacking giac.zip"
                 VERBATIM)
@@ -468,7 +468,7 @@ if (LINUX)
         include_directories(${zdep_path}/ntl/include)
         include_directories(${zdep_path}/pari/include)
         include_directories(${zdep_path}/giac/include)
-        include_directories("/usr/include/")
+        include_directories(${zdep_path}/mpfi/include)
 
         target_link_libraries (zpath
                 ${OPENGL_LIBRARIES}
@@ -478,7 +478,6 @@ if (LINUX)
                 ${CMAKE_DL_LIBS}
                 "${zdep_path}/giac/libgiac.a"
                 "${zdep_path}/assimp/libassimp.so"
-                "/usr/lib/x86_64-linux-gnu/libmpfi.a"
                 "${zdep_path}/png/libpng16.a"
                 "${zdep_path}/zlib/libz.a"
                 "${zdep_path}/freetype/libfreetype.a"
@@ -486,6 +485,7 @@ if (LINUX)
                 "${zdep_path}/gsl/libgsl.a"
                 "${zdep_path}/mpfr/libmpfr.a"
                 "${zdep_path}/ntl/libntl.a"
+                "${zdep_path}/mpfi/libmpfi.a"
                 "${zdep_path}/pari/libpari.a"
                 )
     endif(COMPILE_DEPS)
