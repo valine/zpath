@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-set(THIS_PROJECT neuralcore)
+set(THIS_PROJECT heartbeat)
 project(${THIS_PROJECT})
 
 file(GLOB_RECURSE sources src/core/*.cpp src/core/*.c src/core/*.h src/gui/*.cpp src/gui/*.c src/gui/*.h)
@@ -47,12 +47,15 @@ add_dependencies(${THIS_PROJECT} zpath)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/lib)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/assimp/include)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/assimp/lib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/glfw/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/zdep/src/zdep/headers/assimp/include)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}deps/zpath/src/zpath/deps/zdep/src/zdep/linux/assimp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/zdep/src/zdep/headers/glfw/include)
+
+
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/glfw/lib)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/glm/src/glm)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/freetype2b/src/freetype2b/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/zdep/src/zdep/headers/glm)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/zdep/src/zdep/headers/freetype/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/png/include)
 
 set(OpenGL_GL_PREFERENCE GLVND)
@@ -67,17 +70,48 @@ message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
 message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 include_directories(${X11_INCLUDE_DIR} ${ASSIMP_INCLUDE_DIR})
 
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+    message(STATUS "Linux detected")
+endif()
+
+set(ZDEP "${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/")
+
+if (APPLE)
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        set(zdep_path    "${ZDEP}/deps/zdep/src/zdep/macos")
+        set(zdep_path_include    "${ZDEP}/deps/zdep/src/zdep/headers")
+    else()
+        set(zdep_path    "${ZDEP}/deps/zdep/src/zdep/macos-arm")
+        set(zdep_path_include    "${ZDEP}/deps/zdep/src/zdep/headers")
+    endif()
+else()
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        set(zdep_path    "${ZDEP}/deps/zdep/src/zdep/linux")
+        set(zdep_path_include    "${ZDEP}/deps/zdep/src/zdep/headers")
+    else()
+        set(zdep_path    "${ZDEP}/deps/zdep/src/zdep/macos-arm")
+        set(zdep_path_include    "${ZDEP}/deps/zdep/src/zdep/headers")
+    endif()
+endif()
+
 target_link_libraries (${THIS_PROJECT}
-      ${OPENGL_LIBRARIES}
-      ${zpath_install_dir}/lib/libzpath.a
-      ${CMAKE_DL_LIBS}
-      ${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/assimp/lib/libassimp.so
-      ${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/glfw/lib/libglfw3.a
-      ${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/freetype2b/src/freetype2b-build/libfreetype.a
-      ${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/png/lib/libpng.a
-      ${CMAKE_CURRENT_SOURCE_DIR}/deps/zpath/src/zpath/deps/zlib/lib/libz.a
-      ${X11_LIBRARIES}
-      ${CMAKE_THREAD_LIBS_INIT}
-      ${FREETYPE_LIBRARIES})
+        ${OPENGL_LIBRARIES}
+        ${zpath_install_dir}/lib/libzpath.a
+        "${zdep_path}/glfw/libglfw3.a"
+        ${X11_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${CMAKE_DL_LIBS}
+        "${zdep_path}/giac/libgiac.a"
+        "${zdep_path}/assimp/libassimp.so"
+        "${zdep_path}/png/libpng16.a"
+        "${zdep_path}/zlib/libz.a"
+        "${zdep_path}/freetype/libfreetype.a"
+        "${zdep_path}/gmp/libgmp.a"
+        "${zdep_path}/gsl/libgsl.a"
+        "${zdep_path}/mpfr/libmpfr.a"
+        "${zdep_path}/ntl/libntl.a"
+        "${zdep_path}/mpfi/libmpfi.a"
+        "${zdep_path}/pari/libpari.a")
 
 
