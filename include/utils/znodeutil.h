@@ -10,6 +10,7 @@ class ZNodeDefStore;
 
 #include <queue>
 #include <set>
+#include <stack>
 #include "ui/znodeview.h"
 #include <string>
 

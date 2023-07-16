@@ -103,7 +103,14 @@ void ZLabel::drawText() {
     float centerOffset = mLineTopMargin;
 
     GLfloat x = getCornerRadius().x * mDP;
-    GLfloat y = ((float) mTextSize * 0.5f * mDP) - 4 - centerOffset;
+
+    // Original
+   // GLfloat y = ((float) mTextSize * 0.5f * mDP) - 4 - centerOffset;
+
+   // DP 2
+     GLfloat y = -1 * mTextSize - centerOffset;
+
+    // GLfloat y = ((float) mTextSize * 0.0f * mDP) - mTextSize - centerOffset;
 
     float vHeight = getHeight();
     int lineHeight = getLineHeight();
