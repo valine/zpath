@@ -53,7 +53,8 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp, int size) {
             loadChar(c, face, size, resourcePath);
         }
 
-        loadChar(176, face, size, resourcePath);
+        FT_UInt glyph_index = FT_Get_Char_Index(face, 176);
+        loadChar(glyph_index, face, size, resourcePath);
 
         return face;
     }
