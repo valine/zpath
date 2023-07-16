@@ -36,6 +36,10 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp, int size) {
 
         FT_New_Face(mFreetype, resourceChar, 0, &face);
 
+        // Select Unicode charmap
+        if (FT_Select_Charmap(face, FT_ENCODING_UNICODE)) {
+            fprintf(stderr, "Could not select unicode charmap\n");
+        }
 
         // Set size to load glyphs as
         FT_Set_Pixel_Sizes(face, 0, size * dp);
