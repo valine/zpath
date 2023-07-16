@@ -15,12 +15,17 @@ ZFontStore::ZFontStore() {
 }
 
 FT_Face ZFontStore::loadFont() {
-    return loadFont(mDefaultResource, 0);
+    return loadFont(mDefaultResource, 0, 0);
 }
 
-FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
-    if (mFonts.find(resourcePath) == mFonts.end()) {
+string ZFontStore::getFontKey(string resourcePath, int size) {
+    return resourcePath + to_string(size);
+}
 
+FT_Face ZFontStore::loadFont(string resourcePath, float dp, int size) {
+    if (mFonts.find(getFontKey(resourcePath, size)) == mFonts.end()) {
+
+        mDp = dp;
         FT_Face face;
 
         string resourceString = resourcePath;
@@ -30,8 +35,8 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
 
 
         // Set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 12 * dp);
-        mFonts.insert(make_pair(resourcePath, face));
+        FT_Set_Pixel_Sizes(face, 0, size * dp);
+        mFonts.insert(make_pair(getFontKey(resourcePath, size), face));
 
         // Disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -72,8 +77,7 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
                     glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
                     (GLuint) face->glyph->advance.x
             };
-            make_pair(c, resourcePath);
-            string key = to_string(c) + resourcePath;
+            string key = to_string(c) + resourcePath + to_string(size);
             mCharacters.insert(make_pair(key, character));
 
             glBindTexture(GL_TEXTURE_2D, 0);
@@ -84,13 +88,18 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp) {
         return face;
     }
 
-    return mFonts.at(resourcePath);
+    return mFonts.at(getFontKey(resourcePath, size));
 }
 
-Character ZFontStore::getCharacter(const string& resourcePath, GLchar c) {
-    string key = to_string(c) + resourcePath;
+Character ZFontStore::getCharacter(const string &resourcePath, GLchar c, int size) {
+    string key = to_string(c) + resourcePath + to_string(size);
+    if (mSizesLoaded.count(key) == 0) {
+        loadFont(resourcePath, mDp, size);
+        mSizesLoaded.insert(make_pair(key, 1));
+    }
+
     if (mCharacters.count(key) == 0) {
-        string defaultKey = to_string(' ') + resourcePath;
+        string defaultKey = to_string(' ') + resourcePath + to_string(size);
         return mCharacters.at(defaultKey);
     }
     return mCharacters.at(key);

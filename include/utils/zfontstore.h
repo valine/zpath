@@ -35,8 +35,8 @@ public:
         // Instantiated on first use.
         return instance;
     }
-    FT_Face loadFont(string resourcePath, float dp);
-    Character getCharacter(const string& resourcePath, GLchar);
+    FT_Face loadFont(string resourcePath, float dp, int size);
+    Character getCharacter(const string &resourcePath, GLchar, int size);
 
     string getDefaultResource();
     void setDefaultResource(string);
@@ -46,10 +46,14 @@ private:
     static ZFontStore *mInstance;
     FT_Library mFreetype{};
     unordered_map<string, Character> mCharacters = unordered_map<string, Character>();
+    map<string, int> mSizesLoaded;
     map<string, FT_Face> mFonts;
     ZFontStore(ZFontStore const&);              // Don't Implement
     void operator=(ZFontStore const&); // Don't implement
     std::string mDefaultResource = "";
+    float mDp = 1;
+
+    string getFontKey(string resourcePath, int dp);
 };
 
 

@@ -186,7 +186,7 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     viewController->onDpChange(dpScale);
 
     string resourceString = viewController->getResourcePath() + "resources/fonts/roboto/Roboto-Bold.ttf";
-    ZFontStore::getInstance().loadFont(resourceString, dpScale);
+    ZFontStore::getInstance().loadFont(resourceString, dpScale, 0);
     ZFontStore::getInstance().setDefaultResource(resourceString);
     ZSettings::getInstance().setResourcePath(viewController->getResourcePath());
 
