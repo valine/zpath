@@ -33,6 +33,7 @@ public:
     void setFont(string fontPath);
     string getText();
     void setBackgroundColor(ZColor color) override;
+    int getTextSize();
 
     void drawText();
     pair<int,int> getEndPoint();
@@ -87,7 +88,6 @@ private:
 
     void setColorMode(ColorMode colorMode);
 
-    int getTextSize();
 };
 
 #endif
