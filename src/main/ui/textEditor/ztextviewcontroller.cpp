@@ -14,4 +14,5 @@ void ZTextViewController::onCreate() {
     textField->setBackgroundColor(bg);
     textField->setXOffset(0);
     textField->setCornerRadius(2);
+    textField->setTextSize(30);
 }

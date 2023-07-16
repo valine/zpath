@@ -304,3 +304,10 @@ float ZTextField::getTextWidth() {
 
     return width;
 }
+
+void ZTextField::setTextSize(int textSize) {
+    ZLabel::setTextSize(textSize);
+    mCursor->setMaxHeight(textSize);
+    pair<int, int> offset = getEndPoint();
+    mCursor->setYOffset(offset.second);
+}

@@ -33,6 +33,7 @@ public:
     void onDoubleClick(int x, int y) override;
     void setText(string text) override;
     void setTextColor(ZColor color) override;
+    void setTextSize(int textSize);
 
     void setOnReturn(function<void(string)> listener) {
         mOnReturn = listener;

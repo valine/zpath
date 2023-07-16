@@ -27,7 +27,7 @@ public:
     ZLabel(string label, ZView *parent);
 
     void draw() override;
-    void setTextSize(int textSize);
+    virtual void setTextSize(int textSize);
     ZColor getTextColor();
     virtual void setText(string text);
     void setFont(string fontPath);

@@ -103,14 +103,14 @@ void ZLabel::drawText() {
     float centerOffset = mLineTopMargin;
 
     GLfloat x = getCornerRadius().x * mDP;
-    GLfloat y = (-13 * mDP) + 17 - centerOffset;
+    GLfloat y = (-13 * mDP) + 16 - centerOffset;
 
     float vHeight = getHeight();
     int lineHeight = getLineHeight();
     mPoints.clear();
     mLineIndices.clear();
     int xMargin = 1;
-    int yMargin = -getLineHeight() + (9.5 * mDP);
+    int yMargin = -getLineHeight() + (int) (((float) mTextSize * 0.8) * mDP);
 
     // Handle cursor position for empty string
     mPoints.emplace_back(((x/mDP) + xMargin), (-(y/mDP) - yMargin));
@@ -200,7 +200,7 @@ void ZLabel::computeLineWidth() {
     int lineHeight = getLineHeight();
 
     for (c = mText.begin(); c != mText.end(); c++) {
-        Character ch = ZFontStore::getInstance().getCharacter(mFont, *c, 12);
+        Character ch = ZFontStore::getInstance().getCharacter(mFont, *c, mTextSize);
         int w = ch.Size.x;
 
         char ac = c[0];
@@ -236,7 +236,10 @@ vector<int> ZLabel::getLineIndices() {
 }
 
 int ZLabel::getLineHeight() {
-    return 18;
+    if (mTextSize == 0) {
+        return 18;
+    }
+    return (int) ((float) mTextSize * 1.2857);
 }
 
 string ZLabel::getText() {
