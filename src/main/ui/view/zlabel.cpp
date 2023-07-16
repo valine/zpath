@@ -105,8 +105,9 @@ void ZLabel::drawText() {
     GLfloat x = getCornerRadius().x * mDP;
 
      // Adjust starting point based on DP
-     GLfloat y = 0.125f * (float) mTextSize - centerOffset;
-     if (mDP > 1) {
+    GLfloat y = ((float) mTextSize * 0.5f * mDP) - 4 - centerOffset;
+
+    if (mDP > 1) {
          y = -1.0f * (float) mTextSize - centerOffset;
      }
 
