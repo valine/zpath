@@ -277,6 +277,10 @@ void ZLabel::setTextSize(int textSize) {
     invalidate();
 }
 
+int ZLabel::getTextSize() {
+    return mTextSize;
+}
+
 void ZLabel::setTextColor(ZColor color) {
     mTextColor = color;
     mTextInvalid = true;

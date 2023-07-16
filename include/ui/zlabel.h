@@ -86,6 +86,8 @@ private:
     void onCreate();
 
     void setColorMode(ColorMode colorMode);
+
+    int getTextSize();
 };
 
 #endif
