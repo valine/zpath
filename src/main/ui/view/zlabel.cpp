@@ -266,7 +266,13 @@ void ZLabel::draw() {
 }
 
 void ZLabel::setTextSize(int textSize) {
+    int previousSize = mTextSize;
     mTextSize = textSize;
+    // Percentage change in size
+    float sizeChange = (float) mTextSize / (float) previousSize;
+
+    // Change max height by same percent
+    setMaxHeight((int) ((float) getMaxHeight() * sizeChange));
     drawText();
     invalidate();
 }
