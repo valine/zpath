@@ -23,6 +23,11 @@ ZApplication::ZApplication(ZViewController* controller, string name) {
     init(controllers, name, false, 800, 500, -1, nullptr);
 }
 
+ZApplication::ZApplication(ZViewController* controller, string name, int fullScreen) {
+    vector<ZViewController*> controllers = {controller};
+    init(controllers, name, false, 800, 500, fullScreen, nullptr);
+}
+
 ZApplication::ZApplication(ZViewController* controller, string name, bool shouldPoll) {
     vector<ZViewController*> controllers = {controller};
     init(controllers, name, shouldPoll, 800, 500, -1, nullptr);
