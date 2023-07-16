@@ -41,6 +41,7 @@ public:
 
     vector<pair<int, int>> getPoints();
     vector<int> getLineIndices();
+    void setVisibility(bool visible) override;
 
     int getLineHeight();
 

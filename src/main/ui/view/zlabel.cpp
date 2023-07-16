@@ -270,6 +270,11 @@ void ZLabel::draw() {
     }
 }
 
+void ZLabel::setVisibility(bool visible) {
+    ZView::setVisibility(visible);
+    mTextInvalid = true;
+}
+
 void ZLabel::setTextSize(int textSize) {
     int previousSize = mTextSize;
     mTextSize = textSize;
