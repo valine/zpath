@@ -15,51 +15,59 @@ static void error_callback(int error, const char* description) {
 
 ZApplication::ZApplication(ZViewController* controller) {
     vector<ZViewController*> controllers = {controller};
-    init(controllers, "ZPath", true, 800, 500, nullptr);
+    init(controllers, "ZPath", true, 800, 500, -1, nullptr);
 }
 
 ZApplication::ZApplication(ZViewController* controller, string name) {
     vector<ZViewController*> controllers = {controller};
-    init(controllers, name, false, 800, 500, nullptr);
+    init(controllers, name, false, 800, 500, -1, nullptr);
 }
 
 ZApplication::ZApplication(ZViewController* controller, string name, bool shouldPoll) {
     vector<ZViewController*> controllers = {controller};
-    init(controllers, name, shouldPoll, 800, 500, nullptr);
+    init(controllers, name, shouldPoll, 800, 500, -1, nullptr);
 }
 
 ZApplication::ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight) {
     vector<ZViewController*> controllers = {controller};
-    init(controllers, name, shouldPoll, windowWidth, windowHeight, nullptr);
+    init(controllers, name, shouldPoll, windowWidth, windowHeight, -1, nullptr);
 }
 
 ZApplication::ZApplication(vector<ZViewController*> controllers) {
-    init(controllers, "ZPath", true, 800, 500, nullptr);
+    init(controllers, "ZPath", true, 800, 500, -1, nullptr);
 }
 
 ZApplication::ZApplication(vector<ZViewController*> controllers, string name) {
-    init(controllers, name, false, 800, 500, nullptr);
+    init(controllers, name, false, 800, 500, -1, nullptr);
 }
 
 ZApplication::ZApplication(vector<ZViewController*> controllers, string name, bool shouldPoll) {
-    init(controllers, name, shouldPoll, 800, 500, nullptr);
+    init(controllers, name, shouldPoll, 800, 500, -1, nullptr);
 }
 
 ZApplication::ZApplication(vector<ZViewController*> controllers, string name, bool shouldPoll, int windowWidth, int windowHeight) {
-    init(controllers, name, shouldPoll, windowWidth, windowHeight, nullptr);
+    init(controllers, name, shouldPoll, windowWidth, windowHeight, -1, nullptr);
 }
 
 ZApplication::ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth,
                            int windowHeight, string icon, function<void()> onStart) {
     mOnStartListener = std::move(onStart);
     vector<ZViewController*> controllers = {controller};
-    init(controllers, std::move(name), shouldPoll, windowWidth, windowHeight, nullptr);
+    init(controllers, std::move(name), shouldPoll, windowWidth, windowHeight, -1, nullptr);
+    mIconPath = std::move(icon);
+}
+
+ZApplication::ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth,
+                           int windowHeight, string icon, function<void()> onStart, int fullScreen) {
+    mOnStartListener = std::move(onStart);
+    vector<ZViewController*> controllers = {controller};
+    init(controllers, std::move(name), shouldPoll, windowWidth, windowHeight, fullScreen, nullptr);
     mIconPath = std::move(icon);
 }
 
 void
 ZApplication::init(vector<ZViewController *> controllers, string windowName, bool shouldPoll, int width, int height,
-                   ZApplication *application) {
+                   int fullScreen, ZApplication *application) {
 
     mShouldPoll = shouldPoll;
 
@@ -71,7 +79,8 @@ ZApplication::init(vector<ZViewController *> controllers, string windowName, boo
 
     int index = 0;
     for (ZViewController* controller : mViewControllers) {
-        startUiThread(controller, mShouldPoll, this, windowName, width, height);
+        startUiThread(controller, mShouldPoll,
+                      this, windowName, width, height, fullScreen);
         index++;
     }
 
@@ -85,7 +94,7 @@ void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum se
 }
 
 void ZApplication::startUiThread(ZViewController *viewController, bool shouldPoll, ZApplication *app, string windowName,
-                            int width, int height) {
+                                 int width, int height, int fullScreen) {
     glfwSetErrorCallback(error_callback);
 
     GLFWwindow *window;
@@ -94,10 +103,19 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-    const char *c = windowName.c_str();
-    window = glfwCreateWindow(width, height, c, NULL, NULL);
-    app->mWindows.insert(pair<GLFWwindow*, ZViewController*>(window, viewController));
 
+    int count;
+    GLFWmonitor** monitors = glfwGetMonitors(&count);
+
+    const char *c = windowName.c_str();
+
+    if (fullScreen >= 0 && fullScreen <= count) {
+        window = glfwCreateWindow(width, height, c, monitors[fullScreen], NULL);
+    } else {
+        window = glfwCreateWindow(width, height, c, NULL, NULL);
+    }
+
+    app->mWindows.insert(pair<GLFWwindow*, ZViewController*>(window, viewController));
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);

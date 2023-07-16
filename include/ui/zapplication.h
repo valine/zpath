@@ -23,7 +23,10 @@ public:
     ZApplication(vector<ZViewController*> controllers, string name, bool shouldPoll);
     ZApplication(vector<ZViewController*> controllers, string name, bool shouldPoll, int windowWidth, int windowHeight);
 
-	void onWindowResize(int width, int height, ZViewController *viewController);
+    ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth, int windowHeight,
+                 string icon, function<void()> onStart, int fullScreen);
+
+    void onWindowResize(int width, int height, ZViewController *viewController);
 	void onWindowMove(GLFWwindow *window);
 	void onKeyPress(int key, int scancode, int action, int mods, ZViewController *viewController);
 	void onMouseEvent(GLFWwindow *window, int button, int action, int mods, double xpos, double ypos,
@@ -41,11 +44,11 @@ private:
 
     function<void()> mOnStartListener = nullptr;
 	void init(vector<ZViewController *> controllers, string windowName, bool shouldPoll, int width, int height,
-              ZApplication *application);
+              int fullScreen, ZApplication *application);
 	bool mShouldPoll = false;
 
 	void startUiThread(ZViewController *viewController, bool shouldPoll, ZApplication *app, string windowName,
-                              int width, int height);
+                       int width, int height, int fullScreen);
 
     void onCharacterInput(unsigned int character, ZViewController *viewController);
 };
