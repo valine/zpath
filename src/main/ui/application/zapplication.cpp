@@ -25,7 +25,7 @@ ZApplication::ZApplication(ZViewController* controller, string name) {
 
 ZApplication::ZApplication(ZViewController* controller, string name, int fullScreen) {
     vector<ZViewController*> controllers = {controller};
-    init(controllers, name, false, 800, 500, fullScreen, nullptr);
+    init(controllers, name, false, 1920, 1080, fullScreen, nullptr);
 }
 
 ZApplication::ZApplication(ZViewController* controller, string name, bool shouldPoll) {
@@ -37,6 +37,13 @@ ZApplication::ZApplication(ZViewController* controller, string name, bool should
     vector<ZViewController*> controllers = {controller};
     init(controllers, name, shouldPoll, windowWidth, windowHeight, -1, nullptr);
 }
+
+
+ZApplication::ZApplication(ZViewController* controller, string name, bool shouldPoll, int windowWidth, int windowHeight, int fullScreen) {
+    vector<ZViewController*> controllers = {controller};
+    init(controllers, name, shouldPoll, windowWidth, windowHeight, fullScreen, nullptr);
+}
+
 
 ZApplication::ZApplication(vector<ZViewController*> controllers) {
     init(controllers, "ZPath", true, 800, 500, -1, nullptr);

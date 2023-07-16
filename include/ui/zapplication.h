@@ -28,6 +28,9 @@ public:
 
     ZApplication(ZViewController *controller, string name, int fullScreen);
 
+    ZApplication(ZViewController *controller, string name, bool shouldPoll, int windowWidth, int windowHeight,
+                 int fullScreen);
+
     void onWindowResize(int width, int height, ZViewController *viewController);
 	void onWindowMove(GLFWwindow *window);
 	void onKeyPress(int key, int scancode, int action, int mods, ZViewController *viewController);
