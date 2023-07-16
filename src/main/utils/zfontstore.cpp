@@ -5,6 +5,8 @@
 //
 
 #include <iostream>
+#include <vector>
+#include <sstream>
 #include "utils/zfontstore.h"
 using namespace std;
 
@@ -19,7 +21,8 @@ FT_Face ZFontStore::loadFont() {
 }
 
 string ZFontStore::getFontKey(string resourcePath, int size) {
-    return resourcePath + to_string(size);
+    string file = resourcePath.substr(resourcePath.find_last_of("/\\") + 1);
+    return file + to_string(size);
 }
 
 FT_Face ZFontStore::loadFont(string resourcePath, float dp, int size) {
@@ -41,54 +44,59 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp, int size) {
         // Disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        // Load first 255 characters of ASCII set
-        for (GLubyte c = 0; c < 255; c++) {
-            // Load character glyph
-            if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
-                std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-                continue;
-            }
-            // Generate texture
-            GLuint texture;
-            glGenTextures(1, &texture);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,
-                    GL_RED,
-                    face->glyph->bitmap.width,
-                    face->glyph->bitmap.rows,
-                    0,
-                    GL_RED,
-                    GL_UNSIGNED_BYTE,
-                    face->glyph->bitmap.buffer
-            );
-            // Set texture options
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            // Now store character for later use
-
-
-            Character character = {
-                    texture,
-                    glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-                    glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                    (GLuint) face->glyph->advance.x
-            };
-            string key = to_string(c) + resourcePath + to_string(size);
-            mCharacters.insert(make_pair(key, character));
-
-            glBindTexture(GL_TEXTURE_2D, 0);
-            // Destroy FreeType once we're finished
+        // Load first 128 characters of ASCII set
+        for (GLubyte c = 0; c < 128; c++) {
+            loadChar(c, face, size, resourcePath);
         }
 
+        loadChar(176, face, size, resourcePath);
 
         return face;
     }
 
     return mFonts.at(getFontKey(resourcePath, size));
+}
+
+void ZFontStore::loadChar(GLubyte c, FT_Face face, int size, string resourcePath) {
+    // Load character glyph
+    if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+        std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+    }
+
+    // Generate texture
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RED,
+            face->glyph->bitmap.width,
+            face->glyph->bitmap.rows,
+            0,
+            GL_RED,
+            GL_UNSIGNED_BYTE,
+            face->glyph->bitmap.buffer
+    );
+    // Set texture options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // Now store character for later use
+
+
+    Character character = {
+            texture,
+            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+            (GLuint) face->glyph->advance.x
+    };
+    string key = to_string(c) + resourcePath + to_string(size);
+    mCharacters.insert(make_pair(key, character));
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    // Destroy FreeType once we're finished
 }
 
 Character ZFontStore::getCharacter(const string &resourcePath, GLchar c, int size) {

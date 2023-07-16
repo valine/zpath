@@ -54,6 +54,8 @@ private:
     float mDp = 1;
 
     string getFontKey(string resourcePath, int dp);
+
+    void loadChar(GLubyte c, FT_Face face, int size, string resourcePath);
 };
 
 
