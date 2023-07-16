@@ -108,7 +108,10 @@ void ZLabel::drawText() {
    // GLfloat y = ((float) mTextSize * 0.5f * mDP) - 4 - centerOffset;
 
    // DP 2
-     GLfloat y = -1 * mTextSize - centerOffset;
+     GLfloat y = 0.125f * (float) mTextSize - centerOffset;
+     if (mDP > 1) {
+         y = -1.0f * (float) mTextSize - centerOffset;
+     }
 
     // GLfloat y = ((float) mTextSize * 0.0f * mDP) - mTextSize - centerOffset;
 
