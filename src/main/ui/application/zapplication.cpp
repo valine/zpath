@@ -125,10 +125,14 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
         GLFWmonitor* secondMonitor = monitors[1];  // Grab the second monitor
         const GLFWvidmode* mode = glfwGetVideoMode(secondMonitor); // Get the current video mode of the monitor.
 
+        // Get position of the second monitor
+        int xpos, ypos;
+        glfwGetMonitorPos(secondMonitor, &xpos, &ypos);
+
         glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
         window = glfwCreateWindow(mode->width, mode->height, c, NULL, NULL);
-        glfwSetWindowPos(window, mode->width, 0);
+        glfwSetWindowPos(window, xpos, ypos);
     } else {
         window = glfwCreateWindow(width, height, c, NULL, NULL);
     }
