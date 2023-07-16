@@ -41,8 +41,8 @@ FT_Face ZFontStore::loadFont(string resourcePath, float dp, int size) {
         // Disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        // Load first 128 characters of ASCII set
-        for (GLubyte c = 0; c < 255; c++) {
+        // Load first 1024 characters of ASCII set
+        for (GLuint c = 0; c < 1024; c++) {
             // Load character glyph
             if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
                 std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
