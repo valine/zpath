@@ -156,6 +156,52 @@ void ZView::onMouseEvent(int button, int action, int mods, int x, int y) {
     }
 }
 
+void ZView::handleDrag(float sx, float sy, int state) {
+
+    if (!mDraggable) {
+        return;
+    }
+
+    // Handle mouse down
+    if (state == mouseDown && isMouseInBounds(this, sx, sy)) {
+        mDrag = true;
+        mDragStartX = sx;
+        mDragStartY = sy;
+
+        // Record initial view offset
+        mDragStartOffsetX = getOffsetX();
+        mDragStartOffsetY = getOffsetY();
+
+        // Record border state
+        mDrawWireInitial = mDrawWire;
+        mOutlineColorInitial = mOutlineColor;
+        setOutlineType(WireType::outline);
+        setOutlineColor(white);
+
+    } else if (state == mouseDrag) {
+        if (mDrag) {
+            float deltaX = sx - mDragStartX;
+            float deltaY = sy - mDragStartY;
+
+            // Update view offset
+            float offsetX = mDragStartOffsetX + deltaX;
+            float offsetY = mDragStartOffsetY + deltaY;
+            setOffset(offsetX, offsetY);
+            onWindowChange(getWindowWidth(), getWindowHeight());
+        }
+
+    } else if (state == mouseUp) {
+        mDrag = false;
+        // Reset border state
+        setOutlineType(mDrawWireInitial);
+        setOutlineColor(mOutlineColorInitial);
+
+        cout << "OffsetX: " << getOffsetX() << " OffsetY: " << getOffsetY() << endl;
+    }
+
+    // Handle mouse move
+}
+
 void ZView::onMouseOver() {
 
 }
@@ -174,6 +220,8 @@ void ZView::onMouseDrag(vec2 absolute, vec2 start, vec2 delta, int state, int bu
     } else if (state == mouseDrag || state == mouseDown) {
         mMouseDragDelta = absolute - start;
     }
+
+    handleDrag(mMouseX, mMouseY, state);
 }
 
 void ZView::onCursorPosChange(double x, double y) {

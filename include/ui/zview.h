@@ -381,6 +381,10 @@ class ZView {
 
     bool isMouseInBounds(ZView *view, float x, float y) const;
 
+    void setDraggable(bool draggable) {
+        mDraggable = draggable;
+    }
+
 private:
 
         bool mBuffersInit = false;
@@ -398,6 +402,8 @@ private:
 		Gravity mGravity = topLeft;
 		ZView *mParentView = nullptr;
 		ZView *mRootView{};
+
+        bool mDraggable = false;
 
 		/**
 		 * The z cursor position gets incremented on the root view every
@@ -543,6 +549,15 @@ private:
 
     void redrawCornerRadius();
 
+    void handleDrag(float sx, float sy, int state);
+
+    bool mDrag = false;
+    float mDragStartX;
+    float mDragStartY;
+    double mDragStartOffsetX;
+    double mDragStartOffsetY;
+    WireType mDrawWireInitial;
+    ZColor mOutlineColorInitial = transparent;
 };
 
 #endif
