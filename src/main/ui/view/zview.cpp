@@ -196,7 +196,7 @@ void ZView::handleDrag(float sx, float sy, int state) {
         setOutlineType(mDrawWireInitial);
         setOutlineColor(mOutlineColorInitial);
 
-        cout << "OffsetX: " << getOffsetX() << " OffsetY: " << getOffsetY() << endl;
+        cout << "setOffset(" << getOffsetX() << ", " << getOffsetY() << ");" << endl;
     }
 
     // Handle mouse move
