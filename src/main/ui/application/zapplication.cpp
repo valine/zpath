@@ -121,8 +121,14 @@ void ZApplication::startUiThread(ZViewController *viewController, bool shouldPol
 
     const char *c = windowName.c_str();
 
-    if (fullScreen >= 0 && fullScreen <= count) {
-        window = glfwCreateWindow(width, height, c, monitors[fullScreen], NULL);
+    if (fullScreen >= 0 && fullScreen < count) {
+        GLFWmonitor* secondMonitor = monitors[1];  // Grab the second monitor
+        const GLFWvidmode* mode = glfwGetVideoMode(secondMonitor); // Get the current video mode of the monitor.
+
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
+        window = glfwCreateWindow(mode->width, mode->height, c, NULL, NULL);
+        glfwSetWindowPos(window, mode->width, 0);
     } else {
         window = glfwCreateWindow(width, height, c, NULL, NULL);
     }

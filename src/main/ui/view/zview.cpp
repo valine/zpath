@@ -199,6 +199,7 @@ void ZView::handleDrag(float sx, float sy, int state) {
         cout << "setOffset(" << getOffsetX() << ", " << getOffsetY() << ");" << endl;
     }
 
+
     // Handle mouse move
 }
 
