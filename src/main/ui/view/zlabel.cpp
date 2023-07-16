@@ -177,6 +177,8 @@ void ZLabel::drawText() {
            // }
         }
 
+        mEndPoint = mPoints.at(mPoints.size() - 1);
+
         mLineIndices.push_back(mPoints.size());
     }
     glBindVertexArray(0);
@@ -221,10 +223,7 @@ void ZLabel::computeLineWidth() {
 }
 
 pair<int,int> ZLabel::getEndPoint() {
-    if (mPoints.empty()) {
-        return {0,0};
-    }
-    return mPoints.at(mPoints.size() - 1);
+    return mEndPoint;
 }
 
 vector<pair<int,int>> ZLabel::getPoints() {

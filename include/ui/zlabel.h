@@ -71,6 +71,8 @@ private:
     bool mFrameInvalid = true;
     float mFirstLineWidth = 0;
 
+    pair<int, int> mEndPoint;
+
     /**
      * Character coordinates for setting cursor location
      */
