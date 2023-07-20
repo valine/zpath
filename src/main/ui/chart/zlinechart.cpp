@@ -344,6 +344,9 @@ void ZLineChart::updateFBOSize() {
     computeChartBounds();
 }
 
+/**
+ * Updates the chart with cached data.
+ */
 void ZLineChart::updateChart2D() {
     vector<float> verts;
     for (int lineIndex = 0; lineIndex < mLineCount; lineIndex++) {
