@@ -77,8 +77,6 @@ void ZLabel::drawText() {
     if (getTextShader() == nullptr || getTextShader()->mID == -1) {
         return;
     }
-    computeBounds();
-
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glViewport(0, 0, getWidth() * mDP, getHeight() * mDP);
 
@@ -244,10 +242,13 @@ vector<int> ZLabel::getLineIndices() {
 }
 
 int ZLabel::getLineHeight() {
-    if (mTextSize == 0) {
+    if (mTextSize <= 5 || mTextSize > 1e5) {
         return 18;
     }
-    return (int) ((float) mTextSize * 1.2857);
+
+    int lineHeight = (int) ((float) mTextSize * 1.2857);
+    // return 18;
+    return lineHeight;
 }
 
 string ZLabel::getText() {
@@ -264,7 +265,7 @@ void ZLabel::draw() {
         updateFrameSize();
     }
 
-    if (mTextInvalid && getVisibility()) {
+    if (mTextInvalid) {
         drawText();
     }
 
@@ -309,7 +310,6 @@ ZColor ZLabel::getTextColor() {
 void ZLabel::setText(string text) {
     mText = std::move(text);
     mTextInvalid = true;
-    mFrameInvalid = true;
     computeLineWidth();
     invalidate();
 }
