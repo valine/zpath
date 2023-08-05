@@ -39,7 +39,7 @@ public:
     Character getCharacter(const string &resourcePath, GLchar, int size);
 
     string getDefaultResource();
-    void setDefaultResource(string);
+    void setDefaultResource(const string&);
     FT_Face loadFont();
 private:
     ZFontStore();

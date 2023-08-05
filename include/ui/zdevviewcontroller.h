@@ -14,6 +14,9 @@ public:
     ZDevViewController(char **const pString);
 
     void onCreate() override;
+    void draw() override;
+
+    ZLabel* mLabel;
 
 };
 

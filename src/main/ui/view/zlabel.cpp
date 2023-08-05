@@ -56,6 +56,7 @@ void ZLabel::createFBO() {
 }
 
 void ZLabel::updateFrameSize() {
+
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glBindTexture(GL_TEXTURE_2D, mTexBuffer);
 
@@ -76,6 +77,8 @@ void ZLabel::drawText() {
     if (getTextShader() == nullptr || getTextShader()->mID == -1) {
         return;
     }
+    computeBounds();
+
     glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
     glViewport(0, 0, getWidth() * mDP, getHeight() * mDP);
 
@@ -261,7 +264,7 @@ void ZLabel::draw() {
         updateFrameSize();
     }
 
-    if (mTextInvalid) {
+    if (mTextInvalid && getVisibility()) {
         drawText();
     }
 
@@ -272,7 +275,9 @@ void ZLabel::draw() {
 
 void ZLabel::setVisibility(bool visible) {
     ZView::setVisibility(visible);
-    mTextInvalid = true;
+    if (visible) {
+        mTextInvalid = true;
+    }
 }
 
 void ZLabel::setTextSize(int textSize) {
@@ -304,6 +309,7 @@ ZColor ZLabel::getTextColor() {
 void ZLabel::setText(string text) {
     mText = std::move(text);
     mTextInvalid = true;
+    mFrameInvalid = true;
     computeLineWidth();
     invalidate();
 }

@@ -118,7 +118,7 @@ Character ZFontStore::getCharacter(const string &resourcePath, GLchar c, int siz
     return mCharacters.at(key);
 }
 
-void ZFontStore::setDefaultResource(string r) {
+void ZFontStore::setDefaultResource(const string& r) {
     mDefaultResource = std::move(r);
 }
 
