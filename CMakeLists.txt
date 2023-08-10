@@ -464,11 +464,12 @@ if (LINUX)
 
         include_directories(${zdep_path}/gmp/include)
         include_directories(${zdep_path}/gsl/include)
+        include_directories(${zdep_path}/mpfi/include)
         include_directories(${zdep_path}/mpfr/include)
         include_directories(${zdep_path}/ntl/include)
         include_directories(${zdep_path}/pari/include)
         include_directories(${zdep_path}/giac/include)
-        include_directories(${zdep_path}/mpfi/include)
+
 
         target_link_libraries (zpath
                 ${OPENGL_LIBRARIES}
@@ -483,9 +484,9 @@ if (LINUX)
                 "${zdep_path}/freetype/libfreetype.a"
                 "${zdep_path}/gmp/libgmp.a"
                 "${zdep_path}/gsl/libgsl.a"
+                "${zdep_path}/mpfi/libmpfi.a"
                 "${zdep_path}/mpfr/libmpfr.a"
                 "${zdep_path}/ntl/libntl.a"
-                "${zdep_path}/mpfi/libmpfi.a"
                 "${zdep_path}/pari/libpari.a"
                 )
     endif(COMPILE_DEPS)

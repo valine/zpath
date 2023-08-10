@@ -111,7 +111,7 @@ cd ../working
 ######## MPFI ########
 cd mpfi-1.5.4
 echo "Configuring mpfi"
-./configure --enable-static --prefix=${DIR}/install/mpfi/bin --libdir=${DIR}/install/mpfi/lib > /dev/null 2>&1
+./configure --enable-static --disable-rpath --prefix=${DIR}/install/mpfi/bin --libdir=${DIR}/install/mpfi/lib > /dev/null 2>&1
 echo "Compiling mpfi..."
 make -j32 -s > /dev/null 2>&1
 make install -s > /dev/null 2>&1
@@ -129,7 +129,7 @@ cd ..
 ######## MPFR ########
 cd mpfr-4.2.0
 echo "Configuring mpfr"
-./configure --enable-static --prefix=${DIR}/install/mpfr/bin --libdir=${DIR}/install/mpfr/lib --disable-rpath > /dev/null 2>&1
+./configure --enable-static --disable-rpath --prefix=${DIR}/install/mpfr/bin --libdir=${DIR}/install/mpfr/lib --disable-rpath > /dev/null 2>&1
 echo "Compiling mpfr..."
 make -j32 -s > /dev/null 2>&1
 make install -s > /dev/null 2>&1
@@ -164,7 +164,7 @@ cd ..
 
 cd giac-${GIAC_VERSION_S}
 echo "Configuring giac"
-./configure --disable-micropy --disable-shared  --disable-gui --disable-cocoa --disable-gsl --disable-png --disable-rpath --enable-static --prefix=${DIR}/install/giac/bin --libdir=${DIR}/install/giac/lib > /dev/null 2>&1
+./configure --disable-micropy --disable-shared --disable-fltk --disable-gui --disable-cocoa --disable-gsl --disable-png --disable-rpath --enable-static --prefix=${DIR}/install/giac/bin --libdir=${DIR}/install/giac/lib > /dev/null 2>&1
 echo "Compiling giac..."
 make -j32 -s > /dev/null
 make install -s > /dev/null 2>&1
