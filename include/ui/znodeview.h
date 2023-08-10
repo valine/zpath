@@ -582,10 +582,9 @@ public:
         return bounds;
     }
 
-    vec4 setChartBounds(vec4 bounds) {
+    void setChartBounds(vec4 bounds) {
         mChart->setBounds(bounds);
     }
-
 
     /**
     * Internal group node graph

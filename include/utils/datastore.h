@@ -195,6 +195,9 @@ public:
     void setCrumbsForIndex(int index, const vector<Crumb>& crumbs) {
         mCrumbsMap.insert({index, crumbs});
 
+        if (mJsonMap.empty()) {
+            return;
+        }
         json data = mJsonMap.at(mDataIndexMap.at(index));
         vector<float> dataPoints = followCrumbs(data, crumbs, 0);
         if (mDataMap.count(mDataIndexMap.at(index)) > 0) {
@@ -205,6 +208,9 @@ public:
     }
 
     bool crumbsValidForIndex(int index, const vector<Crumb>& crumbs) {
+        if (mJsonMap.empty()) {
+            return false;
+        }
         json data = mJsonMap.at(mDataIndexMap.at(index));
         bool valid = crumbsValid(data, crumbs, 0);
         return valid;
