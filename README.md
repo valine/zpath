@@ -1,5 +1,7 @@
 # ZPath
-Physically based render engine and cross platform UI framework 
+Interactive, hardware accelerated computation graphs
+<img width="1108" alt="Screenshot 2024-02-15 at 6 03 14 PM" src="https://github.com/valine/zpath/assets/14074844/f06243d0-793e-4b2d-a6e7-6830f0390d4f">
+
 
 ## Build instructions
 
