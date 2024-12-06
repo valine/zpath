@@ -472,8 +472,6 @@ void MlModel::trainSingle(const vector<double>& input, const vector<double>& exp
 
     for (vector<Neuron*> layer : mTrainable) {
         for (Neuron* node : layer) {
-
-
             if (mOptimizer == ADAGRAD) {
                 double db = node->computeDEDB();
 
